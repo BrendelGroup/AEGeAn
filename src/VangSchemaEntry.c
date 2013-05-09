@@ -38,7 +38,13 @@ void vang_schema_entry_add_attributes(VangSchemaEntry *entry, GtArray *attribute
 VangRelationExclusion *vang_relation_exclusion_new();
 void vang_relation_exclusion_add_relation(VangRelationExclusion *exclusion, char *relid);
 void vang_relation_exclusion_set_note(VangRelationExclusion *exclusion, const char *note);
-
+/**
+ * Print a string representation of this relation exclusion
+ *
+ * @param[in]  exclusion    exclusion object
+ * @param[out] outstream    output stream to which data will be printed
+ */
+void vang_relation_exclusion_to_string(VangRelationExclusion *exclusion, FILE *outstream);
 
 //----------------------------------------------------------------------------//
 // Public method implementations
@@ -103,6 +109,43 @@ void vang_relation_exclusion_delete(VangRelationExclusion *exclusion)
 
   gt_free(exclusion);
   exclusion = NULL;
+}
+
+const char *vang_schema_entry_get_datatype(VangSchemaEntry *entry)
+{
+  return entry->datatype;
+}
+
+void vang_schema_entry_to_string(VangSchemaEntry *entry, FILE *outstream)
+{
+  fputs(entry->datatype, outstream);
+
+  unsigned long i;
+  for(i = 0; i < gt_array_size(entry->relations); i++)
+  {
+    VangRelation *rel = *(VangRelation **)gt_array_get(entry->relations, i);
+    fputc('\t', outstream);
+    vang_relation_to_string(rel, outstream);
+  }
+
+  for(i = 0; i < gt_array_size(entry->relation_exclusions); i++)
+  {
+    VangRelationExclusion *exclusion = *(VangRelationExclusion **)gt_array_get(entry->relation_exclusions, i);
+    fputc('\t', outstream);
+    vang_relation_exclusion_to_string(exclusion, outstream);
+  }
+
+  if(gt_array_size(entry->required_attributes) > 0)
+  {
+    fputs("\tAttribute=", outstream);
+    for(i = 0; i < gt_array_size(entry->required_attributes); i++)
+    {
+      const char *attr = *(const char **)gt_array_get(entry->required_attributes, i);
+      if(i > 0)
+        fputc(',', outstream);
+      fputs(attr, outstream);
+    }
+  }
 }
 
 void vang_schema_entry_delete(VangSchemaEntry *entry)
@@ -304,3 +347,21 @@ void vang_relation_exclusion_set_note(VangRelationExclusion *exclusion, const ch
   exclusion->note = gt_cstr_dup(note);
 }
 
+void vang_relation_exclusion_to_string(VangRelationExclusion *exclusion, FILE *outstream)
+{
+  fputs("Exclusive=", outstream);
+
+  unsigned long i;
+  for(i = 0; i < gt_array_size(exclusion->exclusive_relations); i++)
+  {
+    const char *relid = *(const char **)gt_array_get(exclusion->exclusive_relations, i);
+    if(i > 0)
+      fputc(',', outstream);
+    fputs(relid, outstream);
+  }
+
+  if(exclusion->note != NULL)
+  {
+    fprintf(outstream, ";Note=%s", exclusion->note);
+  }
+}

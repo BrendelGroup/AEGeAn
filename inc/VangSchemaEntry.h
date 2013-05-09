@@ -31,6 +31,22 @@ VangSchemaEntry *vang_schema_entry_next(FILE *schemafile);
 void vang_schema_entry_delete(VangSchemaEntry *entry);
 
 /**
+ * Get the data type associated with this entry
+ *
+ * @param[in] entry    a schema entry
+ * @returns            the entry's data type
+ */
+const char *vang_schema_entry_get_datatype(VangSchemaEntry *entry);
+
+/**
+ * Print a string representation of this schema entry
+ *
+ * @param[in]  entry        schema entry object
+ * @param[out] outstream    output stream to which data will be printed
+ */
+void vang_schema_entry_to_string(VangSchemaEntry *entry, FILE *outstream);
+
+/**
  * Free memory previously occupied by a relation exclusion object
  *
  * @param[in] exclusion    a relation exclusion
