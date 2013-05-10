@@ -1,0 +1,7 @@
+##gff-version   3
+##sequence-region   seq 1 500
+seq	nano	gene	1	500	.	+	.	ID=gene
+seq	nano	mRNA	1	500	.	+	.	ID=transcript;Parent=gene
+seq	nano	start_codon	100	102	.	+	.	Parent=transcript
+seq	nano	exon	1	500	.	+	.	Parent=transcript
+seq	nano	stop_codon	448	450	.	+	.	Parent=transcript

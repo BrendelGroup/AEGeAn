@@ -1,0 +1,66 @@
+#-------------------------------------------------------------------------------
+# ParsEval filter file
+#
+# The ParsEval program prints a set of summary statistics based on each
+# individual comparison at each locus. When this filter file is used, the
+# summary statistics will only include loci that meet the specificed criteria.
+# Filters set to 0 will not be enforced.
+#-------------------------------------------------------------------------------
+
+#-----------------------------------------------------------
+# Locus length: filter by length (in bp)
+#-----------------------------------------------------------
+LocusLengthUpperLimit: 0
+LocusLengthLowerLimit: 0
+
+#-----------------------------------------------------------
+# Gene models: most loci contain one reference gene model
+# and one prediction gene model, but occasionally gene
+# models overlap and a locus may contain multiple gene
+# models for the reference and/or prediction; filter by
+# number of gene models (note that loci containing no
+# reference or no prediction gene models are never included
+# in summary statistics since no comparison can be done)
+#-----------------------------------------------------------
+MinReferenceGeneModels:  0
+MaxReferenceGeneModels:  0
+MinPredictionGeneModels: 0
+MaxPredictionGeneModels: 0
+
+#-----------------------------------------------------------
+# Transcript models: filter by number of transcript models
+#-----------------------------------------------------------
+MinReferenceTranscriptModels:  0
+MaxReferenceTranscriptModels:  0
+MinPredictionTranscriptModels: 0
+MaxPredictionTranscriptModels: 0
+
+#-----------------------------------------------------------
+# Alternative splicing: if there are multiple reference (or
+# prediction) gene models in a given locus, then there will
+# be multiple transcripts, even if there is no alternative
+# splicing; alternative splicing only occurs when there are
+# multiple transcripts belonging to the same gene model;
+# filter by number of transcripts per gene model
+#-----------------------------------------------------------
+MinTranscriptsPerReferenceGeneModel:  0
+MaxTranscriptsPerReferenceGeneModel:  0
+MinTranscriptsPerPredictionGeneModel: 0
+MaxTranscriptsPerPredictionGeneModel: 0
+
+#-----------------------------------------------------------
+# Exons: filter by total number of exons
+#-----------------------------------------------------------
+MinReferenceExons:  0
+MaxReferenceExons:  0
+MinPredictionExons: 0
+MaxPredictionExons: 0
+
+#-----------------------------------------------------------
+# CDS length: filter by total CDS length (in codons/aa).
+# This filter is still under development.
+#-----------------------------------------------------------
+MinReferenceCDSLength:  0
+MaxReferenceCDSLength:  0
+MinPredictionCDSLength: 0
+MaxPredictionCDSLength: 0
