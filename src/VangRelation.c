@@ -101,7 +101,7 @@ void vang_relation_to_string(VangRelation *rel, FILE *outstream)
       break;
   }
 
-  fprintf(outstream, "Relation=%s;Nodetype=%s;", rel->id, rel->nodetype);
+  fprintf(outstream, "Relation=%s;Nodetype=%s;Degree=", rel->id, rel->nodetype);
   vang_degree_constraint_to_string(&rel->dc, outstream);
   fprintf(outstream, ";Key=%s;Spatial=%s", rel->key, spatial);
   if(rel->note != NULL)

@@ -1,0 +1,9 @@
+gene	Relation=r1;Nodetype=mRNA;Degree=in + 1;Key=Parent;Spatial=contains	Relation=r2;Nodetype=tRNA,rRNA;Degree=in e 1;Key=Parent;Spatial=contains	Exclusive=r1,r2;Note=Gene cannot encode different RNA types simultaneously	Attribute=Name
+protein	Relation=r3;Nodetype=mRNA;Degree=in e 1;Key=Parent;Spatial=exact	Relation=r4;Nodetype=CDS;Degree=in e 1;Key=Parent;Spatial=exact
+mRNA	Relation=r5;Nodetype=gene;Degree=out - 1;Key=Parent;Spatial=within	Relation=r6;Nodetype=CDS;Degree=in e 1;Key=Parent;Spatial=contains	Relation=r7;Nodetype=exon;Degree=in + 1;Key=Parent;Spatial=contains	Relation=r8;Nodetype=five_prime_UTR;Degree=in - 1;Key=Parent;Spatial=contains	Relation=r9;Nodetype=three_prime_UTR;Degree=in - 1;Key=Parent;Spatial=contains
+CDS	Relation=r10;Nodetype=mRNA;Degree=out e 1;Key=Parent;Spatial=within	Relation=r11;Nodetype=protein;Degree=out e 1;Key=Parent;Spatial=within
+exon	Relation=r12;Nodetype=mRNA;Degree=out + 1;Key=Parent;Spatial=within	Relation=r13;Nodetype=tRNA;Degree=out + 1;Key=Parent;Spatial=within	Relation=r14;Nodetype=rRNA;Degree=out + 1;Key=Parent;Spatial=within	Exclusive=r12,r13,r14;Note=exon cannot belong to different RNA types
+five_prime_UTR	Relation=r15;Nodetype=mRNA;Degree=out e 1;Key=Parent;Spatial=within
+three_prime_UTR	Relation=r16;Nodetype=mRNA;Degree=out e 1;Key=Parent;Spatial=within
+tRNA	Relation=r17;Nodetype=gene;Degree=out - 1;Key=Parent;Spatial=exact	Relation=r18;Nodetype=exon;Degree=in + 1;Key=Parent;Spatial=contains
+rRNA	Relation=r19;Nodetype=gene;Degree=out - 1;Key=Parent;Spatial=exact	Relation=r20;Nodetype=exon;Degree=in + 1;Key=Parent;Spatial=contains

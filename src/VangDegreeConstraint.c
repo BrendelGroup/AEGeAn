@@ -19,7 +19,8 @@ DegreeConstraint vang_degree_constraint_parse(const char *degree_string)
     context = DEGREE_OUT;
   else
   {
-    fprintf(stderr, "error: unknown degree context '%s' (%s)\n", contextstr, degree_string);
+    fprintf( stderr, "error: unknown degree context '%s' (%s)\n", contextstr,
+             degree_string );
     exit(1);
   }
 
@@ -35,13 +36,16 @@ DegreeConstraint vang_degree_constraint_parse(const char *degree_string)
     op = EQUALS;
   else
   {
-    fprintf(stderr, "error: unknown degree constraint operator '%s' (%s)\n", operatorstr, degree_string);
+    fprintf( stderr, "error: unknown degree constraint operator '%s' (%s)\n",
+             operatorstr, degree_string );
     exit(1);
   }
 
   degree = atoi(degreestr);
 
   DegreeConstraint degree_constraint = {context, op, degree};
+  gt_free(degstrcpy);
+
   return degree_constraint;
 }
 

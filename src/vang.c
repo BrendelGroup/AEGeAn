@@ -8,7 +8,9 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  char *schemafile = argv[0];
+  gt_lib_init();
+
+  char *schemafile = argv[1];
   FILE *schema = fopen(schemafile, "r");
   if(schema == NULL)
   {
@@ -17,7 +19,8 @@ int main(int argc, char **argv)
   }
 
   GtArray *entry_datatypes = gt_array_new( sizeof(char *) );
-  GtHashmap *entries = gt_hashmap_new(GT_HASH_STRING, NULL, (GtFree)vang_schema_entry_delete);
+  GtHashmap *entries = gt_hashmap_new( GT_HASH_STRING, NULL,
+                                       (GtFree)vang_schema_entry_delete );
   VangSchemaEntry *entry;
   while( (entry = vang_schema_entry_next(schema)) != NULL )
   {
@@ -25,7 +28,8 @@ int main(int argc, char **argv)
     VangSchemaEntry *testentry = gt_hashmap_get(entries, datatype);
     if(testentry != NULL)
     {
-      fprintf(stderr, "warning: already have an entry for data type '%s'; replacing\n", datatype);
+      fprintf( stderr, "warning: already have an entry for data type '%s'; "
+               "replacing\n", datatype );
       vang_schema_entry_delete(testentry);
     }
     gt_hashmap_add(entries, datatype, entry);
@@ -42,6 +46,8 @@ int main(int argc, char **argv)
   }
   gt_array_delete(entry_datatypes);
   gt_hashmap_delete(entries);
+
+  gt_lib_clean();
 
   return 0;
 }
