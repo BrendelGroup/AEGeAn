@@ -87,6 +87,11 @@ bool agn_gene_validator_validate_mrna( AgnGeneValidator *v,
                                        GtFeatureNode *mRNA,
                                        AgnError *error );
 
+
+//----------------------------------------------------------------------------//
+// Method implementations
+//----------------------------------------------------------------------------//
+
 void agn_gene_validator_check_cds_phase(AgnGeneValidator *v)
 {
   unsigned long num_cds_feats = gt_array_size(v->cdss);
@@ -158,37 +163,16 @@ bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
                                      AgnError *error )
 {
   unsigned long i,j;
-  gt_assert( v->cdss != NULL && v->utrs != NULL && gt_array_size(v->cdss) > 0 );
+  unsigned long num_exons = gt_array_size(v->exons);
+  unsigned long num_cds_segs = gt_array_size(v->cdss);
+  gt_assert(num_exons == 0 && num_cds_segs > 0);
 
   GtGenomeNode *n = (GtGenomeNode *)mrna;
   unsigned int tln = gt_genome_node_get_line_number(n);
   const char *tid = gt_feature_node_get_attribute(mrna, "ID");
 
-  // Make sure this transcript doesn't have any exons before I start trying to
-  // infer more
-  unsigned long num_exons = gt_array_size(v->exons);
-  if(num_exons > 0)
-  {
-    agn_error_add
-    (
-      error,
-      true,
-      "found %lu exons for mRNA '%s' (line %u) while inferring exons",
-      num_exons,
-      tid,
-      tln
-    );
-    gt_array_delete(v->cdss);
-    gt_array_delete(v->exons);
-    gt_array_delete(v->introns);
-    gt_array_delete(v->utrs);
-    return false;
-  }
-
   GtStr *aegean = gt_str_new_cstr("AEGeAn");
-
-  // Iterate through all CDSs
-  for(i = 0; i < gt_array_size(v->cdss); i++)
+  for(i = 0; i < num_cds_segs; i++)
   {
     GtGenomeNode *cds = *(GtGenomeNode **)gt_array_get(v->cdss, i);
     GtRange cds_range = gt_genome_node_get_range(cds);
@@ -212,11 +196,8 @@ bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
     GtStrand exonstrand = gt_feature_node_get_strand((GtFeatureNode *)cds);
     GtGenomeNode *exon = gt_feature_node_new
     (
-      gt_genome_node_get_seqid(cds),
-      "exon",
-      exon_range.start,
-      exon_range.end,
-      exonstrand
+      gt_genome_node_get_seqid(cds), "exon", exon_range.start,
+      exon_range.end, exonstrand
     );
     GtFeatureNode *fn_exon = (GtFeatureNode *)exon;
     gt_feature_node_set_source(fn_exon, aegean);
@@ -225,20 +206,15 @@ bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
     gt_array_add(v->exons, exon);
   }
   gt_str_delete(aegean);
-
-  // Sort and return
-  gt_array_sort(v->exons, (GtCompare)agn_gt_genome_node_compare);
   if(gt_array_size(v->exons) == 0)
   {
-    gt_array_delete(v->cdss);
-    gt_array_delete(v->exons);
-    gt_array_delete(v->introns);
-    gt_array_delete(v->utrs);
     agn_error_add( error,false, "unable to infer exons for mRNA '%s' (line %u)",
                    tid, tln );
     return false;
   }
 
+  // Sort and return
+  gt_array_sort(v->exons, (GtCompare)agn_gt_genome_node_compare);
   return true;
 }
 
@@ -246,34 +222,15 @@ bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
                                        AgnError *error )
 {
   unsigned long i;
-  gt_assert(v->exons != NULL && gt_array_size(v->exons) > 0);
-
+  unsigned long num_introns = gt_array_size(v->introns);
+  unsigned long num_exons = gt_array_size(v->exons);
+  gt_assert(num_introns == 0 && num_exons > 0);
 
   GtGenomeNode *n = (GtGenomeNode *)mrna;
   unsigned int tln = gt_genome_node_get_line_number(n);
   const char *tid = gt_feature_node_get_attribute(mrna, "ID");
 
-  unsigned long num_introns = gt_array_size(v->introns);
-  if(num_introns > 0)
-  {
-    gt_array_delete(v->cdss);
-    gt_array_delete(v->exons);
-    gt_array_delete(v->introns);
-    gt_array_delete(v->utrs);
-    agn_error_add
-    (
-      error,
-      true,
-      "found %lu introns for transcript '%s' (line %u) while inferring introns",
-      num_introns,
-      tid,
-      tln
-    );
-    return false;
-  }
-
   GtStr *aegean = gt_str_new_cstr("AEGeAn");
-
   for(i = 1; i < gt_array_size(v->exons); i++)
   {
     GtGenomeNode *exon1 = *(GtGenomeNode**)gt_array_get(v->exons, i-1);
@@ -285,23 +242,19 @@ bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
     {
       agn_error_add
       (
-        error,
-        false,
-        "mRNA '%s' (line %u) has directly adjacent exons\n",
-        tid,
-        tln
+        error, false, "mRNA '%s' (line %u) has directly adjacent exons\n",
+        tid, tln
       );
+      gt_str_delete(aegean);
+      return false;
     }
     else
     {
       GtStrand intronstrnd = gt_feature_node_get_strand((GtFeatureNode *)exon1);
       GtGenomeNode *intron = gt_feature_node_new
       (
-        gt_genome_node_get_seqid(exon1),
-        "intron",
-        first_range.end + 1,
-        second_range.start - 1,
-        intronstrnd
+        gt_genome_node_get_seqid(exon1), "intron", first_range.end + 1,
+        second_range.start - 1, intronstrnd
       );
       GtFeatureNode *fn_intron = (GtFeatureNode *)intron;
       gt_feature_node_set_source(fn_intron, aegean);
@@ -321,33 +274,13 @@ bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
 {
   unsigned long exon_pointer = 0;
   unsigned long cds_pointer = 0;
-  gt_assert(gt_array_size(v->exons) > 0 && gt_array_size(v->cdss) > 0);
-
-  GtGenomeNode *n = (GtGenomeNode *)mrna;
-  unsigned int tln = gt_genome_node_get_line_number(n);
+  unsigned long num_exons = gt_array_size(v->exons);
+  unsigned long num_cds_segs = gt_array_size(v->cdss);
   const char *tid = gt_feature_node_get_attribute(mrna, "ID");
+  gt_assert(num_exons > 0 && num_cds_segs > 0);
 
-  unsigned long num_utrs = gt_array_size(v->utrs);
-  if(num_utrs > 0)
-  {
-    gt_array_delete(v->cdss);
-    gt_array_delete(v->exons);
-    gt_array_delete(v->introns);
-    gt_array_delete(v->utrs);
-    agn_error_add
-    (
-      error,
-      true,
-      "found %lu UTRs for transcript '%s' (line %u) while inferring UTRs",
-      num_utrs,
-      tid,
-      tln
-    );
-    return false;
-  }
   GtStr *aegean = gt_str_new_cstr("AEGeAn");
-
-  while(exon_pointer < gt_array_size(v->exons))
+  while(exon_pointer < num_exons)
   {
     if(cds_pointer >= gt_array_size(v->cdss))
       cds_pointer = gt_array_size(v->cdss) - 1;
@@ -363,17 +296,12 @@ bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
         char *utr_type = "five_prime_UTR";
         GtStrand exonstrand = gt_feature_node_get_strand((GtFeatureNode *)exon);
         if(exonstrand == GT_STRAND_REVERSE)
-        {
           utr_type = "three_prime_UTR";
-        }
 
         GtGenomeNode *utr = gt_feature_node_new
         (
-          gt_genome_node_get_seqid(exon),
-          utr_type,
-          exon_range.start,
-          cds_range.start - 1,
-          exonstrand
+          gt_genome_node_get_seqid(exon), utr_type, exon_range.start,
+          cds_range.start - 1, exonstrand
         );
         GtFeatureNode *fn_utr = (GtFeatureNode *)utr;
         gt_feature_node_set_source(fn_utr, aegean);
@@ -386,17 +314,12 @@ bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
         char *utr_type = "three_prime_UTR";
         GtStrand exonstrand = gt_feature_node_get_strand((GtFeatureNode *)exon);
         if(exonstrand == GT_STRAND_REVERSE)
-        {
           utr_type = "five_prime_UTR";
-        }
 
         GtGenomeNode *utr = gt_feature_node_new
         (
-          gt_genome_node_get_seqid(exon),
-          utr_type,
-          cds_range.end + 1,
-          exon_range.end,
-          exonstrand
+          gt_genome_node_get_seqid(exon), utr_type, cds_range.end + 1,
+          exon_range.end, exonstrand
         );
         GtFeatureNode *fn_utr = (GtFeatureNode *)utr;
         gt_feature_node_set_source(fn_utr, aegean);
@@ -416,28 +339,19 @@ bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
     {
       char *utr_type = "five_prime_UTR";
       GtStrand exon_strand = gt_feature_node_get_strand((GtFeatureNode *)exon);
-      if
-      ( (
-          exon_strand == GT_STRAND_REVERSE &&
-          exon_range.start < cds_range.start
-        )
-          ||
-        (
-          exon_strand == GT_STRAND_FORWARD &&
-          exon_range.end > cds_range.end
-        )
-      )
+      bool is_3prime_rev = ( exon_strand == GT_STRAND_REVERSE &&
+                             exon_range.start < cds_range.start );
+      bool is_3prime_fwd = ( exon_strand == GT_STRAND_FORWARD &&
+                             exon_range.end > cds_range.end );
+      if(is_3prime_rev || is_3prime_fwd)
       {
         utr_type = "three_prime_UTR";
       }
 
       GtGenomeNode *utr = gt_feature_node_new
       (
-        gt_genome_node_get_seqid(exon),
-        utr_type,
-        exon_range.start,
-        exon_range.end,
-        exon_strand
+        gt_genome_node_get_seqid(exon), utr_type, exon_range.start,
+        exon_range.end, exon_strand
       );
       GtFeatureNode *fn_utr = (GtFeatureNode *)utr;
       gt_feature_node_set_source(fn_utr, aegean);
@@ -580,7 +494,6 @@ bool agn_gene_validator_validate_mrna( AgnGeneValidator *v,
                      "feature from line %u is a %s, expected an mRNA", tid,
                      type );
     }
-
     return false;
   }
 
@@ -614,6 +527,7 @@ bool agn_gene_validator_validate_mrna( AgnGeneValidator *v,
           break;
         }
       } while ( (p = strtok(NULL, ",")) != NULL );
+
       if( strchr(featureparent, ',') )
       {
         fprintf(stderr, "could not fix Parent attribute for mRNA child feauture\n");
@@ -703,11 +617,11 @@ bool agn_gene_validator_validate_mrna( AgnGeneValidator *v,
 
   bool start_codon_found = v->start_codon_range.start != 0;
   bool stop_codon_found  = v->stop_codon_range.start  != 0;
-  bool num_cds_frags = gt_array_size(v->cdss);
+  bool num_cds_segs = gt_array_size(v->cdss);
   unsigned long num_exons = gt_array_size(v->exons);
 
   // If there are no explicitly defined CDS features...
-  if(num_cds_frags == 0)
+  if(num_cds_segs == 0)
   {
     // ...either infer from start/stop codons and exons...
     if(start_codon_found && stop_codon_found && num_exons > 0)
