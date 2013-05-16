@@ -8,7 +8,7 @@
 
 // Main method
 int main(int argc, char * const argv[])
-{ 
+{
   // Parse command-line arguments
   PeOptions options;
   pe_set_option_defaults(&options);
@@ -57,7 +57,7 @@ int main(int argc, char * const argv[])
     gt_genome_node_accept(gn, refrvisitor, error);
     if(gt_error_is_set(error))
     {
-      fprintf(stderr, "error:\n'%s'\n", gt_error_get(error));
+      fprintf(stderr, "%s\n", gt_error_get(error));
       return EXIT_FAILURE;
     }
   }
@@ -65,7 +65,7 @@ int main(int argc, char * const argv[])
   gt_node_visitor_delete(refrvisitor);
   if(gt_error_is_set(error))
   {
-    fprintf(stderr, "error:\n'%s'\n", gt_error_get(error));
+    fprintf(stderr, "%s\n", gt_error_get(error));
     return EXIT_FAILURE;
   }
 
@@ -79,7 +79,7 @@ int main(int argc, char * const argv[])
     gt_genome_node_accept(gn, predvisitor, error);
     if(gt_error_is_set(error))
     {
-      fprintf(stderr, "error:\n'%s'\n", gt_error_get(error));
+      fprintf(stderr, "%s\n", gt_error_get(error));
       return EXIT_FAILURE;
     }
   }
@@ -87,20 +87,20 @@ int main(int argc, char * const argv[])
   gt_node_visitor_delete(predvisitor);
   if(gt_error_is_set(error))
   {
-    fprintf(stderr, "error:\n'%s'\n", gt_error_get(error));
+    fprintf(stderr, "%s\n", gt_error_get(error));
     return EXIT_FAILURE;
   }
 
   GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, error);
   if(gt_error_is_set(error))
   {
-    fprintf(stderr, "error:\n'%s'\n", gt_error_get(error));
+    fprintf(stderr, "%s\n", gt_error_get(error));
     return EXIT_FAILURE;
   }
   GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, error);
   if(gt_error_is_set(error))
   {
-    fprintf(stderr, "error:\n'%s'\n", gt_error_get(error));
+    fprintf(stderr, "%s\n", gt_error_get(error));
     return EXIT_FAILURE;
   }
   GtStrArray *seqids = agn_seq_intersection(refrseqids, predseqids);
@@ -299,7 +299,7 @@ int main(int argc, char * const argv[])
       {
         agn_comparison_counts_init(&locus_summaries[j].counts);
         AgnPairwiseCompareLocus *locus = *(AgnPairwiseCompareLocus **)gt_array_get(seq_loci, j);
-        
+
         GtArray *clique_pairs = agn_pairwise_compare_locus_get_clique_pairs(locus, options.trans_per_locus);
         unsigned long comparisons = 0;
         if(clique_pairs != NULL)
@@ -430,7 +430,7 @@ int main(int argc, char * const argv[])
               metadata.refrlabel = options.refrlabel;
               metadata.predlabel = options.predlabel;
               metadata.track_order_func = pe_track_order;
-              
+
               agn_pairwise_compare_locus_print_png(locus, &metadata);
             }
 #endif

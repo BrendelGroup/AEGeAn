@@ -171,6 +171,11 @@ static int pe_node_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *
           agn_error_print( myerror, stderr,
                            "[ParsEval] issue validating gene '%s'",
                            gt_feature_node_get_attribute(fn2add, "ID") );
+          if(agn_error_is_fatal(myerror))
+          {
+            gt_error_set(error, "    fatal error");
+            return -1;
+          }
           agn_error_unset(myerror);
         }
       }
@@ -193,6 +198,11 @@ static int pe_node_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *
         agn_error_print( myerror, stderr,
                          "[ParsEval] issue validating gene '%s'",
                          gt_feature_node_get_attribute(fn, "ID") );
+        if(agn_error_is_fatal(myerror))
+        {
+          gt_error_set(error, "    fatal error");
+          return -1;
+        }
         agn_error_unset(myerror);
       }
     }
