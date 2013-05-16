@@ -251,7 +251,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     }
 
     char copy_cmd[1024];
-    sprintf(copy_cmd, "cp %s/* %s", options->data_path, options->outfilename);
+    sprintf(copy_cmd, "cp -r %s/* %s", options->data_path, options->outfilename);
     if(options->debug)
       fprintf(stderr, "debug: copying shared data: '%s'\n", copy_cmd);
     if(system(copy_cmd) != 0)

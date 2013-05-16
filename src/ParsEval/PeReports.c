@@ -460,8 +460,8 @@ void pe_gene_locus_print_results_html(AgnPairwiseCompareLocus *locus, PeOptions 
       (options->complimit == 0 || gt_array_size(clique_pairs) <= options->complimit) )
   {
     fputs( "    <script type=\"text/javascript\""
-           " src=\"../mootools-core-1.3.2-full-nocompat-yc.js\"></script>\n"
-           "    <script type=\"text/javascript\" src=\"../mootools-more-1.3.2.1.js\"></script>\n"
+           " src=\"../vendor/mootools-core-1.3.2-full-nocompat-yc.js\"></script>\n"
+           "    <script type=\"text/javascript\" src=\"../vendor/mootools-more-1.3.2.1.js\"></script>\n"
            "    <script type=\"text/javascript\">\n"
            "window.addEvent('domready', function() {\n"
            "  var status =\n"
@@ -942,8 +942,8 @@ void pe_print_seqfile_header(FILE *outstream, const char *seqid)
            "    <meta charset=\"utf-8\" />\n"
            "    <title>ParsEval: Loci for %s</title>\n"
            "    <link rel=\"stylesheet\" type=\"text/css\" href=\"../parseval.css\" />\n"
-           "    <script type=\"text/javascript\" language=\"javascript\" src=\"../jquery.js\"></script>\n"
-           "    <script type=\"text/javascript\" language=\"javascript\" src=\"../jquery.dataTables.js\"></script>\n"
+           "    <script type=\"text/javascript\" language=\"javascript\" src=\"../vendor/jquery.js\"></script>\n"
+           "    <script type=\"text/javascript\" language=\"javascript\" src=\"../vendor/jquery.dataTables.js\"></script>\n"
            "    <script type=\"text/javascript\">\n"
            "      $(document).ready(function() {\n"
            "        $('#locus_table').dataTable( {\n"
