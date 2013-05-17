@@ -194,55 +194,34 @@ FILE *agn_fopen(const char *filename, const char *mode)
 }
 
 bool agn_infer_cds_range_from_exon_and_codons( GtRange *exon_range,
-                                               GtStrand exon_strand,
-                                               GtRange *startcodon_range,
-                                               GtRange *stopcodon_range,
+                                               GtRange *leftcodon_range,
+                                               GtRange *rightcodon_range,
                                                GtRange *cds_range )
 {
   cds_range->start = 0;
   cds_range->end   = 0;
   
-  bool is_utr = ( exon_range->end < startcodon_range->start ||
-                  exon_range->start > stopcodon_range->end );
-  if(exon_strand == GT_STRAND_REVERSE)
-  {
-    is_utr = ( exon_range->start > startcodon_range->end ||
-               exon_range->end < stopcodon_range->start );
-  }
-  if(is_utr)
+  // UTR
+  if(exon_range->end < leftcodon_range->start ||
+     exon_range->start > rightcodon_range->end)
     return false;
   
-  bool overlap_start = gt_range_overlap(exon_range, startcodon_range);
-  bool overlap_stop  = gt_range_overlap(exon_range, stopcodon_range);
-  if(overlap_start && overlap_stop)
+  bool overlap_left  = gt_range_overlap(exon_range, leftcodon_range);
+  bool overlap_right = gt_range_overlap(exon_range, rightcodon_range);
+  if(overlap_left && overlap_right)
   {
-    cds_range->start = startcodon_range->start;
-    cds_range->end   = stopcodon_range->end;
-    if(exon_strand == GT_STRAND_REVERSE)
-    {
-      cds_range->start = stopcodon_range->start;
-      cds_range->end   = startcodon_range->end;
-    }
+    cds_range->start = leftcodon_range->start;
+    cds_range->end   = rightcodon_range->end;
   }
-  else if(overlap_start)
+  else if(overlap_left)
   {
-    cds_range->start = startcodon_range->start;
+    cds_range->start = leftcodon_range->start;
     cds_range->end   = exon_range->end;
-    if(exon_strand == GT_STRAND_REVERSE)
-    {
-      cds_range->start = exon_range->start;
-      cds_range->end   = startcodon_range->end;
-    }
   }
-  else if(overlap_stop)
+  else if(overlap_right)
   {
     cds_range->start = exon_range->start;
-    cds_range->end   = stopcodon_range->end;
-    if(exon_strand == GT_STRAND_REVERSE)
-    {
-      cds_range->start = stopcodon_range->start;
-      cds_range->end   = exon_range->end;
-    }
+    cds_range->end   = rightcodon_range->end;
   }
   else
   {

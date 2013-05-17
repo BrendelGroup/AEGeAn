@@ -89,11 +89,12 @@ FILE *agn_fopen(const char *filename, const char *mode);
  * sequence.
  *
  * @param[in]  exon_range          the coordinates of an exon
- * @param[in]  exon_strand         the strand of the exon
- * @param[in]  startcodon_range    the coordinates of the corresponding mRNA's
- *                                 start codon
- * @param[in]  stopcodon_range     the coordinates of the corresponding mRNA's
- *                                 stop codon
+ * @param[in]  leftcodon_range     the coordinates of the corresponding mRNA's
+ *                                 start codon (or stop codon if on the reverse
+ *                                 strand)
+ * @param[in]  rightcodon_range    the coordinates of the corresponding mRNA's
+ *                                 stop codon (or start codon if on the reverse
+ *                                 strand)
  * @param[out] cds_range           if this exon includes any coding sequence,
  *                                 the coordinates of this coding sequence will
  *                                 be written to this; if not, {0,0} will be
@@ -102,9 +103,8 @@ FILE *agn_fopen(const char *filename, const char *mode);
  *                                 false otherwise
  */
 bool agn_infer_cds_range_from_exon_and_codons( GtRange *exon_range,
-                                               GtStrand exon_strand,
-                                               GtRange *startcodon_range,
-                                               GtRange *stopcodon_range,
+                                               GtRange *leftcodon_range,
+                                               GtRange *rightcodon_range,
                                                GtRange *cds_range );
 
 /**

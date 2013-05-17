@@ -15,85 +15,9 @@ struct AgnGeneValidator
   GtArray *segments;
   GtRange start_codon_range;
   GtRange stop_codon_range;
+  GtRange *left_codon_range;
+  GtRange *right_codon_range;
 };
-
-
-//----------------------------------------------------------------------------//
-// Methods to be re-implemented
-//----------------------------------------------------------------------------//
-void agn_gene_validator_infer_utr_from_partial_exon(AgnGeneValidator *v,
-                                                    GtFeatureNode *mrna,
-                                                    GtFeatureNode *exon,
-                                                    GtFeatureNode *cds)
-{
-  const char *tid = gt_feature_node_get_attribute(mrna, "ID");
-  GtStr *aegean = gt_str_new_cstr("AEGeAn");
-  GtRange exon_range = gt_genome_node_get_range((GtGenomeNode *)exon);
-  GtRange cds_range = gt_genome_node_get_range((GtGenomeNode *)cds);
-  GtStrand exonstrand = gt_feature_node_get_strand(exon);
-  
-  if(exon_range.start < cds_range.start)
-  {
-    char *utr_type = "five_prime_UTR";
-    if(exonstrand == GT_STRAND_REVERSE)
-      utr_type = "three_prime_UTR";
-
-    GtGenomeNode *utr = gt_feature_node_new(
-                            gt_genome_node_get_seqid((GtGenomeNode *)exon),
-                            utr_type, exon_range.start, cds_range.start - 1,
-                            exonstrand);
-    gt_feature_node_set_source((GtFeatureNode *)utr, aegean);
-    gt_feature_node_add_child(mrna, (GtFeatureNode *)utr);
-    gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", tid);
-    gt_array_add(v->utrs, utr);
-  }
-  if(exon_range.end > cds_range.end)
-  {
-    char *utr_type = "three_prime_UTR";
-    if(exonstrand == GT_STRAND_REVERSE)
-      utr_type = "five_prime_UTR";
-
-    GtGenomeNode *utr = gt_feature_node_new(
-                          gt_genome_node_get_seqid((GtGenomeNode *)exon),
-                          utr_type, cds_range.end + 1, exon_range.end,
-                          exonstrand);
-    gt_feature_node_set_source((GtFeatureNode *)utr, aegean);
-    gt_feature_node_add_child(mrna, (GtFeatureNode *)utr);
-    gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", tid);
-    gt_array_add(v->utrs, utr);
-  }
-  gt_str_delete(aegean);
-}
-
-void agn_gene_validator_infer_utr_from_full_exon(AgnGeneValidator *v,
-                                                 GtFeatureNode *mrna,
-                                                 GtFeatureNode *exon,
-                                                 GtFeatureNode *cds)
-{
-  const char *tid = gt_feature_node_get_attribute(mrna, "ID");
-  GtStr *aegean = gt_str_new_cstr("AEGeAn");
-  GtRange exon_range = gt_genome_node_get_range((GtGenomeNode *)exon);
-  GtRange cds_range = gt_genome_node_get_range((GtGenomeNode *)cds);
-  char *utr_type = "five_prime_UTR";
-  GtStrand exon_strand = gt_feature_node_get_strand(exon);
-  bool is_3prime_rev = ( exon_strand == GT_STRAND_REVERSE &&
-                         exon_range.start < cds_range.start );
-  bool is_3prime_fwd = ( exon_strand == GT_STRAND_FORWARD &&
-                         exon_range.end > cds_range.end );
-  if(is_3prime_rev || is_3prime_fwd)
-  {
-    utr_type = "three_prime_UTR";
-  }
-
-  GtGenomeNode *utr = gt_feature_node_new(
-                        gt_genome_node_get_seqid((GtGenomeNode *)exon),
-                        utr_type, exon_range.start,exon_range.end, exon_strand);
-  gt_feature_node_set_source((GtFeatureNode *)utr, aegean);
-  gt_feature_node_add_child(mrna, (GtFeatureNode *)utr);
-  gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", tid);
-  gt_array_add(v->utrs, utr);
-  gt_str_delete(aegean);
-}
 
 
 //----------------------------------------------------------------------------//
@@ -197,6 +121,13 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
                                        GtFeatureNode *child, AgnError *error);
 
 /**
+ * Reset the validator object to be ready to validate the next feature(s).
+ *
+ * @param[in] v        validator object
+ */
+void agn_gene_validator_reset(AgnGeneValidator *v);
+
+/**
  * Make sure that each UTR is explicitly designated as 3' or 5'.
  *
  * @param[in] v    validator object
@@ -280,6 +211,10 @@ bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
                                               GtArray *features,
                                               AgnError *error)
 {
+  gt_assert(features != NULL);
+  if(gt_array_size(features) <= 1)
+    return true;
+  
   bool isvalid = true;
   unsigned long i;
   for(i = 0; i < gt_array_size(features) - 1; i++)
@@ -308,57 +243,46 @@ void agn_gene_validator_delete(AgnGeneValidator *v)
 bool agn_gene_validator_infer_cds(AgnGeneValidator *v, GtFeatureNode *mrna,
                                   AgnError *error)
 {
-  bool start_codon_found = v->start_codon_range.start != 0;
-  bool stop_codon_found  = v->stop_codon_range.start  != 0;
+  bool left_codon_found = v->left_codon_range->start != 0;
+  bool right_codon_found  = v->right_codon_range->start  != 0;
   unsigned long num_exons = gt_array_size(v->exons);
   const char *tid = gt_feature_node_get_attribute(mrna, "ID");
   unsigned int tln = gt_genome_node_get_line_number((GtGenomeNode *)mrna);
   bool isvalid = true;
   
-  // Either infer CDS from start/stop codons and exons...
-  if(start_codon_found && stop_codon_found && num_exons > 0)
+  gt_assert(left_codon_found && right_codon_found && num_exons > 0);
+  GtStr *aegean = gt_str_new_cstr("AEGeAn");
+  unsigned long i;
+  for(i = 0; i < num_exons; i++)
   {
-    GtStr *aegean = gt_str_new_cstr("AEGeAn");
-    unsigned long i;
-    for(i = 0; i < num_exons; i++)
+    GtFeatureNode *exon = *(GtFeatureNode **)gt_array_get(v->exons, i);
+    GtGenomeNode *exon_gn = (GtGenomeNode *)exon;
+    GtRange exon_range = gt_genome_node_get_range(exon_gn);
+    GtStrand exon_strand = gt_feature_node_get_strand(exon);
+
+    GtRange cdsrange;
+    bool exon_includes_cds = agn_infer_cds_range_from_exon_and_codons(
+                                 &exon_range, v->left_codon_range,
+                                 v->right_codon_range, &cdsrange);
+    if(exon_includes_cds)
     {
-      GtFeatureNode *exon = *(GtFeatureNode **)gt_array_get(v->exons, i);
-      GtGenomeNode *exon_gn = (GtGenomeNode *)exon;
-      GtRange exon_range = gt_genome_node_get_range(exon_gn);
-      GtStrand exon_strand = gt_feature_node_get_strand(exon);
-
-      GtRange cdsrange;
-      bool exon_includes_cds = agn_infer_cds_range_from_exon_and_codons(
-                                   &exon_range, exon_strand,
-                                   &v->start_codon_range, &v->stop_codon_range,
-                                   &cdsrange);
-
-      if(exon_includes_cds)
-      {
-        GtGenomeNode *cds = gt_feature_node_new
-        (
-          gt_genome_node_get_seqid(exon_gn), "CDS", cdsrange.start,
-          cdsrange.end, exon_strand
-        );
-        gt_feature_node_set_source((GtFeatureNode *)cds, aegean);
-        gt_feature_node_add_child(mrna, (GtFeatureNode *)cds);
-        gt_feature_node_add_attribute((GtFeatureNode *)cds, "Parent", tid);
-        gt_array_add(v->cdss, cds);
-      }
-    }
-    gt_str_delete(aegean);
-
-    if(gt_array_size(v->cdss) == 0)
-    {
-      agn_error_add(error, false, "error inferring CDS from codons and exons "
-                    "for mRNA '%s' (line %u)", tid, tln);
-      isvalid = false;
+      GtGenomeNode *cds = gt_feature_node_new
+      (
+        gt_genome_node_get_seqid(exon_gn), "CDS", cdsrange.start,
+        cdsrange.end, exon_strand
+      );
+      gt_feature_node_set_source((GtFeatureNode *)cds, aegean);
+      gt_feature_node_add_child(mrna, (GtFeatureNode *)cds);
+      gt_feature_node_add_attribute((GtFeatureNode *)cds, "Parent", tid);
+      gt_array_add(v->cdss, cds);
     }
   }
-  // ...or return with error
-  else
+  gt_str_delete(aegean);
+
+  if(gt_array_size(v->cdss) == 0)
   {
-    agn_error_add(error,false,"found no CDS for mRNA '%s' (line %u)", tid, tln);
+    agn_error_add(error, false, "error inferring CDS from codons and exons "
+                  "for mRNA '%s' (line %u)", tid, tln);
     isvalid = false;
   }
   
@@ -481,8 +405,8 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
     if(!success)
       isvalid = false;
   }
-  agn_gene_validator_check_cds_phase(v);
   agn_gene_validator_check_feature_overlap(v, v->cdss, error);
+  agn_gene_validator_check_cds_phase(v);
 
   // If exons are not explicitly provided, infer them from CDS and UTR segments
   if(isvalid && gt_array_size(v->exons) == 0 && gt_array_size(v->cdss) > 0)
@@ -502,6 +426,7 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
     if(!success)
       isvalid = false;
   }
+  agn_gene_validator_check_feature_overlap(v, v->utrs, error);
   agn_gene_validator_set_utrs(v);
 
   // If there are multiple exons and introns are not explicitly provided, infer
@@ -525,38 +450,69 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
   return isvalid;
 }
 
-bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
-                                    AgnError *error )
+bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
+                                   AgnError *error)
 {
-  unsigned long exon_index = 0;
-  unsigned long cds_index = 0;
-  unsigned long num_exons = gt_array_size(v->exons);
-  unsigned long num_cds_segs = gt_array_size(v->cdss);
-  gt_assert(num_exons > 0 && num_cds_segs > 0);
-
-  while(exon_index < num_exons)
+  const char *tid = gt_feature_node_get_attribute(mrna, "ID");
+  GtStrand strand = gt_feature_node_get_strand(mrna);
+  const char *lefttype  = "five_prime_UTR";
+  const char *righttype = "three_prime_UTR";
+  if(gt_feature_node_get_strand(mrna) == GT_STRAND_REVERSE)
   {
-    if(cds_index >= gt_array_size(v->cdss))
-      cds_index = gt_array_size(v->cdss) - 1;
-    GtFeatureNode *exon = *(GtFeatureNode **)gt_array_get(v->exons, exon_index);
-    GtFeatureNode *cds  = *(GtFeatureNode **)gt_array_get(v->cdss, cds_index);
-    GtRange exon_range = gt_genome_node_get_range((GtGenomeNode *)exon);
-    GtRange cds_range = gt_genome_node_get_range((GtGenomeNode *)cds);
-
-    if(gt_range_overlap(&exon_range, &cds_range))
+    lefttype  = "three_prime_UTR";
+    righttype = "five_prime_UTR";
+  }
+  
+  GtStr *aegean = gt_str_new_cstr("AEGeAn");
+  unsigned long i;
+  for(i = 0; i < gt_array_size(v->exons); i++)
+  {
+    GtFeatureNode *exon = *(GtFeatureNode **)gt_array_get(v->exons, i);
+    GtRange exonrange = gt_genome_node_get_range((GtGenomeNode *)exon);
+    
+    if(exonrange.start < v->left_codon_range->start)
     {
-      agn_gene_validator_infer_utr_from_partial_exon(v, mrna, exon, cds);
-      exon_index++;
-      cds_index++;
+      GtRange utrrange;
+      if(gt_range_overlap(&exonrange, v->left_codon_range))
+      {
+        utrrange.start = exonrange.start;
+        utrrange.end   = v->left_codon_range->start - 1;
+      }
+      else
+      {
+        utrrange = exonrange;
+      }
+      GtGenomeNode *utr = gt_feature_node_new(
+                              gt_genome_node_get_seqid((GtGenomeNode *)exon),
+                              lefttype, utrrange.start, utrrange.end, strand);
+      gt_feature_node_set_source((GtFeatureNode *)utr, aegean);
+      gt_feature_node_add_child(mrna, (GtFeatureNode *)utr);
+      gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", tid);
+      gt_array_add(v->utrs, utr);
     }
-    else
+    
+    if(exonrange.end > v->right_codon_range->end)
     {
-      agn_gene_validator_infer_utr_from_full_exon(v, mrna, exon, cds);
-      exon_index++;
+      GtRange utrrange;
+      if(gt_range_overlap(&exonrange, v->right_codon_range))
+      {
+        utrrange.start = v->right_codon_range->end + 1;
+        utrrange.end   = exonrange.end;
+      }
+      else
+      {
+        utrrange = exonrange;
+      }
+      GtGenomeNode *utr = gt_feature_node_new(
+                              gt_genome_node_get_seqid((GtGenomeNode *)exon),
+                              righttype, utrrange.start, utrrange.end, strand);
+      gt_feature_node_set_source((GtFeatureNode *)utr, aegean);
+      gt_feature_node_add_child(mrna, (GtFeatureNode *)utr);
+      gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", tid);
+      gt_array_add(v->utrs, utr);
     }
   }
-
-  gt_array_sort(v->utrs, (GtCompare)agn_gt_genome_node_compare);
+  
   return true;
 }
 
@@ -572,6 +528,9 @@ AgnGeneValidator* agn_gene_validator_new()
   v->start_codon_range.end   = 0;
   v->stop_codon_range.start  = 0;
   v->stop_codon_range.end    = 0;
+  
+  v->left_codon_range  = NULL;
+  v->right_codon_range = NULL;
 
   return v;
 }
@@ -583,16 +542,17 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
   {
     gt_array_add(v->cdss, child);
     GtRange cdsrange = gt_genome_node_get_range((GtGenomeNode *)child);
-    if(v->start_codon_range.start == 0 ||
-       cdsrange.start < v->start_codon_range.start)
+    if(v->left_codon_range->start == 0 ||
+       cdsrange.start < v->left_codon_range->start)
     {
-      v->start_codon_range.start = cdsrange.start;
-      v->start_codon_range.end   = cdsrange.start + 2;
+      v->left_codon_range->start = cdsrange.start;
+      v->left_codon_range->end   = cdsrange.start + 2;
     }
-    if(v->stop_codon_range.end == 0 || cdsrange.end > v->stop_codon_range.end)
+    if(v->right_codon_range->end == 0 ||
+       cdsrange.end > v->right_codon_range->end)
     {
-      v->stop_codon_range.end   = cdsrange.end;
-      v->stop_codon_range.start = cdsrange.end - 2;
+      v->right_codon_range->end   = cdsrange.end;
+      v->right_codon_range->start = cdsrange.end - 2;
     }
   }
 
@@ -643,6 +603,22 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
     agn_gt_feature_node_remove_child(mrna, child);
     gt_genome_node_delete((GtGenomeNode *)child);
   }
+}
+
+void agn_gene_validator_reset(AgnGeneValidator *v)
+{
+  gt_array_delete(v->cdss);
+  gt_array_delete(v->exons);
+  gt_array_delete(v->introns);
+  gt_array_delete(v->utrs);
+  gt_array_delete(v->segments);
+  
+  v->start_codon_range.start = 0;
+  v->start_codon_range.end   = 0;
+  v->stop_codon_range.start  = 0;
+  v->stop_codon_range.end    = 0;
+  v->left_codon_range  = NULL;
+  v->right_codon_range = NULL;
 }
 
 void agn_gene_validator_set_utrs(AgnGeneValidator *v)
@@ -766,6 +742,14 @@ bool agn_gene_validator_validate_mrna(AgnGeneValidator *v, GtFeatureNode *gene,
   v->introns  = gt_array_new(sizeof(GtFeatureNode *));
   v->utrs     = gt_array_new(sizeof(GtFeatureNode *));
   v->segments = gt_array_new(sizeof(GtFeatureNode *));
+  
+  v->left_codon_range  = &v->start_codon_range;
+  v->right_codon_range = &v->stop_codon_range;
+  if(gt_feature_node_get_strand(mrna) == GT_STRAND_REVERSE)
+  {
+    v->left_codon_range  = &v->stop_codon_range;
+    v->right_codon_range = &v->start_codon_range;
+  }
 
   bool isvalid = true;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(mrna);
@@ -804,11 +788,6 @@ bool agn_gene_validator_validate_mrna(AgnGeneValidator *v, GtFeatureNode *gene,
       isvalid = false;
   }
 
-  gt_array_delete(v->cdss);
-  gt_array_delete(v->exons);
-  gt_array_delete(v->introns);
-  gt_array_delete(v->utrs);
-  gt_array_delete(v->segments);
-
+  agn_gene_validator_reset(v);
   return isvalid;
 }
