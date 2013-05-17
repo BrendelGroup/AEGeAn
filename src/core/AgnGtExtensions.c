@@ -40,6 +40,33 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
   return length / 3;
 }
 
+bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,
+                                              GtFeatureNode *parent)
+{
+  bool success = true;
+  const char *pid = gt_feature_node_get_attribute(parent, "ID");
+  const char *parentattr = gt_feature_node_get_attribute(feature, "Parent");
+  if(strchr(parentattr, ','))
+  {
+    char *parentstr = gt_cstr_dup(parentattr);
+    char *ptok = strtok(parentstr, ",");
+    do
+    {
+      if(strcmp(pid, ptok) == 0)
+      {
+        gt_feature_node_set_attribute(feature, "Parent", ptok);
+        break;
+      }
+    } while ((ptok = strtok(NULL, ",")) != NULL);
+
+    if(strchr(parentattr, ','))
+      success = false;
+    gt_free(parentstr); 
+  }
+  
+  return success;
+}
+
 void agn_gt_feature_node_get_trimmed_id(GtFeatureNode *feature, char * buffer, size_t maxlength)
 {
   const char *fid = gt_feature_node_get_attribute(feature, "ID");
@@ -147,6 +174,13 @@ bool agn_gt_feature_node_overlap(GtFeatureNode *first, GtFeatureNode *second)
   GtRange r1 = gt_genome_node_get_range(one);
   GtRange r2 = gt_genome_node_get_range(two);
   return gt_range_overlap(&r1, &r2);
+}
+
+bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2)
+{
+  GtRange r1 = gt_genome_node_get_range((GtGenomeNode *)n1);
+  GtRange r2 = gt_genome_node_get_range((GtGenomeNode *)n2);
+  return gt_range_contains(&r1, &r2);
 }
 
 bool agn_gt_feature_node_remove_child(GtFeatureNode *root, GtFeatureNode *child)

@@ -25,6 +25,14 @@ GtArray* agn_gt_array_copy(GtArray *source, size_t size);
 unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript);
 
 /**
+ * When a feature has multiple parents but only one of them is valid, this
+ * function will fix the Parent attribute so that it only points to the valid
+ * parent.
+ */
+bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,
+                                              GtFeatureNode *parent);
+
+/**
  * Extract the ID attribute from the given feature node, trim the end and add
  * an elipsis if necessary, and write to the provided buffer.
  *
@@ -115,6 +123,15 @@ unsigned long agn_gt_feature_node_num_transcripts(GtFeatureNode *gene);
  * @returns             boolean indicating whether the features overlap
  */
 bool agn_gt_feature_node_overlap(GtFeatureNode *first, GtFeatureNode *second);
+
+/**
+ * Determine whether the range of n2 falls within the range of n1.
+ *
+ * @param[in] n1    a feature node
+ * @param[in] n2    another feature node
+ * @retuns          true if n2 falls within n1, false otherwise
+ */
+bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2);
 
 /**
  * The GtFeatureNode class comes with a function to add a child feature, but
