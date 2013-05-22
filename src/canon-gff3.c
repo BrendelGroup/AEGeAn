@@ -1,8 +1,8 @@
 #include <getopt.h>
 #include <string.h>
+#include "AgnCanonNodeVisitor.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
-#include "PeNodeVisitor.h"
 #include "extended/feature_node.h"
 
 /**
@@ -117,7 +117,7 @@ int main(int argc, char * const *argv)
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
   GtFeatureIndex *features = gt_feature_index_memory_new();
-  GtNodeVisitor *visitor = pe_node_visitor_new(features, validator);
+  GtNodeVisitor *visitor = agn_canon_node_visitor_new(features, validator);
   while(!(loaderror = gt_node_stream_next(gff3in, &gn, error)) && gn)
   {
     gt_genome_node_accept(gn, visitor, error);

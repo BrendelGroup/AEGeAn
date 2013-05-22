@@ -1,9 +1,9 @@
 #include <omp.h>
 #include <string.h>
 #include <time.h>
+#include "AgnCanonNodeVisitor.h"
 #include "AgnPairwiseCompareLocus.h"
 #include "AgnUtils.h"
-#include "PeNodeVisitor.h"
 #include "PeReports.h"
 
 // Main method

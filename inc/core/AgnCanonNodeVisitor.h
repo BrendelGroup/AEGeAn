@@ -1,7 +1,7 @@
 #include "genometools.h"
 #include "AgnGeneValidator.h"
 
-typedef struct PeNodeVisitor PeNodeVisitor;
+typedef struct AgnCanonNodeVisitor AgnCanonNodeVisitor;
 
 /**
  * Allocate memory for a genome node visitor used to validate and load data into
@@ -13,5 +13,5 @@ typedef struct PeNodeVisitor PeNodeVisitor;
  * @param[in]  options      values for ParsEval's command-line options
  * @returns                 a node visitor object
  */
-GtNodeVisitor* pe_node_visitor_new( GtFeatureIndex *index,
-                                    AgnGeneValidator *validator );
+GtNodeVisitor* agn_canon_node_visitor_new(GtFeatureIndex *index,
+                                          AgnGeneValidator *validator);

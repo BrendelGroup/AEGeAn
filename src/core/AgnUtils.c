@@ -1,11 +1,11 @@
 #include <string.h>
 #include <time.h>
 #include "extended/feature_node.h"
-#include "AgnPairwiseCompareLocus.h"
+#include "AgnCanonNodeVisitor.h"
 #include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
+#include "AgnPairwiseCompareLocus.h"
 #include "AgnUtils.h"
-#include "PeNodeVisitor.h"
 
 void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
                         bool skipsimplecliques )
@@ -203,7 +203,7 @@ GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error)
   
   GtFeatureIndex *features = gt_feature_index_memory_new();
   AgnGeneValidator *validator = agn_gene_validator_new();
-  GtNodeVisitor *nv = pe_node_visitor_new(features, validator);
+  GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator);
 
   GtGenomeNode *gn;
   bool loaderror;

@@ -89,9 +89,9 @@ $(PE_EXE):	src/ParsEval/parseval.c $(AGN_OBJS) $(PE_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) -fopenmp $(INCS) -o $@ $(AGN_OBJS) $(PE_OBJS) src/ParsEval/parseval.c $(LDFLAGS)
 
-$(CN_EXE):	src/canon-gff3.c $(AGN_OBJS) obj/PeNodeVisitor.o
+$(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c obj/PeNodeVisitor.o $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
 		
 $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 		@- mkdir -p bin
