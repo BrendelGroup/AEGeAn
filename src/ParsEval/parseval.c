@@ -43,14 +43,14 @@ int main(int argc, char * const argv[])
   fputs("[ParsEval] Begin loading data\n", stderr);
 
   AgnLogger *logger = agn_logger_new();
-  GtFeatureIndex *refrfeats = agn_import_canonical(options.refrfile, logger);
+  GtFeatureIndex *refrfeats = agn_import_canonical(1,&options.refrfile,logger);
   bool haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
                                        "reference annotations from file '%s'",
                                        options.refrfile);
   if(haderror) return EXIT_FAILURE;
   agn_logger_unset(logger);
   
-  GtFeatureIndex *predfeats = agn_import_canonical(options.predfile, logger);
+  GtFeatureIndex *predfeats = agn_import_canonical(1,&options.predfile,logger);
   haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
                                   "prediction annotations from file '%s'",
                                   options.predfile);

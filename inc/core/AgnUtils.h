@@ -85,9 +85,15 @@ GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set);
 FILE *agn_fopen(const char *filename, const char *mode);
 
 /**
+ * Load annotation data from the given GFF3 files into memory.
  *
+ * @param[in] numfiles     number of files to be parsed
+ * @param[in] filenames    list of filenames
+ * @param[in] logger       object for logging error/warning messages
+ * @returns                a feature index containing annotations for all files
  */
-GtFeatureIndex *agn_import_canonical(const char *filename, AgnLogger *logger);
+GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
+                                     AgnLogger *logger);
 
 /**
  * Given an exon and the start/stop codons associated with its corresponding

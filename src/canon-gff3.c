@@ -107,27 +107,9 @@ int main(int argc, char * const *argv)
     }
   }
   
-  GtError *error = gt_error_new();
-  AgnGeneValidator *validator = agn_gene_validator_new();
+  // Load GFF3 data into memory feature index
   AgnLogger *logger = agn_logger_new();
-  GtGenomeNode *gn;
-  bool loaderror;
-
-  // Load GFF3 data into a feature index
-  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(filenum, gff3files);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
-  GtFeatureIndex *features = gt_feature_index_memory_new();
-  GtNodeVisitor *visitor = agn_canon_node_visitor_new(features, validator,
-                                                      logger);
-  while(!(loaderror = gt_node_stream_next(gff3in, &gn, error)) && gn)
-  {
-    gt_genome_node_accept(gn, visitor, error);
-    if(agn_logger_has_error(logger))
-      break;
-  }
-  gt_node_stream_delete(gff3in);
-  gt_node_visitor_delete(visitor);
+  GtFeatureIndex *features = agn_import_canonical(filenum, gff3files, logger);
   for(x = 0; x < filenum; x++)
   {
     gt_free((char *)gff3files[x]);
@@ -138,6 +120,7 @@ int main(int argc, char * const *argv)
   if(haderror) return EXIT_FAILURE;
   
   // Write header for new GFF3 file: version pragma, sequence regions
+  GtError *error = gt_error_new();
   fputs("##gff-version   3\n", outstream);
   GtStrArray *seqids = gt_feature_index_get_seqids(features, error);
   if(gt_error_is_set(error))

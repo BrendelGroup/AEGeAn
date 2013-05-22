@@ -196,9 +196,10 @@ FILE *agn_fopen(const char *filename, const char *mode)
   return fp;
 }
 
-GtFeatureIndex *agn_import_canonical(const char *filename, AgnLogger *logger)
+GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
+                                     AgnLogger *logger)
 {
-  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(1, &filename);
+  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
   
@@ -217,6 +218,7 @@ GtFeatureIndex *agn_import_canonical(const char *filename, AgnLogger *logger)
   }
   gt_node_stream_delete(gff3);
   gt_node_visitor_delete(nv);
+  agn_gene_validator_delete(validator);
 
   if(agn_logger_has_error(logger))
   {
