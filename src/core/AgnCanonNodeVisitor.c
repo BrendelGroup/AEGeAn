@@ -14,12 +14,12 @@
 //----------------------------------------------------------------------------//
 // Data structure definition
 //----------------------------------------------------------------------------//
-// Perhaps add an AgnError/AgnLogger object?
 struct AgnCanonNodeVisitor
 {
   const GtNodeVisitor parent_instance;
   GtFeatureIndex *index;
   AgnGeneValidator *validator;
+  AgnLogger *logger;
 };
 
 
@@ -133,7 +133,8 @@ static void agn_canon_node_visitor_free(GtNodeVisitor *nv)
 }
 
 GtNodeVisitor* agn_canon_node_visitor_new(GtFeatureIndex *index,
-                                          AgnGeneValidator *validator)
+                                          AgnGeneValidator *validator,
+                                          AgnLogger *logger)
 {
   GtNodeVisitor *nv;
   nv = gt_node_visitor_create(agn_canon_node_visitor_class());
@@ -141,6 +142,7 @@ GtNodeVisitor* agn_canon_node_visitor_new(GtFeatureIndex *index,
 
   v->index = index;
   v->validator = validator;
+  v->logger = logger;
 
   return nv;
 }
@@ -170,7 +172,6 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
   AgnCanonNodeVisitor *v;
   gt_error_check(error);
   v = agn_canon_node_visitor_cast(nv);
-  AgnLogger *logger = agn_logger_new();
 
   if(gt_feature_node_is_pseudo(fn))
   {
@@ -179,52 +180,41 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
     while(gt_array_size(features) > 0)
     {
       GtFeatureNode *fn2add = *(GtFeatureNode **)gt_array_pop(features);
-      if(agn_gene_validator_validate_gene(v->validator, fn2add, logger))
+      if(agn_gene_validator_validate_gene(v->validator, fn2add, v->logger))
       {
         if(gt_feature_index_add_feature_node(v->index, fn2add, error))
         {
+          agn_logger_log_error(v->logger, "%s", gt_error_get(error));
+          gt_error_unset(error);
           return 1;
         }
       }
       else
       {
         gt_genome_node_delete((GtGenomeNode *)fn2add);
-        // FIXME this should not be handled here
-        bool haderror = agn_logger_print_all(logger, stderr,
-                            "[ParsEval] validating gene '%s'",
-                            gt_feature_node_get_attribute(fn2add, "ID"));
-        if(haderror)
-        {
-          gt_error_set(error, "    fatal error(s)");
-          return -1;
-        }
+        if(agn_logger_has_error(v->logger))
+          return 1;
       }
     }
   }
   else
   {
-    if(agn_gene_validator_validate_gene(v->validator, fn, logger))
+    if(agn_gene_validator_validate_gene(v->validator, fn, v->logger))
     {
       if(gt_feature_index_add_feature_node(v->index, fn, error))
       {
+        agn_logger_log_error(v->logger, "%s", gt_error_get(error));
+        gt_error_unset(error);
         return 1;
       }
     }
     else
     {
       gt_genome_node_delete((GtGenomeNode *)fn);
-      // FIXME this should not be handled here
-      bool haderror = agn_logger_print_all(logger, stderr,
-                          "[ParsEval] validating gene '%s'",
-                          gt_feature_node_get_attribute(fn, "ID"));
-      if(haderror)
-      {
-        gt_error_set(error, "    fatal error(s)");
-        return -1;
-      }
+      if(agn_logger_has_error(v->logger))
+        return 1;
     }
   }
-  agn_logger_delete(logger);
 
   return 0;
 }
@@ -239,10 +229,11 @@ static int agn_canon_node_visitor_visit_region_node(GtNodeVisitor *nv,
 
   if(gt_feature_index_add_region_node(v->index, rn, error))
   {
-    // FIXME this should not be handled here
-    fprintf(stderr, "[ParsEval] error: issue loading GFF3 data into memory: %s",
-            gt_error_get(error));
-    exit(1);
+    GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)rn);
+    agn_logger_log_error(v->logger, "unable to add region node for seqid "
+                         "'%s': %s", seqid, gt_error_get(error));
+    gt_error_unset(error);
+    return 1;
   }
 
   return 0;

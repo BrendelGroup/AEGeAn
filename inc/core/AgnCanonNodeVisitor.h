@@ -12,11 +12,11 @@ typedef struct AgnCanonNodeVisitor AgnCanonNodeVisitor;
  *
  * @param[out] index        the feature index into which data will be loaded
  * @param[in]  validator    a gene validator object
- * @param[in]  settings     feature inference settings
- * @param[in]  options      values for ParsEval's command-line options
+ * @param[in]  logger       object for storing error/warning messages
  * @returns                 a node visitor object
  */
 GtNodeVisitor* agn_canon_node_visitor_new(GtFeatureIndex *index,
-                                          AgnGeneValidator *validator);
+                                          AgnGeneValidator *validator,
+                                          AgnLogger *logger);
 
 #endif

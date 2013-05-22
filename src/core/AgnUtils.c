@@ -204,38 +204,34 @@ GtFeatureIndex *agn_import_canonical(const char *filename, AgnLogger *logger)
   
   GtFeatureIndex *features = gt_feature_index_memory_new();
   AgnGeneValidator *validator = agn_gene_validator_new();
-  GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator);
+  GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator, logger);
 
   GtGenomeNode *gn;
   bool loaderror;
-  GtError *e = gt_error_new();
-  while(!(loaderror = gt_node_stream_next(gff3, &gn, e)) && gn)
+  GtError *error = gt_error_new();
+  while(!(loaderror = gt_node_stream_next(gff3, &gn, error)) && gn)
   {
-    gt_genome_node_accept(gn, nv, e);
-    if(gt_error_is_set(e))
-    {
-      agn_logger_log_error(logger, "%s", gt_error_get(e));
-      gt_error_unset(e);
-    }
+    gt_genome_node_accept(gn, nv, error);
+    if(agn_logger_has_error(logger))
+      break;
   }
   gt_node_stream_delete(gff3);
   gt_node_visitor_delete(nv);
 
-  if(gt_error_is_set(e))
+  if(agn_logger_has_error(logger))
   {
-    agn_logger_log_error(logger, "%s", gt_error_get(e));
     gt_feature_index_delete(features);
     features = NULL;
   }
   
-  gt_error_delete(e);
+  gt_error_delete(error);
   return features;
 }
 
-bool agn_infer_cds_range_from_exon_and_codons( GtRange *exon_range,
-                                               GtRange *leftcodon_range,
-                                               GtRange *rightcodon_range,
-                                               GtRange *cds_range )
+bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range,
+                                              GtRange *leftcodon_range,
+                                              GtRange *rightcodon_range,
+                                              GtRange *cds_range)
 {
   cds_range->start = 0;
   cds_range->end   = 0;
