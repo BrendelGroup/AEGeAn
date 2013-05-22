@@ -1,3 +1,6 @@
+#ifndef AEGEAN_CANONICAL_NODE_VISITOR
+#define AEGEAN_CANONICAL_NODE_VISITOR
+
 #include "genometools.h"
 #include "AgnGeneValidator.h"
 
@@ -15,3 +18,5 @@ typedef struct AgnCanonNodeVisitor AgnCanonNodeVisitor;
  */
 GtNodeVisitor* agn_canon_node_visitor_new(GtFeatureIndex *index,
                                           AgnGeneValidator *validator);
+
+#endif

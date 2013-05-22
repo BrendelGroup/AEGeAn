@@ -42,33 +42,23 @@ int main(int argc, char * const argv[])
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin loading data\n", stderr);
 
-  AgnError *changeme = agn_error_new();
-  GtFeatureIndex *refrfeats = agn_import_canonical(options.refrfile, changeme);
-  if(agn_error_is_set(changeme))
-  {
-    agn_error_print(changeme, stderr, "[ParsEval] issue parsing reference "
-                    "annotations from file '%s'", options.refrfile);
-    if(agn_error_is_fatal(changeme))
-      return EXIT_FAILURE;
-  }
+  AgnLogger *logger = agn_logger_new();
+  GtFeatureIndex *refrfeats = agn_import_canonical(options.refrfile, logger);
+  bool haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
+                                       "reference annotations from file '%s'",
+                                       options.refrfile);
+  if(haderror) return EXIT_FAILURE;
   
-  GtFeatureIndex *predfeats = agn_import_canonical(options.predfile, changeme);
-  if(agn_error_is_set(changeme))
-  {
-    agn_error_print(changeme, stderr, "[ParsEval] issue parsing prediction "
-                    "annotations from file '%s'", options.predfile);
-    if(agn_error_is_fatal(changeme))
-      return EXIT_FAILURE;
-  }
+  GtFeatureIndex *predfeats = agn_import_canonical(options.predfile, logger);
+  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
+                                  "prediction annotations from file '%s'",
+                                  options.predfile);
+  if(haderror) return EXIT_FAILURE;
   
-  GtStrArray *seqids = agn_seq_intersection(refrfeats, predfeats, changeme);
-  if(agn_error_is_set(changeme))
-  {
-    agn_error_print(changeme, stderr, "[ParsEval] issue finding sequences for "
-                    "comparison");
-    if(agn_error_is_fatal(changeme))
-      return EXIT_FAILURE;
-  }
+  GtStrArray *seqids = agn_seq_intersection(refrfeats, predfeats, logger);
+  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] identifying "
+                                  "sequences for pairwise comparison");
+  if(haderror) return EXIT_FAILURE;
 
   gt_timer_stop(timer_short);
   gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data "

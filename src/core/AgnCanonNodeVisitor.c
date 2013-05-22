@@ -170,7 +170,7 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
   AgnCanonNodeVisitor *v;
   gt_error_check(error);
   v = agn_canon_node_visitor_cast(nv);
-  AgnError *myerror = agn_error_new();
+  AgnLogger *logger = agn_logger_new();
 
   if(gt_feature_node_is_pseudo(fn))
   {
@@ -179,7 +179,7 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
     while(gt_array_size(features) > 0)
     {
       GtFeatureNode *fn2add = *(GtFeatureNode **)gt_array_pop(features);
-      if( agn_gene_validator_validate_gene(v->validator, fn2add, myerror) )
+      if(agn_gene_validator_validate_gene(v->validator, fn2add, logger))
       {
         if(gt_feature_index_add_feature_node(v->index, fn2add, error))
         {
@@ -189,25 +189,21 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
       else
       {
         gt_genome_node_delete((GtGenomeNode *)fn2add);
-        if(agn_error_is_set(myerror))
+        // FIXME this should not be handled here
+        bool haderror = agn_logger_print_all(logger, stderr,
+                            "[ParsEval] validating gene '%s'",
+                            gt_feature_node_get_attribute(fn2add, "ID"));
+        if(haderror)
         {
-          // FIXME this should not be handled here
-          agn_error_print(myerror, stderr,
-                          "[ParsEval] issue validating gene '%s'",
-                          gt_feature_node_get_attribute(fn2add, "ID"));
-          if(agn_error_is_fatal(myerror))
-          {
-            gt_error_set(error, "    fatal error");
-            return -1;
-          }
-          agn_error_unset(myerror);
+          gt_error_set(error, "    fatal error(s)");
+          return -1;
         }
       }
     }
   }
   else
   {
-    if( agn_gene_validator_validate_gene(v->validator, fn, myerror) )
+    if(agn_gene_validator_validate_gene(v->validator, fn, logger))
     {
       if(gt_feature_index_add_feature_node(v->index, fn, error))
       {
@@ -217,22 +213,18 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
     else
     {
       gt_genome_node_delete((GtGenomeNode *)fn);
-      if(agn_error_is_set(myerror))
+      // FIXME this should not be handled here
+      bool haderror = agn_logger_print_all(logger, stderr,
+                          "[ParsEval] validating gene '%s'",
+                          gt_feature_node_get_attribute(fn, "ID"));
+      if(haderror)
       {
-        // FIXME this should not be handled here
-        agn_error_print( myerror, stderr,
-                         "[ParsEval] issue validating gene '%s'",
-                         gt_feature_node_get_attribute(fn, "ID") );
-        if(agn_error_is_fatal(myerror))
-        {
-          gt_error_set(error, "    fatal error");
-          return -1;
-        }
-        agn_error_unset(myerror);
+        gt_error_set(error, "    fatal error(s)");
+        return -1;
       }
     }
   }
-  agn_error_delete(myerror);
+  agn_logger_delete(logger);
 
   return 0;
 }

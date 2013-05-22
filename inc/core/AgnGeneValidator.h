@@ -2,7 +2,7 @@
 #define AEGEAN_GENE_VALIDATOR
 
 #include "genometools.h"
-#include "AgnError.h"
+#include "AgnLogger.h"
 
 /**
  * The purpose of the AgnGeneValidator class is to validate gene structure
@@ -31,10 +31,11 @@ AgnGeneValidator* agn_gene_validator_new();
  * @param[in] v           validator object
  * @param[in] gene        gene feature to be validated
  * @param[in] settings    list of feature types to infer
- * @param[in] error       stores error messages in case of an error
+ * @param[in] logger      stores error, warning, and status messages in case if
+ *                        necessary
  * @returns               a boolean indicating whether the gene is valid
  */
-bool agn_gene_validator_validate_gene( AgnGeneValidator *v, GtFeatureNode *gene,
-                                       AgnError *error );
+bool agn_gene_validator_validate_gene(AgnGeneValidator *v, GtFeatureNode *gene,
+                                      AgnLogger *logger);
 
 #endif

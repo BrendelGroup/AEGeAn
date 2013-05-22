@@ -36,13 +36,13 @@ void agn_gene_validator_check_cds_phase(AgnGeneValidator *v);
  *
  * @param[in]  v           validator object
  * @param[in]  features    list of features
- * @param[out] error       object to which error/warning messages will be
+ * @param[out] logger      object to which error/warning messages will be
  *                         written if necessary
  * @returns                false if any overlaps are detected, true otherwise
  */
 bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
                                               GtArray *features,
-                                              AgnError *error);
+                                              AgnLogger *logger);
 
 /**
  * If exons and start/stop codons are provided explicitly, the (possibly)
@@ -50,37 +50,35 @@ bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
  * 
  * @param[in]  v        validator object
  * @param[in]  mrna     mRNA feature
- * @param[out] error    object to which error/warning messages will be
+ * @param[out] logger   object to which error/warning messages will be
  *                      written if necessary
  * @returns             true on success, false otherwise
  */
 bool agn_gene_validator_infer_cds(AgnGeneValidator *v, GtFeatureNode *mrna,
-                                  AgnError *error);
+                                  AgnLogger *logger);
 
 /**
  * Infer exon features from explicitly defined CDS and UTR features.
  *
  * @param[in] v        validator object
  * @param[in] mrna     an mRNA feature
- * @param[in] error    error object to which message will be written, if
- *                     necessary
+ * @param[in] logger   object to which message will be written, if necessary
  * @returns            true if exons are successfully infered, false otherwise
  */
-bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
-                                     AgnError *error );
+bool agn_gene_validator_infer_exons(AgnGeneValidator *v, GtFeatureNode *mrna,
+                                    AgnLogger *logger);
 
 /**
  * Infer intron features from explicitly defined exon features
  *
  * @param[in] v        validator object
  * @param[in] mrna     an mRNA feature
- * @param[in] error    error object to which message will be written, if
- *                     necessary
+ * @param[in] logger   object to which message will be written, if necessary
  * @returns            true if introns are successfully inferred, false
  *                     otherwise
  */
-bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
-                                       AgnError *error );
+bool agn_gene_validator_infer_introns(AgnGeneValidator *v, GtFeatureNode *mrna,
+                                      AgnLogger *logger);
 
 /**
  * Determine which features have not been provided explicitly and infer these
@@ -88,25 +86,23 @@ bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
  *
  * @param[in] v        validator object
  * @param[in] mrna     an mRNA feature
- * @param[in] error    error object to which message will be written, if
- *                     necessary
+ * @param[in] logger   object to which message will be written, if necessary
  * @returns            true upon success, false otherwise
  */
 bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
                                             GtFeatureNode *mrna,
-                                            AgnError *error);
+                                            AgnLogger *logger);
 
 /**
  * Infer UTR features from explicitly defined exon features
  *
  * @param[in] v        validator object
  * @param[in] mrna     an mRNA feature
- * @param[in] error    error object to which messages will be written, if
- *                     necessary
+ * @param[in] logger   object to which messages will be written, if necessary
  * @returns            true if UTRs are successfully infered, false otherwise
  */
-bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
-                                    AgnError *error );
+bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
+                                   AgnLogger *logger);
 
 /**
  * Classify and store the given mRNA's subfeature, or delete it if it does not
@@ -114,11 +110,10 @@ bool agn_gene_validator_infer_utrs( AgnGeneValidator *v, GtFeatureNode *mrna,
  * @param[in] v        validator object
  * @param[in] mrna     an mRNA feature
  * @param[in] child    a subfeature of the mRNA
- * @param[in] error    error object to which messages will be written, if
- *                     necessary
+ * @param[in] logger   object to which messages will be written, if necessary
  */
 void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
-                                       GtFeatureNode *child, AgnError *error);
+                                       GtFeatureNode *child, AgnLogger *logger);
 
 /**
  * Reset the validator object to be ready to validate the next feature(s).
@@ -147,15 +142,14 @@ void agn_gene_validator_sort_features(AgnGeneValidator *v);
  * @param[in] v           validator object
  * @param[in] gene        the gene from which the mRNA is derived
  * @param[in] mRNA        the feature to be validated
- * @param[in] error       error object to which messages will be written, if
- *                        necessary
+ * @param[in] logger      object to which messages will be written, ifnecessary
  * @returns               true if the feature is successfully validated as an
  *                        mRNA, false otherwise
  */
-bool agn_gene_validator_validate_mrna( AgnGeneValidator *v,
-                                       GtFeatureNode *gene,
-                                       GtFeatureNode *mRNA,
-                                       AgnError *error );
+bool agn_gene_validator_validate_mrna(AgnGeneValidator *v,
+                                      GtFeatureNode *gene,
+                                      GtFeatureNode *mRNA,
+                                      AgnLogger *logger);
 
 
 //----------------------------------------------------------------------------//
@@ -209,7 +203,7 @@ void agn_gene_validator_check_cds_phase(AgnGeneValidator *v)
 
 bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
                                               GtArray *features,
-                                              AgnError *error)
+                                              AgnLogger *logger)
 {
   gt_assert(features != NULL);
   if(gt_array_size(features) <= 1)
@@ -227,7 +221,7 @@ bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
     {
       const char *type = gt_feature_node_get_type(fni);
       const char *tid = gt_feature_node_get_attribute(fni, "Parent");
-      agn_error_add(error, true, "overlapping %ss for mRNA '%s'", type, tid);
+      agn_logger_log_error(logger, "overlapping %ss for mRNA '%s'", type, tid);
       isvalid = false;
     }
   }
@@ -241,7 +235,7 @@ void agn_gene_validator_delete(AgnGeneValidator *v)
 }
 
 bool agn_gene_validator_infer_cds(AgnGeneValidator *v, GtFeatureNode *mrna,
-                                  AgnError *error)
+                                  AgnLogger *logger)
 {
   bool left_codon_found = v->left_codon_range->start != 0;
   bool right_codon_found  = v->right_codon_range->start  != 0;
@@ -281,16 +275,16 @@ bool agn_gene_validator_infer_cds(AgnGeneValidator *v, GtFeatureNode *mrna,
 
   if(gt_array_size(v->cdss) == 0)
   {
-    agn_error_add(error, false, "error inferring CDS from codons and exons "
-                  "for mRNA '%s' (line %u)", tid, tln);
+    agn_logger_log_error(logger, "error inferring CDS from codons and exons "
+                         "for mRNA '%s' (line %u)", tid, tln);
     isvalid = false;
   }
   
   return isvalid;
 }
 
-bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
-                                     AgnError *error )
+bool agn_gene_validator_infer_exons(AgnGeneValidator *v, GtFeatureNode *mrna,
+                                    AgnLogger *logger)
 {
   unsigned long i,j;
   unsigned long num_exons = gt_array_size(v->exons);
@@ -339,8 +333,8 @@ bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
   
   if(gt_array_size(v->exons) == 0)
   {
-    agn_error_add( error,false, "unable to infer exons for mRNA '%s' (line %u)",
-                   tid, tln );
+    agn_logger_log_error(logger,"unable to infer exons for mRNA '%s' (line %u)",
+                         tid,tln);
     return false;
   }
 
@@ -349,8 +343,8 @@ bool agn_gene_validator_infer_exons( AgnGeneValidator *v, GtFeatureNode *mrna,
   return true;
 }
 
-bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
-                                       AgnError *error )
+bool agn_gene_validator_infer_introns(AgnGeneValidator *v, GtFeatureNode *mrna,
+                                      AgnLogger *logger)
 {
   gt_assert(gt_array_size(v->introns) == 0 && gt_array_size(v->exons) > 0);
 
@@ -365,8 +359,8 @@ bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
 
     if(first_range.end == second_range.start - 1)
     {
-      agn_error_add(error, false, "mRNA '%s' has directly adjacent exons\n",
-                    gt_feature_node_get_attribute(mrna, "ID"));
+      agn_logger_log_error(logger, "mRNA '%s' has directly adjacent exons\n",
+                           gt_feature_node_get_attribute(mrna, "ID"));
       gt_str_delete(aegean);
       return false;
     }
@@ -393,7 +387,7 @@ bool agn_gene_validator_infer_introns( AgnGeneValidator *v, GtFeatureNode *mrna,
 
 bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
                                             GtFeatureNode *mrna,
-                                            AgnError *error)
+                                            AgnLogger *logger)
 {
   bool isvalid = true;
   
@@ -401,49 +395,49 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
   // start/stop codons
   if(gt_array_size(v->cdss) == 0)
   {
-    bool success = agn_gene_validator_infer_cds(v, mrna, error);
+    bool success = agn_gene_validator_infer_cds(v, mrna, logger);
     if(!success)
       isvalid = false;
   }
-  agn_gene_validator_check_feature_overlap(v, v->cdss, error);
+  agn_gene_validator_check_feature_overlap(v, v->cdss, logger);
   agn_gene_validator_check_cds_phase(v);
 
   // If exons are not explicitly provided, infer them from CDS and UTR segments
   if(isvalid && gt_array_size(v->exons) == 0 && gt_array_size(v->cdss) > 0)
   {
-    bool success = agn_gene_validator_infer_exons(v, mrna, error);
+    bool success = agn_gene_validator_infer_exons(v, mrna, logger);
     if(!success)
       isvalid = false;
   }
-  agn_gene_validator_check_feature_overlap(v, v->exons, error);
+  agn_gene_validator_check_feature_overlap(v, v->exons, logger);
 
   // If exons and CDS are provided explicitly, but UTR segments are
   // not, infer the UTRs
   if(isvalid && v->start_codon_range.start != 0 && gt_array_size(v->exons) > 0
      && gt_array_size(v->utrs) == 0)
   {
-    bool success = agn_gene_validator_infer_utrs(v, mrna, error);
+    bool success = agn_gene_validator_infer_utrs(v, mrna, logger);
     if(!success)
       isvalid = false;
   }
-  agn_gene_validator_check_feature_overlap(v, v->utrs, error);
+  agn_gene_validator_check_feature_overlap(v, v->utrs, logger);
   agn_gene_validator_set_utrs(v);
 
   // If there are multiple exons and introns are not explicitly provided, infer
   // introns from the exon features
   if(isvalid && gt_array_size(v->exons) > 1 && gt_array_size(v->introns) == 0)
   {
-    bool success = agn_gene_validator_infer_introns(v, mrna, error);
+    bool success = agn_gene_validator_infer_introns(v, mrna, logger);
     if(!success)
       isvalid = false;
   }
   if(isvalid && gt_array_size(v->exons) != gt_array_size(v->introns) + 1)
   {
-    agn_error_add( error, false,
-                   "mRNA '%s' (line %u) has %lu exons but %lu introns",
-                   gt_feature_node_get_attribute(mrna, "ID"),
-                   gt_genome_node_get_line_number((GtGenomeNode *)mrna),
-                   gt_array_size(v->exons), gt_array_size(v->introns) );
+    agn_logger_log_error(logger, "mRNA '%s' (line %u) has %lu exons but %lu "
+        "introns", gt_feature_node_get_attribute(mrna, "ID"),
+        gt_genome_node_get_line_number((GtGenomeNode *)mrna),
+        gt_array_size(v->exons), gt_array_size(v->introns)
+    );
     isvalid = false;
   }
   
@@ -451,7 +445,7 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
 }
 
 bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
-                                   AgnError *error)
+                                   AgnLogger *logger)
 {
   const char *tid = gt_feature_node_get_attribute(mrna, "ID");
   GtStrand strand = gt_feature_node_get_strand(mrna);
@@ -536,7 +530,7 @@ AgnGeneValidator* agn_gene_validator_new()
 }
 
 void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
-                                       GtFeatureNode *child, AgnError *error)
+                                       GtFeatureNode *child, AgnLogger *logger)
 {
   if(agn_gt_feature_node_is_cds_feature(child))
   {
@@ -581,11 +575,10 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
   {
     if(child != mrna)
     {
-      agn_error_add(
-        error, false, "%s feature (line %u) is not a valid child for mRNA '%s',"
-        " ignoring", gt_feature_node_get_type(child),
-        gt_genome_node_get_line_number((GtGenomeNode *)child),
-        gt_feature_node_get_attribute(mrna, "ID")
+      agn_logger_log_warning(logger, "%s feature (line %u) is not a valid child"
+          " for mRNA '%s', ignoring", gt_feature_node_get_type(child),
+          gt_genome_node_get_line_number((GtGenomeNode *)child),
+          gt_feature_node_get_attribute(mrna, "ID")
       );
       agn_gt_feature_node_remove_child(mrna, child);
       gt_genome_node_delete((GtGenomeNode *)child);
@@ -593,12 +586,10 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
   }
   else
   {
-    agn_error_add
-    (
-      error, false, "%s feature (line %u) is not a valid child for mRNA '%s', "
-      "ignoring", gt_feature_node_get_type(child),
-      gt_genome_node_get_line_number((GtGenomeNode *)child),
-      gt_feature_node_get_attribute(mrna, "ID")
+    agn_logger_log_warning(logger, "%s feature (line %u) is not a valid child "
+        "for mRNA '%s', ignoring", gt_feature_node_get_type(child),
+        gt_genome_node_get_line_number((GtGenomeNode *)child),
+        gt_feature_node_get_attribute(mrna, "ID")
     );
     agn_gt_feature_node_remove_child(mrna, child);
     gt_genome_node_delete((GtGenomeNode *)child);
@@ -671,14 +662,15 @@ void agn_gene_validator_sort_features(AgnGeneValidator *v)
   gt_array_sort(v->segments, (GtCompare)agn_gt_genome_node_compare);
 }
 
-bool agn_gene_validator_validate_gene( AgnGeneValidator *v, GtFeatureNode *gene,
-                                       AgnError *error )
+bool agn_gene_validator_validate_gene(AgnGeneValidator *v, GtFeatureNode *gene,
+                                      AgnLogger *logger)
 {
   if(!agn_gt_feature_node_is_gene_feature(gene))
   {
-    agn_error_add(error, false, "feature from line %u is a %s, expected a gene",
-                  gt_genome_node_get_line_number((GtGenomeNode *)gene),
-                  gt_feature_node_get_type(gene));
+    agn_logger_log_warning(logger, "feature from line %u is a %s, expected a "
+        "gene", gt_genome_node_get_line_number((GtGenomeNode *)gene),
+        gt_feature_node_get_type(gene)
+    );
     return false;
   }
 
@@ -693,15 +685,16 @@ bool agn_gene_validator_validate_gene( AgnGeneValidator *v, GtFeatureNode *gene,
     childfeature = gt_feature_node_iterator_next(iter)
   )
   {
-    if(agn_gene_validator_validate_mrna(v, gene, childfeature, error))
+    if(agn_gene_validator_validate_mrna(v, gene, childfeature, logger))
     {
       GtRange grange = gt_genome_node_get_range((GtGenomeNode *)gene);
       GtRange trange = gt_genome_node_get_range((GtGenomeNode *)childfeature);
       if(!gt_range_contains(&grange, &trange))
       {
-        agn_error_add(error, true, "range of mRNA '%s' exceeds range of gene "
-                      "'%s'", gt_feature_node_get_attribute(childfeature, "ID"),
-                      gt_feature_node_get_attribute(gene, "ID"));
+        agn_logger_log_error(logger, "range of mRNA '%s' exceeds range of gene "
+            "'%s'", gt_feature_node_get_attribute(childfeature, "ID"),
+            gt_feature_node_get_attribute(gene, "ID")
+        );
         isvalid = false;
       }
       
@@ -709,7 +702,7 @@ bool agn_gene_validator_validate_gene( AgnGeneValidator *v, GtFeatureNode *gene,
     }
     else
     {
-      gt_assert(agn_error_is_set(error));
+      // gt_assert(agn_logger_has_error(logger));
       isvalid = false;
     }
   }
@@ -717,9 +710,10 @@ bool agn_gene_validator_validate_gene( AgnGeneValidator *v, GtFeatureNode *gene,
 
   if(num_mrnas == 0)
   {
-    agn_error_add(error, false, "found no valid mRNAs for gene '%s' (line %u)",
-                  gt_feature_node_get_attribute(gene, "ID"),
-                  gt_genome_node_get_line_number((GtGenomeNode *)gene));
+    agn_logger_log_warning(logger, "found no valid mRNAs for gene '%s' "
+        "(line %u)", gt_feature_node_get_attribute(gene, "ID"),
+        gt_genome_node_get_line_number((GtGenomeNode *)gene)
+    );
     return false;
   }
 
@@ -727,13 +721,14 @@ bool agn_gene_validator_validate_gene( AgnGeneValidator *v, GtFeatureNode *gene,
 }
 
 bool agn_gene_validator_validate_mrna(AgnGeneValidator *v, GtFeatureNode *gene,
-                                      GtFeatureNode *mrna, AgnError *error)
+                                      GtFeatureNode *mrna, AgnLogger *logger)
 {
   if(!agn_gt_feature_node_is_mrna_feature(mrna))
   {
-    agn_error_add(error, false,"feature from line %u is a %s, expected an mRNA",
-                  gt_genome_node_get_line_number((GtGenomeNode *)mrna),
-                  gt_feature_node_get_type(mrna) );
+    agn_logger_log_warning(logger, "feature from line %u is a %s, expected an "
+        "mRNA", gt_genome_node_get_line_number((GtGenomeNode *)mrna),
+        gt_feature_node_get_type(mrna)
+    );
     return false;
   }
 
@@ -760,30 +755,31 @@ bool agn_gene_validator_validate_mrna(AgnGeneValidator *v, GtFeatureNode *gene,
   {
     if(!agn_gt_feature_node_fix_parent_attribute(childfeature, mrna))
     {
-      agn_error_add(error, "could not fix 'Parent' attribute for %s feature "
-                    "(child of %s '%s')",
-                    gt_feature_node_get_type(childfeature),
-                    gt_feature_node_get_type(mrna),
-                    gt_feature_node_get_attribute(mrna, "ID"));
+      agn_logger_log_error(logger, "could not fix 'Parent' attribute for %s "
+          "feature (child of %s '%s')", gt_feature_node_get_type(childfeature),
+          gt_feature_node_get_type(mrna),
+          gt_feature_node_get_attribute(mrna, "ID")
+      );
       isvalid = false;
     }
     if(!agn_gt_feature_node_range_contains(mrna, childfeature))
     {
       GtRange crange = gt_genome_node_get_range((GtGenomeNode *)childfeature);
-      agn_error_add(error, true, "%s at [%lu, %lu] exceeds range of its parent "
-                    "mRNA '%s'", gt_feature_node_get_type(childfeature),
-                    crange.start, crange.end,
-                    gt_feature_node_get_attribute(childfeature, "Parent"));
+      agn_logger_log_error(logger, "%s at [%lu, %lu] exceeds range of its "
+          "parent mRNA '%s'", gt_feature_node_get_type(childfeature),
+          crange.start, crange.end,
+          gt_feature_node_get_attribute(childfeature, "Parent")
+      );
       isvalid = false;
     }
-    agn_gene_validator_mrna_typecheck(v, mrna, childfeature, error);
+    agn_gene_validator_mrna_typecheck(v, mrna, childfeature, logger);
   }
   gt_feature_node_iterator_delete(iter);
 
   if(isvalid)
   {
     agn_gene_validator_sort_features(v);
-    int success = agn_gene_validator_infer_mrna_features(v, mrna, error);
+    int success = agn_gene_validator_infer_mrna_features(v, mrna, logger);
     if(!success)
       isvalid = false;
   }

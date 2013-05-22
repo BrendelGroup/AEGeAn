@@ -5,7 +5,7 @@
 #define AEGEAN_UTILS
 
 #include "genometools.h"
-#include "AgnError.h"
+#include "AgnLogger.h"
 
 /**
  * The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal
@@ -87,7 +87,7 @@ FILE *agn_fopen(const char *filename, const char *mode);
 /**
  *
  */
-GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error);
+GtFeatureIndex *agn_import_canonical(const char *filename, AgnLogger *logger);
 
 /**
  * Given an exon and the start/stop codons associated with its corresponding
@@ -137,7 +137,7 @@ GtArray* agn_parse_loci( const char *seqid, GtFeatureIndex *refr,
  * @returns                 a string array containing IDs of shared sequences
  */
 GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
-                                 GtFeatureIndex *predfeats, AgnError *error);
+                                 GtFeatureIndex *predfeats, AgnLogger *logger);
 
 /**
  * Format the given non-negative number with commas as the thousands separator.

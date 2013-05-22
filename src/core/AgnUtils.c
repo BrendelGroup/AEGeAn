@@ -77,7 +77,8 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
     local_range.end = r2.end;
 // fprintf(stderr, "DELETEME newtest c\n");
 
-  AgnCliquePair *pair = agn_clique_pair_new(gt_str_get(seqid), clique1, clique2, &local_range);
+  AgnCliquePair *pair = agn_clique_pair_new(gt_str_get(seqid), clique1, clique2,
+                                            &local_range);
   agn_clique_pair_build_model_vectors(pair);
   agn_clique_pair_comparative_analysis(pair);
 // fprintf(stderr, "DELETEME newtest d\n");
@@ -195,7 +196,7 @@ FILE *agn_fopen(const char *filename, const char *mode)
   return fp;
 }
 
-GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error)
+GtFeatureIndex *agn_import_canonical(const char *filename, AgnLogger *logger)
 {
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(1, &filename);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
@@ -213,7 +214,7 @@ GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error)
     gt_genome_node_accept(gn, nv, e);
     if(gt_error_is_set(e))
     {
-      agn_error_add(error, false, "%s", gt_error_get(e));
+      agn_logger_log_error(logger, "%s", gt_error_get(e));
       gt_error_unset(e);
     }
   }
@@ -222,7 +223,7 @@ GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error)
 
   if(gt_error_is_set(e))
   {
-    agn_error_add(error, false, "%s", gt_error_get(e));
+    agn_logger_log_error(logger, "%s", gt_error_get(e));
     gt_feature_index_delete(features);
     features = NULL;
   }
@@ -386,26 +387,26 @@ GtArray* agn_parse_loci(const char *seqid, GtFeatureIndex *refr, GtFeatureIndex 
 }
 
 GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
-                                 GtFeatureIndex *predfeats, AgnError *error)
+                                 GtFeatureIndex *predfeats, AgnLogger *logger)
 {
   // Fetch seqids from reference and prediction annotations
   GtError *e = gt_error_new();
   GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, e);
   if(gt_error_is_set(e))
   {
-    agn_error_add(error, true, "error fetching seqids for reference: %s",
-                  gt_error_get(e));
+    agn_logger_log_error(logger, "error fetching seqids for reference: %s",
+                         gt_error_get(e));
     gt_error_unset(e);
   }
   GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, e);
   if(gt_error_is_set(e))
   {
-    agn_error_add(error, true, "error fetching seqids for prediction: %s",
-                  gt_error_get(e));
+    agn_logger_log_error(logger, "error fetching seqids for prediction: %s",
+                         gt_error_get(e));
     gt_error_unset(e);
   }
   gt_error_delete(e);
-  if(agn_error_is_set(error))
+  if(agn_logger_has_error(logger))
   {
     gt_str_array_delete(refrseqids);
     gt_str_array_delete(predseqids);
