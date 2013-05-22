@@ -5,6 +5,7 @@
 #define AEGEAN_UTILS
 
 #include "genometools.h"
+#include "AgnError.h"
 
 /**
  * The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal
@@ -84,6 +85,11 @@ GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set);
 FILE *agn_fopen(const char *filename, const char *mode);
 
 /**
+ *
+ */
+GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error);
+
+/**
  * Given an exon and the start/stop codons associated with its corresponding
  * mRNA, determine which parts of the exon (if any) correspond to coding
  * sequence.
@@ -121,14 +127,17 @@ GtArray* agn_parse_loci( const char *seqid, GtFeatureIndex *refr,
                          GtFeatureIndex *pred );
 
 /**
- * Given two string arrays (containing sequence IDs), determine which sequence
- * IDs are common to the two arrays and store them in a third array.
+ * Given two feature indices, determine which sequences are common and return
+ * them as an array.
  *
- * @param[in] refrseqids    reference sequence IDs
- * @param[in] predseqids    prediction sequence IDs
- * @returns                 a string array containing shared IDs
+ * @param[in]  refrfeats    index of reference features
+ * @param[in]  predfeats    index of prediction feature
+ * @param[out] error        object to which warning/error messages will be
+ *                          written if necessary
+ * @returns                 a string array containing IDs of shared sequences
  */
-GtStrArray* agn_seq_intersection(GtStrArray *refrseqids, GtStrArray *predseqids);
+GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
+                                 GtFeatureIndex *predfeats, AgnError *error);
 
 /**
  * Format the given non-negative number with commas as the thousands separator.

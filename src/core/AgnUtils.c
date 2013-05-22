@@ -2,8 +2,10 @@
 #include <time.h>
 #include "extended/feature_node.h"
 #include "AgnPairwiseCompareLocus.h"
+#include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
+#include "PeNodeVisitor.h"
 
 void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
                         bool skipsimplecliques )
@@ -193,6 +195,42 @@ FILE *agn_fopen(const char *filename, const char *mode)
   return fp;
 }
 
+GtFeatureIndex *agn_import_canonical(const char *filename, AgnError *error)
+{
+  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(1, &filename);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
+  
+  GtFeatureIndex *features = gt_feature_index_memory_new();
+  AgnGeneValidator *validator = agn_gene_validator_new();
+  GtNodeVisitor *nv = pe_node_visitor_new(features, validator);
+
+  GtGenomeNode *gn;
+  bool loaderror;
+  GtError *e = gt_error_new();
+  while(!(loaderror = gt_node_stream_next(gff3, &gn, e)) && gn)
+  {
+    gt_genome_node_accept(gn, nv, e);
+    if(gt_error_is_set(e))
+    {
+      agn_error_add(error, false, "%s", gt_error_get(e));
+      gt_error_unset(e);
+    }
+  }
+  gt_node_stream_delete(gff3);
+  gt_node_visitor_delete(nv);
+
+  if(gt_error_is_set(e))
+  {
+    agn_error_add(error, false, "%s", gt_error_get(e));
+    gt_feature_index_delete(features);
+    features = NULL;
+  }
+  
+  gt_error_delete(e);
+  return features;
+}
+
 bool agn_infer_cds_range_from_exon_and_codons( GtRange *exon_range,
                                                GtRange *leftcodon_range,
                                                GtRange *rightcodon_range,
@@ -347,14 +385,36 @@ GtArray* agn_parse_loci(const char *seqid, GtFeatureIndex *refr, GtFeatureIndex 
   return loci;
 }
 
-GtStrArray* agn_seq_intersection(GtStrArray *refrseqids, GtStrArray *predseqids)
+GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
+                                 GtFeatureIndex *predfeats, AgnError *error)
 {
-  GtStrArray *seqids;
-  unsigned long i, j;
-
-  seqids = agn_gt_str_array_intersection(refrseqids, predseqids);
-
+  // Fetch seqids from reference and prediction annotations
+  GtError *e = gt_error_new();
+  GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, e);
+  if(gt_error_is_set(e))
+  {
+    agn_error_add(error, true, "error fetching seqids for reference: %s",
+                  gt_error_get(e));
+    gt_error_unset(e);
+  }
+  GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, e);
+  if(gt_error_is_set(e))
+  {
+    agn_error_add(error, true, "error fetching seqids for prediction: %s",
+                  gt_error_get(e));
+    gt_error_unset(e);
+  }
+  gt_error_delete(e);
+  if(agn_error_is_set(error))
+  {
+    gt_str_array_delete(refrseqids);
+    gt_str_array_delete(predseqids);
+    return NULL;
+  }
+  GtStrArray *seqids = agn_gt_str_array_intersection(refrseqids, predseqids);
+  
   // Print reference sequences with no prediction annotations
+  unsigned long i, j;
   for(i = 0; i < gt_str_array_size(refrseqids); i++)
   {
     const char *refrseq = gt_str_array_get(refrseqids, i);
@@ -367,6 +427,7 @@ GtStrArray* agn_seq_intersection(GtStrArray *refrseqids, GtStrArray *predseqids)
     }
     if(matches == 0)
     {
+      // FIXME add message to error object
       fprintf(stderr, "warning: no prediction annotations found for sequence '%s'\n", refrseq);
     }
   }
@@ -384,10 +445,13 @@ GtStrArray* agn_seq_intersection(GtStrArray *refrseqids, GtStrArray *predseqids)
     }
     if(matches == 0)
     {
+      // FIXME add message to error object
       fprintf(stderr, "warning: no reference annotations found for sequence '%s'\n", predseq);
     }
   }
 
+  gt_str_array_delete(refrseqids);
+  gt_str_array_delete(predseqids);
   return seqids;
 }
 

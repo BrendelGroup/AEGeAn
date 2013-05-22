@@ -42,80 +42,43 @@ int main(int argc, char * const argv[])
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin loading data\n", stderr);
 
-  GtError *error = gt_error_new();
-  AgnGeneValidator *validator = agn_gene_validator_new();
-  GtGenomeNode *gn;
-  bool loaderror;
-
-  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &options.refrfile);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
-  GtFeatureIndex *refrfeats = gt_feature_index_memory_new();
-  GtNodeVisitor *refrvisitor = pe_node_visitor_new(refrfeats, validator);
-  while(!(loaderror = gt_node_stream_next(gff3in, &gn, error)) && gn)
+  AgnError *changeme = agn_error_new();
+  GtFeatureIndex *refrfeats = agn_import_canonical(options.refrfile, changeme);
+  if(agn_error_is_set(changeme))
   {
-    gt_genome_node_accept(gn, refrvisitor, error);
-    if(gt_error_is_set(error))
-    {
-      fprintf(stderr, "%s\n", gt_error_get(error));
+    agn_error_print(changeme, stderr, "[ParsEval] issue parsing reference "
+                    "annotations from file '%s'", options.refrfile);
+    if(agn_error_is_fatal(changeme))
       return EXIT_FAILURE;
-    }
   }
-  gt_node_stream_delete(gff3in);
-  gt_node_visitor_delete(refrvisitor);
-  if(gt_error_is_set(error))
+  
+  GtFeatureIndex *predfeats = agn_import_canonical(options.predfile, changeme);
+  if(agn_error_is_set(changeme))
   {
-    fprintf(stderr, "%s\n", gt_error_get(error));
-    return EXIT_FAILURE;
-  }
-
-  gff3in = gt_gff3_in_stream_new_unsorted(1, &options.predfile);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
-  GtFeatureIndex *predfeats = gt_feature_index_memory_new();
-  GtNodeVisitor *predvisitor = pe_node_visitor_new(predfeats, validator);
-  while(!(loaderror = gt_node_stream_next(gff3in, &gn, error)) && gn)
-  {
-    gt_genome_node_accept(gn, predvisitor, error);
-    if(gt_error_is_set(error))
-    {
-      fprintf(stderr, "%s\n", gt_error_get(error));
+    agn_error_print(changeme, stderr, "[ParsEval] issue parsing prediction "
+                    "annotations from file '%s'", options.predfile);
+    if(agn_error_is_fatal(changeme))
       return EXIT_FAILURE;
-    }
   }
-  gt_node_stream_delete(gff3in);
-  gt_node_visitor_delete(predvisitor);
-  if(gt_error_is_set(error))
+  
+  GtStrArray *seqids = agn_seq_intersection(refrfeats, predfeats, changeme);
+  if(agn_error_is_set(changeme))
   {
-    fprintf(stderr, "%s\n", gt_error_get(error));
-    return EXIT_FAILURE;
+    agn_error_print(changeme, stderr, "[ParsEval] issue finding sequences for "
+                    "comparison");
+    if(agn_error_is_fatal(changeme))
+      return EXIT_FAILURE;
   }
 
-  GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, error);
-  if(gt_error_is_set(error))
-  {
-    fprintf(stderr, "%s\n", gt_error_get(error));
-    return EXIT_FAILURE;
-  }
-  GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, error);
-  if(gt_error_is_set(error))
-  {
-    fprintf(stderr, "%s\n", gt_error_get(error));
-    return EXIT_FAILURE;
-  }
-  GtStrArray *seqids = agn_seq_intersection(refrseqids, predseqids);
-
-  gt_str_array_delete(refrseqids);
-  gt_str_array_delete(predseqids);
-  gt_error_delete(error);
   gt_timer_stop(timer_short);
-  gt_timer_show_formatted( timer_short, "[ParsEval] Finished loading data (%ld.%06ld seconds)\n",
-                           stderr );
+  gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data "
+                          "(%ld.%06ld seconds)\n", stderr);
   unsigned long numseqs = gt_str_array_size(seqids);
 
 
   //----- Parse loci -----
   //----------------------
+  // FIXME write two functions: parse_loci_memory, parse_loci_files
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin parsing loci\n", stderr);
 

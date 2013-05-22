@@ -417,10 +417,10 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
   }
   agn_gene_validator_check_feature_overlap(v, v->exons, error);
 
-  // If exons and CDS segments are provided explicitly, but UTR segments are
-  // not, infer the UTRs; FIXME I should check and use start/stop codons instead
-  if(isvalid && gt_array_size(v->cdss) > 0 && gt_array_size(v->exons) > 0 &&
-     gt_array_size(v->utrs) == 0)
+  // If exons and CDS are provided explicitly, but UTR segments are
+  // not, infer the UTRs
+  if(isvalid && v->start_codon_range.start != 0 && gt_array_size(v->exons) > 0
+     && gt_array_size(v->utrs) == 0)
   {
     bool success = agn_gene_validator_infer_utrs(v, mrna, error);
     if(!success)
