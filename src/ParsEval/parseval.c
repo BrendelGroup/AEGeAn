@@ -48,17 +48,20 @@ int main(int argc, char * const argv[])
                                        "reference annotations from file '%s'",
                                        options.refrfile);
   if(haderror) return EXIT_FAILURE;
+  agn_logger_unset(logger);
   
   GtFeatureIndex *predfeats = agn_import_canonical(options.predfile, logger);
   haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
                                   "prediction annotations from file '%s'",
                                   options.predfile);
   if(haderror) return EXIT_FAILURE;
+  agn_logger_unset(logger);
   
   GtStrArray *seqids = agn_seq_intersection(refrfeats, predfeats, logger);
   haderror = agn_logger_print_all(logger, stderr, "[ParsEval] identifying "
                                   "sequences for pairwise comparison");
   if(haderror) return EXIT_FAILURE;
+  agn_logger_unset(logger);
 
   gt_timer_stop(timer_short);
   gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data "
@@ -68,7 +71,6 @@ int main(int argc, char * const argv[])
 
   //----- Parse loci -----
   //----------------------
-  // FIXME write two functions: parse_loci_memory, parse_loci_files
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin parsing loci\n", stderr);
 

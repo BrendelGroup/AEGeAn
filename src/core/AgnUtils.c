@@ -428,8 +428,8 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
     }
     if(matches == 0)
     {
-      // FIXME add message to error object
-      fprintf(stderr, "warning: no prediction annotations found for sequence '%s'\n", refrseq);
+      agn_logger_log_warning(logger, "warning: no prediction annotations found "
+                             "for sequence '%s'\n", refrseq);
     }
   }
 
@@ -446,8 +446,8 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
     }
     if(matches == 0)
     {
-      // FIXME add message to error object
-      fprintf(stderr, "warning: no reference annotations found for sequence '%s'\n", predseq);
+      agn_logger_log_warning(logger, "warning: no reference annotations found "
+                             "for sequence '%s'\n", predseq);
     }
   }
 
