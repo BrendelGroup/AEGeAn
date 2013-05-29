@@ -10,7 +10,7 @@ typedef struct
 {
   GtDlist *genes;
   GtRange range;
-  const char *seqid;
+  char *seqid;
 } AgnLocus;
 
 /**

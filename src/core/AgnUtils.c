@@ -269,7 +269,10 @@ bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range,
   return true;
 }
 
-GtArray* agn_parse_loci(const char *seqid, GtFeatureIndex *refr, GtFeatureIndex *pred)
+// I would prefer that this function created and returned a GtIntervalTree
+// rather than a GtArray.
+GtArray* agn_parse_loci(const char *seqid, GtFeatureIndex *refr,
+                        GtFeatureIndex *pred)
 {
   GtError *error = gt_error_new();
   GtArray *loci = gt_array_new( sizeof(AgnPairwiseCompareLocus *) );
@@ -426,8 +429,8 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
     }
     if(matches == 0)
     {
-      agn_logger_log_warning(logger, "warning: no prediction annotations found "
-                             "for sequence '%s'\n", refrseq);
+      agn_logger_log_warning(logger, "no prediction annotations found for "
+                             "sequence '%s'", refrseq);
     }
   }
 
@@ -444,9 +447,15 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
     }
     if(matches == 0)
     {
-      agn_logger_log_warning(logger, "warning: no reference annotations found "
-                             "for sequence '%s'\n", predseq);
+      agn_logger_log_warning(logger, "no reference annotations found for "
+                             "sequence '%s'", predseq);
     }
+  }
+  
+  if(gt_str_array_size(seqids) == 0)
+  {
+    agn_logger_log_error(logger, "no sequences in common between reference and "
+                         "prediction");
   }
 
   gt_str_array_delete(refrseqids);

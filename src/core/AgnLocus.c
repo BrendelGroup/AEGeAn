@@ -12,6 +12,7 @@ void agn_locus_add(AgnLocus *locus, GtFeatureNode *gene)
 
 void agn_locus_delete(AgnLocus *locus)
 {
+  gt_free(locus->seqid);
   gt_dlist_delete(locus->genes);
   gt_free(locus);
   locus = NULL;
@@ -20,7 +21,7 @@ void agn_locus_delete(AgnLocus *locus)
 AgnLocus *agn_locus_new(const char *seqid)
 {
   AgnLocus *locus = gt_malloc( sizeof(AgnLocus) );
-  locus->seqid = seqid;
+  locus->seqid = gt_cstr_dup(seqid);
   locus->genes = gt_dlist_new((GtCompare)gt_genome_node_cmp);
   locus->range.start = 0;
   locus->range.end = 0;

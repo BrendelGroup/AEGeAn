@@ -8,8 +8,8 @@
 
 /**
  * The purpose of the AgnPairwiseCompareLocus class is to store all of the data
- * associated with a distinct gene locus to facilitate the comparison of two
- * sets of gene structure annotations for that locus.
+ * associated with a distinct locus to facilitate the comparison of two sets of
+ * gene structure annotations for that locus.
  */
 typedef struct AgnPairwiseCompareLocus AgnPairwiseCompareLocus;
 

@@ -36,7 +36,7 @@ CLSS_MDL_OBJS=$(AGN_OBJS) $(PE_OBJS) $(VN_OBJS)
 
 # Compilation settings
 CC=gcc
-CFLAGS=-Wall -DAGN_DATA_PATH='"$(prefix)/share/aegean"' # -Wno-unused-result
+CFLAGS=-Wall -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -fopenmp # -Wno-unused-result
 ifeq ($(cairo),no)
   CFLAGS += -DWITHOUT_CAIRO
 endif
@@ -87,7 +87,7 @@ $(VN_OBJS):	obj/%.o : src/VAnG/%.c inc/VAnG/%.h
 		
 $(PE_EXE):	src/ParsEval/parseval.c $(AGN_OBJS) $(PE_OBJS)
 		@- mkdir -p bin
-		$(CC) $(CFLAGS) -fopenmp $(INCS) -o $@ $(AGN_OBJS) $(PE_OBJS) src/ParsEval/parseval.c $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) $(PE_OBJS) src/ParsEval/parseval.c $(LDFLAGS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@- mkdir -p bin
