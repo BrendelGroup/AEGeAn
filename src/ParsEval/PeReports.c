@@ -912,25 +912,51 @@ void pe_print_locus_to_seqfile( FILE *seqfile, unsigned long start, unsigned lon
   agn_sprintf_comma(start, sstart);
   agn_sprintf_comma(end, send);
   agn_sprintf_comma(length, slength);
-  fprintf( seqfile,
-           "        <tr>\n"
-           "          <td><a href=\"%lu-%lu.html\">(+)</a></td>\n"
-           "          <td>%s</td>\n"
-           "          <td>%s</td>\n"
-           "          <td>%s</td>\n"
-           "          <td>%lu / %lu</td>\n"
-           "          <td>\n"
-           "            <a class=\"pointer\" title=\"Perfect matches at this locus\">[P]</a> %u\n"
-           "            <a class=\"pointer left20\" title=\"Perfect matches at this locus with mislabeled UTRs\">[M]</a> %u\n"
-           "            <a class=\"pointer left20\" title=\"CDS matches at this locus\">[C]</a> %u\n"
-           "            <a class=\"pointer left20\" title=\"Exon structure matches at this locus\">[E]</a> %u\n"
-           "            <a class=\"pointer left20\" title=\"UTR matches at this locus\">[U]</a> %u\n"
-           "            <a class=\"pointer left20\" title=\"Non-matches at this locus\">[N]</a> %u\n"
-           "          </td>\n"
-           "        </tr>\n",
-          start, end, sstart, send, slength, refr_transcripts, pred_transcripts, comparisons->num_perfect,
-          comparisons->num_mislabeled, comparisons->num_cds_match, comparisons->num_exon_match,
-          comparisons->num_utr_match, comparisons->non_match );
+  fprintf(seqfile,
+          "        <tr>\n"
+          "          <td><a href=\"%lu-%lu.html\">(+)</a></td>\n"
+          "          <td>%s</td>\n"
+          "          <td>%s</td>\n"
+          "          <td>%s</td>\n"
+          "          <td>%lu / %lu</td>\n"
+          "          <td>\n",
+          start, end, sstart, send, slength, refr_transcripts,
+          pred_transcripts);
+  if(comparisons->num_perfect > 0)
+  {
+    fprintf(seqfile, "            <a class=\"pointer left20\" title=\"Perfect "
+            "matches at this locus\">[P]</a> %u\n", comparisons->num_perfect);
+  }
+  if(comparisons->num_mislabeled > 0)
+  {
+    fprintf(seqfile, "            <a class=\"pointer left20\" title=\"Perfect "
+            "matches at this locus with mislabeled UTRs\">[M]</a> %u\n",
+            comparisons->num_mislabeled);
+  }
+  if(comparisons->num_cds_match > 0)
+  {
+    fprintf(seqfile, "            <a class=\"pointer left20\" title=\"CDS "
+            "matches at this locus\">[C]</a> %u\n", comparisons->num_cds_match);
+  }
+  if(comparisons->num_exon_match > 0)
+  {
+    fprintf(seqfile, "            <a class=\"pointer left20\" title=\"Exon "
+            "structure matches at this locus\">[E]</a> %u\n",
+            comparisons->num_exon_match);
+  }
+  if(comparisons->num_utr_match > 0)
+  {
+    fprintf(seqfile, "            <a class=\"pointer left20\" title=\"UTR "
+            "matches at this locus\">[U]</a> %u\n", comparisons->num_utr_match);
+  }
+  if(comparisons->non_match > 0)
+  {
+     fprintf(seqfile, "            <a class=\"pointer left20\" "
+             "title=\"Non-matches at this locus\">[N]</a> %u\n",
+             comparisons->non_match);
+  }
+  fprintf( seqfile, "          </td>\n"
+                    "        </tr>\n" );
 }
 
 void pe_print_seqfile_header(FILE *outstream, const char *seqid)
@@ -1337,8 +1363,8 @@ void pe_print_summary_html( const char *start_time, int argc, char * const argv[
          "    <meta charset=\"utf-8\" />\n"
          "    <title>ParsEval Summary</title>\n"
          "    <link rel=\"stylesheet\" type=\"text/css\" href=\"parseval.css\" />\n"
-         "    <script type=\"text/javascript\" language=\"javascript\" src=\"jquery.js\"></script>\n"
-         "    <script type=\"text/javascript\" language=\"javascript\" src=\"jquery.dataTables.js\"></script>\n"
+         "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.js\"></script>\n"
+         "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.dataTables.js\"></script>\n"
          "    <script type=\"text/javascript\">\n"
          "      $(document).ready(function() {\n"
          "        $('#seqlist').dataTable( {\n"
