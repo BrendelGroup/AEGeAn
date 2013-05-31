@@ -42,7 +42,8 @@ struct AgnPairwiseCompareLocus
  *                      written
  * @param[in]  data     any auxilliary data needed
  */
-void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track, void *data);
+void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track,
+                                                   void *data);
 #endif
 
 /**
@@ -51,8 +52,8 @@ void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track,
  * @param[out] locus           the locus
  * @param[in]  gene_feature    gene that was just merged with the locus
  */
-void agn_pairwise_compare_locus_update_range( AgnPairwiseCompareLocus *locus,
-                                 GtFeatureNode *gene_feature );
+void agn_pairwise_compare_locus_update_range(AgnPairwiseCompareLocus *locus,
+                                 GtFeatureNode *gene_feature);
 
 
 //----------------------------------------------------------------------------//
