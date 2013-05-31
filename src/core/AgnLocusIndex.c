@@ -19,6 +19,16 @@ struct AgnLocusIndex
 //------------------------------------------------------------------------------
 
 /**
+ * Function used to traverse the given interval tree and add all its loci to the
+ * given array.
+ *
+ * @param[in]  itn    node in the interval tree
+ * @param[out] lp     array to which loci are added
+ * @returns           0 for success, 1 otherwise
+ */
+int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp);
+
+/**
  * Given two sets of annotations for the same sequence (a reference set and a
  * prediction set), this function associates each gene annotation with the
  * appropriate locus.
@@ -82,12 +92,63 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
 // Method implementations
 //------------------------------------------------------------------------------
 
+int agn_locus_compare(const void *p1, const void *p2)
+{
+  AgnLocus *l1 = *(AgnLocus **)p1;
+  AgnLocus *l2 = *(AgnLocus **)p2;
+
+  if(l1->range.start == l2->range.start && l1->range.end == l2->range.end)
+    return 0;
+  else if
+  (
+    (l1->range.start < l2->range.start) ||
+    (l1->range.start == l2->range.start && l1->range.end < l2->range.end)
+  )
+  {
+    return -1;
+  }
+  
+  return 1;
+}
+
 void agn_locus_index_delete(AgnLocusIndex *idx)
 {
   gt_hashmap_delete(idx->locus_trees);
   gt_str_array_delete(idx->seqids);
   gt_free(idx);
   idx = NULL;
+}
+
+void agn_locus_index_find(AgnLocusIndex *idx, const char *seqid, GtRange *range,
+                          GtArray *loci)
+{
+  gt_assert(loci != NULL);
+  GtIntervalTree *it = gt_hashmap_get(idx->locus_trees, seqid);
+  if(it == NULL)
+    return;
+  
+  gt_interval_tree_find_all_overlapping(it, range->start, range->end, loci);
+}
+
+GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
+{
+  GtIntervalTree *it = gt_hashmap_get(idx->locus_trees, seqid);
+  if(it == NULL)
+    return NULL;
+  
+  GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
+  gt_interval_tree_traverse(it, agn_locus_index_it_traverse, loci);
+  return loci;
+}
+
+int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
+{
+  GtArray *loci = (GtArray *)lp;
+  // Stored as a void* since we don't know whether these are AgnLocus objects or
+  // AgnPairwiseCompareLocus objects.
+  void *locus = gt_interval_tree_node_get_data(itn);
+  gt_array_add(loci, locus);
+  return 0;
 }
 
 AgnLocusIndex *agn_locus_index_new()
@@ -193,6 +254,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
         continue;
       }
       
+      gt_hashmap_add(visited_genes, fn, fn);
       AgnLocus *locus = agn_locus_new(seqid);
       agn_locus_add(locus, fn);
       
@@ -210,6 +272,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
                                                           locus->range.end);
       gt_interval_tree_insert(loci, itn);
     }
+    gt_feature_node_iterator_delete(iter);
   }
   
   gt_error_delete(error);
@@ -461,6 +524,7 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
     gt_array_delete(overlapping_features);
     return 0;
   }
+  gt_error_delete(error);
   
   while(gt_array_size(overlapping_features) > 0)
   {
@@ -476,4 +540,9 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
   gt_array_delete(overlapping_features);
   
   return new_gene_count;
+}
+
+GtStrArray *agn_locus_index_seqids(AgnLocusIndex *idx)
+{
+  return idx->seqids;
 }

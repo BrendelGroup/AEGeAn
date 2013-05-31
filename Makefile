@@ -12,7 +12,8 @@ GT_COMPILE_DIR=$(GT_INSTALL_DIR)/src/genometools
 PE_EXE=bin/parseval
 CN_EXE=bin/canon-gff3
 VN_EXE=bin/vang
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE)
+LP_EXE=bin/locuspocus
+BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -96,3 +97,8 @@ $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(VN_OBJS) src/VAnG/vang.c $(LDFLAGS)
+
+$(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
+		@- mkdir -p bin
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
+		

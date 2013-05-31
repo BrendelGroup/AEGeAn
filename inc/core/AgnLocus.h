@@ -41,8 +41,10 @@ AgnLocus *agn_locus_new(const char *seqid);
  *
  * @param[in] locus        the locus
  * @param[in] outstream    the file to which the locus will be printed
+ * @param[in] source       source string to use as second column of GFF3 output;
+ *                         if NULL is provided, "AEGeAn" will be used
  */
-void agn_locus_print(AgnLocus *locus, FILE *outstream);
+void agn_locus_print(AgnLocus *locus, FILE *outstream, const char *source);
 
 /**
  * Write a string representation of the locus (seq_start-end)

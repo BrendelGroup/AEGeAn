@@ -21,6 +21,15 @@ capabilities available from the GenomeTools library (http://genometools.org).
     variety of common conventions.
 
     --------------------
+    LocusPocus
+    --------------------
+    In the ParsEval paper cited below, a `gene locus' is defined as the smallest
+    genomic region that contains all genes that overlap with any other genes in
+    that region. This definition can be useful when comparing two sets of gene
+    predictions. LocusPocus is a program for computing gene loci from one or
+    more gene prediction sets.
+
+    --------------------
     ParsEval
     --------------------
     ParsEval is a program for comparing distinct sets of gene structure
@@ -172,10 +181,19 @@ If you use the default install locations and still run into problems, make sure
 that `/usr/local/bin' is in your path (using the `export' or `setenv' commands)
 and that `/usr/local/lib' is in the LD path (using the `ldconfig' command).
 
+
 --------------------------------------------------------------------------------
 Running CanonGFF3
 --------------------------------------------------------------------------------
 Invoking `canon-gff3 -h' will print a helpful usage statement ot the terminal. 
+For a more detailed description and use cases, please refer to the documentation
+in the `doc' directory.
+
+
+--------------------------------------------------------------------------------
+Running LocusPocus
+--------------------------------------------------------------------------------
+Invoking `locuspocus -h' will print a helpful usage statement ot the terminal. 
 For a more detailed description and use cases, please refer to the documentation
 in the `doc' directory.
 

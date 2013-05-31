@@ -506,6 +506,7 @@ bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
       gt_array_add(v->utrs, utr);
     }
   }
+  gt_str_delete(aegean);
   
   return true;
 }

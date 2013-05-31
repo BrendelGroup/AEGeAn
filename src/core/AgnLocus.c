@@ -13,6 +13,12 @@ void agn_locus_add(AgnLocus *locus, GtFeatureNode *gene)
 void agn_locus_delete(AgnLocus *locus)
 {
   gt_free(locus->seqid);
+  GtDlistelem *e;
+  for(e = gt_dlist_first(locus->genes); e != NULL; e = gt_dlistelem_next(e))
+  {
+    GtFeatureNode *gene = gt_dlistelem_get_data(e);
+    gt_genome_node_delete((GtGenomeNode *)gene);
+  }
   gt_dlist_delete(locus->genes);
   gt_free(locus);
   locus = NULL;
@@ -29,12 +35,15 @@ AgnLocus *agn_locus_new(const char *seqid)
   return locus;
 }
 
-void agn_locus_print(AgnLocus *locus, FILE *outstream)
+void agn_locus_print(AgnLocus *locus, FILE *outstream, const char *source)
 {
-  fprintf( outstream,
-           "%s\tgeneannology:locus\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu\n",
-           locus->seqid, locus->range.start, locus->range.end,
-           gt_dlist_size(locus->genes) );
+  const char *src = "AEGeAn";
+  if(source != NULL)
+    src = source;
+  fprintf(outstream,
+          "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu\n",
+          locus->seqid, src, locus->range.start, locus->range.end,
+          gt_dlist_size(locus->genes));
 }
 
 void agn_locus_stringify(AgnLocus *locus, char *string)

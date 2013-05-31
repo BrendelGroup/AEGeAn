@@ -7,12 +7,46 @@
 typedef struct AgnLocusIndex AgnLocusIndex;
 
 /**
+ * Array comparison function for locus objects
  *
+ * @param[in] p1    pointer to one locus object
+ * @param[in] p2    pointer to another locus object
+ * @returns         -1, 0, or 1 depending on their relative position
+ */
+int agn_locus_compare(const void *p1, const void *p2);
+
+/**
+ * Free memory allocated to the given locus index.
+ *
+ * @param[in] idx    the locus index object
  */
 void agn_locus_index_delete(AgnLocusIndex *idx);
 
 /**
+ * Find all overlapping features in the given range stored in this locus index.
  *
+ * @param[in]  idx      locus index object
+ * @param[in]  seqid    ID of the sequence of interest
+ * @param[in]  range    range of interest
+ * @param[out] loci     array in which all loci overlapping the specified range
+ *                      will be stored
+ */
+void agn_locus_index_find(AgnLocusIndex *idx, const char *seqid, GtRange *range,
+                          GtArray *loci);
+
+/**
+ * Retrieve all loci corresponding to the specified sequence ID.
+ *
+ * @param[in] idx      locus index object
+ * @param[in] seqid    ID of the sequence of interest
+ * @returns            array containing all loci corresponding to given seqid
+ */
+GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
+
+/**
+ * Allocate memory for a new locus index object.
+ *
+ * @returns    a pointer to the new object
  */
 AgnLocusIndex *agn_locus_index_new();
 
@@ -58,7 +92,7 @@ unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
  *                          written if necessary
  * @returns                 the number of loci identified
  */
-unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
+unsigned long agn_locus_index_parse_memory(AgnLocusIndex *idx,
                   GtFeatureIndex *features, int numprocs, AgnLogger *logger);
 
 /**
@@ -71,7 +105,15 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
  *                          written if necessary
  * @returns                 the number of loci identified
  */
-unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
+unsigned long agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles,
                   const char **filenames, int numprocs, AgnLogger *logger);
+
+/**
+ * Get a list of the seqids stored in this locus index.
+ *
+ * @param[in] idx    the locus index
+ * @returns          pointer to a string array containing the seqids
+ */
+GtStrArray *agn_locus_index_seqids(AgnLocusIndex *idx);
 
 #endif
