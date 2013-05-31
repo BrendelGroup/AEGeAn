@@ -425,6 +425,8 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
   gt_str_array_delete(idx->seqids);
   idx->seqids = seqids;
   
+  int orig_numprocs = omp_get_num_threads();
+  omp_set_num_threads(numprocs);
   unsigned long totalloci = 0;
   #pragma omp parallel private(i, rank)
   {
@@ -446,6 +448,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
       }
     }
   } // End parallelize
+  omp_set_num_threads(orig_numprocs);
   
   return totalloci;
 }
@@ -490,6 +493,8 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
   gt_str_array_delete(idx->seqids);
   idx->seqids = seqids;
   
+  int orig_numprocs = omp_get_num_threads();
+  omp_set_num_threads(numprocs);
   unsigned long totalloci = 0;
   #pragma omp parallel private(i, rank)
   {
@@ -509,6 +514,7 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
       }
     } // End parallelize
   }
+  omp_set_num_threads(orig_numprocs);
   
   gt_error_delete(error);
   return totalloci;

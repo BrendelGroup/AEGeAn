@@ -95,6 +95,7 @@ int main(int argc, char * const argv[])
 
   //----- Locus comparison -----
   //----------------------------
+  omp_set_num_threads(options.numprocs); // FIXME
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin comparative analysis\n", stderr);
 

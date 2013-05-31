@@ -282,10 +282,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         exit(1);
       }
     }
-
   }
-
-  omp_set_num_threads(options->numprocs);
 
   return optind;
 }

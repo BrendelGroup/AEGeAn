@@ -8,6 +8,7 @@
 typedef struct
 {
   bool debug;
+  int numprocs;
   FILE *outstream;
   bool verbose;
 } LocusPocusOptions;
@@ -18,11 +19,13 @@ void print_usage(FILE *outstream)
   fprintf( outstream,
 "Usage: ./locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
 "  Options:\n"
-"    -d|--debug      print detailed debugging messages to terminal (STDERR)\n"
-"    -h|--help       print this help message and exit\n"
-"    -o|--outfile    name of file to which results will be written; default\n"
-"                    is terminal (STDOUT)\n"
-"    -v|--verbose    print detailed log messages to terminal (STDERR)\n\n" );
+"    -d|--debug            print detailed debugging messages to terminal\n"
+"                          (standard error)\n"
+"    -h|--help             print this help message and exit\n"
+"    -n|--numprocs:INT     number of processors to utilize; default is 1\n"
+"    -o|--outfile: FILE    name of file to which results will be written;\n"
+"                          default is terminal (standard output)\n"
+"    -v|--verbose          print detailed log messages to terminal (standard error)\n\n" );
 }
 
 // Main program
@@ -31,15 +34,16 @@ int main(int argc, char **argv)
   // Parse options from command line
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dho:v";
+  const char *optstr = "dhn:o:v";
   const struct option locuspocus_options[] =
   {
-    { "debug",   no_argument, NULL, 'd' },
-    { "help",    no_argument, NULL, 'h' },
-    { "outfile", no_argument, NULL, 'o' },
-    { "verbose", no_argument, NULL, 'v' },
+    { "debug",    no_argument, NULL, 'd' },
+    { "help",     no_argument, NULL, 'h' },
+    { "numprocs", no_argument, NULL, 'n' },
+    { "outfile",  no_argument, NULL, 'o' },
+    { "verbose",  no_argument, NULL, 'v' },
   };
-  LocusPocusOptions options = { 0, stdout, 0 };
+  LocusPocusOptions options = { 0, 0, stdout, 0 };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex))
@@ -53,6 +57,14 @@ int main(int argc, char **argv)
       case 'h':
         print_usage(stdout);
         exit(0);
+        break;
+      case 'n':
+        if(sscanf(optarg, "%d", &options.numprocs) == EOF)
+        {
+          fprintf(stderr, "[LocusPocus] error: could not convert number of "
+                  "processors '%s' to an integer", optarg);
+          exit(1);
+        }
         break;
       case 'o':
         options.outstream = fopen(optarg, "w");
@@ -83,7 +95,8 @@ int main(int argc, char **argv)
   AgnLogger *logger = agn_logger_new();
   AgnLocusIndex *loci = agn_locus_index_new();
   unsigned long numloci = agn_locus_index_parse_disk(loci, numfiles,
-                              (const char **)argv + optind, 1, logger);
+                              (const char **)argv + optind, options.numprocs,
+                              logger);
   if(options.verbose)
     fprintf(stderr, "[LocusPocus] found %lu total loci\n", numloci);
   bool haderror = agn_logger_print_all(logger, stderr, "[LocusPocus] loading "
