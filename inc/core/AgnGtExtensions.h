@@ -213,7 +213,17 @@ char agn_gt_strand_to_char(GtStrand strand);
  *
  * @param[in] a1    an array of strings
  * @param[in] a2    another array of strings
+ * @returns         array of shared strings
  */
 GtStrArray* agn_gt_str_array_intersection(GtStrArray *a1, GtStrArray *a2);
+
+/**
+ * Find the strings that are present in either (or both) of the string arrays.
+ *
+ * @param[in] a1    an array of strings
+ * @param[in] a2    another array of strings
+ * @returns         array of each string contained in either array
+ */
+GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2);
 
 #endif

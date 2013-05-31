@@ -463,6 +463,39 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
   return seqids;
 }
 
+GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
+                          AgnLogger *logger)
+{
+  // Fetch seqids from reference and prediction annotations
+  GtError *e = gt_error_new();
+  GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, e);
+  if(gt_error_is_set(e))
+  {
+    agn_logger_log_error(logger, "error fetching seqids for reference: %s",
+                         gt_error_get(e));
+    gt_error_unset(e);
+  }
+  GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, e);
+  if(gt_error_is_set(e))
+  {
+    agn_logger_log_error(logger, "error fetching seqids for prediction: %s",
+                         gt_error_get(e));
+    gt_error_unset(e);
+  }
+  gt_error_delete(e);
+  if(agn_logger_has_error(logger))
+  {
+    gt_str_array_delete(refrseqids);
+    gt_str_array_delete(predseqids);
+    return NULL;
+  }
+  GtStrArray *seqids = agn_gt_str_array_union(refrseqids, predseqids);
+  
+  gt_str_array_delete(refrseqids);
+  gt_str_array_delete(predseqids);
+  return seqids;
+}
+
 int agn_sprintf_comma(unsigned long n, char *buffer)
 {
   if(n < 1000)

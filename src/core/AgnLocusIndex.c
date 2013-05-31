@@ -184,10 +184,20 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
                   void (*add_func)(AgnPairwiseCompareLocus *, GtFeatureNode *),
                   AgnLogger *logger)
 {
-  GtRange locusrange;
   GtError *error = gt_error_new();
+  bool has_seqid;
+  gt_feature_index_has_seqid(features, &has_seqid,
+                             agn_pairwise_compare_locus_get_seqid(locus),
+                             error);
+  if(!has_seqid)
+  {
+    gt_error_delete(error);
+    return 0;
+  }
+  
+  GtRange locusrange;
   GtArray *genes_to_add = gt_array_new( sizeof(GtFeatureNode *) );
-  unsigned long new_gene_count;
+  unsigned long new_gene_count = 0;
   
   locusrange.start = agn_pairwise_compare_locus_get_start(locus);
   locusrange.end = agn_pairwise_compare_locus_get_end(locus);
@@ -406,7 +416,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
   int i, rank;
   gt_assert(idx != NULL);
   gt_assert(refrfeats != NULL && predfeats != NULL);
-  GtStrArray *seqids = agn_seq_intersection(refrfeats, predfeats, logger);
+  GtStrArray *seqids = agn_seq_union(refrfeats, predfeats, logger);
   if(agn_logger_has_error(logger))
   {
     gt_str_array_delete(seqids);
@@ -508,8 +518,16 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
                                  GtHashmap *visited_genes, AgnLocus *locus,
                                  AgnLogger *logger)
 {
-  int new_gene_count = 0;
   GtError *error = gt_error_new();
+  bool has_seqid;
+  gt_feature_index_has_seqid(features, &has_seqid, locus->seqid, error);
+  if(!has_seqid)
+  {
+    gt_error_delete(error);
+    return 0;
+  }
+  
+  int new_gene_count = 0;
   GtArray *overlapping_features = gt_array_new( sizeof(GtFeatureNode *) );
   
   gt_feature_index_get_features_for_range(features, overlapping_features,

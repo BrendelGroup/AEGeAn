@@ -2,6 +2,7 @@
 #include <string.h>
 #include <time.h>
 #include "AgnCanonNodeVisitor.h"
+#include "AgnLocusIndex.h"
 #include "AgnPairwiseCompareLocus.h"
 #include "AgnUtils.h"
 #include "PeReports.h"
@@ -36,85 +37,43 @@ int main(int argc, char * const argv[])
   GtTimer *timer_short = gt_timer_new();
   fputs("[ParsEval] Begin ParsEval\n", stderr);
 
-
-  //----- Load data into memory -----
-  //---------------------------------
+  // Load data into memory and parse loci
   gt_timer_start(timer_short);
-  fputs("[ParsEval] Begin loading data\n", stderr);
+  fputs("[ParsEval] Begin loading data and parsing loci\n", stderr);
 
   AgnLogger *logger = agn_logger_new();
-  GtFeatureIndex *refrfeats = agn_import_canonical(1,&options.refrfile,logger);
+  AgnLocusIndex *locusindex = agn_locus_index_new();
+  unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
+                            options.refrfile, options.predfile,
+                            options.numprocs, logger);
   bool haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
-                                       "reference annotations from file '%s'",
-                                       options.refrfile);
+                                       "annotations from files '%s' and '%s'",
+                                       options.refrfile, options.predfile);
   if(haderror) return EXIT_FAILURE;
   agn_logger_unset(logger);
   
-  GtFeatureIndex *predfeats = agn_import_canonical(1,&options.predfile,logger);
-  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
-                                  "prediction annotations from file '%s'",
-                                  options.predfile);
-  if(haderror) return EXIT_FAILURE;
-  agn_logger_unset(logger);
-  
-  GtStrArray *seqids = agn_seq_intersection(refrfeats, predfeats, logger);
-  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] identifying "
-                                  "sequences for pairwise comparison");
-  if(haderror) return EXIT_FAILURE;
-  agn_logger_unset(logger);
-
-  gt_timer_stop(timer_short);
-  gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data "
-                          "(%ld.%06ld seconds)\n", stderr);
+  GtStrArray *seqids = agn_locus_index_seqids(locusindex);
   unsigned long numseqs = gt_str_array_size(seqids);
-
-
-  //----- Parse loci -----
-  //----------------------
-  gt_timer_start(timer_short);
-  fputs("[ParsEval] Begin parsing loci\n", stderr);
-
-  int i;
-  unsigned long total = 0;
-  int rank;
   GtArray *loci = gt_array_new( sizeof(GtArray *) );
-  GtArray **p_list = (GtArray **)gt_malloc( numseqs * sizeof(GtArray *) );
-  #pragma omp parallel private(i, rank)
-  {
-    rank = omp_get_thread_num();
-
-    #pragma omp for schedule(static)
-    for(i = 0; i < numseqs; i++)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      GtArray *seq_loci = agn_parse_loci(seqid, refrfeats, predfeats);
-      #pragma omp critical
-      {
-        total += gt_array_size(seq_loci);
-        p_list[i] = seq_loci;
-        fprintf( stderr, "[ParsEval]     loci on seq '%s' identified by processor %d\n",
-                 seqid, rank );
-      }
-    }
-  } // End parallelize
+  int i;
   for(i = 0; i < numseqs; i++)
   {
-    gt_array_add(loci, p_list[i]);
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
+    gt_array_sort(seq_loci,(GtCompare)agn_pairwise_compare_locus_array_compare);
+    gt_array_add(loci, seq_loci);
   }
-  gt_free(p_list);
   gt_timer_stop(timer_short);
-  gt_timer_show_formatted( timer_short, "[ParsEval] Finished parsing loci (%ld.%06ld seconds)\n",
-                           stderr );
-  gt_feature_index_delete(refrfeats);
-  gt_feature_index_delete(predfeats);
+  gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data and "
+                          "parsing loci (%ld.%06ld seconds)\n", stderr);
 
   // Stop now if there are no loci
   if(total == 0)
   {
     fprintf(stderr, "[ParsEval] Warning: found no loci to analyze");
     gt_timer_stop(timer_all);
-    gt_timer_show_formatted( timer_all,"[ParsEval] ParsEval complete! (total runtime: %ld.%06ld "
-                             "seconds)\n\n", stderr );
+    gt_timer_show_formatted(timer_all,"[ParsEval] ParsEval complete! (total "
+                            "runtime: %ld.%06ld seconds)\n\n", stderr );
     fclose(options.outfile);
     for(i = 0; i < gt_array_size(loci); i++)
     {
@@ -239,7 +198,7 @@ int main(int argc, char * const argv[])
     }
 
     // Distribute the loci for this sequence across the p processors
-    int j;
+    int rank, j;
     #pragma omp parallel private(rank, j)
     {
       AgnSummaryData summary_data_local;
@@ -520,6 +479,7 @@ int main(int argc, char * const argv[])
                            "seconds)\n\n", stderr );
 
   // Free up remaining memory
+  agn_logger_delete(logger);
   gt_free(seqlevel_summary_data);
   gt_array_delete(loci);
   gt_str_array_delete(seqids);

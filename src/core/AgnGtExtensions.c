@@ -387,19 +387,48 @@ char agn_gt_strand_to_char(GtStrand strand)
 GtStrArray* agn_gt_str_array_intersection(GtStrArray *a1, GtStrArray *a2)
 {
   GtStrArray *intersection = gt_str_array_new();
-  unsigned long i, j;
+  GtHashmap *added = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  unsigned long i;
   for(i = 0; i < gt_str_array_size(a1); i++)
   {
-    const char *s1 = gt_str_array_get(a1, i);
-    int matches = 0;
-    for(j = 0; j < gt_str_array_size(a2); j++)
-    {
-      const char *s2 = gt_str_array_get(a2, j);
-      if(strcmp(s1, s2) == 0)
-        matches++;
-    }
-    if(matches > 0)
-      gt_str_array_add_cstr(intersection, s1);
+    char *str = (char *)gt_str_array_get(a1, i);
+    gt_hashmap_add(added, str, str);
   }
+  for(i = 0; i < gt_str_array_size(a2); i++)
+  {
+    char *str = (char *)gt_str_array_get(a2, i);
+    if(gt_hashmap_get(added, str) != NULL)
+    {
+      gt_str_array_add_cstr(intersection, str);
+    }
+  }
+  gt_hashmap_delete(added);
   return intersection;
+}
+
+GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
+{
+  GtStrArray *uniona = gt_str_array_new();
+  GtHashmap *added = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  unsigned long i;
+  for(i = 0; i < gt_str_array_size(a1); i++)
+  {
+    char *str = (char *)gt_str_array_get(a1, i);
+    if(gt_hashmap_get(added, str) == NULL)
+    {
+      gt_hashmap_add(added, str, str);
+      gt_str_array_add_cstr(uniona, str);
+    }
+  }
+  for(i = 0; i < gt_str_array_size(a2); i++)
+  {
+    char *str = (char *)gt_str_array_get(a2, i);
+    if(gt_hashmap_get(added, str) == NULL)
+    {
+      gt_hashmap_add(added, str, str);
+      gt_str_array_add_cstr(uniona, str);
+    }
+  }
+  gt_hashmap_delete(added);
+  return uniona;
 }

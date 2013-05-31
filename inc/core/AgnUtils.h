@@ -146,6 +146,19 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
                                  GtFeatureIndex *predfeats, AgnLogger *logger);
 
 /**
+ * Given two feature indices, determine all of the sequence that are annotated
+ * between them and return the sequence IDs as an array.
+ *
+ * @param[in]  refrfeats    index of reference features
+ * @param[in]  predfeats    index of prediction feature
+ * @param[out] error        object to which warning/error messages will be
+ *                          written if necessary
+ * @returns                 a string array containing IDs of all sequences
+ */
+GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
+                          AgnLogger *logger);
+
+/**
  * Format the given non-negative number with commas as the thousands separator.
  *
  * @param[in]  n         the number
