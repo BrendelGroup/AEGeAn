@@ -120,19 +120,6 @@ bool agn_infer_cds_range_from_exon_and_codons( GtRange *exon_range,
                                                GtRange *cds_range );
 
 /**
- * Given two sets of annotations for the same sequence (a reference set and a
- * prediction set), this function associates each gene annotation with the
- * appropriate locus/loci.
- *
- * @param[in] seqid    the sequence for which loci are needed
- * @param[in] refr     reference annotations for the sequence
- * @param[in] pred     prediction annotations for the sequence
- * @returns            an array of gene loci for the sequence
- */
-GtArray* agn_parse_loci( const char *seqid, GtFeatureIndex *refr,
-                         GtFeatureIndex *pred );
-
-/**
  * Given two feature indices, determine which sequences are common and return
  * them as an array.
  *
