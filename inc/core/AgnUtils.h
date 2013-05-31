@@ -40,17 +40,6 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2);
 double agn_calc_splice_complexity(GtArray *transcripts);
 
 /**
- * Dereference the given pointers and compare the resulting strings.
- *
- * @param[in] p1    pointer to a char array
- * @param[in] p2    pointer to another char array
- * @returns         1 if p1 comes lexicographically before p2, -1 if p2 comes
- *                  lexicographically before p1, and 0 if p1 and p2 are
- *                  lexicographically equal
- */
-int agn_cstr_compare(void *p1, void *p2);
-
-/**
  * If reference transcripts belonging to the same locus overlap, they must be
  * separated before comparison with prediction transcript models (and vice
  * versa). This is an instance of the maximal clique enumeration problem

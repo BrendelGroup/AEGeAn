@@ -2,6 +2,7 @@
 #include "extended/feature_node_rep.h"
 #include "extended/feature_node.h"
 #include "AgnGtExtensions.h"
+#include "AgnUtils.h"
 
 GtArray* agn_gt_array_copy(GtArray *source, size_t size)
 {
@@ -408,7 +409,7 @@ GtStrArray* agn_gt_str_array_intersection(GtStrArray *a1, GtStrArray *a2)
 
 GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
 {
-  GtStrArray *uniona = gt_str_array_new();
+  GtArray *strings = gt_array_new( sizeof(char *) );
   GtHashmap *added = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   unsigned long i;
   for(i = 0; i < gt_str_array_size(a1); i++)
@@ -417,7 +418,7 @@ GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
     if(gt_hashmap_get(added, str) == NULL)
     {
       gt_hashmap_add(added, str, str);
-      gt_str_array_add_cstr(uniona, str);
+      gt_array_add(strings, str);
     }
   }
   for(i = 0; i < gt_str_array_size(a2); i++)
@@ -426,9 +427,19 @@ GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
     if(gt_hashmap_get(added, str) == NULL)
     {
       gt_hashmap_add(added, str, str);
-      gt_str_array_add_cstr(uniona, str);
+      gt_array_add(strings, str);
     }
   }
   gt_hashmap_delete(added);
+  // The whole reason I'm going through this mess--GtStrArray class has no sort
+  // function.
+  gt_array_sort(strings, (GtCompare)agn_string_compare);
+  
+  GtStrArray *uniona = gt_str_array_new();
+  for(i = 0; i < gt_array_size(strings); i++)
+  {
+    const char *str = *(const char **)gt_array_get(strings, i);
+    gt_str_array_add_cstr(uniona, str);
+  }
   return uniona;
 }

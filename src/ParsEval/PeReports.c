@@ -1428,7 +1428,7 @@ void pe_print_summary_html( const char *start_time, int argc, char * const argv[
     if(options->summary_only || seq_summary_data[i].counts.num_loci == 0)
     {
       fprintf( outstream, "        <tr><td>%s</td><td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
-               seqid, seq_summary_data[i].counts.num_loci, seq_summary_data[i].counts.refr_genes, seq_summary_data[i].counts.pred_genes );
+               seqid, seq_summary_data[i].counts.refr_genes, seq_summary_data[i].counts.pred_genes, seq_summary_data[i].counts.num_loci );
 
       char cmd[512];
       sprintf(cmd, "rm -r %s/%s", options->outfilename, seqid);
@@ -1436,7 +1436,7 @@ void pe_print_summary_html( const char *start_time, int argc, char * const argv[
     }
     else
       fprintf( outstream, "        <tr><td><a href=\"%s/index.html\">%s</a></td><td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
-               seqid, seqid, seq_summary_data[i].counts.num_loci, seq_summary_data[i].counts.refr_genes, seq_summary_data[i].counts.pred_genes );
+               seqid, seqid, seq_summary_data[i].counts.refr_genes, seq_summary_data[i].counts.pred_genes, seq_summary_data[i].counts.num_loci );
   }
   fputs("        </tbody>\n\n"
         "      </table>\n\n", outstream);

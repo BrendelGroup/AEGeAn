@@ -120,13 +120,6 @@ double agn_calc_splice_complexity(GtArray *transcripts)
   return sc;
 }
 
-int agn_cstr_compare(void *p1, void *p2)
-{
-  const char *s1 = *(char **)p1;
-  const char *s2 = *(char **)p2;
-  return strcmp(s1, s2);
-}
-
 GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
 {
   GtArray *cliques = gt_array_new( sizeof(GtArray *) );
