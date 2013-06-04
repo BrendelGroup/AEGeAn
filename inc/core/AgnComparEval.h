@@ -3,9 +3,6 @@
 
 #include <stdio.h>
 
-#define AEGEAN_VERSION "0.9.3"
-#define AEGEAN_COPY_DATE "2013"
-
 /**
  * This struct is used to aggregate counts and statistics regarding the
  * nucleotide-level comparison and analysis of gene structure.

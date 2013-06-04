@@ -1,4 +1,4 @@
 bin
 obj
-
+inc/core/AgnVersion.h
 TAIR*.gff

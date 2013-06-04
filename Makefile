@@ -72,17 +72,17 @@ uninstall:
 		rm -r $(prefix)/share/parseval
 
 clean:		
-		rm -f $(BINS) $(CLSS_MDL_OBJS)
+		rm -f $(BINS) $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
 
-$(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h
+$(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
-$(PE_OBJS):	obj/%.o : src/ParsEval/%.c inc/ParsEval/%.h
+$(PE_OBJS):	obj/%.o : src/ParsEval/%.c inc/ParsEval/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
-$(VN_OBJS):	obj/%.o : src/VAnG/%.c inc/VAnG/%.h
+$(VN_OBJS):	obj/%.o : src/VAnG/%.c inc/VAnG/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 		
@@ -101,4 +101,6 @@ $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
-		
+
+inc/core/AgnVersion.h:	
+			perl data/share/version.pl > inc/core/AgnVersion.h
