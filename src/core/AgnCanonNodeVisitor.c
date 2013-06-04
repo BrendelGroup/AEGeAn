@@ -173,35 +173,16 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
   gt_error_check(error);
   v = agn_canon_node_visitor_cast(nv);
 
-  if(gt_feature_node_is_pseudo(fn))
+  GtArray *features = gt_array_new( sizeof(GtFeatureNode *) );
+  agn_gt_feature_node_resolve_pseudo_node(fn, features);
+  while(gt_array_size(features) > 0)
   {
-    GtArray *features = gt_array_new( sizeof(GtFeatureNode *) );
-    agn_gt_feature_node_resolve_pseudo_node(fn, features);
-    while(gt_array_size(features) > 0)
+    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(features);
+    bool isvalid = agn_gene_validator_validate_gene(v->validator,fn,v->logger);
+    if(isvalid)
     {
-      GtFeatureNode *fn2add = *(GtFeatureNode **)gt_array_pop(features);
-      if(agn_gene_validator_validate_gene(v->validator, fn2add, v->logger))
-      {
-        if(gt_feature_index_add_feature_node(v->index, fn2add, error))
-        {
-          agn_logger_log_error(v->logger, "%s", gt_error_get(error));
-          gt_error_unset(error);
-          return 1;
-        }
-      }
-      else
-      {
-        gt_genome_node_delete((GtGenomeNode *)fn2add);
-        if(agn_logger_has_error(v->logger))
-          return 1;
-      }
-    }
-  }
-  else
-  {
-    if(agn_gene_validator_validate_gene(v->validator, fn, v->logger))
-    {
-      if(gt_feature_index_add_feature_node(v->index, fn, error))
+      bool adderror = gt_feature_index_add_feature_node(v->index, fn, error);
+      if(adderror)
       {
         agn_logger_log_error(v->logger, "%s", gt_error_get(error));
         gt_error_unset(error);
@@ -215,6 +196,7 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
         return 1;
     }
   }
+  gt_array_delete(features);
 
   return 0;
 }

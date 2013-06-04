@@ -146,12 +146,14 @@ bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2);
 bool agn_gt_feature_node_remove_child(GtFeatureNode *root, GtFeatureNode *child);
 
 /**
- * Pseudo-nodes are used when connected features have more than one top-level
- * element. This function adds all top-level elements to the provided array.
- * Could be a recursive function, but for now I will simply fail if any of the
- * root's direct children are pseudo-nodes.
+ * Pseudo nodes are used when connected features have more than one top-level
+ * element. This function takes any feature node as input; if it is a pseudo
+ * node, it adds all the node's direct children to the provided array. If it is
+ * not a pseudo node, the node itself is added to the array. This could be a
+ * recursive function, but for now it will simply fail if any of the root's
+ * direct children are pseudo nodes.
  *
- * @param[in]  root     the pseudo-node
+ * @param[in]  root     the node, possibly a pseudo node
  * @param[out] nodes    array to which top-level features will be added
  */
 void agn_gt_feature_node_resolve_pseudo_node(GtFeatureNode *root, GtArray *nodes);

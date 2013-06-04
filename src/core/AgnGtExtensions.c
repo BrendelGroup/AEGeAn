@@ -213,21 +213,23 @@ bool agn_gt_feature_node_remove_child(GtFeatureNode *root, GtFeatureNode *child)
 
 void agn_gt_feature_node_resolve_pseudo_node(GtFeatureNode *root, GtArray *nodes)
 {
-  GtFeatureNode *fn;
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(root);
-
-  for
-  (
-    fn = gt_feature_node_iterator_next(iter);
-    fn != NULL;
-    fn = gt_feature_node_iterator_next(iter)
-  )
+  if(gt_feature_node_is_pseudo(root))
   {
-    gt_assert(gt_feature_node_is_pseudo(fn) == false);
-    gt_array_add(nodes, fn);
+    GtFeatureNode *fn;
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(root);
+    for(fn = gt_feature_node_iterator_next(iter);
+        fn != NULL;
+        fn = gt_feature_node_iterator_next(iter))
+    {
+      gt_assert(gt_feature_node_is_pseudo(fn) == false);
+      gt_array_add(nodes, fn);
+    }
+    gt_feature_node_iterator_delete(iter);
   }
-
-  gt_feature_node_iterator_delete(iter);
+  else
+  {
+    gt_array_add(nodes, root);
+  }
 }
 
 void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
