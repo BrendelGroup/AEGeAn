@@ -32,6 +32,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     { NULL, no_argument, NULL, 0 },
   };
 
+  bool makefilter = false;
   for( opt = getopt_long(argc, argv + 0, optstr, parseval_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, parseval_options, &optindex) )
@@ -78,20 +79,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         break;
 
       case 'k':
-        if(true)
-        {
-          char cmd[512];
-          sprintf(cmd, "cp %s/pe.filter pe.filter", options->data_path);
-          if(options->debug)
-            fprintf(stderr, "debug: creating filter file '%s'\n", cmd);
-          fputs("Created new filter file 'pe.filter'\n", stderr);
-          if(system(cmd) != 0)
-          {
-            fprintf(stderr, "error: could not create filter file 'pe.filter'\n");
-            exit(1);
-          }
-          exit(0);
-        }
+        makefilter = true;
         break;
 
       case 'l':
@@ -175,6 +163,21 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       default:
         break;
     }
+  }
+
+  if(makefilter)
+  {
+    char cmd[512];
+    sprintf(cmd, "cp %s/pe.filter pe.filter", options->data_path);
+    if(options->debug)
+      fprintf(stderr, "debug: creating filter file '%s'\n", cmd);
+    fputs("Created new filter file 'pe.filter'\n", stderr);
+    if(system(cmd) != 0)
+    {
+      fprintf(stderr, "error: could not create filter file 'pe.filter'\n");
+      exit(1);
+    }
+    exit(0);
   }
 
   if(argc - optind != 2)
