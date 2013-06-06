@@ -10,10 +10,9 @@
 //----------------------------------------------------------------------------//
 struct AgnGeneLocus
 {
-  char *seqid;
+  AgnLoc locus;
   GtDlist *refr_genes;
   GtDlist *pred_genes;
-  GtRange range;
   GtArray *refr_cliques;
   GtArray *pred_cliques;
   GtArray *clique_pairs;
@@ -78,15 +77,15 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2)
 {
   AgnGeneLocus *l1 = *(AgnGeneLocus **)p1;
   AgnGeneLocus *l2 = *(AgnGeneLocus **)p2;
+  GtRange l1r = l1->locus.range;
+  GtRange l2r = l2->locus.range;
 
-  bool equal = l1->range.start == l2->range.start &&
-               l1->range.end   == l2->range.end;
+  bool equal = l1r.start == l2r.start && l1r.end == l2r.end;
   if(equal)
     return 0;
 
-  bool l1startfirst = l1->range.start <  l2->range.start;
-  bool l1endfirst   = l1->range.start == l2->range.start &&
-                      l1->range.end   <  l2->range.end;  
+  bool l1startfirst = l1r.start <  l2r.start;
+  bool l1endfirst   = l1r.start == l2r.start && l1r.end < l2r.end;  
   if(l1startfirst || l1endfirst)
     return -1;
   
@@ -158,7 +157,7 @@ void agn_gene_locus_delete(AgnGeneLocus *locus)
   if(locus->unique_pred_cliques != NULL)
     gt_array_delete(locus->unique_pred_cliques);
 
-  gt_free(locus->seqid);
+  gt_free(locus->locus.seqid);
   gt_free(locus);
   locus = NULL;
 }
@@ -387,7 +386,7 @@ GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus)
   if(locus->reported_pairs != NULL)
     return locus->reported_pairs;
 
-  gt_array_sort(locus->clique_pairs, (GtCompare)agn_clique_pair_compare_reverse);
+  gt_array_sort(locus->clique_pairs,(GtCompare)agn_clique_pair_compare_reverse);
   GtHashmap *refr_cliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   GtHashmap *pred_cliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   locus->reported_pairs = gt_array_new( sizeof(AgnCliquePair *) );
@@ -528,9 +527,9 @@ GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
         "debug: skipping locus %s[%lu, %lu] with %lu reference transcripts and"
         " %lu prediction transcripts (must have at least 1 transcript for"
         " both)\n",
-        locus->seqid,
-        locus->range.start,
-        locus->range.end,
+        locus->locus.seqid,
+        locus->locus.range.start,
+        locus->locus.range.end,
         gt_array_size(refr_trans),
         gt_array_size(pred_trans)
       );
@@ -551,9 +550,9 @@ GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
         stderr,
         "debug: skipping locus %s[%lu, %lu] with %lu reference transcripts and"
         " %lu prediction transcripts (exceeds reasonable limit of %u)\n",
-        locus->seqid,
-        locus->range.start,
-        locus->range.end,
+        locus->locus.seqid,
+        locus->locus.range.start,
+        locus->locus.range.end,
         gt_array_size(refr_trans),
         gt_array_size(pred_trans),
         trans_per_locus
@@ -577,8 +576,9 @@ GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
     for(j = 0; j < gt_array_size(locus->pred_cliques); j++)
     {
       pred_clique = *(AgnTranscriptClique**)gt_array_get(locus->pred_cliques,j);
-      AgnCliquePair *pair = agn_clique_pair_new(locus->seqid, refr_clique,
-                                                pred_clique, &locus->range);
+      AgnCliquePair *pair = agn_clique_pair_new(locus->locus.seqid,
+                                                refr_clique, pred_clique,
+                                                &locus->locus.range);
       gt_array_add(clique_pairs, pair);
     }
   }
@@ -590,12 +590,12 @@ GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
 
 unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus)
 {
-  return locus->range.end;
+  return locus->locus.range.end;
 }
 
 unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus)
 {
-  return gt_range_length(&locus->range);
+  return gt_range_length(&locus->locus.range);
 }
 
 AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
@@ -825,12 +825,12 @@ GtArray *agn_gene_locus_get_refr_transcript_ids(AgnGeneLocus *locus)
 
 const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus)
 {
-  return locus->seqid;
+  return locus->locus.seqid;
 }
 
 unsigned long agn_gene_locus_get_start(AgnGeneLocus *locus)
 {
-  return locus->range.start;
+  return locus->locus.range.start;
 }
 
 GtArray *agn_gene_locus_get_unique_pred_cliques(AgnGeneLocus *locus)
@@ -855,8 +855,8 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
                                      gt_malloc(sizeof(AgnGeneLocus));
   locus->refr_genes = NULL;
   locus->pred_genes = NULL;
-  locus->range.start = 0;
-  locus->range.end = 0;
+  locus->locus.range.start = 0;
+  locus->locus.range.end = 0;
   locus->clique_pairs = NULL;
   locus->clique_pairs_formed = false;
   locus->refr_cliques = NULL;
@@ -865,8 +865,7 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
   locus->unique_refr_cliques = NULL;
   locus->unique_pred_cliques = NULL;
 
-  locus->seqid = gt_cstr_dup(seqid);
-  strcpy(locus->seqid, seqid);
+  locus->locus.seqid = gt_cstr_dup(seqid);
 
   locus->refr_splice_complexity = 0.0;
   locus->pred_splice_complexity = 0.0;
@@ -1013,7 +1012,7 @@ unsigned long agn_gene_locus_pred_cds_length(AgnGeneLocus *locus)
 
 GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 {
-  return locus->range;
+  return locus->locus.range;
 }
 
 unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus)
@@ -1032,8 +1031,8 @@ unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus)
 void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   GtRange gene_range = gt_genome_node_get_range((GtGenomeNode *)gene);
-  if(locus->range.start == 0 && locus->range.end == 0)
-    locus->range = gene_range;
+  if(locus->locus.range.start == 0 && locus->locus.range.end == 0)
+    locus->locus.range = gene_range;
   else
-    locus->range = gt_range_join(&locus->range, &gene_range);
+    locus->locus.range = gt_range_join(&locus->locus.range, &gene_range);
 }

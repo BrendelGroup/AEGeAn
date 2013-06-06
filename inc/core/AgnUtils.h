@@ -8,6 +8,16 @@
 #include "AgnLogger.h"
 
 /**
+ * Simple data structure for referencing genomic locations: sequence identifier
+ * plus start and end coordinates.
+ */
+typedef struct
+{
+  char *seqid;
+  GtRange range;
+} AgnLoc;
+
+/**
  * The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal
  * cliques in an undirected graph. See
  * http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm.
