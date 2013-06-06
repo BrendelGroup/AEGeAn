@@ -309,7 +309,7 @@ int main(int argc, char * const argv[])
             }
 
             PeCompEvaluation data;
-            agn_pairwise_compare_locus_get_summary_data(locus, &data);
+            //agn_pairwise_compare_locus_get_summary_data(locus, &data);
             agn_pairwise_compare_locus_aggregate_results(locus, &data);
             agn_pairwise_compare_locus_aggregate_results(locus, &summary_data_local);
             GtArray *reported_pairs = agn_pairwise_compare_locus_find_best_pairs(locus);
@@ -322,8 +322,8 @@ int main(int argc, char * const argv[])
 
           if(!options.summary_only)
           {
-            PeCompEvaluation data;
-            agn_pairwise_compare_locus_get_summary_data(locus, &data);
+            //PeCompEvaluation data;
+            //agn_pairwise_compare_locus_get_summary_data(locus, &data);
             if(options.html)
             {
               pe_gene_locus_print_results(locus, seqfile, &options);
@@ -351,8 +351,8 @@ int main(int argc, char * const argv[])
 #endif
           }
 
-          if(options.locusgff3)
-            agn_pairwise_compare_locus_to_gff3(locus, locusgff3file);
+//          if(options.locusgff3)
+//            agn_pairwise_compare_locus_to_gff3(locus, locusgff3file);
         }
 // fprintf(stderr, "DELETEME two\n");
         agn_pairwise_compare_locus_delete(locus);

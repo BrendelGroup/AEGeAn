@@ -21,9 +21,6 @@ struct AgnPairwiseCompareLocus
   GtArray *reported_pairs;
   GtArray *unique_refr_cliques;
   GtArray *unique_pred_cliques;
-  AgnComparison stats;
-  AgnCompSummary counts;
-  PeCompResultSummary results;
   double refr_splice_complexity;
   double pred_splice_complexity;
 };
@@ -68,111 +65,6 @@ void agn_pairwise_compare_locus_add_refr_gene( AgnPairwiseCompareLocus *locus,
 
   gt_dlist_add(locus->refr_genes, gene_feature);
   agn_pairwise_compare_locus_update_range(locus, gene_feature);
-}
-
-void agn_pairwise_compare_locus_aggregate_results( AgnPairwiseCompareLocus *locus,
-                                      PeCompEvaluation *data )
-{
-  unsigned long i;
-  GtArray *reported_pairs = agn_pairwise_compare_locus_find_best_pairs(locus);
-  unsigned long pairs_to_report = gt_array_size(reported_pairs);
-  gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
-
-  for(i = 0; i < pairs_to_report; i++)
-  {
-    AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
-    gt_assert(agn_clique_pair_needs_comparison(pair));
-
-    data->counts.num_comparisons++;
-
-    // Classify this comparison: perfect match, CDS match, etc.
-    unsigned int compareclass = agn_clique_pair_classify(pair);
-    switch(compareclass)
-    {
-      case PE_CLIQUE_PAIR_PERFECT_MATCH:
-        data->counts.num_perfect++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.perfect_matches
-        );
-        break;
-
-      case PE_CLIQUE_PAIR_MISLABELED:
-        data->counts.num_mislabeled++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.perfect_mislabeled
-        );
-        break;
-
-      case PE_CLIQUE_PAIR_CDS_MATCH:
-        data->counts.num_cds_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.cds_matches
-        );
-        break;
-
-      case PE_CLIQUE_PAIR_EXON_MATCH:
-        data->counts.num_exon_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.exon_matches
-        );
-        break;
-
-      case PE_CLIQUE_PAIR_UTR_MATCH:
-        data->counts.num_utr_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.utr_matches
-        );
-        break;
-
-      case PE_CLIQUE_PAIR_NON_MATCH:
-        data->counts.non_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.non_matches
-        );
-        break;
-
-      default:
-        fprintf(stderr, "error: unknown classification %d\n", compareclass);
-        exit(1);
-        break;
-    }
-
-    // Record structure-level counts
-    AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
-    data->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
-    data->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
-    data->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
-    data->stats.exon_struc_stats.correct += pairstats->exon_struc_stats.correct;
-    data->stats.exon_struc_stats.missing += pairstats->exon_struc_stats.missing;
-    data->stats.exon_struc_stats.wrong   += pairstats->exon_struc_stats.wrong;
-    data->stats.utr_struc_stats.correct  += pairstats->utr_struc_stats.correct;
-    data->stats.utr_struc_stats.missing  += pairstats->utr_struc_stats.missing;
-    data->stats.utr_struc_stats.wrong    += pairstats->utr_struc_stats.wrong;
-
-    // Record nucleotide-level counts
-    data->stats.cds_nuc_stats.tp += pairstats->cds_nuc_stats.tp;
-    data->stats.cds_nuc_stats.fn += pairstats->cds_nuc_stats.fn;
-    data->stats.cds_nuc_stats.fp += pairstats->cds_nuc_stats.fp;
-    data->stats.cds_nuc_stats.tn += pairstats->cds_nuc_stats.tn;
-    data->stats.utr_nuc_stats.tp += pairstats->utr_nuc_stats.tp;
-    data->stats.utr_nuc_stats.fn += pairstats->utr_nuc_stats.fn;
-    data->stats.utr_nuc_stats.fp += pairstats->utr_nuc_stats.fp;
-    data->stats.utr_nuc_stats.tn += pairstats->utr_nuc_stats.tn;
-    data->stats.overall_matches  += pairstats->overall_matches;
-    data->stats.overall_length   += agn_pairwise_compare_locus_get_length(locus);
-  }
 }
 
 void agn_pairwise_compare_locus_calc_splice_complexity_pred(AgnPairwiseCompareLocus *locus)
@@ -954,13 +846,13 @@ unsigned long agn_pairwise_compare_locus_get_start(AgnPairwiseCompareLocus *locu
   return locus->range.start;
 }
 
-void agn_pairwise_compare_locus_get_summary_data( AgnPairwiseCompareLocus *locus,
-                                     PeCompEvaluation *data )
-{
-  data->counts  = locus->counts;
-  data->stats   = locus->stats;
-  data->results = locus->results;
-}
+//void agn_pairwise_compare_locus_get_summary_data( AgnPairwiseCompareLocus *locus,
+//                                     PeCompEvaluation *data )
+//{
+//  data->counts  = locus->counts;
+//  data->stats   = locus->stats;
+//  data->results = locus->results;
+//}
 
 GtArray *agn_pairwise_compare_locus_get_unique_pred_cliques(AgnPairwiseCompareLocus *locus)
 {
@@ -997,9 +889,6 @@ AgnPairwiseCompareLocus* agn_pairwise_compare_locus_new(const char *seqid)
   locus->seqid = (char *)gt_malloc(sizeof(char)*(strlen(seqid) + 1));
   strcpy(locus->seqid, seqid);
 
-  agn_comp_summary_init(&locus->counts);
-  agn_comparison_init(&locus->stats);
-  pe_comp_result_summary_init(&locus->results);
   locus->refr_splice_complexity = 0.0;
   locus->pred_splice_complexity = 0.0;
 
@@ -1159,42 +1048,6 @@ unsigned long agn_pairwise_compare_locus_refr_cds_length(AgnPairwiseCompareLocus
   }
   gt_array_delete(transcripts);
   return length;
-}
-
-void agn_pairwise_compare_locus_to_gff3(AgnPairwiseCompareLocus *locus, FILE *outstream)
-{
-  float score;
-  if(locus->counts.non_match > 0)
-    score = 0.0;
-  else if(locus->counts.num_utr_match > 0)
-    score = 0.25;
-  else if(locus->counts.num_exon_match > 0)
-    score = 0.5;
-  else if(locus->counts.num_cds_match > 0)
-    score = 0.75;
-  else if(locus->counts.num_perfect + locus->counts.num_mislabeled > 0)
-    score = 1.0;
-  else
-    score = 0.0;
-
-  fprintf
-  (
-    outstream,
-    "%s\t%s\t%s\t%lu\t%lu\t%.2f\t%c\t.\tperfect_matches=%d;cds_matches=%d;"
-    "exon_matches=%d;utr_matches=%d;non_matches=%d\n",
-    agn_pairwise_compare_locus_get_seqid(locus),
-    "AEGeAn",
-    "locus",
-    agn_pairwise_compare_locus_get_start(locus),
-    agn_pairwise_compare_locus_get_end(locus),
-    score,
-    '.',
-    locus->counts.num_perfect + locus->counts.num_mislabeled,
-    locus->counts.num_cds_match,
-    locus->counts.num_exon_match,
-    locus->counts.num_utr_match,
-    locus->counts.non_match
-  );
 }
 
 void agn_pairwise_compare_locus_update_range( AgnPairwiseCompareLocus *locus,

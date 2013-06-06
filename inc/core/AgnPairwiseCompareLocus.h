@@ -3,7 +3,6 @@
 
 #include "genometools.h"
 #include "AgnCliquePair.h"
-#include "PeComparEval.h"
 
 /**
  * The purpose of the AgnPairwiseCompareLocus class is to store all of the data
@@ -29,19 +28,6 @@ void agn_pairwise_compare_locus_add_pred_gene( AgnPairwiseCompareLocus *locus,
  */
 void agn_pairwise_compare_locus_add_refr_gene( AgnPairwiseCompareLocus *locus,
                                                GtFeatureNode *gene_feature );
-
-/**
- * Add the locus' comparison statistics to a set of aggregate statistics.
- *
- * @param[in]  locus    the locus annotation
- * @param[out] data     summary counts, stats, and results to which the locus
- *                      data will be aggregated
- */
-void agn_pairwise_compare_locus_aggregate_results
-(
-  AgnPairwiseCompareLocus *locus,
-  PeCompEvaluation *data
-);
 
 /**
  * Calculate and store the splice complexity of this locus' reference and
@@ -288,15 +274,6 @@ unsigned long agn_pairwise_compare_locus_get_start
 );
 
 /**
- * Write this locus' summary data to the given data pointer.
- *
- * @param[in]  locus    the locus
- * @param[out] data     the pointer to which the summary data will be written
- */
-void agn_pairwise_compare_locus_get_summary_data( AgnPairwiseCompareLocus *locus,
-                                                  PeCompEvaluation *data );
-
-/**
  * Get a list of all the prediction transcript cliques that have no
  * corresponding reference transcript clique.
  *
@@ -434,14 +411,5 @@ unsigned long agn_pairwise_compare_locus_refr_cds_length
 (
   AgnPairwiseCompareLocus *locus
 );
-
-/**
- * Print this locus' coordinates to the given outstream in GFF3 format
- *
- * @param[in]  locus        the locus
- * @param[out] outstream    the output stream to which the GFF3 will be written
- */
-void agn_pairwise_compare_locus_to_gff3( AgnPairwiseCompareLocus *locus,
-                                         FILE *outstream );
 
 #endif

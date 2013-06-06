@@ -18,6 +18,111 @@ void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track,
                                                    void *data);
 #endif
 
+void agn_pairwise_compare_locus_aggregate_results( AgnPairwiseCompareLocus *locus,
+                                      PeCompEvaluation *data )
+{
+  unsigned long i;
+  GtArray *reported_pairs = agn_pairwise_compare_locus_find_best_pairs(locus);
+  unsigned long pairs_to_report = gt_array_size(reported_pairs);
+  gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
+
+  for(i = 0; i < pairs_to_report; i++)
+  {
+    AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
+    gt_assert(agn_clique_pair_needs_comparison(pair));
+
+    data->counts.num_comparisons++;
+
+    // Classify this comparison: perfect match, CDS match, etc.
+    unsigned int compareclass = agn_clique_pair_classify(pair);
+    switch(compareclass)
+    {
+      case PE_CLIQUE_PAIR_PERFECT_MATCH:
+        data->counts.num_perfect++;
+        agn_clique_pair_record_characteristics
+        (
+          pair,
+          &data->results.perfect_matches
+        );
+        break;
+
+      case PE_CLIQUE_PAIR_MISLABELED:
+        data->counts.num_mislabeled++;
+        agn_clique_pair_record_characteristics
+        (
+          pair,
+          &data->results.perfect_mislabeled
+        );
+        break;
+
+      case PE_CLIQUE_PAIR_CDS_MATCH:
+        data->counts.num_cds_match++;
+        agn_clique_pair_record_characteristics
+        (
+          pair,
+          &data->results.cds_matches
+        );
+        break;
+
+      case PE_CLIQUE_PAIR_EXON_MATCH:
+        data->counts.num_exon_match++;
+        agn_clique_pair_record_characteristics
+        (
+          pair,
+          &data->results.exon_matches
+        );
+        break;
+
+      case PE_CLIQUE_PAIR_UTR_MATCH:
+        data->counts.num_utr_match++;
+        agn_clique_pair_record_characteristics
+        (
+          pair,
+          &data->results.utr_matches
+        );
+        break;
+
+      case PE_CLIQUE_PAIR_NON_MATCH:
+        data->counts.non_match++;
+        agn_clique_pair_record_characteristics
+        (
+          pair,
+          &data->results.non_matches
+        );
+        break;
+
+      default:
+        fprintf(stderr, "error: unknown classification %d\n", compareclass);
+        exit(1);
+        break;
+    }
+
+    // Record structure-level counts
+    AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
+    data->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
+    data->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
+    data->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
+    data->stats.exon_struc_stats.correct += pairstats->exon_struc_stats.correct;
+    data->stats.exon_struc_stats.missing += pairstats->exon_struc_stats.missing;
+    data->stats.exon_struc_stats.wrong   += pairstats->exon_struc_stats.wrong;
+    data->stats.utr_struc_stats.correct  += pairstats->utr_struc_stats.correct;
+    data->stats.utr_struc_stats.missing  += pairstats->utr_struc_stats.missing;
+    data->stats.utr_struc_stats.wrong    += pairstats->utr_struc_stats.wrong;
+
+    // Record nucleotide-level counts
+    data->stats.cds_nuc_stats.tp += pairstats->cds_nuc_stats.tp;
+    data->stats.cds_nuc_stats.fn += pairstats->cds_nuc_stats.fn;
+    data->stats.cds_nuc_stats.fp += pairstats->cds_nuc_stats.fp;
+    data->stats.cds_nuc_stats.tn += pairstats->cds_nuc_stats.tn;
+    data->stats.utr_nuc_stats.tp += pairstats->utr_nuc_stats.tp;
+    data->stats.utr_nuc_stats.fn += pairstats->utr_nuc_stats.fn;
+    data->stats.utr_nuc_stats.fp += pairstats->utr_nuc_stats.fp;
+    data->stats.utr_nuc_stats.tn += pairstats->utr_nuc_stats.tn;
+    data->stats.overall_matches  += pairstats->overall_matches;
+    data->stats.overall_length   += agn_pairwise_compare_locus_get_length(locus);
+  }
+}
+
 #ifndef WITHOUT_CAIRO
 void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
 {

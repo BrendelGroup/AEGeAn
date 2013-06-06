@@ -3,6 +3,7 @@
 
 #include "genometools.h"
 #include "AgnPairwiseCompareLocus.h"
+#include "PeComparEval.h"
 #include "PeOptions.h"
 
 #define AGN_PAIRWISE_COMPARE_LOCUS_GRAPHIC_MIN_WIDTH 650
@@ -38,6 +39,19 @@ typedef struct
   unsigned long total;
   AgnCompSummary counts;
 } AgnPairwiseCompareLocusSummary;
+
+/**
+ * Add the locus' comparison statistics to a set of aggregate statistics.
+ *
+ * @param[in]  locus    the locus annotation
+ * @param[out] data     summary counts, stats, and results to which the locus
+ *                      data will be aggregated
+ */
+void agn_pairwise_compare_locus_aggregate_results
+(
+  AgnPairwiseCompareLocus *locus,
+  PeCompEvaluation *data
+);
 
 #ifndef WITHOUT_CAIRO
 /**
