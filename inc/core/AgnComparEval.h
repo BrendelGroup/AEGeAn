@@ -25,7 +25,7 @@ typedef struct
   char          sps[7];
   char          f1s[7];
   char          eds[16];
-} AgnNucleotideLevelStats;
+} AgnCompStatsScaled;
 
 /**
  * This struct is used to aggregate counts and statistics regarding the
@@ -45,7 +45,7 @@ typedef struct
   char          sps[7];
   char          f1s[7];
   char          eds[16];
-} AgnStructureLevelStats;
+} AgnCompStatsBinary;
 
 /**
  * This struct contains various counts to be reported in the summary report.
@@ -74,11 +74,11 @@ typedef struct
  */
 typedef struct
 {
-  AgnNucleotideLevelStats cds_nuc_stats;
-  AgnNucleotideLevelStats utr_nuc_stats;
-  AgnStructureLevelStats cds_struc_stats;
-  AgnStructureLevelStats exon_struc_stats;
-  AgnStructureLevelStats utr_struc_stats;
+  AgnCompStatsScaled cds_nuc_stats;
+  AgnCompStatsScaled utr_nuc_stats;
+  AgnCompStatsBinary cds_struc_stats;
+  AgnCompStatsBinary exon_struc_stats;
+  AgnCompStatsBinary utr_struc_stats;
   unsigned long overall_matches;
   unsigned long overall_length;
   double overall_identity;
@@ -263,14 +263,14 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream);
  *
  * @param[in] stats    pointer to the counts and the stats
  */
-void agn_resolve_nucleotide_level_stats(AgnNucleotideLevelStats *stats);
+void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats);
 
 /**
  * Calculate stats from the given counts.
  *
  * @param[in] stats    pointer to the counts and the stats
  */
-void agn_resolve_structure_level_stats(AgnStructureLevelStats *stats);
+void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
 
 /**
  * Take values from one data set and add them to the other.

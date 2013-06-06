@@ -332,7 +332,7 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream)
   }
 }
 
-void agn_resolve_nucleotide_level_stats(AgnNucleotideLevelStats *stats)
+void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
 {
   double tp = (double)stats->tp;
   double fn = (double)stats->fn;
@@ -385,7 +385,7 @@ void agn_resolve_nucleotide_level_stats(AgnNucleotideLevelStats *stats)
     sprintf(stats->eds, "%.3lf", stats->ed);
 }
 
-void agn_resolve_structure_level_stats(AgnStructureLevelStats *stats)
+void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
 {
   double correct = (double)stats->correct;
   double missing = (double)stats->missing;

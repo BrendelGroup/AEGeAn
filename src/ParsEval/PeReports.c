@@ -1029,15 +1029,15 @@ void pe_print_summary( const char *start_time, int argc, char * const argv[], Gt
                        FILE *outstream, PeOptions *options )
 {
   // Calculate nucleotide-level statistics
-  agn_resolve_nucleotide_level_stats(&summary_data->stats.cds_nuc_stats);
-  agn_resolve_nucleotide_level_stats(&summary_data->stats.utr_nuc_stats);
+  agn_comp_stats_scaled_resolve(&summary_data->stats.cds_nuc_stats);
+  agn_comp_stats_scaled_resolve(&summary_data->stats.utr_nuc_stats);
   summary_data->stats.overall_identity = (double)summary_data->stats.overall_matches /
                                     (double)summary_data->stats.overall_length;
 
   // Calculate structure-level statistics
-  agn_resolve_structure_level_stats(&summary_data->stats.cds_struc_stats);
-  agn_resolve_structure_level_stats(&summary_data->stats.exon_struc_stats);
-  agn_resolve_structure_level_stats(&summary_data->stats.utr_struc_stats);
+  agn_comp_stats_binary_resolve(&summary_data->stats.cds_struc_stats);
+  agn_comp_stats_binary_resolve(&summary_data->stats.exon_struc_stats);
+  agn_comp_stats_binary_resolve(&summary_data->stats.utr_struc_stats);
 
   if(options->html)
   {

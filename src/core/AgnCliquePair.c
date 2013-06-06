@@ -272,8 +272,8 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
 // fprintf(stderr, "test c\n");
 
   // Calculate nucleotide-level statistics from counts
-  agn_resolve_nucleotide_level_stats(&pair->stats.cds_nuc_stats);
-  agn_resolve_nucleotide_level_stats(&pair->stats.utr_nuc_stats);
+  agn_comp_stats_scaled_resolve(&pair->stats.cds_nuc_stats);
+  agn_comp_stats_scaled_resolve(&pair->stats.utr_nuc_stats);
   pair->stats.overall_identity = pair->stats.overall_matches / (double)locus_length;
 
   // Calculate statistics for CDS structure from counts
@@ -306,7 +306,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
     if(!found_match)
       pair->stats.cds_struc_stats.wrong++;
   }
-  agn_resolve_structure_level_stats(&pair->stats.cds_struc_stats);
+  agn_comp_stats_binary_resolve(&pair->stats.cds_struc_stats);
 
   // Calculate statistics for exon structure from counts
   for(i = 0; i < num_refr_exons; i++)
@@ -338,7 +338,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
     if(!found_match)
       pair->stats.exon_struc_stats.wrong++;
   }
-  agn_resolve_structure_level_stats(&pair->stats.exon_struc_stats);
+  agn_comp_stats_binary_resolve(&pair->stats.exon_struc_stats);
 
   // Calculate statistics for UTR structure from counts
   for(i = 0; i < num_refr_utrs; i++)
@@ -370,7 +370,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
     if(!found_match)
       pair->stats.utr_struc_stats.wrong++;
   }
-  agn_resolve_structure_level_stats(&pair->stats.utr_struc_stats);
+  agn_comp_stats_binary_resolve(&pair->stats.utr_struc_stats);
 // fprintf(stderr, "test d\n");
 }
 
