@@ -4,7 +4,7 @@
 #include "AgnCanonNodeVisitor.h"
 #include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
-#include "AgnPairwiseCompareLocus.h"
+#include "AgnGeneLocus.h"
 #include "AgnUtils.h"
 
 void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,

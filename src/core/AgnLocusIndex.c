@@ -1,7 +1,7 @@
 #include <omp.h>
 #include "AgnLocus.h"
 #include "AgnLocusIndex.h"
-#include "AgnPairwiseCompareLocus.h"
+#include "AgnGeneLocus.h"
 #include "AgnUtils.h"
 
 //------------------------------------------------------------------------------
@@ -65,8 +65,8 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
  */
 int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
                   GtFeatureIndex *features, GtHashmap *visited_genes,
-                  AgnPairwiseCompareLocus *locus,
-                  void (*add_func)(AgnPairwiseCompareLocus *, GtFeatureNode *),
+                  AgnGeneLocus *locus,
+                  void (*add_func)(AgnGeneLocus *, GtFeatureNode *),
                   AgnLogger *logger);
 
 /**
@@ -145,7 +145,7 @@ int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
 {
   GtArray *loci = (GtArray *)lp;
   // Stored as a void* since we don't know whether these are AgnLocus objects or
-  // AgnPairwiseCompareLocus objects.
+  // AgnGeneLocus objects.
   void *locus = gt_interval_tree_node_get_data(itn);
   gt_array_add(loci, locus);
   return 0;
@@ -180,14 +180,14 @@ unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
 
 int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
                   GtFeatureIndex *features, GtHashmap *visited_genes,
-                  AgnPairwiseCompareLocus *locus,
-                  void (*add_func)(AgnPairwiseCompareLocus *, GtFeatureNode *),
+                  AgnGeneLocus *locus,
+                  void (*add_func)(AgnGeneLocus *, GtFeatureNode *),
                   AgnLogger *logger)
 {
   GtError *error = gt_error_new();
   bool has_seqid;
   gt_feature_index_has_seqid(features, &has_seqid,
-                             agn_pairwise_compare_locus_get_seqid(locus),
+                             agn_gene_locus_get_seqid(locus),
                              error);
   if(!has_seqid)
   {
@@ -199,14 +199,14 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
   GtArray *genes_to_add = gt_array_new( sizeof(GtFeatureNode *) );
   unsigned long new_gene_count = 0;
   
-  locusrange.start = agn_pairwise_compare_locus_get_start(locus);
-  locusrange.end = agn_pairwise_compare_locus_get_end(locus);
+  locusrange.start = agn_gene_locus_get_start(locus);
+  locusrange.end = agn_gene_locus_get_end(locus);
   gt_feature_index_get_features_for_range(features, genes_to_add,
-          agn_pairwise_compare_locus_get_seqid(locus), &locusrange, error);
+          agn_gene_locus_get_seqid(locus), &locusrange, error);
   if(gt_error_is_set(error))
   {
     agn_logger_log_error(logger, "error fetching features for range %s[%lu, "
-                         "%lu]: %s",agn_pairwise_compare_locus_get_seqid(locus),
+                         "%lu]: %s",agn_gene_locus_get_seqid(locus),
                          locusrange.start, locusrange.end, gt_error_get(error));
     gt_error_unset(error);
   }
@@ -301,7 +301,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
   GtIntervalTree *loci = gt_interval_tree_new(
-                             (GtFree)agn_pairwise_compare_locus_delete);
+                             (GtFree)agn_gene_locus_delete);
 
   // Seed new loci with reference genes
   GtArray *refr_list = gt_feature_index_get_features_for_seqid(refr, seqid,
@@ -323,19 +323,19 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       continue;
     
     gt_hashmap_add(visited_genes, refr_gene, refr_gene);
-    AgnPairwiseCompareLocus *locus = agn_pairwise_compare_locus_new(seqid);
-    agn_pairwise_compare_locus_add_refr_gene(locus, refr_gene);
+    AgnGeneLocus *locus = agn_gene_locus_new(seqid);
+    agn_gene_locus_add_refr_gene(locus, refr_gene);
 
     int new_gene_count = 0;
     do
     {
       int new_refr_gene_count = agn_locus_index_pairwise_test_overlap(idx, refr,
                                     visited_genes, locus,
-                                    agn_pairwise_compare_locus_add_refr_gene,
+                                    agn_gene_locus_add_refr_gene,
                                     logger);
       int new_pred_gene_count = agn_locus_index_pairwise_test_overlap(idx, pred,
                                     visited_genes, locus,
-                                    agn_pairwise_compare_locus_add_pred_gene,
+                                    agn_gene_locus_add_pred_gene,
                                     logger);
       if(agn_logger_has_error(logger))
       {
@@ -348,8 +348,8 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       new_gene_count = new_refr_gene_count + new_pred_gene_count;
     } while(new_gene_count > 0);
     GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
-                                  agn_pairwise_compare_locus_get_start(locus),
-                                  agn_pairwise_compare_locus_get_end(locus));
+                                  agn_gene_locus_get_start(locus),
+                                  agn_gene_locus_get_end(locus));
     gt_interval_tree_insert(loci, itn);
   }
   gt_array_delete(refr_list);
@@ -375,15 +375,15 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       continue;
     
     gt_hashmap_add(visited_genes, pred_gene, pred_gene);
-    AgnPairwiseCompareLocus *locus = agn_pairwise_compare_locus_new(seqid);
-    agn_pairwise_compare_locus_add_pred_gene(locus, pred_gene);
+    AgnGeneLocus *locus = agn_gene_locus_new(seqid);
+    agn_gene_locus_add_pred_gene(locus, pred_gene);
     
     int new_gene_count = 0;
     do
     {
       int new_pred_gene_count = agn_locus_index_pairwise_test_overlap(idx, pred,
                                     visited_genes, locus,
-                                    agn_pairwise_compare_locus_add_pred_gene,
+                                    agn_gene_locus_add_pred_gene,
                                     logger);
       if(agn_logger_has_error(logger))
       {
@@ -397,8 +397,8 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     } while(new_gene_count > 0);
     
     GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
-                                  agn_pairwise_compare_locus_get_start(locus),
-                                  agn_pairwise_compare_locus_get_end(locus));
+                                  agn_gene_locus_get_start(locus),
+                                  agn_gene_locus_get_end(locus));
     gt_interval_tree_insert(loci, itn);
   }
   

@@ -1,14 +1,14 @@
 #include <math.h>
 #include <string.h>
 #include "extended/feature_node.h"
-#include "AgnPairwiseCompareLocus.h"
+#include "AgnGeneLocus.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
 
 //----------------------------------------------------------------------------//
 // Data structure definition
 //----------------------------------------------------------------------------//
-struct AgnPairwiseCompareLocus
+struct AgnGeneLocus
 {
   char *seqid;
   GtDlist *refr_genes;
@@ -33,83 +33,74 @@ struct AgnPairwiseCompareLocus
 /**
  * Update this locus' start and end coordinates based on the gene being merged.
  *
- * @param[out] locus           the locus
- * @param[in]  gene_feature    gene that was just merged with the locus
+ * @param[out] locus    the locus
+ * @param[in]  gene     gene that was just merged with the locus
  */
-void agn_pairwise_compare_locus_update_range(AgnPairwiseCompareLocus *locus,
-                                 GtFeatureNode *gene_feature);
+void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene);
 
 
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
-void agn_pairwise_compare_locus_add_pred_gene( AgnPairwiseCompareLocus *locus,
-                                  GtFeatureNode *gene_feature )
+void agn_gene_locus_add_pred_gene(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   if(locus->pred_genes == NULL)
-  {
     locus->pred_genes = gt_dlist_new( (GtCompare)gt_genome_node_cmp );
-  }
 
-  gt_dlist_add(locus->pred_genes, gene_feature);
-  agn_pairwise_compare_locus_update_range(locus, gene_feature);
+  gt_dlist_add(locus->pred_genes, gene);
+  agn_gene_locus_update_range(locus, gene);
 }
 
-void agn_pairwise_compare_locus_add_refr_gene( AgnPairwiseCompareLocus *locus,
-                                  GtFeatureNode *gene_feature )
+void agn_gene_locus_add_refr_gene(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   if(locus->refr_genes == NULL)
-  {
     locus->refr_genes = gt_dlist_new( (GtCompare)gt_genome_node_cmp );
-  }
 
-  gt_dlist_add(locus->refr_genes, gene_feature);
-  agn_pairwise_compare_locus_update_range(locus, gene_feature);
+  gt_dlist_add(locus->refr_genes, gene);
+  agn_gene_locus_update_range(locus, gene);
 }
 
-void agn_pairwise_compare_locus_calc_splice_complexity_pred(AgnPairwiseCompareLocus *locus)
+void agn_gene_locus_calc_splice_complexity_pred(AgnGeneLocus *locus)
 {
-  GtArray *pred_trans = agn_pairwise_compare_locus_get_pred_transcripts(locus);
-// fprintf(stderr, "DELETEME pred sc\n");
+  GtArray *pred_trans = agn_gene_locus_get_pred_transcripts(locus);
   locus->pred_splice_complexity = agn_calc_splice_complexity(pred_trans);
   gt_array_delete(pred_trans);
 }
 
-void agn_pairwise_compare_locus_calc_splice_complexity_refr(AgnPairwiseCompareLocus *locus)
+void agn_gene_locus_calc_splice_complexity_refr(AgnGeneLocus *locus)
 {
-  GtArray *refr_trans = agn_pairwise_compare_locus_get_refr_transcripts(locus);
-// fprintf(stderr, "DELETEME refr sc\n");
+  GtArray *refr_trans = agn_gene_locus_get_refr_transcripts(locus);
   locus->refr_splice_complexity = agn_calc_splice_complexity(refr_trans);
   gt_array_delete(refr_trans);
 }
 
-int agn_pairwise_compare_locus_array_compare(const void *p1, const void *p2)
+int agn_gene_locus_array_compare(const void *p1, const void *p2)
 {
-  AgnPairwiseCompareLocus *l1 = *(AgnPairwiseCompareLocus **)p1;
-  AgnPairwiseCompareLocus *l2 = *(AgnPairwiseCompareLocus **)p2;
+  AgnGeneLocus *l1 = *(AgnGeneLocus **)p1;
+  AgnGeneLocus *l2 = *(AgnGeneLocus **)p2;
 
-  if(l1->range.start == l2->range.start && l1->range.end == l2->range.end)
+  bool equal = l1->range.start == l2->range.start &&
+               l1->range.end   == l2->range.end;
+  if(equal)
     return 0;
-  else if
-  (
-    (l1->range.start < l2->range.start) ||
-    (l1->range.start == l2->range.start && l1->range.end < l2->range.end)
-  )
-  {
+
+  bool l1startfirst = l1->range.start <  l2->range.start;
+  bool l1endfirst   = l1->range.start == l2->range.start &&
+                      l1->range.end   <  l2->range.end;  
+  if(l1startfirst || l1endfirst)
     return -1;
-  }
   
   return 1;
 }
 
-void agn_pairwise_compare_locus_delete(AgnPairwiseCompareLocus *locus)
+void agn_gene_locus_delete(AgnGeneLocus *locus)
 {
   if(locus->refr_genes != NULL)
   {
     GtDlistelem *current;
-    for( current = gt_dlist_first(locus->refr_genes);
-         current != NULL;
-         current = gt_dlistelem_next(current) )
+    for(current = gt_dlist_first(locus->refr_genes);
+        current != NULL;
+        current = gt_dlistelem_next(current))
     {
       GtGenomeNode *gn = gt_dlistelem_get_data(current);
       gt_genome_node_delete(gn);
@@ -119,15 +110,16 @@ void agn_pairwise_compare_locus_delete(AgnPairwiseCompareLocus *locus)
   if(locus->pred_genes != NULL)
   {
     GtDlistelem *current;
-    for( current = gt_dlist_first(locus->pred_genes);
-         current != NULL;
-         current = gt_dlistelem_next(current) )
+    for(current = gt_dlist_first(locus->pred_genes);
+        current != NULL;
+        current = gt_dlistelem_next(current) )
     {
       GtGenomeNode *gn = gt_dlistelem_get_data(current);
       gt_genome_node_delete(gn);
     }
     gt_dlist_delete(locus->pred_genes);
   }
+
   if(locus->refr_cliques != NULL)
   {
     while(gt_array_size(locus->refr_cliques) > 0)
@@ -148,11 +140,12 @@ void agn_pairwise_compare_locus_delete(AgnPairwiseCompareLocus *locus)
     }
     gt_array_delete(locus->pred_cliques);
   }
+
   if(locus->clique_pairs != NULL)
   {
     while(gt_array_size(locus->clique_pairs) > 0)
     {
-      AgnCliquePair *pair = *(AgnCliquePair **)gt_array_pop(locus->clique_pairs);
+      AgnCliquePair *pair = *(AgnCliquePair**)gt_array_pop(locus->clique_pairs);
       agn_clique_pair_delete(pair);
     }
     gt_array_delete(locus->clique_pairs);
@@ -170,8 +163,7 @@ void agn_pairwise_compare_locus_delete(AgnPairwiseCompareLocus *locus)
   locus = NULL;
 }
 
-bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
-                                        AgnCompareFilters *filters )
+bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
 {
   if(filters == NULL)
     return false;
@@ -179,7 +171,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   // Ignore all filter configuration settings set to 0
 
   // Filter by locus length
-  unsigned long length = agn_pairwise_compare_locus_get_length(locus);
+  unsigned long length = agn_gene_locus_get_length(locus);
   if(filters->LocusLengthUpperLimit > 0)
   {
     if(length > filters->LocusLengthUpperLimit)
@@ -192,7 +184,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   }
 
   // Filter by reference gene models
-  unsigned long num_refr_genes = agn_pairwise_compare_locus_num_refr_genes(locus);
+  unsigned long num_refr_genes = agn_gene_locus_num_refr_genes(locus);
   if(filters->MinReferenceGeneModels > 0)
   {
     if(num_refr_genes < filters->MinReferenceGeneModels)
@@ -205,7 +197,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   }
 
   // Filter by prediction gene models
-  unsigned long num_pred_genes = agn_pairwise_compare_locus_num_pred_genes(locus);
+  unsigned long num_pred_genes = agn_gene_locus_num_pred_genes(locus);
   if(filters->MinPredictionGeneModels > 0)
   {
     if(num_pred_genes < filters->MinPredictionGeneModels)
@@ -218,33 +210,33 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   }
 
   // Filter by reference transcript models
-  unsigned long num_refr_transcripts = agn_pairwise_compare_locus_num_refr_transcripts(locus);
+  unsigned long nrefr_transcripts = agn_gene_locus_num_refr_transcripts(locus);
   if(filters->MinReferenceTranscriptModels > 0)
   {
-    if(num_refr_transcripts < filters->MinReferenceTranscriptModels)
+    if(nrefr_transcripts < filters->MinReferenceTranscriptModels)
       return true;
   }
   if(filters->MaxReferenceTranscriptModels > 0)
   {
-    if(num_refr_transcripts > filters->MaxReferenceTranscriptModels)
+    if(nrefr_transcripts > filters->MaxReferenceTranscriptModels)
       return true;
   }
 
   // Filter by prediction transcript models
-  unsigned long num_pred_transcripts = agn_pairwise_compare_locus_num_pred_transcripts(locus);
+  unsigned long npred_transcripts = agn_gene_locus_num_pred_transcripts(locus);
   if(filters->MinPredictionTranscriptModels > 0)
   {
-    if(num_pred_transcripts < filters->MinPredictionTranscriptModels)
+    if(npred_transcripts < filters->MinPredictionTranscriptModels)
       return true;
   }
   if(filters->MaxPredictionTranscriptModels > 0)
   {
-    if(num_pred_transcripts > filters->MaxPredictionTranscriptModels)
+    if(npred_transcripts > filters->MaxPredictionTranscriptModels)
       return true;
   }
 
   // Filter by number of transcripts per gene model
-  GtArray *refr_genes = agn_pairwise_compare_locus_get_refr_genes(locus);
+  GtArray *refr_genes = agn_gene_locus_get_refr_genes(locus);
   if(filters->MinTranscriptsPerReferenceGeneModel > 0)
   {
     unsigned long i;
@@ -252,8 +244,8 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
     for(i = 0; i < gt_array_size(refr_genes); i++)
     {
       GtFeatureNode *gene = gt_array_get(refr_genes, i);
-      if( agn_gt_feature_node_num_transcripts(gene) >=
-          filters->MinTranscriptsPerReferenceGeneModel )
+      if(agn_gt_feature_node_num_transcripts(gene) >=
+         filters->MinTranscriptsPerReferenceGeneModel)
       {
         success = true;
         break;
@@ -272,8 +264,8 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
     for(i = 0; i < gt_array_size(refr_genes); i++)
     {
       GtFeatureNode *gene = gt_array_get(refr_genes, i);
-      if( agn_gt_feature_node_num_transcripts(gene) <=
-          filters->MaxTranscriptsPerReferenceGeneModel )
+      if(agn_gt_feature_node_num_transcripts(gene) <=
+         filters->MaxTranscriptsPerReferenceGeneModel)
       {
         success = true;
         break;
@@ -286,7 +278,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
     }
   }
   gt_array_delete(refr_genes);
-  GtArray *pred_genes = agn_pairwise_compare_locus_get_pred_genes(locus);
+  GtArray *pred_genes = agn_gene_locus_get_pred_genes(locus);
   if(filters->MinTranscriptsPerPredictionGeneModel > 0)
   {
     unsigned long i;
@@ -294,8 +286,8 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
     for(i = 0; i < gt_array_size(pred_genes); i++)
     {
       GtFeatureNode *gene = gt_array_get(pred_genes, i);
-      if( agn_gt_feature_node_num_transcripts(gene) >=
-          filters->MinTranscriptsPerPredictionGeneModel )
+      if(agn_gt_feature_node_num_transcripts(gene) >=
+         filters->MinTranscriptsPerPredictionGeneModel)
       {
         success = true;
         break;
@@ -314,8 +306,8 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
     for(i = 0; i < gt_array_size(pred_genes); i++)
     {
       GtFeatureNode *gene = gt_array_get(pred_genes, i);
-      if( agn_gt_feature_node_num_transcripts(gene) <=
-          filters->MaxTranscriptsPerPredictionGeneModel )
+      if(agn_gt_feature_node_num_transcripts(gene) <=
+         filters->MaxTranscriptsPerPredictionGeneModel)
       {
         success = true;
         break;
@@ -330,7 +322,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   gt_array_delete(pred_genes);
 
   // Filter by reference exons
-  unsigned long num_refr_exons = agn_pairwise_compare_locus_num_refr_exons(locus);
+  unsigned long num_refr_exons = agn_gene_locus_num_refr_exons(locus);
   if(filters->MinReferenceExons > 0)
   {
     if(num_refr_exons < filters->MinReferenceExons)
@@ -343,7 +335,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   }
 
   // Filter by prediction exons
-  unsigned long num_pred_exons = agn_pairwise_compare_locus_num_pred_exons(locus);
+  unsigned long num_pred_exons = agn_gene_locus_num_pred_exons(locus);
   if(filters->MinPredictionExons > 0)
   {
     if(num_pred_exons < filters->MinPredictionExons)
@@ -356,7 +348,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   }
 
   // Filter by reference CDS length
-  unsigned long refr_cds_length = agn_pairwise_compare_locus_refr_cds_length(locus);
+  unsigned long refr_cds_length = agn_gene_locus_refr_cds_length(locus);
   if(filters->MinReferenceCDSLength > 0)
   {
     if(refr_cds_length < filters->MinReferenceCDSLength)
@@ -369,7 +361,7 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   }
 
   // Filter by prediction CDS length
-  unsigned long pred_cds_length = agn_pairwise_compare_locus_pred_cds_length(locus);
+  unsigned long pred_cds_length = agn_gene_locus_pred_cds_length(locus);
   if(filters->MinPredictionCDSLength > 0)
   {
     if(pred_cds_length < filters->MinPredictionCDSLength)
@@ -384,11 +376,13 @@ bool agn_pairwise_compare_locus_filter( AgnPairwiseCompareLocus *locus,
   return false;
 }
 
-GtArray *agn_pairwise_compare_locus_find_best_pairs(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus)
 {
-  if( locus->refr_cliques == NULL || gt_array_size(locus->refr_cliques) == 0 ||
-      locus->pred_cliques == NULL || gt_array_size(locus->pred_cliques) == 0 )
+  if(locus->refr_cliques == NULL || gt_array_size(locus->refr_cliques) == 0 ||
+     locus->pred_cliques == NULL || gt_array_size(locus->pred_cliques) == 0)
+  {
     return NULL;
+  }
 
   if(locus->reported_pairs != NULL)
     return locus->reported_pairs;
@@ -405,11 +399,8 @@ GtArray *agn_pairwise_compare_locus_find_best_pairs(AgnPairwiseCompareLocus *loc
                                            gt_array_get(locus->clique_pairs, i);
     AgnTranscriptClique *rclique = agn_clique_pair_get_refr_clique(pair);
     AgnTranscriptClique *pclique = agn_clique_pair_get_pred_clique(pair);
-    if
-    (
-      agn_transcript_clique_has_id_in_hash(rclique, refr_cliques_acctd) == false &&
-      agn_transcript_clique_has_id_in_hash(pclique, pred_cliques_acctd) == false
-    )
+    if(!agn_transcript_clique_has_id_in_hash(rclique, refr_cliques_acctd) &&
+       !agn_transcript_clique_has_id_in_hash(pclique, pred_cliques_acctd))
     {
       gt_array_add(locus->reported_pairs, pair);
       agn_transcript_clique_put_ids_in_hash(rclique, refr_cliques_acctd);
@@ -422,7 +413,7 @@ GtArray *agn_pairwise_compare_locus_find_best_pairs(AgnPairwiseCompareLocus *loc
   {
     AgnTranscriptClique *refr_clique = *(AgnTranscriptClique **)
                                            gt_array_get(locus->refr_cliques, i);
-    if(agn_transcript_clique_has_id_in_hash(refr_clique, refr_cliques_acctd) == false)
+    if(!agn_transcript_clique_has_id_in_hash(refr_clique, refr_cliques_acctd))
     {
       gt_array_add(locus->unique_refr_cliques, refr_clique);
       agn_transcript_clique_put_ids_in_hash(refr_clique, refr_cliques_acctd);
@@ -434,7 +425,7 @@ GtArray *agn_pairwise_compare_locus_find_best_pairs(AgnPairwiseCompareLocus *loc
   {
     AgnTranscriptClique *pred_clique = *(AgnTranscriptClique **)
                                            gt_array_get(locus->pred_cliques, i);
-    if(agn_transcript_clique_has_id_in_hash(pred_clique, pred_cliques_acctd) == false)
+    if(!agn_transcript_clique_has_id_in_hash(pred_clique, pred_cliques_acctd))
     {
       gt_array_add(locus->unique_pred_cliques, pred_clique);
       agn_transcript_clique_put_ids_in_hash(pred_clique, pred_cliques_acctd);
@@ -446,8 +437,8 @@ GtArray *agn_pairwise_compare_locus_find_best_pairs(AgnPairwiseCompareLocus *loc
   return locus->reported_pairs;
 }
 
-GtArray* agn_pairwise_compare_locus_get_clique_pairs( AgnPairwiseCompareLocus *locus,
-                                          unsigned int trans_per_locus )
+GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
+                                         unsigned int trans_per_locus)
 {
   GtArray *refr_trans, *pred_trans;
   GtDlistelem *elem;
@@ -460,17 +451,17 @@ GtArray* agn_pairwise_compare_locus_get_clique_pairs( AgnPairwiseCompareLocus *l
   refr_trans = gt_array_new( sizeof(GtFeatureNode *) );
   if(locus->refr_genes)
   {
-    for( elem = gt_dlist_first(locus->refr_genes);
-         elem != NULL;
-         elem = gt_dlistelem_next(elem) )
+    for(elem = gt_dlist_first(locus->refr_genes);
+        elem != NULL;
+        elem = gt_dlistelem_next(elem))
     {
       GtFeatureNode *gene = (GtFeatureNode *)gt_dlistelem_get_data(elem);
       GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
       GtFeatureNode *feature;
 
-      for( feature = gt_feature_node_iterator_next(iter);
-           feature != NULL;
-           feature = gt_feature_node_iterator_next(iter) )
+      for(feature = gt_feature_node_iterator_next(iter);
+          feature != NULL;
+          feature = gt_feature_node_iterator_next(iter))
       {
         if(agn_gt_feature_node_is_mrna_feature(feature))
           gt_array_add(refr_trans, feature);
@@ -483,17 +474,17 @@ GtArray* agn_pairwise_compare_locus_get_clique_pairs( AgnPairwiseCompareLocus *l
   pred_trans = gt_array_new( sizeof(GtFeatureNode *) );
   if(locus->pred_genes)
   {
-    for( elem = gt_dlist_first(locus->pred_genes);
-         elem != NULL;
-         elem = gt_dlistelem_next(elem) )
+    for(elem = gt_dlist_first(locus->pred_genes);
+        elem != NULL;
+        elem = gt_dlistelem_next(elem))
     {
       GtFeatureNode *gene = (GtFeatureNode *)gt_dlistelem_get_data(elem);
       GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
       GtFeatureNode *feature;
 
-      for( feature = gt_feature_node_iterator_next(iter);
-           feature != NULL;
-           feature = gt_feature_node_iterator_next(iter) )
+      for(feature = gt_feature_node_iterator_next(iter);
+          feature != NULL;
+          feature = gt_feature_node_iterator_next(iter))
       {
         if(agn_gt_feature_node_is_mrna_feature(feature))
           gt_array_add(pred_trans, feature);
@@ -581,14 +572,13 @@ GtArray* agn_pairwise_compare_locus_get_clique_pairs( AgnPairwiseCompareLocus *l
   unsigned long i,j;
   for(i = 0; i < gt_array_size(locus->refr_cliques); i++)
   {
-    AgnTranscriptClique *refr_clique = *(AgnTranscriptClique **)
-                                           gt_array_get(locus->refr_cliques, i);
+    AgnTranscriptClique *refr_clique, *pred_clique;
+    refr_clique = *(AgnTranscriptClique **)gt_array_get(locus->refr_cliques, i);
     for(j = 0; j < gt_array_size(locus->pred_cliques); j++)
     {
-      AgnTranscriptClique *pred_clique = *(AgnTranscriptClique **)
-                                            gt_array_get(locus->pred_cliques,j);
-      AgnCliquePair *pair = agn_clique_pair_new( locus->seqid, refr_clique,
-                                                 pred_clique, &locus->range );
+      pred_clique = *(AgnTranscriptClique**)gt_array_get(locus->pred_cliques,j);
+      AgnCliquePair *pair = agn_clique_pair_new(locus->seqid, refr_clique,
+                                                pred_clique, &locus->range);
       gt_array_add(clique_pairs, pair);
     }
   }
@@ -598,33 +588,30 @@ GtArray* agn_pairwise_compare_locus_get_clique_pairs( AgnPairwiseCompareLocus *l
   return locus->clique_pairs;
 }
 
-unsigned long agn_pairwise_compare_locus_get_end(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus)
 {
   return locus->range.end;
 }
 
-unsigned long agn_pairwise_compare_locus_get_length(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus)
 {
   return gt_range_length(&locus->range);
 }
 
-AgnCliquePair* agn_pairwise_compare_locus_get_optimal_clique_pair
-(
-  AgnPairwiseCompareLocus *locus,
-  AgnTranscriptClique *refr_clique
-)
+AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
+                                              AgnTranscriptClique *refr_clique)
 {
   AgnCliquePair *bestpair = NULL;
   unsigned long i;
 
   for(i = 0; i < gt_array_size(locus->clique_pairs); i++)
   {
-    AgnCliquePair *currentpair = *(AgnCliquePair **)
-                                    gt_array_get(locus->clique_pairs, i);
+    AgnCliquePair *currentpair;
+    currentpair = *(AgnCliquePair **)gt_array_get(locus->clique_pairs, i);
     if(refr_clique == agn_clique_pair_get_refr_clique(currentpair))
     {
-      if( bestpair == NULL ||
-          agn_clique_pair_compare_direct(bestpair, currentpair) == -1 )
+      if(bestpair == NULL ||
+         agn_clique_pair_compare_direct(bestpair, currentpair) == -1)
       {
         bestpair = currentpair;
       }
@@ -634,16 +621,16 @@ AgnCliquePair* agn_pairwise_compare_locus_get_optimal_clique_pair
   return bestpair;
 }
 
-GtArray *agn_pairwise_compare_locus_get_pred_genes(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_pred_genes(AgnGeneLocus *locus)
 {
   if(locus->pred_genes == NULL)
     return NULL;
 
   GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->pred_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->pred_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     gt_array_add(genes, gene);
@@ -652,16 +639,16 @@ GtArray *agn_pairwise_compare_locus_get_pred_genes(AgnPairwiseCompareLocus *locu
   return genes;
 }
 
-GtArray *agn_pairwise_compare_locus_get_pred_gene_ids(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_pred_gene_ids(AgnGeneLocus *locus)
 {
   if(locus->pred_genes == NULL)
     return NULL;
 
   GtArray *ids = gt_array_new( sizeof(char *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->pred_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->pred_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     const char *id = gt_feature_node_get_attribute(gene, "ID");
@@ -671,29 +658,29 @@ GtArray *agn_pairwise_compare_locus_get_pred_gene_ids(AgnPairwiseCompareLocus *l
   return ids;
 }
 
-double agn_pairwise_compare_locus_get_pred_splice_complexity(AgnPairwiseCompareLocus *locus)
+double agn_gene_locus_get_pred_splice_complexity(AgnGeneLocus *locus)
 {
   return locus->pred_splice_complexity;
 }
 
-GtArray *agn_pairwise_compare_locus_get_pred_transcripts(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_pred_transcripts(AgnGeneLocus *locus)
 {
   if(locus->pred_genes == NULL)
     return NULL;
 
   GtArray *transcripts = gt_array_new( sizeof(GtFeatureNode *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->pred_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->pred_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_mrna_feature(feature))
         gt_array_add(transcripts, feature);
@@ -704,24 +691,24 @@ GtArray *agn_pairwise_compare_locus_get_pred_transcripts(AgnPairwiseCompareLocus
   return transcripts;
 }
 
-GtArray *agn_pairwise_compare_locus_get_pred_transcript_ids(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_pred_transcript_ids(AgnGeneLocus *locus)
 {
   if(locus->pred_genes == NULL)
     return NULL;
 
   GtArray *ids = gt_array_new( sizeof(char *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->pred_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->pred_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem) )
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_mrna_feature(feature))
       {
@@ -735,16 +722,16 @@ GtArray *agn_pairwise_compare_locus_get_pred_transcript_ids(AgnPairwiseCompareLo
   return ids;
 }
 
-GtArray *agn_pairwise_compare_locus_get_refr_genes(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_refr_genes(AgnGeneLocus *locus)
 {
   if(locus->refr_genes == NULL)
     return NULL;
 
   GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->refr_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->refr_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     gt_array_add(genes, gene);
@@ -753,16 +740,16 @@ GtArray *agn_pairwise_compare_locus_get_refr_genes(AgnPairwiseCompareLocus *locu
   return genes;
 }
 
-GtArray *agn_pairwise_compare_locus_get_refr_gene_ids(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_refr_gene_ids(AgnGeneLocus *locus)
 {
   if(locus->refr_genes == NULL)
     return NULL;
 
   GtArray *ids = gt_array_new( sizeof(char *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->refr_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->refr_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     const char *id = gt_feature_node_get_attribute(gene, "ID");
@@ -772,29 +759,29 @@ GtArray *agn_pairwise_compare_locus_get_refr_gene_ids(AgnPairwiseCompareLocus *l
   return ids;
 }
 
-double agn_pairwise_compare_locus_get_refr_splice_complexity(AgnPairwiseCompareLocus *locus)
+double agn_gene_locus_get_refr_splice_complexity(AgnGeneLocus *locus)
 {
   return locus->refr_splice_complexity;
 }
 
-GtArray *agn_pairwise_compare_locus_get_refr_transcripts(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_refr_transcripts(AgnGeneLocus *locus)
 {
   if(locus->refr_genes == NULL)
     return NULL;
 
   GtArray *transcripts = gt_array_new( sizeof(GtFeatureNode *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->refr_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->refr_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_mrna_feature(feature))
         gt_array_add(transcripts, feature);
@@ -805,24 +792,24 @@ GtArray *agn_pairwise_compare_locus_get_refr_transcripts(AgnPairwiseCompareLocus
   return transcripts;
 }
 
-GtArray *agn_pairwise_compare_locus_get_refr_transcript_ids(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_refr_transcript_ids(AgnGeneLocus *locus)
 {
   if(locus->refr_genes == NULL)
     return NULL;
 
   GtArray *ids = gt_array_new( sizeof(char *) );
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(locus->refr_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->refr_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_mrna_feature(feature))
       {
@@ -836,44 +823,36 @@ GtArray *agn_pairwise_compare_locus_get_refr_transcript_ids(AgnPairwiseCompareLo
   return ids;
 }
 
-const char* agn_pairwise_compare_locus_get_seqid(AgnPairwiseCompareLocus *locus)
+const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus)
 {
   return locus->seqid;
 }
 
-unsigned long agn_pairwise_compare_locus_get_start(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_get_start(AgnGeneLocus *locus)
 {
   return locus->range.start;
 }
 
-//void agn_pairwise_compare_locus_get_summary_data( AgnPairwiseCompareLocus *locus,
-//                                     PeCompEvaluation *data )
-//{
-//  data->counts  = locus->counts;
-//  data->stats   = locus->stats;
-//  data->results = locus->results;
-//}
-
-GtArray *agn_pairwise_compare_locus_get_unique_pred_cliques(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_unique_pred_cliques(AgnGeneLocus *locus)
 {
   return locus->unique_pred_cliques;
 }
 
-GtArray *agn_pairwise_compare_locus_get_unique_refr_cliques(AgnPairwiseCompareLocus *locus)
+GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus)
 {
   return locus->unique_refr_cliques;
 }
 
-bool agn_pairwise_compare_locus_is_complex(AgnPairwiseCompareLocus *locus)
+bool agn_gene_locus_is_complex(AgnGeneLocus *locus)
 {
   return gt_array_size(locus->refr_cliques) > 1 ||
          gt_array_size(locus->pred_cliques) > 1;
 }
 
-AgnPairwiseCompareLocus* agn_pairwise_compare_locus_new(const char *seqid)
+AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 {
-  AgnPairwiseCompareLocus *locus = (AgnPairwiseCompareLocus *)
-                                     gt_malloc(sizeof(AgnPairwiseCompareLocus));
+  AgnGeneLocus *locus = (AgnGeneLocus *)
+                                     gt_malloc(sizeof(AgnGeneLocus));
   locus->refr_genes = NULL;
   locus->pred_genes = NULL;
   locus->range.start = 0;
@@ -886,7 +865,7 @@ AgnPairwiseCompareLocus* agn_pairwise_compare_locus_new(const char *seqid)
   locus->unique_refr_cliques = NULL;
   locus->unique_pred_cliques = NULL;
 
-  locus->seqid = (char *)gt_malloc(sizeof(char)*(strlen(seqid) + 1));
+  locus->seqid = gt_cstr_dup(seqid);
   strcpy(locus->seqid, seqid);
 
   locus->refr_splice_complexity = 0.0;
@@ -895,12 +874,12 @@ AgnPairwiseCompareLocus* agn_pairwise_compare_locus_new(const char *seqid)
   return locus;
 }
 
-unsigned long agn_pairwise_compare_locus_num_pred_exons(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_num_pred_exons(AgnGeneLocus *locus)
 {
   if(locus->pred_genes == NULL)
     return 0;
 
-  GtArray *transcripts = agn_pairwise_compare_locus_get_pred_transcripts(locus);
+  GtArray *transcripts = agn_gene_locus_get_pred_transcripts(locus);
   unsigned long exon_count = 0, i;
   for(i = 0; i < gt_array_size(transcripts); i++)
   {
@@ -908,9 +887,9 @@ unsigned long agn_pairwise_compare_locus_num_pred_exons(AgnPairwiseCompareLocus 
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_exon_feature(feature))
         exon_count++;
@@ -921,7 +900,7 @@ unsigned long agn_pairwise_compare_locus_num_pred_exons(AgnPairwiseCompareLocus 
   return exon_count;
 }
 
-unsigned long agn_pairwise_compare_locus_num_pred_genes(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_num_pred_genes(AgnGeneLocus *locus)
 {
   if(locus->pred_genes == NULL)
     return 0;
@@ -929,7 +908,7 @@ unsigned long agn_pairwise_compare_locus_num_pred_genes(AgnPairwiseCompareLocus 
   return gt_dlist_size(locus->pred_genes);
 }
 
-unsigned long agn_pairwise_compare_locus_num_pred_transcripts(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_num_pred_transcripts(AgnGeneLocus *locus)
 {
   GtDlistelem *elem;
 
@@ -937,17 +916,17 @@ unsigned long agn_pairwise_compare_locus_num_pred_transcripts(AgnPairwiseCompare
     return 0;
 
   unsigned long transcript_count = 0;
-  for( elem = gt_dlist_first(locus->pred_genes);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(locus->pred_genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *gene = (GtFeatureNode *)gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_mrna_feature(feature))
         transcript_count++;
@@ -957,12 +936,12 @@ unsigned long agn_pairwise_compare_locus_num_pred_transcripts(AgnPairwiseCompare
   return transcript_count;
 }
 
-unsigned long agn_pairwise_compare_locus_num_refr_exons(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_num_refr_exons(AgnGeneLocus *locus)
 {
   if(locus->refr_genes == NULL)
     return 0;
 
-  GtArray *transcripts = agn_pairwise_compare_locus_get_refr_transcripts(locus);
+  GtArray *transcripts = agn_gene_locus_get_refr_transcripts(locus);
   unsigned long exon_count = 0, i;
   for(i = 0; i < gt_array_size(transcripts); i++)
   {
@@ -970,9 +949,9 @@ unsigned long agn_pairwise_compare_locus_num_refr_exons(AgnPairwiseCompareLocus 
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter) )
     {
       if(agn_gt_feature_node_is_exon_feature(feature))
         exon_count++;
@@ -983,7 +962,7 @@ unsigned long agn_pairwise_compare_locus_num_refr_exons(AgnPairwiseCompareLocus 
   return exon_count;
 }
 
-unsigned long agn_pairwise_compare_locus_num_refr_genes(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_num_refr_genes(AgnGeneLocus *locus)
 {
   if(locus->refr_genes == NULL)
     return 0;
@@ -991,7 +970,7 @@ unsigned long agn_pairwise_compare_locus_num_refr_genes(AgnPairwiseCompareLocus 
   return gt_dlist_size(locus->refr_genes);
 }
 
-unsigned long agn_pairwise_compare_locus_num_refr_transcripts(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_num_refr_transcripts(AgnGeneLocus *locus)
 {
   GtDlistelem *elem;
 
@@ -1007,9 +986,9 @@ unsigned long agn_pairwise_compare_locus_num_refr_transcripts(AgnPairwiseCompare
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *feature;
 
-    for( feature = gt_feature_node_iterator_next(iter);
-         feature != NULL;
-         feature = gt_feature_node_iterator_next(iter) )
+    for(feature = gt_feature_node_iterator_next(iter);
+        feature != NULL;
+        feature = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_mrna_feature(feature))
         transcript_count++;
@@ -1019,10 +998,10 @@ unsigned long agn_pairwise_compare_locus_num_refr_transcripts(AgnPairwiseCompare
   return transcript_count;
 }
 
-unsigned long agn_pairwise_compare_locus_pred_cds_length(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_pred_cds_length(AgnGeneLocus *locus)
 {
   unsigned long length = 0, i;
-  GtArray *transcripts = agn_pairwise_compare_locus_get_pred_transcripts(locus);
+  GtArray *transcripts = agn_gene_locus_get_pred_transcripts(locus);
   for(i = 0; i < gt_array_size(transcripts); i++)
   {
     GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(transcripts, i);
@@ -1032,15 +1011,15 @@ unsigned long agn_pairwise_compare_locus_pred_cds_length(AgnPairwiseCompareLocus
   return length;
 }
 
-GtRange agn_pairwise_compare_locus_range(AgnPairwiseCompareLocus *locus)
+GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 {
   return locus->range;
 }
 
-unsigned long agn_pairwise_compare_locus_refr_cds_length(AgnPairwiseCompareLocus *locus)
+unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus)
 {
   unsigned long length = 0, i;
-  GtArray *transcripts = agn_pairwise_compare_locus_get_refr_transcripts(locus);
+  GtArray *transcripts = agn_gene_locus_get_refr_transcripts(locus);
   for(i = 0; i < gt_array_size(transcripts); i++)
   {
     GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(transcripts, i);
@@ -1050,11 +1029,9 @@ unsigned long agn_pairwise_compare_locus_refr_cds_length(AgnPairwiseCompareLocus
   return length;
 }
 
-void agn_pairwise_compare_locus_update_range( AgnPairwiseCompareLocus *locus,
-                                 GtFeatureNode *gene_feature )
+void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
-  GtGenomeNode *gn = (GtGenomeNode *)gene_feature;
-  GtRange gene_range = gt_genome_node_get_range(gn);
+  GtRange gene_range = gt_genome_node_get_range((GtGenomeNode *)gene);
   if(locus->range.start == 0 && locus->range.end == 0)
     locus->range = gene_range;
   else
