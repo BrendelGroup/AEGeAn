@@ -3,7 +3,7 @@
 #include <time.h>
 #include "AgnCanonNodeVisitor.h"
 #include "AgnLocusIndex.h"
-#include "AgnPairwiseCompareLocus.h"
+#include "AgnGeneLocus.h"
 #include "AgnUtils.h"
 #include "PeReports.h"
 
@@ -60,7 +60,7 @@ int main(int argc, char * const argv[])
   {
     const char *seqid = gt_str_array_get(seqids, i);
     GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
-    gt_array_sort(seq_loci,(GtCompare)agn_pairwise_compare_locus_array_compare);
+    gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
     gt_array_add(loci, seq_loci);
   }
   gt_timer_stop(timer_short);
@@ -142,8 +142,8 @@ int main(int argc, char * const argv[])
     // For HTML output, each sequence and each locus gets a dedicated .html file
     FILE *seqfile = NULL;
     GtArray *seq_loci = *(GtArray **)gt_array_get(loci, i);
-    AgnPairwiseCompareLocusSummary *locus_summaries = (AgnPairwiseCompareLocusSummary *)
-                                  gt_malloc( sizeof(AgnPairwiseCompareLocusSummary) * gt_array_size(seq_loci) );
+    AgnGeneLocusSummary *locus_summaries = (AgnGeneLocusSummary *)
+                                  gt_malloc( sizeof(AgnGeneLocusSummary) * gt_array_size(seq_loci) );
 
     if(!options.summary_only)
     {
@@ -202,9 +202,9 @@ int main(int argc, char * const argv[])
       // Parallel loop over the loci, not the clique pairs
       {
         agn_comp_summary_init(&locus_summaries[j].counts);
-        AgnPairwiseCompareLocus *locus = *(AgnPairwiseCompareLocus **)gt_array_get(seq_loci, j);
+        AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seq_loci, j);
 
-        GtArray *clique_pairs = agn_pairwise_compare_locus_get_clique_pairs(locus, options.trans_per_locus);
+        GtArray *clique_pairs = agn_gene_locus_get_clique_pairs(locus, options.trans_per_locus);
         unsigned long comparisons = 0;
         if(clique_pairs != NULL)
           comparisons = gt_array_size(clique_pairs);
@@ -216,39 +216,39 @@ int main(int argc, char * const argv[])
           if(options.debug)
             fprintf( stderr, "debug: locus %s[%lu, %lu] contains %lu transcript (or transcript"
                      " clique) pairs, exceeds the limit of %d, moving on\n",
-                     agn_pairwise_compare_locus_get_seqid(locus), agn_pairwise_compare_locus_get_start(locus),
-                     agn_pairwise_compare_locus_get_end(locus), comparisons, options.complimit );
+                     agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
+                     agn_gene_locus_get_end(locus), comparisons, options.complimit );
         }
-        else if(agn_pairwise_compare_locus_filter(locus, &options.filters))
+        else if(agn_gene_locus_filter(locus, &options.filters))
         {
           locus_summaries[j].start = 0;
           locus_summaries[j].end   = 0;
           if(options.debug)
             fprintf( stderr, "debug: locus %s[%lu, %lu] was filtered, moving on\n",
-                     agn_pairwise_compare_locus_get_seqid(locus), agn_pairwise_compare_locus_get_start(locus),
-                     agn_pairwise_compare_locus_get_end(locus));
+                     agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
+                     agn_gene_locus_get_end(locus));
         }
         else
         {
           summary_data_local.counts.num_loci++;
 
           // Grab some summary counts
-          summary_data_local.counts.refr_genes       += agn_pairwise_compare_locus_num_refr_genes(locus);
-          summary_data_local.counts.refr_transcripts += agn_pairwise_compare_locus_num_refr_transcripts(locus);
-          summary_data_local.counts.pred_genes       += agn_pairwise_compare_locus_num_pred_genes(locus);
-          summary_data_local.counts.pred_transcripts += agn_pairwise_compare_locus_num_pred_transcripts(locus);
-          if(agn_pairwise_compare_locus_num_refr_genes(locus) == 0)
+          summary_data_local.counts.refr_genes       += agn_gene_locus_num_refr_genes(locus);
+          summary_data_local.counts.refr_transcripts += agn_gene_locus_num_refr_transcripts(locus);
+          summary_data_local.counts.pred_genes       += agn_gene_locus_num_pred_genes(locus);
+          summary_data_local.counts.pred_transcripts += agn_gene_locus_num_pred_transcripts(locus);
+          if(agn_gene_locus_num_refr_genes(locus) == 0)
             summary_data_local.counts.unique_pred++;
-          else if(agn_pairwise_compare_locus_num_pred_genes(locus) == 0)
+          else if(agn_gene_locus_num_pred_genes(locus) == 0)
             summary_data_local.counts.unique_refr++;
 
           if(options.html && !options.summary_only)
           {
-            locus_summaries[j].start = agn_pairwise_compare_locus_get_start(locus);
-            locus_summaries[j].end = agn_pairwise_compare_locus_get_end(locus);
-            locus_summaries[j].length = agn_pairwise_compare_locus_get_length(locus);
-            locus_summaries[j].refr_transcripts = agn_pairwise_compare_locus_num_refr_transcripts(locus);
-            locus_summaries[j].pred_transcripts = agn_pairwise_compare_locus_num_pred_transcripts(locus);
+            locus_summaries[j].start = agn_gene_locus_get_start(locus);
+            locus_summaries[j].end = agn_gene_locus_get_end(locus);
+            locus_summaries[j].length = agn_gene_locus_get_length(locus);
+            locus_summaries[j].refr_transcripts = agn_gene_locus_num_refr_transcripts(locus);
+            locus_summaries[j].pred_transcripts = agn_gene_locus_num_pred_transcripts(locus);
             locus_summaries[j].total = comparisons;
           }
 
@@ -272,10 +272,10 @@ int main(int argc, char * const argv[])
             {
               fprintf( stderr,
                        "debug: (proc %d) locus: %s[%lu, %lu]; length: %lu, trans: %lu,%lu; pairs: ",
-                       rank, agn_pairwise_compare_locus_get_seqid(locus), agn_pairwise_compare_locus_get_start(locus),
-                       agn_pairwise_compare_locus_get_end(locus), agn_pairwise_compare_locus_get_length(locus),
-                       agn_pairwise_compare_locus_num_refr_transcripts(locus),
-                       agn_pairwise_compare_locus_num_pred_transcripts(locus) );
+                       rank, agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
+                       agn_gene_locus_get_end(locus), agn_gene_locus_get_length(locus),
+                       agn_gene_locus_num_refr_transcripts(locus),
+                       agn_gene_locus_num_pred_transcripts(locus) );
               if(clique_pairs == NULL)
                 fprintf(stderr, "0; no comparison");
               else if(options.complimit != 0 && gt_array_size(clique_pairs) > options.complimit)
@@ -293,15 +293,15 @@ int main(int argc, char * const argv[])
             if( clique_pairs != NULL &&
                 (options.complimit == 0 || gt_array_size(clique_pairs) <= options.complimit) )
             {
-              agn_pairwise_compare_locus_calc_splice_complexity_refr(locus);
-              agn_pairwise_compare_locus_calc_splice_complexity_pred(locus);
+              agn_gene_locus_calc_splice_complexity_refr(locus);
+              agn_gene_locus_calc_splice_complexity_pred(locus);
             }
 
             PeCompEvaluation data;
-            //agn_pairwise_compare_locus_get_summary_data(locus, &data);
-            agn_pairwise_compare_locus_aggregate_results(locus, &data);
-            agn_pairwise_compare_locus_aggregate_results(locus, &summary_data_local);
-            GtArray *reported_pairs = agn_pairwise_compare_locus_find_best_pairs(locus);
+            //agn_gene_locus_get_summary_data(locus, &data);
+            agn_gene_locus_aggregate_results(locus, &data);
+            agn_gene_locus_aggregate_results(locus, &summary_data_local);
+            GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
             if(reported_pairs == NULL)
               locus_summaries[j].reported = 0;
             else
@@ -312,7 +312,7 @@ int main(int argc, char * const argv[])
           if(!options.summary_only)
           {
             //PeCompEvaluation data;
-            //agn_pairwise_compare_locus_get_summary_data(locus, &data);
+            //agn_gene_locus_get_summary_data(locus, &data);
             if(options.html)
             {
               pe_gene_locus_print_results(locus, seqfile, &options);
@@ -325,7 +325,7 @@ int main(int argc, char * const argv[])
 #ifndef WITHOUT_CAIRO
             if(options.locus_graphics)
             {
-              AgnPairwiseCompareLocusPngMetadata metadata;
+              AgnGeneLocusPngMetadata metadata;
               pe_gene_locus_get_png_filename(locus, metadata.filename, options.outfilename);
               metadata.graphic_width = pe_gene_locus_get_graphic_width(locus);
               sprintf(metadata.stylefile, "%s/pe.style", options.data_path);
@@ -335,16 +335,16 @@ int main(int argc, char * const argv[])
               metadata.predlabel = options.predlabel;
               metadata.track_order_func = pe_track_order;
 
-              agn_pairwise_compare_locus_print_png(locus, &metadata);
+              agn_gene_locus_print_png(locus, &metadata);
             }
 #endif
           }
 
 //          if(options.locusgff3)
-//            agn_pairwise_compare_locus_to_gff3(locus, locusgff3file);
+//            agn_gene_locus_to_gff3(locus, locusgff3file);
         }
 // fprintf(stderr, "DELETEME two\n");
-        agn_pairwise_compare_locus_delete(locus);
+        agn_gene_locus_delete(locus);
 // fprintf(stderr, "DELETEME three\n");
       } // End parallel for loop
 
@@ -361,7 +361,7 @@ int main(int argc, char * const argv[])
       {
         for(j = 0; j < gt_array_size(seq_loci); j++)
         {
-          AgnPairwiseCompareLocusSummary *locus_summary = locus_summaries + j;
+          AgnGeneLocusSummary *locus_summary = locus_summaries + j;
           if(locus_summary->start > 0 && locus_summary->end > 0)
             pe_print_locus_to_seqfile( seqfile, locus_summary->start, locus_summary->end,
                                        locus_summary->length, locus_summary->refr_transcripts,

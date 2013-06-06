@@ -2,11 +2,11 @@
 #define PE_REPORTS
 
 #include "genometools.h"
-#include "AgnPairwiseCompareLocus.h"
+#include "AgnGeneLocus.h"
 #include "PeComparEval.h"
 #include "PeOptions.h"
 
-#define AGN_PAIRWISE_COMPARE_LOCUS_GRAPHIC_MIN_WIDTH 650
+#define AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH 650
 
 /**
 * This data structure provides a convenient container for metadata needed to
@@ -22,7 +22,7 @@ typedef struct
   const char *predlabel;
   unsigned long graphic_width;
   int (*track_order_func)(const char *s1, const char *s2, void *data);
-} AgnPairwiseCompareLocusPngMetadata;
+} AgnGeneLocusPngMetadata;
 
 /**
 * This data structure provides a summary of the data and comparisons associated
@@ -38,7 +38,7 @@ typedef struct
   unsigned long reported;
   unsigned long total;
   AgnCompSummary counts;
-} AgnPairwiseCompareLocusSummary;
+} AgnGeneLocusSummary;
 
 /**
  * Add the locus' comparison statistics to a set of aggregate statistics.
@@ -47,9 +47,9 @@ typedef struct
  * @param[out] data     summary counts, stats, and results to which the locus
  *                      data will be aggregated
  */
-void agn_pairwise_compare_locus_aggregate_results
+void agn_gene_locus_aggregate_results
 (
-  AgnPairwiseCompareLocus *locus,
+  AgnGeneLocus *locus,
   PeCompEvaluation *data
 );
 
@@ -59,10 +59,10 @@ void agn_pairwise_compare_locus_aggregate_results
  *
  * @param[in] locus    the locus
  */
-void agn_pairwise_compare_locus_print_png
+void agn_gene_locus_print_png
 (
-  AgnPairwiseCompareLocus *locus,
-  AgnPairwiseCompareLocusPngMetadata *metadata
+  AgnGeneLocus *locus,
+  AgnGeneLocusPngMetadata *metadata
 );
 #endif
 
@@ -72,7 +72,7 @@ void agn_pairwise_compare_locus_print_png
  * @param[in]  locus     the locus
  * @param[out] buffer    the string to which the filename will be written
  */
-void pe_gene_locus_get_filename( AgnPairwiseCompareLocus *locus, char *buffer,
+void pe_gene_locus_get_filename( AgnGeneLocus *locus, char *buffer,
                                  const char *dirpath );
 
 /**
@@ -81,7 +81,7 @@ void pe_gene_locus_get_filename( AgnPairwiseCompareLocus *locus, char *buffer,
  * @param[in]    the locus
  * @returns      the width (in pixels) to use
  */
-unsigned long pe_gene_locus_get_graphic_width(AgnPairwiseCompareLocus *locus);
+unsigned long pe_gene_locus_get_graphic_width(AgnGeneLocus *locus);
 
 /**
  * Get the filename for printing this locus' graphic.
@@ -89,7 +89,7 @@ unsigned long pe_gene_locus_get_graphic_width(AgnPairwiseCompareLocus *locus);
  * @param[in]  locus       the locus
  * @param[out] filename    string to which filename will be written
  */
-void pe_gene_locus_get_png_filename( AgnPairwiseCompareLocus *locus,
+void pe_gene_locus_get_png_filename( AgnGeneLocus *locus,
                                      char *buffer, const char *dirpath );
 
 /**
@@ -98,7 +98,7 @@ void pe_gene_locus_get_png_filename( AgnPairwiseCompareLocus *locus,
  * @param[in]  locus        the locus
  * @param[out] outstream    the file to which the report will be written
  */
-void pe_gene_locus_print_results( AgnPairwiseCompareLocus *locus,
+void pe_gene_locus_print_results( AgnGeneLocus *locus,
                                   FILE *outstream, PeOptions *options );
 
 /**
@@ -107,7 +107,7 @@ void pe_gene_locus_print_results( AgnPairwiseCompareLocus *locus,
  * @param[in]  locus        the locus
  * @param[out] outstream    the file to which the report will be written
  */
-void pe_gene_locus_print_results_csv( AgnPairwiseCompareLocus *locus,
+void pe_gene_locus_print_results_csv( AgnGeneLocus *locus,
                                       FILE *outstream, PeOptions *options );
 
 /**
@@ -115,7 +115,7 @@ void pe_gene_locus_print_results_csv( AgnPairwiseCompareLocus *locus,
  *
  * @param[in] locus    the locus
  */
-void pe_gene_locus_print_results_html( AgnPairwiseCompareLocus *locus,
+void pe_gene_locus_print_results_html( AgnGeneLocus *locus,
                                        PeOptions *options );
 
 /**
