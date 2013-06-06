@@ -3,124 +3,82 @@
 #include <string.h>
 #include "AgnComparEval.h"
 
-void agn_comp_summary_combine( AgnCompSummary *counts,
-                                    AgnCompSummary *counts_to_add )
+void agn_comp_summary_combine(AgnCompSummary *s1, AgnCompSummary *s2)
 {
-  counts->unique_refr += counts_to_add->unique_refr;
-  counts->unique_pred += counts_to_add->unique_pred;
-  counts->refr_genes += counts_to_add->refr_genes;
-  counts->pred_genes += counts_to_add->pred_genes;
-  counts->refr_transcripts += counts_to_add->refr_transcripts;
-  counts->pred_transcripts += counts_to_add->pred_transcripts;
-  counts->num_loci += counts_to_add->num_loci;
-  counts->num_comparisons += counts_to_add->num_comparisons;
-  counts->num_perfect += counts_to_add->num_perfect;
-  counts->num_mislabeled += counts_to_add->num_mislabeled;
-  counts->num_cds_match += counts_to_add->num_cds_match;
-  counts->num_exon_match += counts_to_add->num_exon_match;
-  counts->num_utr_match += counts_to_add->num_utr_match;
-  counts->non_match += counts_to_add->non_match;
+  s1->unique_refr      += s2->unique_refr;
+  s1->unique_pred      += s2->unique_pred;
+  s1->refr_genes       += s2->refr_genes;
+  s1->pred_genes       += s2->pred_genes;
+  s1->refr_transcripts += s2->refr_transcripts;
+  s1->pred_transcripts += s2->pred_transcripts;
+  s1->num_loci         += s2->num_loci;
+  s1->num_comparisons  += s2->num_comparisons;
+  s1->num_perfect      += s2->num_perfect;
+  s1->num_mislabeled   += s2->num_mislabeled;
+  s1->num_cds_match    += s2->num_cds_match;
+  s1->num_exon_match   += s2->num_exon_match;
+  s1->num_utr_match    += s2->num_utr_match;
+  s1->non_match        += s2->non_match;
 }
 
-void agn_comp_summary_init(AgnCompSummary *counts)
+void agn_comp_summary_init(AgnCompSummary *summary)
 {
-  counts->unique_refr = 0;
-  counts->unique_pred = 0;
-  counts->refr_genes = 0;
-  counts->pred_genes = 0;
-  counts->refr_transcripts = 0;
-  counts->pred_transcripts = 0;
-  counts->num_loci = 0;
-  counts->num_comparisons = 0;
-  counts->num_perfect = 0;
-  counts->num_mislabeled = 0;
-  counts->num_cds_match = 0;
-  counts->num_exon_match = 0;
-  counts->num_utr_match = 0;
-  counts->non_match = 0;
+  summary->unique_refr = 0;
+  summary->unique_pred = 0;
+  summary->refr_genes = 0;
+  summary->pred_genes = 0;
+  summary->refr_transcripts = 0;
+  summary->pred_transcripts = 0;
+  summary->num_loci = 0;
+  summary->num_comparisons = 0;
+  summary->num_perfect = 0;
+  summary->num_mislabeled = 0;
+  summary->num_cds_match = 0;
+  summary->num_exon_match = 0;
+  summary->num_utr_match = 0;
+  summary->non_match = 0;
 }
 
-void agn_comparison_combine( AgnComparison *stats,
-                                   AgnComparison *stats_to_add )
+void agn_comparison_combine(AgnComparison *c1, AgnComparison *c2)
 {
-  stats->cds_nuc_stats.tp += stats_to_add->cds_nuc_stats.tp;
-  stats->cds_nuc_stats.fn += stats_to_add->cds_nuc_stats.fn;
-  stats->cds_nuc_stats.fp += stats_to_add->cds_nuc_stats.fp;
-  stats->cds_nuc_stats.tn += stats_to_add->cds_nuc_stats.tn;
+  c1->cds_nuc_stats.tp += c2->cds_nuc_stats.tp;
+  c1->cds_nuc_stats.fn += c2->cds_nuc_stats.fn;
+  c1->cds_nuc_stats.fp += c2->cds_nuc_stats.fp;
+  c1->cds_nuc_stats.tn += c2->cds_nuc_stats.tn;
 
-  stats->utr_nuc_stats.tp += stats_to_add->utr_nuc_stats.tp;
-  stats->utr_nuc_stats.fn += stats_to_add->utr_nuc_stats.fn;
-  stats->utr_nuc_stats.fp += stats_to_add->utr_nuc_stats.fp;
-  stats->utr_nuc_stats.tn += stats_to_add->utr_nuc_stats.tn;
+  c1->utr_nuc_stats.tp += c2->utr_nuc_stats.tp;
+  c1->utr_nuc_stats.fn += c2->utr_nuc_stats.fn;
+  c1->utr_nuc_stats.fp += c2->utr_nuc_stats.fp;
+  c1->utr_nuc_stats.tn += c2->utr_nuc_stats.tn;
 
-  stats->cds_struc_stats.correct += stats_to_add->cds_struc_stats.correct;
-  stats->cds_struc_stats.missing += stats_to_add->cds_struc_stats.missing;
-  stats->cds_struc_stats.wrong   += stats_to_add->cds_struc_stats.wrong  ;
+  c1->cds_struc_stats.correct += c2->cds_struc_stats.correct;
+  c1->cds_struc_stats.missing += c2->cds_struc_stats.missing;
+  c1->cds_struc_stats.wrong   += c2->cds_struc_stats.wrong  ;
 
-  stats->exon_struc_stats.correct += stats_to_add->exon_struc_stats.correct;
-  stats->exon_struc_stats.missing += stats_to_add->exon_struc_stats.missing;
-  stats->exon_struc_stats.wrong   += stats_to_add->exon_struc_stats.wrong  ;
+  c1->exon_struc_stats.correct += c2->exon_struc_stats.correct;
+  c1->exon_struc_stats.missing += c2->exon_struc_stats.missing;
+  c1->exon_struc_stats.wrong   += c2->exon_struc_stats.wrong  ;
 
-  stats->utr_struc_stats.correct += stats_to_add->utr_struc_stats.correct;
-  stats->utr_struc_stats.missing += stats_to_add->utr_struc_stats.missing;
-  stats->utr_struc_stats.wrong   += stats_to_add->utr_struc_stats.wrong  ;
+  c1->utr_struc_stats.correct += c2->utr_struc_stats.correct;
+  c1->utr_struc_stats.missing += c2->utr_struc_stats.missing;
+  c1->utr_struc_stats.wrong   += c2->utr_struc_stats.wrong  ;
 
-  stats->overall_matches += stats_to_add->overall_matches;
-  stats->overall_length += stats_to_add->overall_length;
+  c1->overall_matches += c2->overall_matches;
+  c1->overall_length += c2->overall_length;
 }
 
-void agn_comparison_init(AgnComparison *stats)
+void agn_comparison_init(AgnComparison *comparison)
 {
-  stats->cds_nuc_stats.tp = 0;
-  stats->cds_nuc_stats.fn = 0;
-  stats->cds_nuc_stats.fp = 0;
-  stats->cds_nuc_stats.tn = 0;
-  stats->cds_nuc_stats.mc = 0.0;
-  stats->cds_nuc_stats.cc = 0.0;
-  stats->cds_nuc_stats.sn = 0.0;
-  stats->cds_nuc_stats.sp = 0.0;
-  stats->cds_nuc_stats.f1 = 0.0;
-  stats->cds_nuc_stats.ed = 0.0;
+  agn_comp_stats_scaled_init(comparison->cds_nuc_stats);
+  agn_comp_stats_scaled_init(comparison->utr_nuc_stats);
+  agn_comp_stats_binary_init(comparison->cds_struc_stats);
+  agn_comp_stats_binary_init(comparison->exon_struc_stats);
+  agn_comp_stats_binary_init(comparison->utr_struc_stats);
 
-  stats->utr_nuc_stats.tp = 0;
-  stats->utr_nuc_stats.fn = 0;
-  stats->utr_nuc_stats.fp = 0;
-  stats->utr_nuc_stats.tn = 0;
-  stats->utr_nuc_stats.mc = 0.0;
-  stats->utr_nuc_stats.cc = 0.0;
-  stats->utr_nuc_stats.sn = 0.0;
-  stats->utr_nuc_stats.sp = 0.0;
-  stats->utr_nuc_stats.f1 = 0.0;
-  stats->utr_nuc_stats.ed = 0.0;
-
-  stats->cds_struc_stats.correct = 0;
-  stats->cds_struc_stats.missing = 0;
-  stats->cds_struc_stats.wrong   = 0;
-  stats->cds_struc_stats.sn      = 0.0;
-  stats->cds_struc_stats.sp      = 0.0;
-  stats->cds_struc_stats.f1      = 0.0;
-  stats->cds_struc_stats.ed      = 0.0;
-
-  stats->exon_struc_stats.correct = 0;
-  stats->exon_struc_stats.missing = 0;
-  stats->exon_struc_stats.wrong   = 0;
-  stats->exon_struc_stats.sn      = 0.0;
-  stats->exon_struc_stats.sp      = 0.0;
-  stats->exon_struc_stats.f1      = 0.0;
-  stats->exon_struc_stats.ed      = 0.0;
-
-  stats->utr_struc_stats.correct = 0;
-  stats->utr_struc_stats.missing = 0;
-  stats->utr_struc_stats.wrong   = 0;
-  stats->utr_struc_stats.sn      = 0.0;
-  stats->utr_struc_stats.sp      = 0.0;
-  stats->utr_struc_stats.f1      = 0.0;
-  stats->utr_struc_stats.ed      = 0.0;
-
-  stats->overall_matches = 0;
-  stats->overall_length = 0;
-  stats->overall_identity = 0.0;
-  stats->tolerance = 0.0;
+  comparison->overall_matches  = 0;
+  comparison->overall_length   = 0;
+  comparison->overall_identity = 0.0;
+  comparison->tolerance        = 0.0;
 }
 
 void agn_compare_filters_init(AgnCompareFilters *filters)
@@ -278,6 +236,17 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream)
   }
 }
 
+void agn_comp_stats_binary_init(AgnCompStatsBinary *stats)
+{
+  stats->correct = 0;
+  stats->missing = 0;
+  stats->wrong   = 0;
+  stats->sn      = 0.0;
+  stats->sp      = 0.0;
+  stats->f1      = 0.0;
+  stats->ed      = 0.0;
+}
+
 void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
 {
   double correct = (double)stats->correct;
@@ -314,6 +283,20 @@ void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
     sprintf(stats->eds, "--");
   else
     sprintf(stats->eds, "%.3lf", stats->ed);
+}
+
+void agn_comp_stats_scaled_init(AgnCompStatsScaled *stats)
+{
+  stats->tp = 0;
+  stats->fn = 0;
+  stats->fp = 0;
+  stats->tn = 0;
+  stats->mc = 0.0;
+  stats->cc = 0.0;
+  stats->sn = 0.0;
+  stats->sp = 0.0;
+  stats->f1 = 0.0;
+  stats->ed = 0.0;
 }
 
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)

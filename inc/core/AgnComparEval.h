@@ -116,38 +116,34 @@ typedef struct
 } AgnCompareFilters;
 
 /**
- * Take one set of counts and add them to the other.
+ * Take one set of values and add them to the other.
  *
- * @param[out] counts           a set of counts relevant to comparative analysis
- * @param[in]  counts_to_add    a smaller set of counts which will be added to
- *                              the first set
+ * @param[out] s1    a set of values relevant to comparative analysis
+ * @param[in]  s2    a smaller set of values which will be added to the first
  */
-void agn_comp_summary_combine( AgnCompSummary *counts,
-                                    AgnCompSummary *counts_to_add );
+void agn_comp_summary_combine(AgnCompSummary *s1, AgnCompSummary *s2);
 
 /**
- * Initialize counts to default values.
+ * Initialize default values.
  *
- * @param[in] counts    the counts
+ * @param[in] summary    the summary data
  */
-void agn_comp_summary_init(AgnCompSummary *counts);
+void agn_comp_summary_init(AgnCompSummary *summary);
 
 /**
- * Take one set of stats and add them to the other.
+ * Take stats from one comparison and add them to the other.
  *
- * @param[out] stats           a set of stats relevant to comparative analysis
- * @param[in]  stats_to_add    a smaller set of stats which will be added to
- *                             the first set
+ * @param[out] c1    a set of stats relevant to comparative analysis
+ * @param[in]  c2    a smaller set of stats which will be added to the first set
  */
-void agn_comparison_combine( AgnComparison *stats,
-                                   AgnComparison *stats_to_add );
+void agn_comparison_combine(AgnComparison *c1, AgnComparison *c2);
 
 /**
  * Initialize comparison stats to default values.
  *
  * @param[in] stats    the comparison stats
  */
-void agn_comparison_init(AgnComparison *stats);
+void agn_comparison_init(AgnComparison *comparison);
 
 /**
  * Initialize filters to default values.
@@ -165,16 +161,30 @@ void agn_compare_filters_init(AgnCompareFilters *filters);
 void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream);
 
 /**
- * Calculate stats from the given counts.
+ * Initialize comparison counts/stats to default values.
  *
- * @param[in] stats    pointer to the counts and the stats
+ * @param[in] stats    pointer to the counts and stats
  */
-void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
+void agn_comp_stats_binary_init(AgnCompStatsBinary *stats);
 
 /**
  * Calculate stats from the given counts.
  *
- * @param[in] stats    pointer to the counts and the stats
+ * @param[in] stats    pointer to the counts and stats
+ */
+void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
+
+/**
+ * Initialize comparison counts/stats to default values.
+ *
+ * @param[in] stats    pointer to the counts and stats
+ */
+void agn_comp_stats_scaled_init(AgnCompStatsScaled *stats);
+
+/**
+ * Calculate stats from the given counts.
+ *
+ * @param[in] stats    pointer to the counts and stats
  */
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats);
 
