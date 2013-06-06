@@ -5,6 +5,163 @@
 #include "AgnVersion.h"
 #include "PeReports.h"
 
+#ifndef WITHOUT_CAIRO
+/**
+ * Track selector function for PNG graphics
+ *
+ * @param[in]  block    the object to be printed in the graphic
+ * @param[out] track    string to which the appropriate track name will be
+ *                      written
+ * @param[in]  data     any auxilliary data needed
+ */
+void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track,
+                                                   void *data);
+#endif
+
+#ifndef WITHOUT_CAIRO
+void agn_pairwise_compare_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
+{
+  GtFeatureNode *fn = gt_block_get_top_level_feature(block);
+  GtGenomeNode *gn = (GtGenomeNode *)fn;
+  const char *filename = gt_genome_node_get_filename(gn);
+  AgnPairwiseCompareLocusPngMetadata *metadata =
+                                 (AgnPairwiseCompareLocusPngMetadata *)data;
+  char trackname[512];
+
+  if(strcmp(filename, metadata->refrfile) == 0)
+  {
+    if(strcmp(metadata->refrlabel, "") == 0)
+    {
+      sprintf(trackname, "Reference annotations (%s)", metadata->refrfile);
+      gt_str_set(track, trackname);
+    }
+    else
+    {
+      sprintf(trackname, "%s (Reference)", metadata->refrlabel);
+      gt_str_set(track, trackname);
+    }
+    return;
+  }
+  else if(strcmp(filename, metadata->predfile) == 0)
+  {
+    if(strcmp(metadata->predlabel, "") == 0)
+    {
+      sprintf(trackname, "Prediction annotations (%s)", metadata->predfile);
+      gt_str_set(track, trackname);
+    }
+    else
+    {
+      sprintf(trackname, "%s (Prediction)", metadata->predlabel);
+      gt_str_set(track, trackname);
+    }
+    return;
+  }
+  else
+  {
+    fprintf(stderr, "Error: unknown filename '%s'\n", filename);
+    exit(1);
+  }
+}
+
+// FIXME this function should use an AgnLogger
+void agn_pairwise_compare_locus_print_png(AgnPairwiseCompareLocus *locus,
+                                AgnPairwiseCompareLocusPngMetadata *metadata)
+{
+  GtError *error = gt_error_new();
+  GtFeatureIndex *index = gt_feature_index_memory_new();
+  unsigned long i;
+  
+  GtArray *refr_genes = agn_pairwise_compare_locus_get_refr_genes(locus);
+  for(i = 0; i < gt_array_size(refr_genes); i++)
+  {
+    GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(refr_genes, i);
+    gt_feature_index_add_feature_node(index, gene, error);
+    if(gt_error_is_set(error))
+    {
+      fprintf(stderr, "error: %s\n", gt_error_get(error));
+      exit(1);
+    }
+  }
+  gt_array_delete(refr_genes);
+  
+  GtArray *pred_genes = agn_pairwise_compare_locus_get_pred_genes(locus);
+  for(i = 0; i < gt_array_size(pred_genes); i++)
+  {
+    GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(pred_genes, i);
+    gt_feature_index_add_feature_node(index, gene, error);
+    if(gt_error_is_set(error))
+    {
+      fprintf(stderr, "error: %s\n", gt_error_get(error));
+      exit(1);
+    }
+  }
+  gt_array_delete(pred_genes);
+
+  // Generate the graphic...this is going to get a bit hairy
+  GtStyle *style;
+  if(!(style = gt_style_new(error)))
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+  if(gt_style_load_file(style, metadata->stylefile, error))
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+  const char *seqid = agn_pairwise_compare_locus_get_seqid(locus);
+  GtRange locusrange = agn_pairwise_compare_locus_range(locus);
+  GtDiagram *diagram = gt_diagram_new( index, seqid, &locusrange,
+                                       style, error );
+  gt_diagram_set_track_selector_func
+  (
+    diagram,
+    (GtTrackSelectorFunc)agn_pairwise_compare_locus_png_track_selector,
+    metadata
+  );
+  GtLayout *layout = gt_layout_new(diagram, metadata->graphic_width, style, error);
+  if(!layout)
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+  gt_layout_set_track_ordering_func( layout,
+                                     (GtTrackOrderingFunc)metadata->track_order_func,
+                                     NULL );
+  unsigned long image_height;
+  if(gt_layout_get_height(layout, &image_height, error))
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+  GtCanvas *canvas = gt_canvas_cairo_file_new( style, GT_GRAPHICS_PNG,
+                                               metadata->graphic_width, image_height, NULL,
+                                               error );
+  if(!canvas)
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+  if(gt_layout_sketch(layout, canvas, error))
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+  if(gt_canvas_cairo_file_to_file((GtCanvasCairoFile*) canvas, metadata->filename, error))
+  {
+    fprintf(stderr, "error: %s\n", gt_error_get(error));
+    exit(EXIT_FAILURE);
+  }
+
+  gt_feature_index_delete(index);
+  gt_canvas_delete(canvas);
+  gt_layout_delete(layout);
+  gt_diagram_delete(diagram);
+  gt_style_delete(style);
+  gt_error_delete(error);
+}
+#endif
+
 void pe_gene_locus_get_filename(AgnPairwiseCompareLocus *locus, char *buffer, const char *dirpath)
 {
   const char *seqid = agn_pairwise_compare_locus_get_seqid(locus);

@@ -1,11 +1,9 @@
-#ifndef AGN_PAIRWISE_COMPARE_LOCUS
-#define AGN_PAIRWISE_COMPARE_LOCUS
+#ifndef AEGEAN_PAIRWISE_COMPARE_LOCUS
+#define AEGEAN_PAIRWISE_COMPARE_LOCUS
 
 #include "genometools.h"
 #include "AgnCliquePair.h"
 #include "PeComparEval.h"
-
-#define AGN_PAIRWISE_COMPARE_LOCUS_GRAPHIC_MIN_WIDTH 650
 
 /**
  * The purpose of the AgnPairwiseCompareLocus class is to store all of the data
@@ -13,38 +11,6 @@
  * gene structure annotations for that locus.
  */
 typedef struct AgnPairwiseCompareLocus AgnPairwiseCompareLocus;
-
-/**
- * This data structure provides a convenient container for metadata needed to
- * produce a locus PNG graphic.
- */
-typedef struct
-{
-  char filename[512];
-  char stylefile[512];
-  const char *refrfile;
-  const char *predfile;
-  const char *refrlabel;
-  const char *predlabel;
-  unsigned long graphic_width;
-  int (*track_order_func)(const char *s1, const char *s2, void *data);
-} AgnPairwiseCompareLocusPngMetadata;
-
-/**
- * This data structure provides a summary of the data and comparisons associated
- * with a given locus.
- */
-typedef struct
-{
-  unsigned long start;
-  unsigned long end;
-  unsigned long length;
-  unsigned long refr_transcripts;
-  unsigned long pred_transcripts;
-  unsigned long reported;
-  unsigned long total;
-  AgnCompSummary counts;
-} AgnPairwiseCompareLocusSummary;
 
 /**
  * Associate the given gene annotation with this gene locus.
@@ -437,19 +403,6 @@ unsigned long agn_pairwise_compare_locus_num_refr_transcripts
   AgnPairwiseCompareLocus *locus
 );
 
-#ifndef WITHOUT_CAIRO
-/**
- * Print a PNG graphic for this locus.
- *
- * @param[in] locus    the locus
- */
-void agn_pairwise_compare_locus_print_png
-(
-  AgnPairwiseCompareLocus *locus,
-  AgnPairwiseCompareLocusPngMetadata *metadata
-);
-#endif
-
 /**
  * The combined length of all prediction coding sequences associated with this
  * locus.
@@ -461,6 +414,14 @@ unsigned long agn_pairwise_compare_locus_pred_cds_length
 (
   AgnPairwiseCompareLocus *locus
 );
+
+/**
+ * Return the coordinates of this locus.
+ *
+ * @param[in] locus    the locus
+ * @returns            its coordinates
+ */
+GtRange agn_pairwise_compare_locus_range(AgnPairwiseCompareLocus *locus);
 
 /**
  * The combined length of all reference coding sequences associated with this

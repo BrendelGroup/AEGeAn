@@ -5,6 +5,53 @@
 #include "AgnPairwiseCompareLocus.h"
 #include "PeOptions.h"
 
+#define AGN_PAIRWISE_COMPARE_LOCUS_GRAPHIC_MIN_WIDTH 650
+
+/**
+* This data structure provides a convenient container for metadata needed to
+* produce a locus PNG graphic.
+*/
+typedef struct
+{
+  char filename[512];
+  char stylefile[512];
+  const char *refrfile;
+  const char *predfile;
+  const char *refrlabel;
+  const char *predlabel;
+  unsigned long graphic_width;
+  int (*track_order_func)(const char *s1, const char *s2, void *data);
+} AgnPairwiseCompareLocusPngMetadata;
+
+/**
+* This data structure provides a summary of the data and comparisons associated
+* with a given locus.
+*/
+typedef struct
+{
+  unsigned long start;
+  unsigned long end;
+  unsigned long length;
+  unsigned long refr_transcripts;
+  unsigned long pred_transcripts;
+  unsigned long reported;
+  unsigned long total;
+  AgnCompSummary counts;
+} AgnPairwiseCompareLocusSummary;
+
+#ifndef WITHOUT_CAIRO
+/**
+ * Print a PNG graphic for this locus.
+ *
+ * @param[in] locus    the locus
+ */
+void agn_pairwise_compare_locus_print_png
+(
+  AgnPairwiseCompareLocus *locus,
+  AgnPairwiseCompareLocusPngMetadata *metadata
+);
+#endif
+
 /**
  * Get the filename for printing this locus' results.
  *

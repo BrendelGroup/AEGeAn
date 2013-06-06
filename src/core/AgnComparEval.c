@@ -69,11 +69,11 @@ void agn_comparison_combine(AgnComparison *c1, AgnComparison *c2)
 
 void agn_comparison_init(AgnComparison *comparison)
 {
-  agn_comp_stats_scaled_init(comparison->cds_nuc_stats);
-  agn_comp_stats_scaled_init(comparison->utr_nuc_stats);
-  agn_comp_stats_binary_init(comparison->cds_struc_stats);
-  agn_comp_stats_binary_init(comparison->exon_struc_stats);
-  agn_comp_stats_binary_init(comparison->utr_struc_stats);
+  agn_comp_stats_scaled_init(&comparison->cds_nuc_stats);
+  agn_comp_stats_scaled_init(&comparison->utr_nuc_stats);
+  agn_comp_stats_binary_init(&comparison->cds_struc_stats);
+  agn_comp_stats_binary_init(&comparison->exon_struc_stats);
+  agn_comp_stats_binary_init(&comparison->utr_struc_stats);
 
   comparison->overall_matches  = 0;
   comparison->overall_length   = 0;
