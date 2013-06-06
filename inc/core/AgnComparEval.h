@@ -86,56 +86,6 @@ typedef struct
 } AgnComparisonStats;
 
 /**
- * Each transcript clique pair that is compared is classified as one of the
- * following.
- *   - perfect match
- *   - perfect match with mislabeled UTRs
- *   - CDS match
- *   - exon structure match
- *   - UTR structure match
- *   - non-match
- *
- * When reporting the results of a comparative analysis, it may be useful to (as
- * is done by ParsEval) show some basic information about clique pairs that fall
- * under each classification category. The counts in this struct are necessary
- * to calculate those summary characteristics.
- */
-typedef struct
-{
-  unsigned long total_length;
-  unsigned long transcript_count;
-  unsigned long refr_cds_length;
-  unsigned long pred_cds_length;
-  unsigned long refr_exon_count;
-  unsigned long pred_exon_count;
-} AgnCompareClassDescription;
-
-/**
- * This struct is used to aggregate characteristics for all of the
- * classification categories.
- */
-typedef struct
-{
-  AgnCompareClassDescription perfect_matches;
-  AgnCompareClassDescription perfect_mislabeled;
-  AgnCompareClassDescription cds_matches;
-  AgnCompareClassDescription exon_matches;
-  AgnCompareClassDescription utr_matches;
-  AgnCompareClassDescription non_matches;
-} AgnCompareClassAggregateDescription;
-
-/**
- * This struct provides a convenient way to manage the counts, stats, and
- * results corresponding to one or more comparisons.
- */
-typedef struct
-{
-  AgnComparisonCounts counts;
-  AgnComparisonStats stats;
-  AgnCompareClassAggregateDescription results;
-} AgnSummaryData;
-
-/**
  * This struct contains a list of filters to be used in determining which loci
  * should be included/excluded in a comparative analysis.
  */
@@ -164,50 +114,6 @@ typedef struct
   unsigned long MinPredictionCDSLength;
   unsigned long MaxPredictionCDSLength;
 } AgnCompareFilters;
-
-/**
- * Take values from one description and add them to the other.
- *
- * @param[out] desc           a set of descriptive values relevant to
- *                            comparative analysis
- * @param[in]  desc_to_add    a set of descriptive values which will be added to
- *                            the first
- */
-void agn_compare_class_agg_desc_combine
-(
-  AgnCompareClassAggregateDescription *desc,
-  AgnCompareClassAggregateDescription *desc_to_add
-);
-
-/**
- * Initialize to default values.
- *
- * @param[in] results    the descriptive values
- */
-void agn_compare_class_agg_desc_init(AgnCompareClassAggregateDescription *desc);
-
-/**
- * Take the counts from one description and add them to a larger aggregate set
- * of counts.
- *
- * @param[out] desc           a set of aggregate descriptive counts
- * @param[in]  desc_to_add    a smaller set of counts which will be added to the
- *                            first set
- */
-//void pe_classification_characteristics_combine
-void agn_compare_class_description_combine
-(
-  AgnCompareClassDescription *desc,
-  AgnCompareClassDescription *desc_to_add
-);
-
-/**
- * Initialize characteristics to default values.
- *
- * @param[in] characteristics    the counts/stats
- */
-//void pe_classification_characteristics_init
-void agn_compare_class_description_init(AgnCompareClassDescription *desc);
 
 /**
  * Take one set of counts and add them to the other.
@@ -264,28 +170,5 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream);
  * @param[in] stats    pointer to the counts and the stats
  */
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats);
-
-/**
- * Calculate stats from the given counts.
- *
- * @param[in] stats    pointer to the counts and the stats
- */
-void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
-
-/**
- * Take values from one data set and add them to the other.
- *
- * @param[out] data           stats, counts, and descriptions relevant to
- *                            comparative analysis
- * @param[in]  data_to_add    a data set which will be added to the first
- */
-void agn_summary_data_combine(AgnSummaryData *data, AgnSummaryData *data_to_add);
-
-/**
- * Initialize to default values.
- *
- * @param[in] data    the data
- */
-void agn_summary_data_init(AgnSummaryData *data);
 
 #endif

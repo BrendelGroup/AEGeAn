@@ -4,6 +4,7 @@
 #include "genometools.h"
 #include "AgnComparEval.h"
 #include "AgnTranscriptClique.h"
+#include "PeComparEval.h"
 
 #define MAX_EXONS 512
 #define MAX_UTRS  64
@@ -184,7 +185,7 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid,
 void agn_clique_pair_record_characteristics
 (
   AgnCliquePair *pair,
-  AgnCompareClassDescription *characteristics
+  PeCompResultDesc *characteristics
 );
 
 #endif

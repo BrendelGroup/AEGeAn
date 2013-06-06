@@ -23,7 +23,7 @@ struct AgnPairwiseCompareLocus
   GtArray *unique_pred_cliques;
   AgnComparisonStats stats;
   AgnComparisonCounts counts;
-  AgnCompareClassAggregateDescription results;
+  PeCompResultSummary results;
   double refr_splice_complexity;
   double pred_splice_complexity;
 };
@@ -1012,7 +1012,7 @@ AgnPairwiseCompareLocus* agn_pairwise_compare_locus_new(const char *seqid)
 
   agn_comparison_counts_init(&locus->counts);
   agn_comparison_stats_init(&locus->stats);
-  agn_compare_class_agg_desc_init(&locus->results);
+  pe_comp_result_summary_init(&locus->results);
   locus->refr_splice_complexity = 0.0;
   locus->pred_splice_complexity = 0.0;
 

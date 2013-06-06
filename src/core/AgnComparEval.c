@@ -3,60 +3,6 @@
 #include <string.h>
 #include "AgnComparEval.h"
 
-void agn_compare_class_agg_desc_combine
-(
-  AgnCompareClassAggregateDescription *desc,
-  AgnCompareClassAggregateDescription *desc_to_add
-)
-{
-  agn_compare_class_description_combine( &desc->perfect_matches,
-                                         &desc_to_add->perfect_matches );
-  agn_compare_class_description_combine( &desc->perfect_mislabeled,
-                                         &desc_to_add->perfect_mislabeled );
-  agn_compare_class_description_combine( &desc->cds_matches,
-                                         &desc_to_add->cds_matches );
-  agn_compare_class_description_combine( &desc->exon_matches,
-                                         &desc_to_add->exon_matches );
-  agn_compare_class_description_combine( &desc->utr_matches,
-                                         &desc_to_add->utr_matches );
-  agn_compare_class_description_combine( &desc->non_matches,
-                                         &desc_to_add->non_matches );
-}
-
-void agn_compare_class_agg_desc_init(AgnCompareClassAggregateDescription *desc)
-{
-  agn_compare_class_description_init(&desc->perfect_matches);
-  agn_compare_class_description_init(&desc->perfect_mislabeled);
-  agn_compare_class_description_init(&desc->cds_matches);
-  agn_compare_class_description_init(&desc->exon_matches);
-  agn_compare_class_description_init(&desc->utr_matches);
-  agn_compare_class_description_init(&desc->non_matches);
-}
-
-void agn_compare_class_description_combine
-(
-  AgnCompareClassDescription *desc,
-  AgnCompareClassDescription *desc_to_add
-)
-{
-  desc->total_length     += desc_to_add->total_length;
-  desc->transcript_count += desc_to_add->transcript_count;
-  desc->refr_cds_length  += desc_to_add->refr_cds_length;
-  desc->pred_cds_length  += desc_to_add->pred_cds_length;
-  desc->refr_exon_count  += desc_to_add->refr_exon_count;
-  desc->pred_exon_count  += desc_to_add->pred_exon_count;
-}
-
-void agn_compare_class_description_init(AgnCompareClassDescription *desc)
-{
-  desc->total_length = 0;
-  desc->transcript_count = 0;
-  desc->refr_cds_length = 0;
-  desc->pred_cds_length = 0;
-  desc->refr_exon_count = 0;
-  desc->pred_exon_count = 0;
-}
-
 void agn_comparison_counts_combine( AgnComparisonCounts *counts,
                                     AgnComparisonCounts *counts_to_add )
 {
@@ -421,18 +367,4 @@ void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
     sprintf(stats->eds, "--");
   else
     sprintf(stats->eds, "%.3lf", stats->ed);
-}
-
-void agn_summary_data_combine(AgnSummaryData *data, AgnSummaryData *data_to_add)
-{
-  agn_comparison_counts_combine(&data->counts, &data_to_add->counts);
-  agn_comparison_stats_combine(&data->stats, &data_to_add->stats);
-  agn_compare_class_agg_desc_combine(&data->results, &data_to_add->results);
-}
-
-void agn_summary_data_init(AgnSummaryData *data)
-{
-  agn_comparison_counts_init(&data->counts);
-  agn_comparison_stats_init(&data->stats);
-  agn_compare_class_agg_desc_init(&data->results);
 }

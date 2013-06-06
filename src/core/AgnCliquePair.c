@@ -574,7 +574,7 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid, AgnTranscriptClique *refr
 }
 
 void agn_clique_pair_record_characteristics( AgnCliquePair *pair,
-                                            AgnCompareClassDescription *characteristics )
+                                            PeCompResultDesc *characteristics )
 {
   characteristics->transcript_count += 1;
   characteristics->total_length += gt_range_length(pair->locus_range);
