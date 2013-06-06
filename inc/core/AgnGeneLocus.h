@@ -17,6 +17,14 @@ typedef struct AgnGeneLocus AgnGeneLocus;
  * @param[out] locus    locus to which the gene annotation will be added
  * @param[in]  gene     annotation to associate with this locus
  */
+void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
+
+/**
+ * Associate the given gene annotation with this gene locus.
+ *
+ * @param[out] locus    locus to which the gene annotation will be added
+ * @param[in]  gene     annotation to associate with this locus
+ */
 void agn_gene_locus_add_pred_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
 
 /**
