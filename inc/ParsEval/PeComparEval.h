@@ -1,6 +1,7 @@
 #ifndef PARSEVAL_COMPARATIVE_EVALUATION
 #define PARSEVAL_COMPARATIVE_EVALUATION
 
+#include "AgnCliquePair.h"
 #include "AgnComparEval.h"
 
 /**
@@ -48,10 +49,36 @@ typedef struct
  */
 typedef struct
 {
-  AgnComparisonCounts counts;
-  AgnComparisonStats stats;
+  AgnCompSummary counts;
+  AgnComparison stats;
   PeCompResultSummary results;
-} AgnSummaryData;
+} PeCompEvaluation;
+
+/**
+ * Add information about this clique pair to a set of aggregate characteristics.
+ *
+ * @param[in]  pair               the clique pair
+ * @param[out] characteristics    a set of aggregate characteristics
+ */
+void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
+                                            PeCompResultDesc *desc);
+
+/**
+ * Take values from one data set and add them to the other.
+ *
+ * @param[out] data           stats, counts, and descriptions relevant to
+ *                            comparative analysis
+ * @param[in]  data_to_add    a data set which will be added to the first
+ */
+void pe_comp_evalutation_combine(PeCompEvaluation *data,
+                                 PeCompEvaluation *data_to_add);
+
+/**
+ * Initialize to default values.
+ *
+ * @param[in] data    the data
+ */
+void pe_comp_evalutation_init(PeCompEvaluation *data);
 
 
 /**
@@ -91,29 +118,5 @@ void pe_comp_result_desc_combine(PeCompResultDesc *desc,
  */
 //void pe_classification_characteristics_init
 void pe_comp_result_desc_init(PeCompResultDesc *desc);
-
-/**
- * Calculate stats from the given counts.
- *
- * @param[in] stats    pointer to the counts and the stats
- */
-void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
-
-/**
- * Take values from one data set and add them to the other.
- *
- * @param[out] data           stats, counts, and descriptions relevant to
- *                            comparative analysis
- * @param[in]  data_to_add    a data set which will be added to the first
- */
-void agn_summary_data_combine(AgnSummaryData *data,
-                              AgnSummaryData *data_to_add);
-
-/**
- * Initialize to default values.
- *
- * @param[in] data    the data
- */
-void agn_summary_data_init(AgnSummaryData *data);
 
 #endif

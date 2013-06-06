@@ -4,7 +4,6 @@
 #include "genometools.h"
 #include "AgnComparEval.h"
 #include "AgnTranscriptClique.h"
-#include "PeComparEval.h"
 
 #define MAX_EXONS 512
 #define MAX_UTRS  64
@@ -132,7 +131,7 @@ const char *agn_clique_pair_get_refr_vector(AgnCliquePair *pair);
  * @param[in] pair    a clique pair
  * @returns           a pointer to the pair's stats
  */
-AgnComparisonStats *agn_clique_pair_get_stats(AgnCliquePair *pair);
+AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair);
 
 /**
  * Determine whether there are UTRs in this clique pair
@@ -177,15 +176,11 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid,
                                     GtRange *locus_range );
 
 /**
- * Add information about this clique pair to a set of aggregate characteristics.
+ * Get the length of the locus to which this clique pair belongs.
  *
- * @param[in]  pair               the clique pair
- * @param[out] characteristics    a set of aggregate characteristics
+ * @param[in] pair    the clique pair
+ * @returns           the length (in bp) of the corresponding locus
  */
-void agn_clique_pair_record_characteristics
-(
-  AgnCliquePair *pair,
-  PeCompResultDesc *characteristics
-);
+unsigned long agn_clique_pair_length(AgnCliquePair *pair);
 
 #endif

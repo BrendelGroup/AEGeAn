@@ -66,7 +66,7 @@ typedef struct
   unsigned int num_exon_match;
   unsigned int num_utr_match;
   unsigned int non_match;
-} AgnComparisonCounts;
+} AgnCompSummary;
 
 /**
  * This struct aggregates all the counts and stats that go into a comparison,
@@ -83,7 +83,7 @@ typedef struct
   unsigned long overall_length;
   double overall_identity;
   double tolerance;
-} AgnComparisonStats;
+} AgnComparison;
 
 /**
  * This struct contains a list of filters to be used in determining which loci
@@ -122,15 +122,15 @@ typedef struct
  * @param[in]  counts_to_add    a smaller set of counts which will be added to
  *                              the first set
  */
-void agn_comparison_counts_combine( AgnComparisonCounts *counts,
-                                    AgnComparisonCounts *counts_to_add );
+void agn_comp_summary_combine( AgnCompSummary *counts,
+                                    AgnCompSummary *counts_to_add );
 
 /**
  * Initialize counts to default values.
  *
  * @param[in] counts    the counts
  */
-void agn_comparison_counts_init(AgnComparisonCounts *counts);
+void agn_comp_summary_init(AgnCompSummary *counts);
 
 /**
  * Take one set of stats and add them to the other.
@@ -139,15 +139,15 @@ void agn_comparison_counts_init(AgnComparisonCounts *counts);
  * @param[in]  stats_to_add    a smaller set of stats which will be added to
  *                             the first set
  */
-void agn_comparison_stats_combine( AgnComparisonStats *stats,
-                                   AgnComparisonStats *stats_to_add );
+void agn_comparison_combine( AgnComparison *stats,
+                                   AgnComparison *stats_to_add );
 
 /**
  * Initialize comparison stats to default values.
  *
  * @param[in] stats    the comparison stats
  */
-void agn_comparison_stats_init(AgnComparisonStats *stats);
+void agn_comparison_init(AgnComparison *stats);
 
 /**
  * Initialize filters to default values.
@@ -163,6 +163,13 @@ void agn_compare_filters_init(AgnCompareFilters *filters);
  * @param[in]  instream    pointer to the filter config file
  */
 void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream);
+
+/**
+ * Calculate stats from the given counts.
+ *
+ * @param[in] stats    pointer to the counts and the stats
+ */
+void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
 
 /**
  * Calculate stats from the given counts.

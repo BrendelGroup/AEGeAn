@@ -3,6 +3,7 @@
 
 #include "genometools.h"
 #include "AgnCliquePair.h"
+#include "PeComparEval.h"
 
 #define AGN_PAIRWISE_COMPARE_LOCUS_GRAPHIC_MIN_WIDTH 650
 
@@ -42,7 +43,7 @@ typedef struct
   unsigned long pred_transcripts;
   unsigned long reported;
   unsigned long total;
-  AgnComparisonCounts counts;
+  AgnCompSummary counts;
 } AgnPairwiseCompareLocusSummary;
 
 /**
@@ -73,7 +74,7 @@ void agn_pairwise_compare_locus_add_refr_gene( AgnPairwiseCompareLocus *locus,
 void agn_pairwise_compare_locus_aggregate_results
 (
   AgnPairwiseCompareLocus *locus,
-  AgnSummaryData *data
+  PeCompEvaluation *data
 );
 
 /**
@@ -327,7 +328,7 @@ unsigned long agn_pairwise_compare_locus_get_start
  * @param[out] data     the pointer to which the summary data will be written
  */
 void agn_pairwise_compare_locus_get_summary_data( AgnPairwiseCompareLocus *locus,
-                                                  AgnSummaryData *data );
+                                                  PeCompEvaluation *data );
 
 /**
  * Get a list of all the prediction transcript cliques that have no

@@ -159,7 +159,7 @@ void pe_gene_locus_print_results(AgnPairwiseCompareLocus *locus, FILE *outstream
           fprintf(outstream, "     |\n");
         }
 
-        AgnComparisonStats *pairstats = agn_clique_pair_get_stats(pair);
+        AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
 
         // CDS structure stats
         fprintf(outstream, "     |  CDS structure comparison\n");
@@ -377,7 +377,7 @@ void pe_gene_locus_print_results_csv(AgnPairwiseCompareLocus *locus, FILE *outst
       }
       fputs(",", outstream);
 
-      AgnComparisonStats *pairstats = agn_clique_pair_get_stats(pair);
+      AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
 
       // Print CDS structure comparison
       fprintf( outstream,
@@ -686,7 +686,7 @@ void pe_gene_locus_print_results_html(AgnPairwiseCompareLocus *locus, PeOptions 
                  agn_clique_pair_get_pred_vector(pair) );
       }
 
-      AgnComparisonStats *pairstats = agn_clique_pair_get_stats(pair);
+      AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
 
       // CDS structure stats
       fputs( "        <h3>CDS structure comparison</h3>\n"
@@ -913,7 +913,7 @@ void pe_print_locus_to_seqfile(FILE *seqfile, unsigned long start,
                                unsigned long end, unsigned long length,
                                unsigned long refr_transcripts,
                                unsigned long pred_transcripts,
-                               AgnComparisonCounts *comparisons)
+                               AgnCompSummary *comparisons)
 {
   char sstart[64], send[64], slength[64];
   agn_sprintf_comma(start, sstart);
@@ -1025,7 +1025,7 @@ void pe_print_seqfile_footer(FILE *outstream)
 }
 
 void pe_print_summary( const char *start_time, int argc, char * const argv[], GtStrArray *seqids,
-                       AgnSummaryData *summary_data, AgnSummaryData *seq_summary_data,
+                       PeCompEvaluation *summary_data, PeCompEvaluation *seq_summary_data,
                        FILE *outstream, PeOptions *options )
 {
   // Calculate nucleotide-level statistics
@@ -1360,8 +1360,8 @@ void pe_print_summary( const char *start_time, int argc, char * const argv[], Gt
 }
 
 void pe_print_summary_html( const char *start_time, int argc, char * const argv[],
-                            GtStrArray *seqids, AgnSummaryData *summary_data,
-                            AgnSummaryData *seq_summary_data, FILE *outstream, PeOptions *options )
+                            GtStrArray *seqids, PeCompEvaluation *summary_data,
+                            PeCompEvaluation *seq_summary_data, FILE *outstream, PeOptions *options )
 {
   // Print header
   fputs( "<!doctype html>\n"

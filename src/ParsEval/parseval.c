@@ -100,14 +100,14 @@ int main(int argc, char * const argv[])
   fputs("[ParsEval] Begin comparative analysis\n", stderr);
 
   // Counts and stats needed to print summary report
-  AgnSummaryData summary_data;
-  agn_summary_data_init(&summary_data);
+  PeCompEvaluation summary_data;
+  pe_comp_evalutation_init(&summary_data);
 
   // Counts and stats at the sequence level
-  AgnSummaryData *seqlevel_summary_data = gt_malloc( sizeof(AgnSummaryData) * numseqs );
+  PeCompEvaluation *seqlevel_summary_data = gt_malloc( sizeof(PeCompEvaluation) * numseqs );
   for(i = 0; i < numseqs; i++)
   {
-    agn_summary_data_init(&seqlevel_summary_data[i]);
+    pe_comp_evalutation_init(&seqlevel_summary_data[i]);
   }
 
   if(strcmp(options.outfmt, "csv") == 0)
@@ -202,8 +202,8 @@ int main(int argc, char * const argv[])
     int rank, j;
     #pragma omp parallel private(rank, j)
     {
-      AgnSummaryData summary_data_local;
-      agn_summary_data_init(&summary_data_local);
+      PeCompEvaluation summary_data_local;
+      pe_comp_evalutation_init(&summary_data_local);
 
       rank = omp_get_thread_num();
 
@@ -212,7 +212,7 @@ int main(int argc, char * const argv[])
       // Begin parallelize loop
       // Parallel loop over the loci, not the clique pairs
       {
-        agn_comparison_counts_init(&locus_summaries[j].counts);
+        agn_comp_summary_init(&locus_summaries[j].counts);
         AgnPairwiseCompareLocus *locus = *(AgnPairwiseCompareLocus **)gt_array_get(seq_loci, j);
 
         GtArray *clique_pairs = agn_pairwise_compare_locus_get_clique_pairs(locus, options.trans_per_locus);
@@ -308,7 +308,7 @@ int main(int argc, char * const argv[])
               agn_pairwise_compare_locus_calc_splice_complexity_pred(locus);
             }
 
-            AgnSummaryData data;
+            PeCompEvaluation data;
             agn_pairwise_compare_locus_get_summary_data(locus, &data);
             agn_pairwise_compare_locus_aggregate_results(locus, &data);
             agn_pairwise_compare_locus_aggregate_results(locus, &summary_data_local);
@@ -322,7 +322,7 @@ int main(int argc, char * const argv[])
 
           if(!options.summary_only)
           {
-            AgnSummaryData data;
+            PeCompEvaluation data;
             agn_pairwise_compare_locus_get_summary_data(locus, &data);
             if(options.html)
             {
@@ -361,8 +361,8 @@ int main(int argc, char * const argv[])
 
       #pragma omp critical(aggregate_stats)
       {
-        agn_summary_data_combine(&summary_data, &summary_data_local);
-        agn_summary_data_combine(&seqlevel_summary_data[i], &summary_data_local);
+        pe_comp_evalutation_combine(&summary_data, &summary_data_local);
+        pe_comp_evalutation_combine(&seqlevel_summary_data[i], &summary_data_local);
       }
     } // End pragma omp parallel
 

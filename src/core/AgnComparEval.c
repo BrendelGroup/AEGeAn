@@ -3,8 +3,8 @@
 #include <string.h>
 #include "AgnComparEval.h"
 
-void agn_comparison_counts_combine( AgnComparisonCounts *counts,
-                                    AgnComparisonCounts *counts_to_add )
+void agn_comp_summary_combine( AgnCompSummary *counts,
+                                    AgnCompSummary *counts_to_add )
 {
   counts->unique_refr += counts_to_add->unique_refr;
   counts->unique_pred += counts_to_add->unique_pred;
@@ -22,7 +22,7 @@ void agn_comparison_counts_combine( AgnComparisonCounts *counts,
   counts->non_match += counts_to_add->non_match;
 }
 
-void agn_comparison_counts_init(AgnComparisonCounts *counts)
+void agn_comp_summary_init(AgnCompSummary *counts)
 {
   counts->unique_refr = 0;
   counts->unique_pred = 0;
@@ -40,8 +40,8 @@ void agn_comparison_counts_init(AgnComparisonCounts *counts)
   counts->non_match = 0;
 }
 
-void agn_comparison_stats_combine( AgnComparisonStats *stats,
-                                   AgnComparisonStats *stats_to_add )
+void agn_comparison_combine( AgnComparison *stats,
+                                   AgnComparison *stats_to_add )
 {
   stats->cds_nuc_stats.tp += stats_to_add->cds_nuc_stats.tp;
   stats->cds_nuc_stats.fn += stats_to_add->cds_nuc_stats.fn;
@@ -69,7 +69,7 @@ void agn_comparison_stats_combine( AgnComparisonStats *stats,
   stats->overall_length += stats_to_add->overall_length;
 }
 
-void agn_comparison_stats_init(AgnComparisonStats *stats)
+void agn_comparison_init(AgnComparison *stats)
 {
   stats->cds_nuc_stats.tp = 0;
   stats->cds_nuc_stats.fn = 0;
@@ -278,6 +278,44 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream)
   }
 }
 
+void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
+{
+  double correct = (double)stats->correct;
+  double missing = (double)stats->missing;
+  double wrong = (double)stats->wrong;
+
+  // Sensitivity
+  stats->sn = correct / (correct + missing);
+  if(isnan(stats->sn))
+    sprintf(stats->sns, "--");
+  else
+    sprintf(stats->sns, "%.3lf", stats->sn);
+
+  // Specificity
+  stats->sp = correct / (correct + wrong);
+  if(isnan(stats->sp))
+    sprintf(stats->sps, "--");
+  else
+    sprintf(stats->sps, "%.3lf", stats->sp);
+
+  // F1 score
+  double precision = correct/(correct + wrong);
+  double recall = correct/(correct + missing);
+  stats->f1 = (2.0 * precision * recall) / (precision + recall);
+  if(isnan(stats->f1))
+    sprintf(stats->f1s, "--");
+  else
+    sprintf(stats->f1s, "%.3lf", stats->f1);
+
+  // Annotation edit distance
+  double congruency = (stats->sn+stats->sp)*0.5;
+  stats->ed = 1 - congruency;
+  if(isnan(stats->ed))
+    sprintf(stats->eds, "--");
+  else
+    sprintf(stats->eds, "%.3lf", stats->ed);
+}
+
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
 {
   double tp = (double)stats->tp;
@@ -316,44 +354,6 @@ void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
   // F1 score
   double precision = tp/(tp + fp);
   double recall = tp/(tp + fn);
-  stats->f1 = (2.0 * precision * recall) / (precision + recall);
-  if(isnan(stats->f1))
-    sprintf(stats->f1s, "--");
-  else
-    sprintf(stats->f1s, "%.3lf", stats->f1);
-
-  // Annotation edit distance
-  double congruency = (stats->sn+stats->sp)*0.5;
-  stats->ed = 1 - congruency;
-  if(isnan(stats->ed))
-    sprintf(stats->eds, "--");
-  else
-    sprintf(stats->eds, "%.3lf", stats->ed);
-}
-
-void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
-{
-  double correct = (double)stats->correct;
-  double missing = (double)stats->missing;
-  double wrong = (double)stats->wrong;
-
-  // Sensitivity
-  stats->sn = correct / (correct + missing);
-  if(isnan(stats->sn))
-    sprintf(stats->sns, "--");
-  else
-    sprintf(stats->sns, "%.3lf", stats->sn);
-
-  // Specificity
-  stats->sp = correct / (correct + wrong);
-  if(isnan(stats->sp))
-    sprintf(stats->sps, "--");
-  else
-    sprintf(stats->sps, "%.3lf", stats->sp);
-
-  // F1 score
-  double precision = correct/(correct + wrong);
-  double recall = correct/(correct + missing);
   stats->f1 = (2.0 * precision * recall) / (precision + recall);
   if(isnan(stats->f1))
     sprintf(stats->f1s, "--");

@@ -84,7 +84,7 @@ void pe_print_locus_to_seqfile( FILE *seqfile, unsigned long start,
                                 unsigned long end, unsigned long length,
                                 unsigned long refr_transcripts,
                                 unsigned long pred_transcripts,
-                                AgnComparisonCounts *comparisons );
+                                AgnCompSummary *comparisons );
 
 /**
  * Print header for sequence-specific HTML files.
@@ -105,13 +105,13 @@ void pe_print_seqfile_footer(FILE *outstream);
  * Print the ParsEval summary.
  */
 void pe_print_summary( const char *start_time, int argc, char * const argv[],
-                       GtStrArray *seqids, AgnSummaryData *summary_data,
-                       AgnSummaryData *seq_summary_data, FILE *outstream,
+                       GtStrArray *seqids, PeCompEvaluation *summary_data,
+                       PeCompEvaluation *seq_summary_data, FILE *outstream,
                        PeOptions *options );
 void pe_print_summary_html( const char *start_time, int argc,
                             char * const argv[], GtStrArray *seqids,
-                            AgnSummaryData *summary_data,
-                            AgnSummaryData *seq_summary_data, FILE *outstream,
+                            PeCompEvaluation *summary_data,
+                            PeCompEvaluation *seq_summary_data, FILE *outstream,
                             PeOptions *options );
 
 /**

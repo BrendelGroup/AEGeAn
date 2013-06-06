@@ -21,8 +21,8 @@ struct AgnPairwiseCompareLocus
   GtArray *reported_pairs;
   GtArray *unique_refr_cliques;
   GtArray *unique_pred_cliques;
-  AgnComparisonStats stats;
-  AgnComparisonCounts counts;
+  AgnComparison stats;
+  AgnCompSummary counts;
   PeCompResultSummary results;
   double refr_splice_complexity;
   double pred_splice_complexity;
@@ -84,7 +84,7 @@ void agn_pairwise_compare_locus_add_refr_gene( AgnPairwiseCompareLocus *locus,
 }
 
 void agn_pairwise_compare_locus_aggregate_results( AgnPairwiseCompareLocus *locus,
-                                      AgnSummaryData *data )
+                                      PeCompEvaluation *data )
 {
   unsigned long i;
   GtArray *reported_pairs = agn_pairwise_compare_locus_find_best_pairs(locus);
@@ -163,7 +163,7 @@ void agn_pairwise_compare_locus_aggregate_results( AgnPairwiseCompareLocus *locu
     }
 
     // Record structure-level counts
-    AgnComparisonStats *pairstats = agn_clique_pair_get_stats(pair);
+    AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
     data->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
     data->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
     data->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
@@ -968,7 +968,7 @@ unsigned long agn_pairwise_compare_locus_get_start(AgnPairwiseCompareLocus *locu
 }
 
 void agn_pairwise_compare_locus_get_summary_data( AgnPairwiseCompareLocus *locus,
-                                     AgnSummaryData *data )
+                                     PeCompEvaluation *data )
 {
   data->counts  = locus->counts;
   data->stats   = locus->stats;
@@ -1010,8 +1010,8 @@ AgnPairwiseCompareLocus* agn_pairwise_compare_locus_new(const char *seqid)
   locus->seqid = (char *)gt_malloc(sizeof(char)*(strlen(seqid) + 1));
   strcpy(locus->seqid, seqid);
 
-  agn_comparison_counts_init(&locus->counts);
-  agn_comparison_stats_init(&locus->stats);
+  agn_comp_summary_init(&locus->counts);
+  agn_comparison_init(&locus->stats);
   pe_comp_result_summary_init(&locus->results);
   locus->refr_splice_complexity = 0.0;
   locus->pred_splice_complexity = 0.0;

@@ -14,7 +14,7 @@ struct AgnCliquePair
   GtRange *locus_range;
   char *refr_vector;
   char *pred_vector;
-  AgnComparisonStats stats;
+  AgnComparison stats;
 };
 
 
@@ -526,7 +526,7 @@ const char *agn_clique_pair_get_refr_vector(AgnCliquePair *pair)
   return pair->refr_vector;
 }
 
-AgnComparisonStats *agn_clique_pair_get_stats(AgnCliquePair *pair)
+AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
 {
   return &pair->stats;
 }
@@ -550,6 +550,11 @@ bool agn_clique_pair_needs_comparison(AgnCliquePair *pair)
            agn_transcript_clique_size(pair->pred_clique) > 0 );
 }
 
+unsigned long agn_clique_pair_length(AgnCliquePair *pair)
+{
+  return gt_range_length(pair->locus_range);
+}
+
 AgnCliquePair* agn_clique_pair_new( const char *seqid, AgnTranscriptClique *refr_clique,
                                   AgnTranscriptClique *pred_clique, GtRange *locus_range )
 {
@@ -561,7 +566,7 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid, AgnTranscriptClique *refr
   pair->pred_clique = pred_clique;
   pair->locus_range = locus_range;
 
-  agn_comparison_stats_init(&pair->stats);
+  agn_comparison_init(&pair->stats);
   double perc = 1.0 / (double)gt_range_length(pair->locus_range);
   pair->stats.tolerance = 1.0;
   while(pair->stats.tolerance > perc)
@@ -571,15 +576,4 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid, AgnTranscriptClique *refr
   pair->pred_vector = NULL;
 
   return pair;
-}
-
-void agn_clique_pair_record_characteristics( AgnCliquePair *pair,
-                                            PeCompResultDesc *characteristics )
-{
-  characteristics->transcript_count += 1;
-  characteristics->total_length += gt_range_length(pair->locus_range);
-  characteristics->refr_cds_length += agn_transcript_clique_cds_length(pair->refr_clique);
-  characteristics->pred_cds_length += agn_transcript_clique_cds_length(pair->pred_clique);
-  characteristics->refr_exon_count += agn_transcript_clique_num_exons(pair->refr_clique);
-  characteristics->pred_exon_count += agn_transcript_clique_num_exons(pair->pred_clique);
 }

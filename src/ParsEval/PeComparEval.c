@@ -1,5 +1,34 @@
 #include "PeComparEval.h"
 
+void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
+                                            PeCompResultDesc *desc)
+{
+  AgnTranscriptClique *refr = agn_clique_pair_get_refr_clique(pair);
+  AgnTranscriptClique *pred = agn_clique_pair_get_refr_clique(pair);
+  
+  desc->transcript_count += 1;
+  desc->total_length += agn_clique_pair_length(pair);
+  desc->refr_cds_length += agn_transcript_clique_cds_length(refr);
+  desc->pred_cds_length += agn_transcript_clique_cds_length(pred);
+  desc->refr_exon_count += agn_transcript_clique_num_exons(refr);
+  desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
+}
+
+void pe_comp_evalutation_combine(PeCompEvaluation *data,
+                                 PeCompEvaluation *data_to_add)
+{
+  agn_comp_summary_combine(&data->counts, &data_to_add->counts);
+  agn_comparison_combine(&data->stats, &data_to_add->stats);
+  pe_comp_result_summary_combine(&data->results, &data_to_add->results);
+}
+
+void pe_comp_evalutation_init(PeCompEvaluation *data)
+{
+  agn_comp_summary_init(&data->counts);
+  agn_comparison_init(&data->stats);
+  pe_comp_result_summary_init(&data->results);
+}
+
 void pe_comp_result_summary_combine(PeCompResultSummary *desc,
                                     PeCompResultSummary *desc_to_add)
 {
@@ -46,18 +75,4 @@ void pe_comp_result_desc_init(PeCompResultDesc *desc)
   desc->pred_cds_length = 0;
   desc->refr_exon_count = 0;
   desc->pred_exon_count = 0;
-}
-
-void agn_summary_data_combine(AgnSummaryData *data, AgnSummaryData *data_to_add)
-{
-  agn_comparison_counts_combine(&data->counts, &data_to_add->counts);
-  agn_comparison_stats_combine(&data->stats, &data_to_add->stats);
-  pe_comp_result_summary_combine(&data->results, &data_to_add->results);
-}
-
-void agn_summary_data_init(AgnSummaryData *data)
-{
-  agn_comparison_counts_init(&data->counts);
-  agn_comparison_stats_init(&data->stats);
-  pe_comp_result_summary_init(&data->results);
 }
