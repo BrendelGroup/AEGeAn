@@ -301,13 +301,6 @@ int main(int argc, char * const argv[])
             // End maybe delete
             gt_timer_delete(comp_timer);
 
-            if( clique_pairs != NULL &&
-                (options.complimit == 0 || gt_array_size(clique_pairs) <= options.complimit) )
-            {
-              agn_gene_locus_calc_splice_complexity_refr(locus);
-              agn_gene_locus_calc_splice_complexity_pred(locus);
-            }
-
             PeCompEvaluation data;
             //agn_gene_locus_get_summary_data(locus, &data);
             agn_gene_locus_aggregate_results(locus, &data);

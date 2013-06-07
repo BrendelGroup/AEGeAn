@@ -36,15 +36,6 @@ void agn_gene_locus_add_pred_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
 void agn_gene_locus_add_refr_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
 
 /**
- * Calculate and store the splice complexity of this locus' reference and
- * prediction annotations, respectively.
- *
- * @param[in] locus    this locus
- */
-void agn_gene_locus_calc_splice_complexity_pred(AgnGeneLocus *locus);
-void agn_gene_locus_calc_splice_complexity_refr(AgnGeneLocus *locus);
-
-/**
  * Array comparison function for locus objects
  *
  * @param[in] p1    pointer to a pointer to one locus object

@@ -21,8 +21,6 @@ struct AgnGeneLocus
   GtArray *reported_pairs;
   GtArray *unique_refr_cliques;
   GtArray *unique_pred_cliques;
-  double refr_splice_complexity;
-  double pred_splice_complexity;
 };
 
 
@@ -58,20 +56,6 @@ void agn_gene_locus_add_refr_gene(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   agn_gene_locus_add_gene(locus, gene);
   gt_hashmap_add(locus->refr_genes, gene, gene);
-}
-
-void agn_gene_locus_calc_splice_complexity_pred(AgnGeneLocus *locus)
-{
-  GtArray *pred_trans = agn_gene_locus_get_pred_transcripts(locus);
-  locus->pred_splice_complexity = agn_calc_splice_complexity(pred_trans);
-  gt_array_delete(pred_trans);
-}
-
-void agn_gene_locus_calc_splice_complexity_refr(AgnGeneLocus *locus)
-{
-  GtArray *refr_trans = agn_gene_locus_get_refr_transcripts(locus);
-  locus->refr_splice_complexity = agn_calc_splice_complexity(refr_trans);
-  gt_array_delete(refr_trans);
 }
 
 int agn_gene_locus_array_compare(const void *p1, const void *p2)
@@ -625,7 +609,10 @@ GtArray *agn_gene_locus_get_pred_gene_ids(AgnGeneLocus *locus)
 
 double agn_gene_locus_get_pred_splice_complexity(AgnGeneLocus *locus)
 {
-  return locus->pred_splice_complexity;
+  GtArray *pred_trans = agn_gene_locus_get_pred_transcripts(locus);
+  double sc = agn_calc_splice_complexity(pred_trans);
+  gt_array_delete(pred_trans);
+  return sc;
 }
 
 GtArray *agn_gene_locus_get_pred_transcripts(AgnGeneLocus *locus)
@@ -722,7 +709,10 @@ GtArray *agn_gene_locus_get_refr_gene_ids(AgnGeneLocus *locus)
 
 double agn_gene_locus_get_refr_splice_complexity(AgnGeneLocus *locus)
 {
-  return locus->refr_splice_complexity;
+  GtArray *refr_trans = agn_gene_locus_get_pred_transcripts(locus);
+  double sc = agn_calc_splice_complexity(refr_trans);
+  gt_array_delete(refr_trans);
+  return sc;
 }
 
 GtArray *agn_gene_locus_get_refr_transcripts(AgnGeneLocus *locus)
@@ -825,8 +815,6 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
   locus->reported_pairs = NULL;
   locus->unique_refr_cliques = NULL;
   locus->unique_pred_cliques = NULL;
-  locus->refr_splice_complexity = 0.0;
-  locus->pred_splice_complexity = 0.0;
 
   return locus;
 }
