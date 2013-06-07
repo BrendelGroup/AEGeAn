@@ -47,7 +47,7 @@ bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
 /**
  * If exons and start/stop codons are provided explicitly, the (possibly)
  * disjoint segments(s) of the CDS can be inferred using this function.
- * 
+ *
  * @param[in]  v        validator object
  * @param[in]  mrna     mRNA feature
  * @param[out] logger   object to which error/warning messages will be
@@ -208,7 +208,7 @@ bool agn_gene_validator_check_feature_overlap(AgnGeneValidator *v,
   gt_assert(features != NULL);
   if(gt_array_size(features) <= 1)
     return true;
-  
+
   bool isvalid = true;
   unsigned long i;
   for(i = 0; i < gt_array_size(features) - 1; i++)
@@ -243,7 +243,7 @@ bool agn_gene_validator_infer_cds(AgnGeneValidator *v, GtFeatureNode *mrna,
   const char *tid = gt_feature_node_get_attribute(mrna, "ID");
   unsigned int tln = gt_genome_node_get_line_number((GtGenomeNode *)mrna);
   bool isvalid = true;
-  
+
   gt_assert(left_codon_found && right_codon_found && num_exons > 0);
   GtStr *aegean = gt_str_new_cstr("AEGeAn");
   unsigned long i;
@@ -279,7 +279,7 @@ bool agn_gene_validator_infer_cds(AgnGeneValidator *v, GtFeatureNode *mrna,
                          "for mRNA '%s' (line %u)", tid, tln);
     isvalid = false;
   }
-  
+
   return isvalid;
 }
 
@@ -329,7 +329,7 @@ bool agn_gene_validator_infer_exons(AgnGeneValidator *v, GtFeatureNode *mrna,
       gt_array_add(exons_to_add, utr_range);
     }
   }
-  
+
   GtStr *aegean = gt_str_new_cstr("AEGeAn");
   for(i = 0; i < gt_array_size(exons_to_add); i++)
   {
@@ -348,7 +348,7 @@ bool agn_gene_validator_infer_exons(AgnGeneValidator *v, GtFeatureNode *mrna,
   }
   gt_str_delete(aegean);
   gt_array_delete(exons_to_add);
-  
+
   if(gt_array_size(v->exons) == 0)
   {
     agn_logger_log_error(logger,"unable to infer exons for mRNA '%s' (line %u)",
@@ -356,7 +356,7 @@ bool agn_gene_validator_infer_exons(AgnGeneValidator *v, GtFeatureNode *mrna,
     return false;
   }
   gt_hashmap_delete(adjacent_utrs);
-  
+
   // Sort and return
   gt_array_sort(v->exons, (GtCompare)agn_gt_genome_node_compare);
   return true;
@@ -409,7 +409,7 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
                                             AgnLogger *logger)
 {
   bool isvalid = true;
-  
+
   // If CDS segments are not explicitly provided, infer CDS from exons and
   // start/stop codons
   if(gt_array_size(v->cdss) == 0)
@@ -459,7 +459,7 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
     );
     isvalid = false;
   }
-  
+
   return isvalid;
 }
 
@@ -475,14 +475,14 @@ bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
     lefttype  = "three_prime_UTR";
     righttype = "five_prime_UTR";
   }
-  
+
   GtStr *aegean = gt_str_new_cstr("AEGeAn");
   unsigned long i;
   for(i = 0; i < gt_array_size(v->exons); i++)
   {
     GtFeatureNode *exon = *(GtFeatureNode **)gt_array_get(v->exons, i);
     GtRange exonrange = gt_genome_node_get_range((GtGenomeNode *)exon);
-    
+
     if(exonrange.start < v->left_codon_range->start)
     {
       GtRange utrrange;
@@ -503,7 +503,7 @@ bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
       gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", tid);
       gt_array_add(v->utrs, utr);
     }
-    
+
     if(exonrange.end > v->right_codon_range->end)
     {
       GtRange utrrange;
@@ -526,7 +526,7 @@ bool agn_gene_validator_infer_utrs(AgnGeneValidator *v, GtFeatureNode *mrna,
     }
   }
   gt_str_delete(aegean);
-  
+
   return true;
 }
 
@@ -542,7 +542,7 @@ AgnGeneValidator* agn_gene_validator_new()
   v->start_codon_range.end   = 0;
   v->stop_codon_range.start  = 0;
   v->stop_codon_range.end    = 0;
-  
+
   v->left_codon_range  = NULL;
   v->right_codon_range = NULL;
 
@@ -623,7 +623,7 @@ void agn_gene_validator_reset(AgnGeneValidator *v)
   gt_array_delete(v->introns);
   gt_array_delete(v->utrs);
   gt_array_delete(v->segments);
-  
+
   v->start_codon_range.start = 0;
   v->start_codon_range.end   = 0;
   v->stop_codon_range.start  = 0;
@@ -717,7 +717,7 @@ bool agn_gene_validator_validate_gene(AgnGeneValidator *v, GtFeatureNode *gene,
         );
         isvalid = false;
       }
-      
+
       num_mrnas++;
     }
     else
@@ -757,7 +757,7 @@ bool agn_gene_validator_validate_mrna(AgnGeneValidator *v, GtFeatureNode *gene,
   v->introns  = gt_array_new(sizeof(GtFeatureNode *));
   v->utrs     = gt_array_new(sizeof(GtFeatureNode *));
   v->segments = gt_array_new(sizeof(GtFeatureNode *));
-  
+
   v->left_codon_range  = &v->start_codon_range;
   v->right_codon_range = &v->stop_codon_range;
   if(gt_feature_node_get_strand(mrna) == GT_STRAND_REVERSE)

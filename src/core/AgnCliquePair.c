@@ -171,7 +171,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       {
         refr_cds_starts[num_refr_cdss] = i;
       }
-      
+
       if(i == locus_length - 1 || pair->refr_vector[i+1] != 'C')
       {
         refr_cds_ends[num_refr_cdss] = i;
@@ -184,7 +184,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       {
         pred_cds_starts[num_pred_cdss] = i;
       }
-      
+
       if(i == locus_length - 1 || pair->pred_vector[i+1] != 'C')
       {
         pred_cds_ends[num_pred_cdss] = i;
@@ -227,7 +227,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       {
         pred_exon_starts[num_pred_exons] = i;
       }
-      
+
       if( i == locus_length - 1 || ( pair->pred_vector[i+1] != 'C' &&
                                      pair->pred_vector[i+1] != 'F' &&
                                      pair->pred_vector[i+1] != 'T'    ))
@@ -244,7 +244,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       {
         refr_utr_starts[num_refr_utrs] = i;
       }
-      
+
       if(i == locus_length - 1 || ( pair->refr_vector[i+1] != 'F' &&
                                     pair->refr_vector[i+1] != 'T' ))
       {
@@ -259,7 +259,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       {
         pred_utr_starts[num_pred_utrs] = i;
       }
-      
+
       if(i == locus_length - 1 || ( pair->pred_vector[i+1] != 'F' &&
                                     pair->pred_vector[i+1] != 'T' ))
       {

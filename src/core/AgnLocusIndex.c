@@ -107,7 +107,7 @@ int agn_locus_compare(const void *p1, const void *p2)
   {
     return -1;
   }
-  
+
   return 1;
 }
 
@@ -126,7 +126,7 @@ void agn_locus_index_find(AgnLocusIndex *idx, const char *seqid, GtRange *range,
   GtIntervalTree *it = gt_hashmap_get(idx->locus_trees, seqid);
   if(it == NULL)
     return;
-  
+
   gt_interval_tree_find_all_overlapping(it, range->start, range->end, loci);
 }
 
@@ -135,7 +135,7 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
   GtIntervalTree *it = gt_hashmap_get(idx->locus_trees, seqid);
   if(it == NULL)
     return NULL;
-  
+
   GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
   gt_interval_tree_traverse(it, agn_locus_index_it_traverse, loci);
   return loci;
@@ -172,7 +172,7 @@ unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
     gt_feature_index_delete(features);
     return 0;
   }
-  
+
   nloci = agn_locus_index_parse_memory(idx, features, numprocs, logger);
   gt_feature_index_delete(features);
   return nloci;
@@ -194,11 +194,11 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
     gt_error_delete(error);
     return 0;
   }
-  
+
   GtRange locusrange;
   GtArray *genes_to_add = gt_array_new( sizeof(GtFeatureNode *) );
   unsigned long new_gene_count = 0;
-  
+
   locusrange.start = agn_gene_locus_get_start(locus);
   locusrange.end = agn_gene_locus_get_end(locus);
   gt_feature_index_get_features_for_range(features, genes_to_add,
@@ -210,7 +210,7 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
                          locusrange.start, locusrange.end, gt_error_get(error));
     gt_error_unset(error);
   }
-  
+
   while(gt_array_size(genes_to_add) > 0)
   {
     GtFeatureNode *gene_to_add = *(GtFeatureNode **)gt_array_pop(genes_to_add);
@@ -221,10 +221,10 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
       new_gene_count++;
     }
   }
-  
+
   gt_array_delete(genes_to_add);
   gt_error_delete(error);
-  
+
   return new_gene_count;
 }
 
@@ -236,7 +236,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
   GtIntervalTree *loci = gt_interval_tree_new((GtFree)agn_locus_delete);
-  
+
   GtArray *seqfeatures = gt_feature_index_get_features_for_seqid(features,
                                  seqid, error);
   if(gt_error_is_set(error))
@@ -263,11 +263,11 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
       {
         continue;
       }
-      
+
       gt_hashmap_add(visited_genes, fn, fn);
       AgnLocus *locus = agn_locus_new(seqid);
       agn_locus_add(locus, fn);
-      
+
       int new_gene_count = 0;
       do
       {
@@ -276,7 +276,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
                                       logger);
         new_gene_count = temp_new_gene_count;
       } while(new_gene_count > 0);
-      
+
       GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
                                                           locus->range.start,
                                                           locus->range.end);
@@ -284,7 +284,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
     }
     gt_feature_node_iterator_delete(iter);
   }
-  
+
   gt_error_delete(error);
   gt_hashmap_delete(visited_genes);
   gt_array_delete(seqfeatures);
@@ -321,7 +321,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     GtFeatureNode *refr_gene = *(GtFeatureNode**)gt_array_get(refr_list, i);
     if(gt_hashmap_get(visited_genes, refr_gene) != NULL)
       continue;
-    
+
     gt_hashmap_add(visited_genes, refr_gene, refr_gene);
     AgnGeneLocus *locus = agn_gene_locus_new(seqid);
     agn_gene_locus_add_refr_gene(locus, refr_gene);
@@ -373,11 +373,11 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     GtFeatureNode *pred_gene = *(GtFeatureNode**)gt_array_get(pred_list,i);
     if(gt_hashmap_get(visited_genes, pred_gene) != NULL)
       continue;
-    
+
     gt_hashmap_add(visited_genes, pred_gene, pred_gene);
     AgnGeneLocus *locus = agn_gene_locus_new(seqid);
     agn_gene_locus_add_pred_gene(locus, pred_gene);
-    
+
     int new_gene_count = 0;
     do
     {
@@ -395,13 +395,13 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       }
       new_gene_count = new_pred_gene_count;
     } while(new_gene_count > 0);
-    
+
     GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
                                   agn_gene_locus_get_start(locus),
                                   agn_gene_locus_get_end(locus));
     gt_interval_tree_insert(loci, itn);
   }
-  
+
   gt_error_delete(error);
   gt_hashmap_delete(visited_genes);
   gt_array_delete(pred_list);
@@ -424,7 +424,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
   }
   gt_str_array_delete(idx->seqids);
   idx->seqids = seqids;
-  
+
   int orig_numprocs = omp_get_num_threads();
   omp_set_num_threads(numprocs);
   unsigned long totalloci = 0;
@@ -449,7 +449,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
     }
   } // End parallelize
   omp_set_num_threads(orig_numprocs);
-  
+
   return totalloci;
 }
 
@@ -467,7 +467,7 @@ unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
     gt_feature_index_delete(predfeats);
     return 0;
   }
-  
+
   nloci = agn_locus_index_parse_pairwise_memory(idx, refrfeats, predfeats,
                                                 numprocs, logger);
   gt_feature_index_delete(refrfeats);
@@ -492,14 +492,14 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
   }
   gt_str_array_delete(idx->seqids);
   idx->seqids = seqids;
-  
+
   int orig_numprocs = omp_get_num_threads();
   omp_set_num_threads(numprocs);
   unsigned long totalloci = 0;
   #pragma omp parallel private(i, rank)
   {
     rank = omp_get_thread_num();
-    
+
     #pragma omp for schedule(static)
     for(i = 0; i < gt_str_array_size(seqids); i++)
     {
@@ -515,7 +515,7 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
     } // End parallelize
   }
   omp_set_num_threads(orig_numprocs);
-  
+
   gt_error_delete(error);
   return totalloci;
 }
@@ -532,10 +532,10 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
     gt_error_delete(error);
     return 0;
   }
-  
+
   int new_gene_count = 0;
   GtArray *overlapping_features = gt_array_new( sizeof(GtFeatureNode *) );
-  
+
   gt_feature_index_get_features_for_range(features, overlapping_features,
                                           locus->seqid, &locus->range, error);
   if(gt_error_is_set(error))
@@ -549,7 +549,7 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
     return 0;
   }
   gt_error_delete(error);
-  
+
   while(gt_array_size(overlapping_features) > 0)
   {
     GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(overlapping_features);
@@ -562,7 +562,7 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
     }
   }
   gt_array_delete(overlapping_features);
-  
+
   return new_gene_count;
 }
 

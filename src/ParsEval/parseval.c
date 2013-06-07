@@ -51,7 +51,7 @@ int main(int argc, char * const argv[])
                                        options.refrfile, options.predfile);
   if(haderror) return EXIT_FAILURE;
   agn_logger_unset(logger);
-  
+
   GtStrArray *seqids = agn_locus_index_seqids(locusindex);
   unsigned long numseqs = gt_str_array_size(seqids);
   GtArray *loci = gt_array_new( sizeof(GtArray *) );

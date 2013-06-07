@@ -123,7 +123,7 @@ double agn_calc_splice_complexity(GtArray *transcripts)
 GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
 {
   GtArray *cliques = gt_array_new( sizeof(GtArray *) );
-  
+
   if(gt_array_size(feature_set) == 1)
   {
     GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(feature_set, 0);
@@ -142,16 +142,16 @@ GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
       agn_transcript_clique_add(clique, fn);
       gt_array_add(cliques, clique);
     }
-    
+
     // Then use the Bron-Kerbosch algorithm to find all maximal cliques
     // containing >1 transcript
     GtArray *R = gt_array_new( sizeof(GtGenomeNode *) );
     GtArray *P = agn_gt_array_copy(feature_set, sizeof(GtGenomeNode *));
     GtArray *X = gt_array_new( sizeof(GtGenomeNode *) );
-  
+
     // Initial call: agn_bron_kerbosch(\emptyset, vertex_set, \emptyset )
     agn_bron_kerbosch(R, P, X, cliques, true);
-  
+
     gt_array_delete(R);
     gt_array_delete(P);
     gt_array_delete(X);
@@ -195,7 +195,7 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-  
+
   GtFeatureIndex *features = gt_feature_index_memory_new();
   AgnGeneValidator *validator = agn_gene_validator_new();
   GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator, logger);
@@ -218,7 +218,7 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
     gt_feature_index_delete(features);
     features = NULL;
   }
-  
+
   gt_error_delete(error);
   return features;
 }
@@ -230,12 +230,12 @@ bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range,
 {
   cds_range->start = 0;
   cds_range->end   = 0;
-  
+
   // UTR
   if(exon_range->end < leftcodon_range->start ||
      exon_range->start > rightcodon_range->end)
     return false;
-  
+
   bool overlap_left  = gt_range_overlap(exon_range, leftcodon_range);
   bool overlap_right = gt_range_overlap(exon_range, rightcodon_range);
   if(overlap_left && overlap_right)
@@ -258,7 +258,7 @@ bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range,
     cds_range->start = exon_range->start;
     cds_range->end   = exon_range->end;
   }
-  
+
   return true;
 }
 
@@ -289,7 +289,7 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
     return NULL;
   }
   GtStrArray *seqids = agn_gt_str_array_intersection(refrseqids, predseqids);
-  
+
   // Print reference sequences with no prediction annotations
   unsigned long i, j;
   for(i = 0; i < gt_str_array_size(refrseqids); i++)
@@ -326,7 +326,7 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
                              "sequence '%s'", predseq);
     }
   }
-  
+
   if(gt_str_array_size(seqids) == 0)
   {
     agn_logger_log_error(logger, "no sequences in common between reference and "
@@ -365,7 +365,7 @@ GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
     return NULL;
   }
   GtStrArray *seqids = agn_gt_str_array_union(refrseqids, predseqids);
-  
+
   gt_str_array_delete(refrseqids);
   gt_str_array_delete(predseqids);
   return seqids;
@@ -398,7 +398,7 @@ GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
   GtRange trange;
   trange.start = 0;
   trange.end = 0;
-  
+
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(transcript);
   GtFeatureNode *current;
   for
@@ -417,7 +417,7 @@ GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
         trange.end = crange.end;
     }
   }
-  
+
   if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
   {
     unsigned long temp = trange.start;
@@ -430,7 +430,7 @@ GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
 void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
 {
   gt_assert(transcript && outstream);
-  
+
   GtArray *exons = gt_array_new( sizeof(GtFeatureNode *) );
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(transcript);
   GtFeatureNode *child;
@@ -445,13 +445,13 @@ void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
       gt_array_add(exons, child);
   }
   gt_feature_node_iterator_delete(iter);
-  
+
   gt_assert(gt_array_size(exons) > 0);
   gt_array_sort(exons, (GtCompare)agn_gt_genome_node_compare);
-  
+
   if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
     fputs("complement(", outstream);
-  
+
   if(gt_array_size(exons) == 1)
   {
     GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, 0);
@@ -466,7 +466,7 @@ void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
     {
       GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, i);
       GtRange exonrange = gt_genome_node_get_range(exon);
-      
+
       if(i == 0)
         fprintf(outstream, "<%lu..%lu", exonrange.start, exonrange.end);
       else if(i+1 == gt_array_size(exons))
@@ -476,7 +476,7 @@ void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
     }
     fputs(")", outstream);
   }
-  
+
   if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
     fputs(")", outstream);
 }

@@ -62,9 +62,9 @@ bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,
 
     if(strchr(parentattr, ','))
       success = false;
-    gt_free(parentstr); 
+    gt_free(parentstr);
   }
-  
+
   return success;
 }
 
@@ -246,7 +246,7 @@ void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
     //This function will not allow you to reset the source, so I'm hacking. I'll
     //open a ticket to see if/why this is a bad idea.
     //gt_feature_node_set_source(current, source);
-    
+
     // This is the hack.
     current->source = gt_str_ref(source);
   }
@@ -263,7 +263,7 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool p
       filtered_types = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
       gt_hashmap_add(filtered_types, "intron", filtered_types);
     }
-    
+
     GtFeatureNode *current;
     GtFeatureNodeIterator *iter;
     iter = gt_feature_node_iterator_new(feature);
@@ -274,7 +274,7 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool p
       const char *type = gt_feature_node_get_type(current);
       if(gt_hashmap_get(filtered_types, type) != NULL)
         continue;
-      
+
       GtGenomeNode *gn = (GtGenomeNode *)current;
       GtStr *seqid = gt_genome_node_get_seqid(gn);
       const char *source = gt_feature_node_get_source(current);
@@ -290,13 +290,13 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool p
         sprintf(score_string, "%s", ".");
       GtStrand strand = gt_feature_node_get_strand(current);
       GtPhase phase = gt_feature_node_get_phase(current);
-  
+
       if(prefix != NULL && strcmp(prefix, "") != 0)
         fputs(prefix, outstream);
-    
+
       fprintf( outstream, "%s\t%s\t%s\t%lu\t%lu\t%s\t%c\t%c\t", gt_str_get(seqid), source, type, start,
                end, score_string, agn_gt_strand_to_char(strand), agn_gt_phase_to_char(phase) );
-    
+
       GtStrArray *attributes = gt_feature_node_get_attribute_list(current);
       unsigned long num_attrs = gt_str_array_size(attributes);
       unsigned long i;
@@ -337,10 +337,10 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool p
 
     if(prefix != NULL && strcmp(prefix, "") != 0)
       fputs(prefix, outstream);
-      
+
     fprintf( outstream, "%s\t%s\t%s\t%lu\t%lu\t%s\t%c\t%c\t", gt_str_get(seqid), source, type, start,
              end, score_string, agn_gt_strand_to_char(strand), agn_gt_phase_to_char(phase) );
-  
+
     GtStrArray *attributes = gt_feature_node_get_attribute_list(feature);
     unsigned long num_attrs = gt_str_array_size(attributes);
     unsigned long i;
@@ -436,7 +436,7 @@ GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
   // The whole reason I'm going through this mess--GtStrArray class has no sort
   // function.
   gt_array_sort(strings, (GtCompare)agn_string_compare);
-  
+
   GtStrArray *uniona = gt_str_array_new();
   for(i = 0; i < gt_array_size(strings); i++)
   {

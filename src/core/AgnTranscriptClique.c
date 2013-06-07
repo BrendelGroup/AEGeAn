@@ -70,7 +70,7 @@ bool agn_transcript_clique_has_id_in_hash( AgnTranscriptClique *clique,
     if(gt_hashmap_get(map, tid) != NULL)
       return true;
   }
-  
+
   return false;
 }
 

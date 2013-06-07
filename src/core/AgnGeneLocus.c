@@ -86,10 +86,10 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2)
     return 0;
 
   bool l1startfirst = l1r.start <  l2r.start;
-  bool l1endfirst   = l1r.start == l2r.start && l1r.end < l2r.end;  
+  bool l1endfirst   = l1r.start == l2r.start && l1r.end < l2r.end;
   if(l1startfirst || l1endfirst)
     return -1;
-  
+
   return 1;
 }
 
@@ -811,7 +811,7 @@ bool agn_gene_locus_is_complex(AgnGeneLocus *locus)
 AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 {
   AgnGeneLocus *locus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
-  
+
   locus->locus.seqid = gt_cstr_dup(seqid);
   locus->locus.range.start = 0;
   locus->locus.range.end = 0;
