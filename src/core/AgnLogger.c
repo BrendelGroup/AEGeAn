@@ -21,24 +21,9 @@ struct AgnLogger
 //----------------------------------------------------------------------------//
 void agn_logger_delete(AgnLogger *logger)
 {
-  unsigned long i;
-  for(i = 0; i < gt_array_size(logger->errors); i++)
-  {
-    GtError *message = *(GtError **)gt_array_get(logger->errors, i);
-    gt_error_delete(message);
-  }
+  agn_logger_unset(logger);
   gt_array_delete(logger->errors);
-  for(i = 0; i < gt_array_size(logger->messages); i++)
-  {
-    GtError *message = *(GtError **)gt_array_get(logger->messages, i);
-    gt_error_delete(message);
-  }
   gt_array_delete(logger->messages);
-  for(i = 0; i < gt_array_size(logger->warnings); i++)
-  {
-    GtError *message = *(GtError **)gt_array_get(logger->warnings, i);
-    gt_error_delete(message);
-  }
   gt_array_delete(logger->warnings);
   gt_free(logger);
   logger = NULL;
@@ -252,6 +237,19 @@ bool agn_logger_print_warning(AgnLogger *logger, FILE *outstream,
 
 void agn_logger_unset(AgnLogger *logger)
 {
-  agn_logger_delete(logger);
-  logger = agn_logger_new();
+  while(gt_array_size(logger->errors) > 0)
+  {
+    GtError *message = *(GtError **)gt_array_pop(logger->errors);
+    gt_error_delete(message);
+  }
+  while(gt_array_size(logger->messages) > 0)
+  {
+    GtError *message = *(GtError **)gt_array_pop(logger->messages);
+    gt_error_delete(message);
+  }
+  while(gt_array_size(logger->warnings) > 0)
+  {
+    GtError *message = *(GtError **)gt_array_pop(logger->warnings);
+    gt_error_delete(message);
+  }
 }

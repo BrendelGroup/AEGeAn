@@ -33,17 +33,19 @@ int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp);
  * prediction set), this function associates each gene annotation with the
  * appropriate locus.
  *
- * @param[in] idx       the locus index
- * @param[in] seqid     the sequence for which loci are requested
- * @param[in] refr      reference annotations for the sequence
- * @param[in] pred      prediction annotations for the sequence
- * @param[in] logger    object to which warning/error messages are written
- * @returns             an interval tree containing the sequence's gene loci
+ * @param[in] idx        the locus index
+ * @param[in] seqid      the sequence for which loci are requested
+ * @param[in] refr       reference annotations for the sequence
+ * @param[in] pred       prediction annotations for the sequence
+ * @param[in] filters    filtering criteria
+ * @param[in] logger     object to which warning/error messages are written
+ * @returns              an interval tree containing the sequence's gene loci
  */
 GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
                                                const char *seqid,
                                                GtFeatureIndex *refr,
                                                GtFeatureIndex *pred,
+                                               AgnCompareFilters *filters,
                                                AgnLogger *logger);
 
 /**
@@ -235,7 +237,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
   unsigned long i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  GtIntervalTree *loci = gt_interval_tree_new((GtFree)agn_locus_delete);
+  GtIntervalTree *loci = gt_interval_tree_new(NULL);
   
   GtArray *seqfeatures = gt_feature_index_get_features_for_seqid(features,
                                  seqid, error);
@@ -295,13 +297,16 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
                                                const char *seqid,
                                                GtFeatureIndex *refr,
                                                GtFeatureIndex *pred,
+                                               AgnCompareFilters *filters,
                                                AgnLogger *logger)
 {
   unsigned long i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  GtIntervalTree *loci = gt_interval_tree_new(
-                             (GtFree)agn_gene_locus_delete);
+  // FIXME the interval tree delete function is set to NULL; perhaps it should
+  // be set to agn_gene_locus_delete, but ParsEval likes to delete loci right
+  // after they're analyzed instead of waiting until the end; how to fix?
+  GtIntervalTree *loci = gt_interval_tree_new(NULL);
 
   // Seed new loci with reference genes
   GtArray *refr_list = gt_feature_index_get_features_for_seqid(refr, seqid,
@@ -347,10 +352,23 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       }
       new_gene_count = new_refr_gene_count + new_pred_gene_count;
     } while(new_gene_count > 0);
-    GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
-                                  agn_gene_locus_get_start(locus),
-                                  agn_gene_locus_get_end(locus));
-    gt_interval_tree_insert(loci, itn);
+
+    bool failfilter = agn_gene_locus_filter(locus, filters);
+    if(!failfilter)
+    {
+      GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
+                                    agn_gene_locus_get_start(locus),
+                                    agn_gene_locus_get_end(locus));
+      gt_interval_tree_insert(loci, itn);
+    }
+    else
+    {
+      agn_logger_log_status(logger, "locus %s[%lu, %lu] did not pass filtering "
+                            "criteria; moving on", seqid,
+                            agn_gene_locus_get_start(locus),
+                            agn_gene_locus_get_end(locus));
+      agn_gene_locus_delete(locus);
+    }
   }
   gt_array_delete(refr_list);
 
@@ -396,10 +414,22 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       new_gene_count = new_pred_gene_count;
     } while(new_gene_count > 0);
     
-    GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
-                                  agn_gene_locus_get_start(locus),
-                                  agn_gene_locus_get_end(locus));
-    gt_interval_tree_insert(loci, itn);
+    bool failfilter = agn_gene_locus_filter(locus, filters);
+    if(!failfilter)
+    {
+      GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
+                                    agn_gene_locus_get_start(locus),
+                                    agn_gene_locus_get_end(locus));
+      gt_interval_tree_insert(loci, itn);
+    }
+    else
+    {
+      agn_logger_log_status(logger, "locus %s[%lu, %lu] did not pass filtering "
+                            "criteria; moving on", seqid,
+                            agn_gene_locus_get_start(locus),
+                            agn_gene_locus_get_end(locus));
+      agn_gene_locus_delete(locus);
+    }
   }
   
   gt_error_delete(error);
@@ -411,7 +441,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
 
 unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                   GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
-                  int numprocs, AgnLogger *logger)
+                  int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
 {
   int i, rank;
   gt_assert(idx != NULL);
@@ -438,7 +468,8 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
       const char *seqid = gt_str_array_get(seqids, i);
       GtIntervalTree *loci = agn_locus_index_parse_pairwise(idx, seqid,
                                                             refrfeats,
-                                                            predfeats, logger);
+                                                            predfeats, filters,
+                                                            logger);
       #pragma omp critical
       {
         totalloci += gt_interval_tree_size(loci);
@@ -455,7 +486,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
 
 unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
                   const char *refrfile, const char *predfile, int numprocs,
-                  AgnLogger *logger)
+                  AgnCompareFilters *filters, AgnLogger *logger)
 {
   gt_assert(idx != NULL);
   unsigned long nloci;
@@ -469,7 +500,7 @@ unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
   }
   
   nloci = agn_locus_index_parse_pairwise_memory(idx, refrfeats, predfeats,
-                                                numprocs, logger);
+                                                numprocs, filters, logger);
   gt_feature_index_delete(refrfeats);
   gt_feature_index_delete(predfeats);
   return nloci;

@@ -3,6 +3,7 @@
 
 #include "genometools.h"
 #include "AgnLogger.h"
+#include "AgnComparEval.h"
 
 typedef struct AgnLocusIndex AgnLocusIndex;
 
@@ -58,13 +59,14 @@ AgnLocusIndex *agn_locus_index_new();
  * @param[in]  refrfeats    reference annotations
  * @param[in]  predfeats    prediction annotations
  * @param[in]  numprocs     number of processors to use while identifying loci
+ * @param[in] filters    filtering criteria
  * @param[out] logger       object to which warning/error messages will be
  *                          written if necessary
  * @returns                 the number of loci identified
  */
 unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                   GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
-                  int numprocs, AgnLogger *logger);
+                  int numprocs, AgnCompareFilters *filters, AgnLogger *logger);
 
 /**
  * Given a pair of annotation feature sets in memory, identify loci while
@@ -74,13 +76,14 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
  * @param[in]  refrfile     path to GFF3 file containing reference annotations
  * @param[in]  predfile     path to GFF3 file containing prediction annotations
  * @param[in]  numprocs     number of processors to use while identifying loci
+ * @param[in] filters    filtering criteria
  * @param[out] logger       object to which warning/error messages will be
  *                          written if necessary
  * @returns                 the number of loci identified
  */
 unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
                   const char *refrfile, const char *predfile, int numprocs,
-                  AgnLogger *logger);
+                  AgnCompareFilters *filters, AgnLogger *logger);
 
 /**
  * Identify loci given an index of annotation features.

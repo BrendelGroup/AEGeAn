@@ -286,6 +286,20 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       }
     }
   }
+  
+  if(options->trans_per_locus > 0)
+  {
+    if(options->filters.MaxReferenceTranscriptModels == 0 ||
+       options->trans_per_locus < options->filters.MaxReferenceTranscriptModels)
+    {
+      options->filters.MaxReferenceTranscriptModels = options->trans_per_locus;
+    }
+    if(options->filters.MaxPredictionTranscriptModels == 0 ||
+      options->trans_per_locus < options->filters.MaxPredictionTranscriptModels)
+    {
+      options->filters.MaxPredictionTranscriptModels = options->trans_per_locus;
+    }
+  }
 
   return optind;
 }

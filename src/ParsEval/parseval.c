@@ -45,7 +45,7 @@ int main(int argc, char * const argv[])
   AgnLocusIndex *locusindex = agn_locus_index_new();
   unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
                             options.refrfile, options.predfile,
-                            options.numprocs, logger);
+                            options.numprocs, &options.filters, logger);
   bool haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
                                        "annotations from files '%s' and '%s'",
                                        options.refrfile, options.predfile);
@@ -229,15 +229,6 @@ int main(int argc, char * const argv[])
                      " clique) pairs, exceeds the limit of %d, moving on\n",
                      agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
                      agn_gene_locus_get_end(locus), comparisons, options.complimit );
-        }
-        else if(agn_gene_locus_filter(locus, &options.filters))
-        {
-          locus_summaries[j].start = 0;
-          locus_summaries[j].end   = 0;
-          if(options.debug)
-            fprintf( stderr, "debug: locus %s[%lu, %lu] was filtered, moving on\n",
-                     agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
-                     agn_gene_locus_get_end(locus));
         }
         else
         {
@@ -474,9 +465,9 @@ int main(int argc, char * const argv[])
 
   // Free up remaining memory
   agn_logger_delete(logger);
+  agn_locus_index_delete(locusindex);
   gt_free(seqlevel_summary_data);
   gt_array_delete(loci);
-  gt_str_array_delete(seqids);
   gt_timer_delete(timer_all);
   gt_timer_delete(timer_short);
   if(gt_lib_clean() != 0)
