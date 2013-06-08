@@ -159,7 +159,8 @@ bool agn_gene_validator_validate_mrna(AgnGeneValidator *v,
 void agn_gene_validator_check_cds_phase(AgnGeneValidator *v)
 {
   unsigned long num_cds_feats = gt_array_size(v->cdss);
-  gt_assert(num_cds_feats > 0);
+  if(num_cds_feats == 0)
+    return;
 
   GtFeatureNode *cdsf1 = *(GtFeatureNode **)gt_array_get(v->cdss, 0);
   gt_feature_node_set_phase(cdsf1, GT_PHASE_ZERO);
@@ -412,7 +413,11 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
 
   // If CDS segments are not explicitly provided, infer CDS from exons and
   // start/stop codons
-  if(gt_array_size(v->cdss) == 0)
+  bool left_codon_found = v->left_codon_range->start != 0;
+  bool right_codon_found  = v->right_codon_range->start  != 0;
+  unsigned long num_exons = gt_array_size(v->exons);
+  if(gt_array_size(v->cdss) == 0 && left_codon_found && right_codon_found &&
+     num_exons > 0)
   {
     bool success = agn_gene_validator_infer_cds(v, mrna, logger);
     if(!success)

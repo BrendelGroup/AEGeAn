@@ -300,8 +300,8 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
   unsigned long i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  GtIntervalTree *loci = gt_interval_tree_new(
-                             (GtFree)agn_gene_locus_delete);
+  //GtIntervalTree *loci = gt_interval_tree_new((GtFree)agn_gene_locus_delete);
+  GtIntervalTree *loci = gt_interval_tree_new(NULL);
 
   // Seed new loci with reference genes
   GtArray *refr_list = gt_feature_index_get_features_for_seqid(refr, seqid,
