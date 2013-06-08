@@ -33,7 +33,7 @@ int main(int argc, char * const *argv)
   GtStr *source = NULL;
   bool read_stdin = false;
   gt_lib_init();
-  
+
   // Parse options
   int opt = 0;
   int optindex = 0;
@@ -46,7 +46,7 @@ int main(int argc, char * const *argv)
     { "stdin", required_argument, NULL, 't' },
     { NULL, no_argument, NULL, 0 },
   };
-  
+
   for( opt = getopt_long(argc, argv, optstr, init_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv, optstr, init_options, &optindex) )
@@ -57,19 +57,19 @@ int main(int argc, char * const *argv)
         print_usage(stdout);
         return 0;
         break;
-      
+
       case 'o':
         outstream = agn_fopen(optarg, "w");
         break;
-      
+
       case 's':
         source = gt_str_new_cstr(optarg);
         break;
-      
+
       case 't':
         read_stdin = true;
         break;
-      
+
       default:
         break;
     }
@@ -94,7 +94,7 @@ int main(int argc, char * const *argv)
       return EXIT_FAILURE;
     }
   }
-  
+
   // Create a char ** of the GFF3 filenames
   const char **gff3files = NULL;
   int x;
@@ -106,7 +106,7 @@ int main(int argc, char * const *argv)
       gff3files[x] = gt_cstr_dup(argv[x+optind]);
     }
   }
-  
+
   // Load GFF3 data into memory feature index
   AgnLogger *logger = agn_logger_new();
   GtFeatureIndex *features = agn_import_canonical(filenum, gff3files, logger);
@@ -118,7 +118,7 @@ int main(int argc, char * const *argv)
   bool haderror = agn_logger_print_all(logger, stderr, "[CanonGFF3] load "
                                        "annotation data into memory");
   if(haderror) return EXIT_FAILURE;
-  
+
   // Write header for new GFF3 file: version pragma, sequence regions
   GtError *error = gt_error_new();
   fputs("##gff-version   3\n", outstream);
@@ -153,7 +153,7 @@ int main(int argc, char * const *argv)
       return 1;
     }
     gt_array_sort(genes, (GtCompare)agn_gt_genome_node_compare);
-    
+
     unsigned long j;
     for(j = 0; j < gt_array_size(genes); j++)
     {
@@ -164,7 +164,7 @@ int main(int argc, char * const *argv)
       fputs("###\n", outstream);
     }
   }
-  
+
   // Clean up
   fclose(outstream);
   gt_str_delete(source);

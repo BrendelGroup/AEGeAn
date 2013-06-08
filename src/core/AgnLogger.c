@@ -66,7 +66,7 @@ void agn_logger_log_error(AgnLogger *logger, const char *format, ...)
   va_start(ap, format);
   gt_error_vset(message, format, ap);
   va_end(ap);
-  
+
   gt_array_add(logger->errors, message);
 }
 
@@ -79,7 +79,7 @@ void agn_logger_log_status(AgnLogger *logger, const char *format, ...)
   va_start(ap, format);
   gt_error_vset(message, format, ap);
   va_end(ap);
-  
+
   gt_array_add(logger->messages, message);
 }
 
@@ -92,7 +92,7 @@ void agn_logger_log_warning(AgnLogger *logger, const char *format, ...)
   va_start(ap, format);
   gt_error_vset(message, format, ap);
   va_end(ap);
-  
+
   gt_array_add(logger->warnings, message);
 }
 
@@ -113,7 +113,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
   unsigned long nwarnings = gt_array_size(logger->warnings);
   if(nerrors + nmessages + nwarnings == 0)
     return false;
-  
+
   if(format)
   {
     va_list ap;
@@ -122,7 +122,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
     va_end(ap);
     fputs("\n", outstream);
   }
-  
+
   unsigned long i;
   if(nmessages > 0)
   {
@@ -133,7 +133,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
       fprintf(outstream, "        %s\n", gt_error_get(message));
     }
   }
-  
+
   if(nwarnings > 0)
   {
     fputs("    warning:\n", outstream);
@@ -143,7 +143,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
       fprintf(outstream, "        %s\n", gt_error_get(message));
     }
   }
-  
+
   if(nerrors > 0)
   {
     fputs("    error:\n", outstream);
@@ -153,7 +153,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
       fprintf(outstream, "        %s\n", gt_error_get(message));
     }
   }
-  
+
   return nerrors > 0;
 }
 
@@ -163,7 +163,7 @@ bool agn_logger_print_error(AgnLogger *logger, FILE *outstream,
   unsigned long nerrors = gt_array_size(logger->errors);
   if(nerrors == 0)
     return false;
-  
+
   if(format)
   {
     va_list ap;
@@ -172,14 +172,14 @@ bool agn_logger_print_error(AgnLogger *logger, FILE *outstream,
     va_end(ap);
     fputs("\n", outstream);
   }
-  
+
   unsigned long i;
   for(i = 0; i < nerrors; i++)
   {
     GtError *message = *(GtError **)gt_array_get(logger->errors, i);
     fprintf(outstream, "    %s\n", gt_error_get(message));
   }
-  
+
   return true;
 }
 
@@ -189,7 +189,7 @@ bool agn_logger_print_status(AgnLogger *logger, FILE *outstream,
   unsigned long nmessages = gt_array_size(logger->messages);
   if(nmessages == 0)
     return false;
-  
+
   if(format)
   {
     va_list ap;
@@ -198,14 +198,14 @@ bool agn_logger_print_status(AgnLogger *logger, FILE *outstream,
     va_end(ap);
     fputs("\n", outstream);
   }
-  
+
   unsigned long i;
   for(i = 0; i < nmessages; i++)
   {
     GtError *message = *(GtError **)gt_array_get(logger->messages, i);
     fprintf(outstream, "    %s\n", gt_error_get(message));
   }
-  
+
   return true;
 }
 
@@ -215,7 +215,7 @@ bool agn_logger_print_warning(AgnLogger *logger, FILE *outstream,
   unsigned long nwarnings = gt_array_size(logger->warnings);
   if(nwarnings == 0)
     return false;
-  
+
   if(format)
   {
     va_list ap;
@@ -224,14 +224,14 @@ bool agn_logger_print_warning(AgnLogger *logger, FILE *outstream,
     va_end(ap);
     fputs("\n", outstream);
   }
-  
-  unsigned long i;  
+
+  unsigned long i;
   for(i = 0; i < nwarnings; i++)
   {
     GtError *message = *(GtError **)gt_array_get(logger->warnings, i);
     fprintf(outstream, "    %s\n", gt_error_get(message));
   }
-  
+
   return true;
 }
 

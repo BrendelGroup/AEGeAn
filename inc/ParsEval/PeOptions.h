@@ -32,8 +32,6 @@ typedef struct
   AgnCompareFilters filters;
   int numprocs;
   int trans_per_locus;
-  int locusgff3;
-  const char *locusfilename;
 } PeOptions;
 
 /**

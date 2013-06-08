@@ -7,7 +7,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "a:c:df:ghkl:mn:o:pr:t:svwx:y:";
+  const char *optstr = "a:c:df:ghkmn:o:pr:t:svwx:y:";
   const struct option parseval_options[] =
   {
     { "datashare", required_argument, NULL, 'a' },
@@ -17,7 +17,6 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     { "printgff3", required_argument, NULL, 'g' },
     { "help", no_argument, NULL, 'h' },
     { "makefilter", no_argument, NULL, 'k' },
-    { "locusgff3", required_argument, NULL, 'l' },
     { "vectors", no_argument, NULL, 'm' },
     { "numprocs", required_argument, NULL, 'n' },
     { "outfile", required_argument, NULL, 'o' },
@@ -80,11 +79,6 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
       case 'k':
         makefilter = true;
-        break;
-
-      case 'l':
-        options->locusfilename = optarg;
-        options->locusgff3 = 1;
         break;
 
       case 'm':
@@ -325,8 +319,6 @@ void pe_print_usage()
            "    -h|--help:                  Print help message and exit\n"
            "    -k|--makefilter             Create a default configuration file for\n"
            "                                filtering reported results\n"
-           "    -l|--locusgff3: STRING      Print out locus coordinates to the given GFF3\n"
-           "                                file (ideal for genome browser integration)\n"
            "    -m|--vectors:               Print model vectors in output file\n"
            "    -n|--numprocs: INT          Number of processors to use (default=1)\n"
            "    -o|--outfile: FILENAME      File/directory to which output will be written;\n"
@@ -366,8 +358,6 @@ void pe_set_option_defaults(PeOptions *options)
   agn_compare_filters_init(&options->filters);
   options->numprocs = 1;
   options->trans_per_locus = 32;
-  options->locusgff3 = 0;
-  options->locusfilename = "";
   options->refrlabel = "";
   options->predlabel = "";
 }

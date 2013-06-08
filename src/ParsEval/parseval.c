@@ -51,7 +51,7 @@ int main(int argc, char * const argv[])
                                        options.refrfile, options.predfile);
   if(haderror) return EXIT_FAILURE;
   agn_logger_unset(logger);
-  
+
   GtStrArray *seqids = agn_locus_index_seqids(locusindex);
   unsigned long numseqs = gt_str_array_size(seqids);
   GtArray *loci = gt_array_new( sizeof(GtArray *) );
@@ -141,7 +141,6 @@ int main(int argc, char * const argv[])
     // For text output, write locus results to a temp file
     // For HTML output, each sequence and each locus gets a dedicated .html file
     FILE *seqfile = NULL;
-    FILE *locusgff3file = NULL;
     GtArray *seq_loci = *(GtArray **)gt_array_get(loci, i);
     AgnGeneLocusSummary *locus_summaries = (AgnGeneLocusSummary *)
                                   gt_malloc( sizeof(AgnGeneLocusSummary) * gt_array_size(seq_loci) );
@@ -186,16 +185,6 @@ int main(int argc, char * const argv[])
           fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
         seqfile = agn_fopen(filename, "w");
       }
-    }
-
-    if(options.locusgff3)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      char filename[512];
-      sprintf(filename, "%s.%s", options.locusfilename, seqid);
-      if(options.debug)
-        fprintf(stderr, "debug: opening temp locus file '%s'\n", filename);
-      locusgff3file = agn_fopen(filename, "w");
     }
 
     // Distribute the loci for this sequence across the p processors
@@ -367,8 +356,6 @@ int main(int argc, char * const argv[])
       fclose(seqfile);
     }
 
-    if(options.locusgff3)
-      fclose(locusgff3file);
     gt_free(locus_summaries);
     gt_array_delete(seq_loci);
   } // End iterate over sequences
@@ -405,44 +392,6 @@ int main(int argc, char * const argv[])
       }
       if(options.debug)
         fprintf(stderr, "debug: merging output files: %s\n", command);
-      result = system(command);
-      if(result)
-      {
-        fprintf(stderr, "[ParsEval] error: issue merging GFF3 files: %s\n", command);
-        exit(1);
-      }
-    }
-  }
-  if(options.locusgff3)
-  {
-    int result;
-    FILE *gff3out = agn_fopen(options.locusfilename, "w");
-    fputs
-    (
-      "##gff-version\t3\n"
-      "#\n"
-      "# If visualizing with GBrowse, add the following to your track configuration\n"
-      "# and customize as desired. See the ParsEval README for more details.\n"
-      "#\n"
-      "# glyph       = heat_map\n"
-      "# min_score   = 0\n"
-      "# max_score   = 1\n"
-      "# start_color = red\n"
-      "# end_color   = green\n"
-      "# link        = http://localhost/myparsevalhtml/$ref/$start-$end.html\n"
-      "#\n",
-      gff3out
-    );
-    fclose(gff3out);
-
-    for(i = 0; i < numseqs; i++)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      char command[1024];
-      sprintf( command, "cat %s.%s >> %s && rm %s.%s", options.locusfilename, seqid,
-               options.locusfilename, options.locusfilename, seqid );
-      if(options.debug)
-        fprintf(stderr, "debug: merging GFF3 files: %s\n", command);
       result = system(command);
       if(result)
       {
