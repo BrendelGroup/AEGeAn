@@ -1,5 +1,4 @@
 #include <omp.h>
-#include "AgnLocus.h"
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
 #include "AgnUtils.h"
@@ -87,32 +86,13 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
  * @returns                     the number of genes assigned to the locus
  */
 int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
-                                 GtHashmap *visited_genes, AgnLocus *locus,
+                                 GtHashmap *visited_genes, AgnGeneLocus *locus,
                                  AgnLogger *logger);
 
 
 //------------------------------------------------------------------------------
 // Method implementations
 //------------------------------------------------------------------------------
-
-int agn_locus_compare(const void *p1, const void *p2)
-{
-  AgnLocus *l1 = *(AgnLocus **)p1;
-  AgnLocus *l2 = *(AgnLocus **)p2;
-
-  if(l1->range.start == l2->range.start && l1->range.end == l2->range.end)
-    return 0;
-  else if
-  (
-    (l1->range.start < l2->range.start) ||
-    (l1->range.start == l2->range.start && l1->range.end < l2->range.end)
-  )
-  {
-    return -1;
-  }
-
-  return 1;
-}
 
 void agn_locus_index_delete(AgnLocusIndex *idx)
 {
@@ -139,7 +119,7 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
   if(it == NULL)
     return NULL;
 
-  GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
+  GtArray *loci = gt_array_new( sizeof(AgnGeneLocus *) );
   gt_interval_tree_traverse(it, agn_locus_index_it_traverse, loci);
   return loci;
 }
@@ -273,8 +253,8 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
       }
 
       gt_hashmap_add(visited_genes, fn, fn);
-      AgnLocus *locus = agn_locus_new(seqid);
-      agn_locus_add(locus, fn);
+      AgnGeneLocus *locus = agn_gene_locus_new(seqid);
+      agn_gene_locus_add_gene(locus, fn);
 
       int new_gene_count = 0;
       do
@@ -286,8 +266,8 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
       } while(new_gene_count > 0);
 
       GtIntervalTreeNode *itn = gt_interval_tree_node_new(locus,
-                                                          locus->range.start,
-                                                          locus->range.end);
+                                              agn_gene_locus_get_start(locus),
+                                              agn_gene_locus_get_end(locus));
       gt_interval_tree_insert(loci, itn);
     }
     gt_feature_node_iterator_delete(iter);
@@ -554,12 +534,15 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
 }
 
 int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
-                                 GtHashmap *visited_genes, AgnLocus *locus,
+                                 GtHashmap *visited_genes, AgnGeneLocus *locus,
                                  AgnLogger *logger)
 {
   GtError *error = gt_error_new();
+  const char *seqid = agn_gene_locus_get_seqid(locus);
+  GtRange locusrange = {agn_gene_locus_get_start(locus),
+                        agn_gene_locus_get_end(locus)};
   bool has_seqid;
-  gt_feature_index_has_seqid(features, &has_seqid, locus->seqid, error);
+  gt_feature_index_has_seqid(features, &has_seqid, seqid, error);
   if(!has_seqid)
   {
     gt_error_delete(error);
@@ -569,14 +552,13 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
   int new_gene_count = 0;
   GtArray *overlapping_features = gt_array_new( sizeof(GtFeatureNode *) );
 
-  gt_feature_index_get_features_for_range(features, overlapping_features,
-                                          locus->seqid, &locus->range, error);
+  gt_feature_index_get_features_for_range(features, overlapping_features, seqid,
+                                          &locusrange, error);
   if(gt_error_is_set(error))
   {
     agn_logger_log_error(logger, "error fetching features for range "
-                         "%s[%lu, %lu]: %s", locus->seqid,
-                         locus->range.start, locus->range.end,
-                         gt_error_get(error));
+                         "%s[%lu, %lu]: %s", seqid, locusrange.start,
+                         locusrange.end, gt_error_get(error));
     gt_error_delete(error);
     gt_array_delete(overlapping_features);
     return 0;
@@ -590,7 +572,7 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
        gt_hashmap_get(visited_genes, fn) == NULL)
     {
       gt_hashmap_add(visited_genes, fn, fn);
-      agn_locus_add(locus, fn);
+      agn_gene_locus_add_gene(locus, fn);
       new_gene_count++;
     }
   }

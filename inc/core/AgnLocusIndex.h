@@ -8,15 +8,6 @@
 typedef struct AgnLocusIndex AgnLocusIndex;
 
 /**
- * Array comparison function for locus objects
- *
- * @param[in] p1    pointer to one locus object
- * @param[in] p2    pointer to another locus object
- * @returns         -1, 0, or 1 depending on their relative position
- */
-int agn_locus_compare(const void *p1, const void *p2);
-
-/**
  * Free memory allocated to the given locus index.
  *
  * @param[in] idx    the locus index object

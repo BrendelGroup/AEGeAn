@@ -1,7 +1,7 @@
 #include <omp.h>
 #include <getopt.h>
 #include "genometools.h"
-#include "AgnLocus.h"
+#include "AgnGeneLocus.h"
 #include "AgnLocusIndex.h"
 
 // Simple data structure for program options
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
   {
     const char *seqid = gt_str_array_get(seqids, i);
     GtArray *seqloci = agn_locus_index_get(loci, seqid);
-    gt_array_sort(seqloci, (GtCompare)agn_locus_compare);
+    gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
     if(options.verbose)
     {
       fprintf(stderr, "[LocusPocus] found %lu loci for sequence '%s'\n",
@@ -128,8 +128,8 @@ int main(int argc, char **argv)
     }
     for(j = 0; j < gt_array_size(seqloci); j++)
     {
-      AgnLocus *locus = *(AgnLocus **)gt_array_get(seqloci, j);
-      agn_locus_print(locus, options.outstream, "AEGeAn::LocusPocus");
+      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
+      agn_gene_locus_to_gff3(locus, options.outstream, "AEGeAn::LocusPocus");
     }
     gt_array_delete(seqloci);
   }

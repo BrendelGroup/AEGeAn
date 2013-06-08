@@ -988,6 +988,18 @@ unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus)
   return length;
 }
 
+void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
+                            const char *source)
+{
+  const char *src = "AEGeAn";
+  if(source != NULL)
+    src = source;
+  fprintf(outstream,
+          "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu\n",
+          locus->locus.seqid, src, locus->locus.range.start,
+          locus->locus.range.end, gt_dlist_size(locus->genes));
+}
+
 void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   GtRange gene_range = gt_genome_node_get_range((GtGenomeNode *)gene);

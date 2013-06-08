@@ -326,9 +326,17 @@ GtRange agn_gene_locus_range(AgnGeneLocus *locus);
  * @param[in] locus    the locus
  * @returns            the combined CDS length
  */
-unsigned long agn_gene_locus_refr_cds_length
-(
-  AgnGeneLocus *locus
-);
+unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus);
+
+/**
+ * Print the locus in GFF3 format
+ *
+ * @param[in] locus        the locus
+ * @param[in] outstream    the file to which the locus will be printed
+ * @param[in] source       source string to use as second column of GFF3 output;
+ *                         if NULL is provided, "AEGeAn" will be used
+ */
+void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
+                            const char *source);
 
 #endif
