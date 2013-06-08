@@ -42,7 +42,7 @@ int main(int argc, char * const argv[])
   fputs("[ParsEval] Begin loading data and parsing loci\n", stderr);
 
   AgnLogger *logger = agn_logger_new();
-  AgnLocusIndex *locusindex = agn_locus_index_new();
+  AgnLocusIndex *locusindex = agn_locus_index_new(false);
   unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
                             options.refrfile, options.predfile,
                             options.numprocs, &options.filters, logger);

@@ -93,7 +93,7 @@ int main(int argc, char **argv)
   gt_lib_init();
   omp_set_num_threads(1);
   AgnLogger *logger = agn_logger_new();
-  AgnLocusIndex *loci = agn_locus_index_new();
+  AgnLocusIndex *loci = agn_locus_index_new(false);
   unsigned long numloci = agn_locus_index_parse_disk(loci, numfiles,
                               (const char **)argv + optind, options.numprocs,
                               logger);

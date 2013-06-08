@@ -47,9 +47,11 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
 /**
  * Allocate memory for a new locus index object.
  *
- * @returns    a pointer to the new object
+ * @param[in] freeondelete    indicate whether the locus index object should
+ *                            deallocate locus memory on delete
+ * @returns                   a pointer to the new object
  */
-AgnLocusIndex *agn_locus_index_new();
+AgnLocusIndex *agn_locus_index_new(bool freeondelete);
 
 /**
  * Given a pair of annotation feature sets in memory, identify loci while

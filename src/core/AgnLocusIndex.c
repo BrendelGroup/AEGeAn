@@ -11,6 +11,7 @@ struct AgnLocusIndex
 {
   GtStrArray *seqids;
   GtHashmap *locus_trees;
+  GtFree locusfreefunc;
 };
 
 
@@ -153,12 +154,16 @@ int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
   return 0;
 }
 
-AgnLocusIndex *agn_locus_index_new()
+AgnLocusIndex *agn_locus_index_new(bool freeondelete)
 {
-  AgnLocusIndex *idx = gt_malloc( sizeof(AgnLocusIndex *) );
+  AgnLocusIndex *idx = gt_malloc( sizeof(AgnLocusIndex) );
   idx->seqids = gt_str_array_new();
   idx->locus_trees = gt_hashmap_new(GT_HASH_STRING, NULL,
                                     (GtFree)gt_interval_tree_delete);
+  idx->locusfreefunc = NULL;
+  if(freeondelete)
+    idx->locusfreefunc = (GtFree)agn_gene_locus_delete;
+
   return idx;
 }
 
@@ -304,8 +309,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
   unsigned long i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  //GtIntervalTree *loci = gt_interval_tree_new((GtFree)agn_gene_locus_delete);
-  GtIntervalTree *loci = gt_interval_tree_new(NULL);
+  GtIntervalTree *loci = gt_interval_tree_new(idx->locusfreefunc);
 
   // Seed new loci with reference genes
   GtArray *refr_list = gt_feature_index_get_features_for_seqid(refr, seqid,
@@ -497,7 +501,6 @@ unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
     gt_feature_index_delete(predfeats);
     return 0;
   }
-
   nloci = agn_locus_index_parse_pairwise_memory(idx, refrfeats, predfeats,
                                                 numprocs, filters, logger);
   gt_feature_index_delete(refrfeats);
