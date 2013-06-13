@@ -70,6 +70,20 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2)
   return 1;
 }
 
+unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
+                                        AgnComparisonSource src)
+{
+  unsigned long length = 0, i;
+  GtArray *transcripts = agn_gene_locus_transcripts(locus, src);
+  for(i = 0; i < gt_array_size(transcripts); i++)
+  {
+    GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(transcripts, i);
+    length = agn_gt_feature_node_cds_length(transcript);
+  }
+  gt_array_delete(transcripts);
+  return length;
+}
+
 void agn_gene_locus_delete(AgnGeneLocus *locus)
 {
   GtDlistelem *current;
@@ -714,35 +728,9 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
   return locus;
 }
 
-unsigned long agn_gene_locus_pred_cds_length(AgnGeneLocus *locus)
-{
-  unsigned long length = 0, i;
-  GtArray *transcripts = agn_gene_locus_pred_transcripts(locus);
-  for(i = 0; i < gt_array_size(transcripts); i++)
-  {
-    GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(transcripts, i);
-    length = agn_gt_feature_node_cds_length(transcript);
-  }
-  gt_array_delete(transcripts);
-  return length;
-}
-
 GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 {
   return locus->locus.range;
-}
-
-unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus)
-{
-  unsigned long length = 0, i;
-  GtArray *transcripts = agn_gene_locus_refr_transcripts(locus);
-  for(i = 0; i < gt_array_size(transcripts); i++)
-  {
-    GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(transcripts, i);
-    length = agn_gt_feature_node_cds_length(transcript);
-  }
-  gt_array_delete(transcripts);
-  return length;
 }
 
 double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,

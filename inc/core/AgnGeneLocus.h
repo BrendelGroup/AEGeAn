@@ -48,6 +48,30 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
 int agn_gene_locus_array_compare(const void *p1, const void *p2);
 
 /**
+ * The combined length of all coding sequences associated with this locus.
+ * Rather than calling this function directly, users are encouraged to use one
+ * of the following macros: `agn_gene_locus_refr_cds_length(locus)' for the
+ * combined length of all reference CDSs,
+ * `agn_gene_locus_pred_cds_length(locus)' for the combined length of all
+ * prediction CDSs, and `agn_gene_locus_get_cds_length(locus)' for the combined
+ * length of all CDSs.
+ *
+ * @param[in] locus    the locus
+ * @param[in] src      REFERENCESOURCE will consider only reference CDSs,
+ *                     PREDICTIONSOURCE will consider only prediction CDSs,
+ *                     DEFAULTSOURCE will consider all CDSs
+ * @returns            the combined CDS length
+ */
+unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
+                                        AgnComparisonSource src);
+#define agn_gene_locus_pred_cds_length(LC)\
+        agn_gene_locus_cds_length(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_refr_cds_length(LC)\
+        agn_gene_locus_cds_length(LC, REFERENCESOURCE)
+#define agn_gene_locus_get_cds_length(LC)\
+        agn_gene_locus_cds_length(LC, DEFAULTSOURCE)
+
+/**
  * Free the memory previously occupied by this locus object.
  *
  * @param[out] locus    locus to be deleted
@@ -266,30 +290,12 @@ bool agn_gene_locus_is_complex(AgnGeneLocus *locus);
 AgnGeneLocus* agn_gene_locus_new(const char *seqid);
 
 /**
- * The combined length of all prediction coding sequences associated with this
- * locus.
- *
- * @param[in] locus    the locus
- * @returns            the combined CDS length
- */
-unsigned long agn_gene_locus_pred_cds_length(AgnGeneLocus *locus);
-
-/**
  * Return the coordinates of this locus.
  *
  * @param[in] locus    the locus
  * @returns            its coordinates
  */
 GtRange agn_gene_locus_range(AgnGeneLocus *locus);
-
-/**
- * The combined length of all reference coding sequences associated with this
- * locus.
- *
- * @param[in] locus    the locus
- * @returns            the combined CDS length
- */
-unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus);
 
 /**
  * Calculate the splice complexity of this gene locus. Rather than calling this
