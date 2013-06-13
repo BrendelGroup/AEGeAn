@@ -40,7 +40,7 @@ void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene);
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
-void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene,
+void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
                              AgnComparisonSource source)
 {
   gt_dlist_add(locus->genes, gene);

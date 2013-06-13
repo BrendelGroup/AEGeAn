@@ -202,7 +202,7 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
     if(gt_hashmap_get(visited_genes, gene_to_add) == NULL)
     {
       gt_hashmap_add(visited_genes, gene_to_add, gene_to_add);
-      agn_gene_locus_add_gene(locus, gene_to_add, source);
+      agn_gene_locus_add(locus, gene_to_add, source);
       new_gene_count++;
     }
   }
@@ -252,7 +252,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
 
       gt_hashmap_add(visited_genes, fn, fn);
       AgnGeneLocus *locus = agn_gene_locus_new(seqid);
-      agn_gene_locus_add_gene(locus, fn, DEFAULTSOURCE);
+      agn_gene_locus_add_gene(locus, fn);
 
       int new_gene_count = 0;
       do
@@ -567,7 +567,7 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
        gt_hashmap_get(visited_genes, fn) == NULL)
     {
       gt_hashmap_add(visited_genes, fn, fn);
-      agn_gene_locus_add_gene(locus, fn, DEFAULTSOURCE);
+      agn_gene_locus_add_gene(locus, fn);
       new_gene_count++;
     }
   }
