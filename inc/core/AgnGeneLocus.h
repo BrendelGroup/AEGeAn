@@ -10,30 +10,28 @@
  * gene structure annotations for that locus.
  */
 typedef struct AgnGeneLocus AgnGeneLocus;
+enum AgnComparisonSource { REFERENCE, PREDICTION, DEFAULTSOURCE };
+typedef enum AgnComparisonSource AgnComparisonSource;
 
 /**
- * Associate the given gene annotation with this gene locus.
+ * Associate the given gene annotation with this gene locus. The macros
+ * `agn_gene_locus_add_pred_gene(locus, gene)' and
+ * `agn_gene_locus_add_refr_gene(locus, gene)' have been provided for
+ * convenience, when keeping track of an annotation's source is important for
+ * pairwise comparison.
  *
- * @param[out] locus    locus to which the gene annotation will be added
- * @param[in]  gene     annotation to associate with this locus
+ * @param[out] locus     locus to which the gene annotation will be added
+ * @param[in]  gene      annotation to associate with this locus
+ * @param[in]  source    indication as to whether this gene is a reference gene
+ *                       or prediction gene, if this locus is intended for
+ *                       pairwise comparison; use DEFAULTSOURCE otherwise
  */
-void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
-
-/**
- * Associate the given gene annotation with this gene locus.
- *
- * @param[out] locus    locus to which the gene annotation will be added
- * @param[in]  gene     annotation to associate with this locus
- */
-void agn_gene_locus_add_pred_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
-
-/**
- * Associate the given gene annotation with this gene locus.
- *
- * @param[out] locus    locus to which the gene annotation will be added
- * @param[in]  gene     annotation to associate with this locus
- */
-void agn_gene_locus_add_refr_gene(AgnGeneLocus *locus, GtFeatureNode *gene);
+void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene,
+                             AgnComparisonSource source);
+#define agn_gene_locus_add_pred_gene(LC, GN)\
+        agn_gene_locus_add_gene(LC, GN, PREDICTION)
+#define agn_gene_locus_add_refr_gene(LC, GN)\
+        agn_gene_locus_add_gene(LC, GN, REFERENCE)
 
 /**
  * Array comparison function for locus objects

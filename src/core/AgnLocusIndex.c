@@ -67,8 +67,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
  */
 int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
                   GtFeatureIndex *features, GtHashmap *visited_genes,
-                  AgnGeneLocus *locus,
-                  void (*add_func)(AgnGeneLocus *, GtFeatureNode *),
+                  AgnGeneLocus *locus, AgnComparisonSource source,
                   AgnLogger *logger);
 
 /**
@@ -167,8 +166,7 @@ unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
 
 int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
                   GtFeatureIndex *features, GtHashmap *visited_genes,
-                  AgnGeneLocus *locus,
-                  void (*add_func)(AgnGeneLocus *, GtFeatureNode *),
+                  AgnGeneLocus *locus, AgnComparisonSource source,
                   AgnLogger *logger)
 {
   GtError *error = gt_error_new();
@@ -204,7 +202,7 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
     if(gt_hashmap_get(visited_genes, gene_to_add) == NULL)
     {
       gt_hashmap_add(visited_genes, gene_to_add, gene_to_add);
-      add_func(locus, gene_to_add);
+      agn_gene_locus_add_gene(locus, gene_to_add, source);
       new_gene_count++;
     }
   }
@@ -254,7 +252,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
 
       gt_hashmap_add(visited_genes, fn, fn);
       AgnGeneLocus *locus = agn_gene_locus_new(seqid);
-      agn_gene_locus_add_gene(locus, fn);
+      agn_gene_locus_add_gene(locus, fn, DEFAULTSOURCE);
 
       int new_gene_count = 0;
       do
@@ -318,13 +316,9 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     do
     {
       int new_refr_gene_count = agn_locus_index_pairwise_test_overlap(idx, refr,
-                                    visited_genes, locus,
-                                    agn_gene_locus_add_refr_gene,
-                                    logger);
+                                    visited_genes, locus, REFERENCE, logger);
       int new_pred_gene_count = agn_locus_index_pairwise_test_overlap(idx, pred,
-                                    visited_genes, locus,
-                                    agn_gene_locus_add_pred_gene,
-                                    logger);
+                                    visited_genes, locus, PREDICTION, logger);
       if(agn_logger_has_error(logger))
       {
         gt_error_delete(error);
@@ -383,9 +377,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     do
     {
       int new_pred_gene_count = agn_locus_index_pairwise_test_overlap(idx, pred,
-                                    visited_genes, locus,
-                                    agn_gene_locus_add_pred_gene,
-                                    logger);
+                                    visited_genes, locus, PREDICTION, logger);
       if(agn_logger_has_error(logger))
       {
         gt_error_delete(error);
@@ -572,7 +564,7 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
        gt_hashmap_get(visited_genes, fn) == NULL)
     {
       gt_hashmap_add(visited_genes, fn, fn);
-      agn_gene_locus_add_gene(locus, fn);
+      agn_gene_locus_add_gene(locus, fn, DEFAULTSOURCE);
       new_gene_count++;
     }
   }

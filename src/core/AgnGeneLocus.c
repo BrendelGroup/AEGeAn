@@ -40,22 +40,15 @@ void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene);
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
-void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene)
+void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene,
+                             AgnComparisonSource source)
 {
   gt_dlist_add(locus->genes, gene);
   agn_gene_locus_update_range(locus, gene);
-}
-
-void agn_gene_locus_add_pred_gene(AgnGeneLocus *locus, GtFeatureNode *gene)
-{
-  agn_gene_locus_add_gene(locus, gene);
-  gt_hashmap_add(locus->pred_genes, gene, gene);
-}
-
-void agn_gene_locus_add_refr_gene(AgnGeneLocus *locus, GtFeatureNode *gene)
-{
-  agn_gene_locus_add_gene(locus, gene);
-  gt_hashmap_add(locus->refr_genes, gene, gene);
+  if(source == REFERENCE)
+    gt_hashmap_add(locus->refr_genes, gene, gene);
+  else if(source == PREDICTION)
+    gt_hashmap_add(locus->pred_genes, gene, gene);
 }
 
 int agn_gene_locus_array_compare(const void *p1, const void *p2)
