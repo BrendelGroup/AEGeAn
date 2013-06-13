@@ -55,6 +55,29 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2);
 void agn_gene_locus_delete(AgnGeneLocus *locus);
 
 /**
+ * Get the number of exons for the locus. Rather than calling this function
+ * directly, users are encouraged to use one of the following macros:
+ * `agn_gene_locus_num_pred_exons(locus)' for the number of prediction exons,
+ * `agn_gene_locus_num_refr_exons(locus)' for the number of reference exons, or
+ * `agn_gene_locus_num_exons(locus)' if the source of annotation is undesignated
+ * or irrelevant.
+ *
+ * @param[in] locus   the locus
+ * @param[in] src     REFERENCESOURCE will consider only reference exons,
+ *                    PREDICTIONSOURCE will consider only prediction exons,
+ *                    DEFAULTSOURCE will consider all exons
+ * @returns           the number of exons associated with the locus
+ */
+unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus,
+                                      AgnComparisonSource src);
+#define agn_gene_locus_num_pred_exons(LC)\
+        agn_gene_locus_exon_num(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_num_refr_exons(LC)\
+        agn_gene_locus_exon_num(LC, REFERENCESOURCE)
+#define agn_gene_locus_num_exons(LC)\
+        agn_gene_locus_exon_num(LC, DEFAULTSOURCE)
+
+/**
  * Given a set of filtering criteria, determine whether a locus meets those
  * criteria.
  *
@@ -119,6 +142,29 @@ GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
         agn_gene_locus_genes(LC, REFERENCESOURCE)
 #define agn_gene_locus_get_gene_ids(LC)\
         agn_gene_locus_genes(LC, DEFAULTSOURCE)
+
+/**
+ * Get the number of genes for the locus. Rather than calling this function
+ * directly, users are encouraged to use one of the following macros:
+ * `agn_gene_locus_num_pred_genes(locus)' for the number of prediction genes,
+ * `agn_gene_locus_num_refr_genes(locus)' for the number of reference genes, or
+ * `agn_gene_locus_num_genes(locus)' if the source of annotation is undesignated
+ * or irrelevant.
+ *
+ * @param[in] locus   the locus
+ * @param[in] src     REFERENCESOURCE will consider only reference genes,
+ *                    PREDICTIONSOURCE will consider only prediction genes,
+ *                    DEFAULTSOURCE will consider all genes
+ * @returns           the number of genes associated with the locus
+ */
+unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
+                                      AgnComparisonSource src);
+#define agn_gene_locus_num_pred_genes(LC)\
+        agn_gene_locus_gene_num(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_num_refr_genes(LC)\
+        agn_gene_locus_gene_num(LC, REFERENCESOURCE)
+#define agn_gene_locus_num_genes(LC)\
+        agn_gene_locus_gene_num(LC, DEFAULTSOURCE)
 
 /**
  * We use the Bron-Kerbosch algorithm to separate reference transcripts and
@@ -218,54 +264,6 @@ bool agn_gene_locus_is_complex(AgnGeneLocus *locus);
  * @returns               pointer to a new locus object
  */
 AgnGeneLocus* agn_gene_locus_new(const char *seqid);
-
-/**
- * Get the total number of prediction exons for the locus.
- *
- * @param[in]    the locus
- * @returns      the number of prediction exons
- */
-unsigned long agn_gene_locus_num_pred_exons(AgnGeneLocus *locus);
-
-/**
- * Get the number of prediction gene annotations associated with this locus.
- *
- * @param[in] locus    the locus
- * @returns            the number of prediction gene annotations for that locus
- */
-unsigned long agn_gene_locus_num_pred_genes(AgnGeneLocus *locus);
-
-/**
- * Get the number of prediction mRNA annotations associated with this locus.
- *
- * @param[in] locus    the locus
- * @returns            the number of prediction mRNA annotations for that locus
- */
-unsigned long agn_gene_locus_num_pred_transcripts(AgnGeneLocus *locus);
-
-/**
- * Get the total number of reference exons for the locus.
- *
- * @param[in]    the locus
- * @returns      the number of reference exons
- */
-unsigned long agn_gene_locus_num_refr_exons(AgnGeneLocus *locus);
-
-/**
- * Get the number of reference gene annotations associated with this locus.
- *
- * @param[in] locus    the locus
- * @returns            the number of reference gene annotations for that locus
- */
-unsigned long agn_gene_locus_num_refr_genes(AgnGeneLocus *locus);
-
-/**
- * Get the number of reference mRNA annotations associated with this locus.
- *
- * @param[in] locus    the locus
- * @returns            the number of reference mRNA annotations for that locus
- */
-unsigned long agn_gene_locus_num_refr_transcripts(AgnGeneLocus *locus);
 
 /**
  * The combined length of all prediction coding sequences associated with this
@@ -376,5 +374,29 @@ GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus,
         agn_gene_locus_transcript_ids(LC, REFERENCESOURCE)
 #define agn_gene_locus_get_transcript_ids(LC)\
         agn_gene_locus_transcript_ids(LC, DEFAULTSOURCE)
+
+/**
+ * Get the number of transcripts for the locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * `agn_transcript_locus_num_pred_transcripts(locus)' for the number of
+ * prediction transcripts, `agn_transcript_locus_num_refr_transcripts(locus)'
+ * for the number of reference transcripts, or
+ * `agn_transcript_locus_num_transcripts(locus)' if the source of annotation is
+ * undesignated or irrelevant.
+ *
+ * @param[in] locus   the locus
+ * @param[in] src     REFERENCESOURCE will consider only reference transcripts,
+ *                    PREDICTIONSOURCE will consider only prediction
+ *                    transcripts, DEFAULTSOURCE will consider all transcripts
+ * @returns           the number of transcripts associated with the locus
+ */
+unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
+                                                  AgnComparisonSource src);
+#define agn_gene_locus_num_pred_transcripts(LC)\
+        agn_gene_locus_transcript_num(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_num_refr_transcripts(LC)\
+        agn_gene_locus_transcript_num(LC, REFERENCESOURCE)
+#define agn_gene_locus_num_transcripts(LC)\
+        agn_gene_locus_transcript_num(LC, DEFAULTSOURCE)
 
 #endif
