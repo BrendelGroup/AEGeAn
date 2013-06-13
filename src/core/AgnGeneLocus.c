@@ -45,9 +45,9 @@ void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene,
 {
   gt_dlist_add(locus->genes, gene);
   agn_gene_locus_update_range(locus, gene);
-  if(source == REFERENCE)
+  if(source == REFERENCESOURCE)
     gt_hashmap_add(locus->refr_genes, gene, gene);
-  else if(source == PREDICTION)
+  else if(source == PREDICTIONSOURCE)
     gt_hashmap_add(locus->pred_genes, gene, gene);
 }
 
@@ -200,7 +200,7 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
   }
 
   // Filter by number of transcripts per gene model
-  GtArray *refr_genes = agn_gene_locus_get_refr_genes(locus);
+  GtArray *refr_genes = agn_gene_locus_refr_genes(locus);
   if(filters->MinTranscriptsPerReferenceGeneModel > 0)
   {
     unsigned long i;
@@ -242,7 +242,7 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
     }
   }
   gt_array_delete(refr_genes);
-  GtArray *pred_genes = agn_gene_locus_get_pred_genes(locus);
+  GtArray *pred_genes = agn_gene_locus_pred_genes(locus);
   if(filters->MinTranscriptsPerPredictionGeneModel > 0)
   {
     unsigned long i;
@@ -399,6 +399,29 @@ GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus)
   gt_hashmap_delete(refr_cliques_acctd);
   gt_hashmap_delete(pred_cliques_acctd);
   return locus->reported_pairs;
+}
+
+GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src)
+{
+  GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
+  GtDlistelem *elem;
+  for(elem = gt_dlist_first(locus->genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
+  {
+    GtFeatureNode *gene = gt_dlistelem_get_data(elem);
+    bool isrefr = gt_hashmap_get(locus->refr_genes, gene) != NULL;
+    bool ispred = gt_hashmap_get(locus->pred_genes, gene) != NULL;
+    
+    if(src == DEFAULTSOURCE)
+      gt_array_add(genes, gene);
+    else if(src == REFERENCESOURCE && isrefr)
+      gt_array_add(genes, gene);
+    else if(src == PREDICTIONSOURCE && ispred)
+      gt_array_add(genes, gene);
+  }
+  gt_array_sort(genes, (GtCompare)agn_gt_genome_node_compare);
+  return genes;
 }
 
 GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
@@ -565,22 +588,6 @@ AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
   return bestpair;
 }
 
-GtArray *agn_gene_locus_get_pred_genes(AgnGeneLocus *locus)
-{
-  GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
-  GtDlistelem *elem;
-  for(elem = gt_dlist_first(locus->genes);
-      elem != NULL;
-      elem = gt_dlistelem_next(elem))
-  {
-    GtFeatureNode *gene = gt_dlistelem_get_data(elem);
-    if(gt_hashmap_get(locus->pred_genes, gene) != NULL)
-      gt_array_add(genes, gene);
-  }
-  gt_array_sort(genes, (GtCompare)agn_gt_genome_node_compare);
-  return genes;
-}
-
 GtArray *agn_gene_locus_get_pred_gene_ids(AgnGeneLocus *locus)
 {
   GtArray *ids = gt_array_new( sizeof(char *) );
@@ -663,22 +670,6 @@ GtArray *agn_gene_locus_get_pred_transcript_ids(AgnGeneLocus *locus)
   }
   gt_array_sort(ids, (GtCompare)agn_string_compare);
   return ids;
-}
-
-GtArray *agn_gene_locus_get_refr_genes(AgnGeneLocus *locus)
-{
-  GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
-  GtDlistelem *elem;
-  for(elem = gt_dlist_first(locus->genes);
-      elem != NULL;
-      elem = gt_dlistelem_next(elem))
-  {
-    GtFeatureNode *gene = gt_dlistelem_get_data(elem);
-    if(gt_hashmap_get(locus->refr_genes, gene))
-      gt_array_add(genes, gene);
-  }
-  gt_array_sort(genes, (GtCompare)gt_genome_node_compare);
-  return genes;
 }
 
 GtArray *agn_gene_locus_get_refr_gene_ids(AgnGeneLocus *locus)

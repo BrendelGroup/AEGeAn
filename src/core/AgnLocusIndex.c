@@ -316,9 +316,11 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     do
     {
       int new_refr_gene_count = agn_locus_index_pairwise_test_overlap(idx, refr,
-                                    visited_genes, locus, REFERENCE, logger);
+                                    visited_genes, locus, REFERENCESOURCE,
+                                    logger);
       int new_pred_gene_count = agn_locus_index_pairwise_test_overlap(idx, pred,
-                                    visited_genes, locus, PREDICTION, logger);
+                                    visited_genes, locus, PREDICTIONSOURCE,
+                                    logger);
       if(agn_logger_has_error(logger))
       {
         gt_error_delete(error);
@@ -377,7 +379,8 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
     do
     {
       int new_pred_gene_count = agn_locus_index_pairwise_test_overlap(idx, pred,
-                                    visited_genes, locus, PREDICTION, logger);
+                                    visited_genes, locus, PREDICTIONSOURCE,
+                                    logger);
       if(agn_logger_has_error(logger))
       {
         gt_error_delete(error);

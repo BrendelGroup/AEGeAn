@@ -10,7 +10,7 @@
  * gene structure annotations for that locus.
  */
 typedef struct AgnGeneLocus AgnGeneLocus;
-enum AgnComparisonSource { REFERENCE, PREDICTION, DEFAULTSOURCE };
+enum AgnComparisonSource { REFERENCESOURCE, PREDICTIONSOURCE, DEFAULTSOURCE };
 typedef enum AgnComparisonSource AgnComparisonSource;
 
 /**
@@ -29,12 +29,13 @@ typedef enum AgnComparisonSource AgnComparisonSource;
 void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene,
                              AgnComparisonSource source);
 #define agn_gene_locus_add_pred_gene(LC, GN)\
-        agn_gene_locus_add_gene(LC, GN, PREDICTION)
+        agn_gene_locus_add_gene(LC, GN, PREDICTIONSOURCE)
 #define agn_gene_locus_add_refr_gene(LC, GN)\
-        agn_gene_locus_add_gene(LC, GN, REFERENCE)
+        agn_gene_locus_add_gene(LC, GN, REFERENCESOURCE)
 
 /**
- * Array comparison function for locus objects
+ * Analog of strcmp for comparing AgnGeneLocus objects, used for sorting GtArray
+ * objects containing AgnGeneLocus objects.
  *
  * @param[in] p1    pointer to a pointer to one locus object
  * @param[in] p2    pointer to a pointer to another locus object
@@ -43,9 +44,9 @@ void agn_gene_locus_add_gene(AgnGeneLocus *locus, GtFeatureNode *gene,
 int agn_gene_locus_array_compare(const void *p1, const void *p2);
 
 /**
- * Free the memory previously occupied by this locus object
+ * Free the memory previously occupied by this locus object.
  *
- * @param[out] locus    object to be deleted
+ * @param[out] locus    locus to be deleted
  */
 void agn_gene_locus_delete(AgnGeneLocus *locus);
 
@@ -69,7 +70,24 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters);
  * @param[in]  locus    the locus
  * @returns             the pairs to be reported
  */
-GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *lo);
+GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus);
+
+/**
+ * Get the genes for this locus The macros `agn_gene_locus_pred_genes(locus)',
+ * `agn_gene_locus_refr_genes(locus)', and `agn_gene_locus_get_genes(locus)'
+ * are provided for convenience.
+ *
+ * @param[in] locus    the locus
+ * @param[in] src      REFERENCESOURCE will return only reference genes,
+ *                     PREDICTIONSOURCE will return only prediction genes,
+ *                     DEFAULTSOURCE will return all genes
+ * @returns            array containing the genes
+ */
+GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
+#define agn_gene_locus_pred_genes(LC)\
+        agn_gene_locus_genes(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_refr_genes(LC)\
+        agn_gene_locus_genes(LC, REFERENCESOURCE)
 
 /**
  * We use the Bron-Kerbosch algorithm to separate reference transcripts and
@@ -120,14 +138,6 @@ AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
                                               AgnTranscriptClique *refr_clique);
 
 /**
- * Get the prediction genes for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the prediction genes
- */
-GtArray *agn_gene_locus_get_pred_genes(AgnGeneLocus *locus);
-
-/**
  * Get the prediction gene IDs for this locus.
  *
  * @param[in] locus    the locus
@@ -159,14 +169,6 @@ GtArray *agn_gene_locus_get_pred_transcripts(AgnGeneLocus *locus);
  * @returns            the prediction transcript IDs
  */
 GtArray *agn_gene_locus_get_pred_transcript_ids(AgnGeneLocus *locus);
-
-/**
- * Get the reference genes for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the reference genes
- */
-GtArray *agn_gene_locus_get_refr_genes(AgnGeneLocus *locus);
 
 /**
  * Get the reference gene IDs for this locus.

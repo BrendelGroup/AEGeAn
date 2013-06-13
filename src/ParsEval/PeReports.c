@@ -176,7 +176,7 @@ void agn_gene_locus_print_png(AgnGeneLocus *locus,
   GtFeatureIndex *index = gt_feature_index_memory_new();
   unsigned long i;
 
-  GtArray *refr_genes = agn_gene_locus_get_refr_genes(locus);
+  GtArray *refr_genes = agn_gene_locus_refr_genes(locus);
   for(i = 0; i < gt_array_size(refr_genes); i++)
   {
     GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(refr_genes, i);
@@ -189,7 +189,7 @@ void agn_gene_locus_print_png(AgnGeneLocus *locus,
   }
   gt_array_delete(refr_genes);
 
-  GtArray *pred_genes = agn_gene_locus_get_pred_genes(locus);
+  GtArray *pred_genes = agn_gene_locus_pred_genes(locus);
   for(i = 0; i < gt_array_size(pred_genes); i++)
   {
     GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(pred_genes, i);
@@ -311,7 +311,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
 
   fprintf(outstream, "|  reference genes:\n");
-  GtArray *refr_genes = agn_gene_locus_get_refr_genes(locus);
+  GtArray *refr_genes = agn_gene_locus_refr_genes(locus);
   if(refr_genes == NULL || gt_array_size(refr_genes) == 0)
     fprintf(outstream, "|    None!\n");
   else
@@ -326,7 +326,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
 
   fprintf(outstream, "|  prediction genes:\n");
-  GtArray *pred_genes = agn_gene_locus_get_pred_genes(locus);
+  GtArray *pred_genes = agn_gene_locus_pred_genes(locus);
   if(pred_genes == NULL || gt_array_size(pred_genes) == 0)
     fprintf(outstream, "|    None!\n");
   else
