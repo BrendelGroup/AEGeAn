@@ -767,8 +767,8 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
          "      <table>\n"
          "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
          outstream );
-  GtArray *refr_genes = agn_gene_locus_get_refr_gene_ids(locus);
-  GtArray *pred_genes = agn_gene_locus_get_pred_gene_ids(locus);
+  GtArray *refr_genes = agn_gene_locus_refr_gene_ids(locus);
+  GtArray *pred_genes = agn_gene_locus_pred_gene_ids(locus);
   unsigned long i;
   for(i = 0; i < gt_array_size(refr_genes) || i < gt_array_size(pred_genes); i++)
   {

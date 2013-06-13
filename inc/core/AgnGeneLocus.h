@@ -77,9 +77,12 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters);
 GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus);
 
 /**
- * Get the genes for this locus The macros `agn_gene_locus_pred_genes(locus)',
- * `agn_gene_locus_refr_genes(locus)', and `agn_gene_locus_get_genes(locus)'
- * are provided for convenience.
+ * Get the genes associated with this locus. Rather than calling this function
+ * directly, users are encouraged to use one of the following macros:
+ * `agn_gene_locus_pred_genes(locus)' to retrieve prediction genes,
+ * `agn_gene_locus_refr_genes(locus)' to retrieve reference genes, or
+ * `agn_gene_locus_get_genes(locus)' if the source of annotation is undesignated
+ * or irrelevant.
  *
  * @param[in] locus    the locus
  * @param[in] src      REFERENCESOURCE will return only reference genes,
@@ -93,6 +96,22 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_refr_genes(LC)\
         agn_gene_locus_genes(LC, REFERENCESOURCE)
 #define agn_gene_locus_get_genes(LC)\
+        agn_gene_locus_genes(LC, DEFAULTSOURCE)
+
+/**
+ * Get IDs of the genes associated with this locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * `agn_gene_locus_pred_gene_ids(locus)' to retrieve prediction genes IDs,
+ * `agn_gene_locus_refr_gene_ids(locus)' to retrieve reference genes IDs, or
+ * `agn_gene_locus_get_gene_ids(locus)' if the source of annotation is
+ * undesignated or irrelevant.
+ */
+GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
+#define agn_gene_locus_pred_gene_ids(LC)\
+        agn_gene_locus_genes(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_refr_gene_ids(LC)\
+        agn_gene_locus_genes(LC, REFERENCESOURCE)
+#define agn_gene_locus_get_gene_ids(LC)\
         agn_gene_locus_genes(LC, DEFAULTSOURCE)
 
 /**
@@ -142,14 +161,6 @@ unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus);
  */
 AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
                                               AgnTranscriptClique *refr_clique);
-
-/**
- * Get the prediction gene IDs for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the prediction gene IDs
- */
-GtArray *agn_gene_locus_get_pred_gene_ids(AgnGeneLocus *locus);
 
 /**
  * Get the splice complexity of prediction annotations associated with this
