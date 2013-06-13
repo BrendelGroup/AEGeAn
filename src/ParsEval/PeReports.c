@@ -341,8 +341,8 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
 
   fprintf(outstream, "|  locus splice complexity:\n");
-  fprintf(outstream, "|    reference:   %.3lf\n", agn_gene_locus_get_refr_splice_complexity(locus));
-  fprintf(outstream, "|    prediction:  %.3lf\n", agn_gene_locus_get_pred_splice_complexity(locus));
+  fprintf(outstream, "|    reference:   %.3lf\n", agn_gene_locus_refr_splice_complexity(locus));
+  fprintf(outstream, "|    prediction:  %.3lf\n", agn_gene_locus_pred_splice_complexity(locus));
   fprintf(outstream, "|\n");
 
   fprintf(outstream, "|\n");
@@ -618,8 +618,8 @@ void pe_gene_locus_print_results_csv(AgnGeneLocus *locus, FILE *outstream, PeOpt
         agn_clique_pair_needs_comparison(pair) )
     {
       unsigned long j;
-      GtArray *refr_ids = agn_gene_locus_get_refr_transcript_ids(locus);
-      GtArray *pred_ids = agn_gene_locus_get_pred_transcript_ids(locus);
+      GtArray *refr_ids = agn_gene_locus_refr_transcript_ids(locus);
+      GtArray *pred_ids = agn_gene_locus_pred_transcript_ids(locus);
 
       fprintf(outstream, "%s,%lu,%lu,", agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus));
       for(j = 0; j < gt_array_size(refr_ids); j++)
@@ -806,8 +806,8 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
          "      <table>\n"
          "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
          outstream );
-  GtArray *refr_trns = agn_gene_locus_get_refr_transcript_ids(locus);
-  GtArray *pred_trns = agn_gene_locus_get_pred_transcript_ids(locus);
+  GtArray *refr_trns = agn_gene_locus_refr_transcript_ids(locus);
+  GtArray *pred_trns = agn_gene_locus_pred_transcript_ids(locus);
   for(i = 0; i < gt_array_size(refr_trns) || i < gt_array_size(pred_trns); i++)
   {
     fputs("      <tr>", outstream);
@@ -844,7 +844,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
   fputs("      <table>\n", outstream);
   fputs("        <tr><th>Reference</th><th>Prediction</th></tr>\n", outstream);
   fprintf( outstream, "        <tr><td>%.3lf</td><td>%.3lf</td></tr>\n",
-           agn_gene_locus_get_refr_splice_complexity(locus), agn_gene_locus_get_pred_splice_complexity(locus) );
+           agn_gene_locus_refr_splice_complexity(locus), agn_gene_locus_pred_splice_complexity(locus) );
   fputs("      </table>\n", outstream);
 
   if(options->locus_graphics)

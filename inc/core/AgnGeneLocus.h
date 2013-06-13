@@ -84,7 +84,7 @@ GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus);
  * `agn_gene_locus_get_genes(locus)' if the source of annotation is undesignated
  * or irrelevant.
  *
- * @param[in] locus    the locus
+ * @param[in] locus    a gene locus
  * @param[in] src      REFERENCESOURCE will return only reference genes,
  *                     PREDICTIONSOURCE will return only prediction genes,
  *                     DEFAULTSOURCE will return all genes
@@ -105,6 +105,12 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
  * `agn_gene_locus_refr_gene_ids(locus)' to retrieve reference genes IDs, or
  * `agn_gene_locus_get_gene_ids(locus)' if the source of annotation is
  * undesignated or irrelevant.
+ *
+ * @param[in] locus    a gene locus
+ * @param[in] src      REFERENCESOURCE will return only reference gene IDs,
+ *                     PREDICTIONSOURCE will return only prediction gene IDs,
+ *                     DEFAULTSOURCE will return all gene IDs
+ * @returns            array containing the genes
  */
 GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_pred_gene_ids(LC)\
@@ -161,64 +167,6 @@ unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus);
  */
 AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
                                               AgnTranscriptClique *refr_clique);
-
-/**
- * Get the splice complexity of prediction annotations associated with this
- * locus.
- *
- * @param[in] locus    the locus
- * @returns            the prediction splice complexity
- */
-double agn_gene_locus_get_pred_splice_complexity(AgnGeneLocus *locus);
-
-/**
- * Get the prediction transcripts for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the prediction transcripts
- */
-GtArray *agn_gene_locus_get_pred_transcripts(AgnGeneLocus *locus);
-
-/**
- * Get the prediction transcript IDs for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the prediction transcript IDs
- */
-GtArray *agn_gene_locus_get_pred_transcript_ids(AgnGeneLocus *locus);
-
-/**
- * Get the reference gene IDs for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the reference gene IDs
- */
-GtArray *agn_gene_locus_get_refr_gene_ids(AgnGeneLocus *locus);
-
-/**
- * Get the splice complexity of reference annotations associated with this
- * locus.
- *
- * @param[in] locus    the locus
- * @returns            the reference splice complexity
- */
-double agn_gene_locus_get_refr_splice_complexity(AgnGeneLocus *locus);
-
-/**
- * Get the reference transcripts for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the reference transcripts
- */
-GtArray *agn_gene_locus_get_refr_transcripts(AgnGeneLocus *locus);
-
-/**
- * Get the reference transcript IDs for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the reference transcript IDs
- */
-GtArray *agn_gene_locus_get_refr_transcript_ids(AgnGeneLocus *locus);
 
 /**
  * Get this locus' sequence ID.
@@ -346,6 +294,33 @@ GtRange agn_gene_locus_range(AgnGeneLocus *locus);
 unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus);
 
 /**
+ * Calculate the splice complexity of this gene locus. Rather than calling this
+ * method directly, users are recommended to use one of the following macros:
+ * `agn_gene_locus_prep_splice_complexity(locus)' to calculate the splice
+ * complexity of just the prediction transcripts,
+ * `agn_gene_locus_refr_splice_complexity(locus)' to calculate the splice
+ * complexity of just the reference transcripts, and
+ * `agn_gene_locus_calc_splice_complexity(locus)' to calculate the splice
+ * complexity taking into account all transcripts.
+ *
+ * @param[in] locus    the locus
+ * @param[in] src      indication as to whether to calculate splice complexity
+ *                     for just reference transcripts (REFERENCESOURCE),
+ *                     just prediction transcripts (PREDICTIONSOURCE),
+ *                     or all transcripts (DEFAULTSOURCE)
+ * @returns            the splice complexity
+ */
+double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,
+                                        AgnComparisonSource src);
+#define agn_gene_locus_pred_splice_complexity(LC)\
+        agn_gene_locus_splice_complexity(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_refr_splice_complexity(LC)\
+        agn_gene_locus_splice_complexity(LC, REFERENCESOURCE)
+#define agn_gene_locus_calc_splice_complexity(LC)\
+        agn_gene_locus_splice_complexity(LC, DEFAULTSOURCE)
+
+
+/**
  * Print the locus in GFF3 format
  *
  * @param[in] locus        the locus
@@ -355,5 +330,51 @@ unsigned long agn_gene_locus_refr_cds_length(AgnGeneLocus *locus);
  */
 void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
                             const char *source);
+
+/**
+ * Get the transcripts associated with this locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * `agn_gene_locus_pred_transcripts(locus)' to retrieve prediction transcripts,
+ * `agn_gene_locus_refr_transcripts(locus)' to retrieve reference transcripts,
+ * or `agn_gene_locus_get_genes(locus)' if the source of annotation is
+ * undesignated or irrelevant.
+ *
+ * @param[in] locus    the locus
+ * @param[in] src      REFERENCESOURCE will return only reference transcripts,
+ *                     PREDICTIONSOURCE will return only prediction transcripts,
+ *                     DEFAULTSOURCE will return all transcripts
+ * @returns            the prediction transcripts
+ */
+GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
+                                    AgnComparisonSource src);
+#define agn_gene_locus_pred_transcripts(LC)\
+        agn_gene_locus_transcripts(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_refr_transcripts(LC)\
+        agn_gene_locus_transcripts(LC, REFERENCESOURCE)
+#define agn_gene_locus_get_transcripts(LC)\
+        agn_gene_locus_transcripts(LC, DEFAULTSOURCE)
+
+/**
+ * Get the transcript IDs associated with this locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * `agn_gene_locus_pred_transcripts(locus)' to retrieve prediction IDs,
+ * `agn_gene_locus_refr_transcripts(locus)' to retrieve reference IDs,
+ * or `agn_gene_locus_get_genes(locus)' if the source of annotation is
+ * undesignated or irrelevant.
+ *
+ * @param[in] locus    the locus
+ * @param[in] src      REFERENCESOURCE will return only reference IDs,
+ *                     PREDICTIONSOURCE will return only prediction IDs,
+ *                     DEFAULTSOURCE will return all transcript IDs
+ * @returns            the prediction transcripts
+ */
+GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus,
+                                       AgnComparisonSource src);
+#define agn_gene_locus_pred_transcript_ids(LC)\
+        agn_gene_locus_transcript_ids(LC, PREDICTIONSOURCE)
+#define agn_gene_locus_refr_transcript_ids(LC)\
+        agn_gene_locus_transcript_ids(LC, REFERENCESOURCE)
+#define agn_gene_locus_get_transcript_ids(LC)\
+        agn_gene_locus_transcript_ids(LC, DEFAULTSOURCE)
 
 #endif
