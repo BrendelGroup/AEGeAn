@@ -142,8 +142,12 @@ int main(int argc, char * const argv[])
     // For HTML output, each sequence and each locus gets a dedicated .html file
     FILE *seqfile = NULL;
     GtArray *seq_loci = *(GtArray **)gt_array_get(loci, i);
-    AgnGeneLocusSummary *locus_summaries = (AgnGeneLocusSummary *)
-                                  gt_malloc( sizeof(AgnGeneLocusSummary) * gt_array_size(seq_loci) );
+    AgnGeneLocusSummary loc_sum_template;
+    agn_gene_locus_summary_init(&loc_sum_template);
+    GtArray *locus_summaries = gt_array_new( sizeof(AgnGeneLocusSummary) );
+    int j;
+    for(j = 0; j < gt_array_size(seq_loci); j++)
+      gt_array_add(locus_summaries, loc_sum_template);
 
     if(!options.summary_only)
     {
@@ -188,7 +192,7 @@ int main(int argc, char * const argv[])
     }
 
     // Distribute the loci for this sequence across the p processors
-    int rank, j;
+    int rank;
     #pragma omp parallel private(rank, j)
     {
       PeCompEvaluation summary_data_local;
@@ -201,27 +205,34 @@ int main(int argc, char * const argv[])
       // Begin parallelize loop
       // Parallel loop over the loci, not the clique pairs
       {
-        agn_comp_summary_init(&locus_summaries[j].counts);
         AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seq_loci, j);
+        AgnGeneLocusSummary *lsum = gt_array_get(locus_summaries, j);
 
         unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
         if(options.complimit != 0 && npairs > options.complimit)
         {
           if(options.debug)
-            fprintf( stderr, "debug: locus %s[%lu, %lu] contains %lu transcript (or transcript"
-                     " clique) pairs, exceeds the limit of %d, moving on\n",
-                     agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
-                     agn_gene_locus_get_end(locus), npairs, options.complimit );
+          {
+            fprintf(stderr, "debug: locus %s[%lu, %lu] contains %lu transcript "
+                    "(or transcript clique) pairs, exceeds the limit of %d, "
+                    "moving on\n", agn_gene_locus_get_seqid(locus),
+                    agn_gene_locus_get_start(locus),
+                    agn_gene_locus_get_end(locus), npairs, options.complimit);
+          }
         }
         else
         {
           summary_data_local.counts.num_loci++;
 
           // Grab some summary counts
-          summary_data_local.counts.refr_genes       += agn_gene_locus_num_refr_genes(locus);
-          summary_data_local.counts.refr_transcripts += agn_gene_locus_num_refr_transcripts(locus);
-          summary_data_local.counts.pred_genes       += agn_gene_locus_num_pred_genes(locus);
-          summary_data_local.counts.pred_transcripts += agn_gene_locus_num_pred_transcripts(locus);
+          summary_data_local.counts.refr_genes +=
+                                           agn_gene_locus_num_refr_genes(locus);
+          summary_data_local.counts.refr_transcripts +=
+                                     agn_gene_locus_num_refr_transcripts(locus);
+          summary_data_local.counts.pred_genes +=
+                                           agn_gene_locus_num_pred_genes(locus);
+          summary_data_local.counts.pred_transcripts +=
+                                     agn_gene_locus_num_pred_transcripts(locus);
           if(agn_gene_locus_num_refr_genes(locus) == 0)
             summary_data_local.counts.unique_pred++;
           else if(agn_gene_locus_num_pred_genes(locus) == 0)
@@ -229,12 +240,12 @@ int main(int argc, char * const argv[])
 
           if(options.html && !options.summary_only)
           {
-            locus_summaries[j].start = agn_gene_locus_get_start(locus);
-            locus_summaries[j].end = agn_gene_locus_get_end(locus);
-            locus_summaries[j].length = agn_gene_locus_get_length(locus);
-            locus_summaries[j].refr_transcripts = agn_gene_locus_num_refr_transcripts(locus);
-            locus_summaries[j].pred_transcripts = agn_gene_locus_num_pred_transcripts(locus);
-            locus_summaries[j].total = npairs;
+            lsum->start     = agn_gene_locus_get_start(locus);
+            lsum->end       = agn_gene_locus_get_end(locus);
+            lsum->length    = agn_gene_locus_get_length(locus);
+            lsum->refrtrans = agn_gene_locus_num_refr_transcripts(locus);
+            lsum->predtrans = agn_gene_locus_num_pred_transcripts(locus);
+            lsum->total     = npairs;
           }
 
           if( npairs != 0 &&
@@ -245,7 +256,6 @@ int main(int argc, char * const argv[])
             GtArray *reportedpairs = agn_gene_locus_comparative_analysis(locus);
             gt_timer_stop(comp_timer);
 
-            // Begin maybe delete
             if(options.debug)
             {
               fprintf(stderr, "debug: (proc %d) locus: %s[%lu, %lu]; length: "
@@ -269,15 +279,15 @@ int main(int argc, char * const argv[])
               }
               fputs("\n", stderr);
             }
-            // End maybe delete
             gt_timer_delete(comp_timer);
 
             PeCompEvaluation data;
             pe_comp_evaluation_init(&data);
             agn_gene_locus_aggregate_results(locus, &data);
             agn_gene_locus_aggregate_results(locus, &summary_data_local);
-            locus_summaries[j].reported = gt_array_size(reportedpairs);
-            locus_summaries[j].counts = data.counts;
+
+            lsum->reported = gt_array_size(reportedpairs);
+            lsum->counts   = data.counts;
           }
 
           if(!options.summary_only)
@@ -327,14 +337,12 @@ int main(int argc, char * const argv[])
       {
         for(j = 0; j < gt_array_size(seq_loci); j++)
         {
-          AgnGeneLocusSummary *locus_summary = locus_summaries + j;
-          if(locus_summary->start > 0 && locus_summary->end > 0)
+          AgnGeneLocusSummary *lsum = gt_array_get(locus_summaries, j);
+          if(lsum->start > 0 && lsum->end > 0)
           {
-            pe_print_locus_to_seqfile(seqfile, locus_summary->start,
-                                      locus_summary->end, locus_summary->length,
-                                      locus_summary->refr_transcripts,
-                                      locus_summary->pred_transcripts,
-                                      &locus_summary->counts);
+            pe_print_locus_to_seqfile(seqfile, lsum->start, lsum->end,
+                                      lsum->length, lsum->refrtrans,
+                                      lsum->predtrans, &lsum->counts);
           }
         }
         pe_print_seqfile_footer(seqfile);
@@ -342,7 +350,7 @@ int main(int argc, char * const argv[])
       fclose(seqfile);
     }
 
-    gt_free(locus_summaries);
+    gt_array_delete(locus_summaries);
     gt_array_delete(seq_loci);
   } // End iterate over sequences
 

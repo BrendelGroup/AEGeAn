@@ -33,12 +33,17 @@ typedef struct
   unsigned long start;
   unsigned long end;
   unsigned long length;
-  unsigned long refr_transcripts;
-  unsigned long pred_transcripts;
+  unsigned long refrtrans;
+  unsigned long predtrans;
   unsigned long reported;
   unsigned long total;
   AgnCompSummary counts;
 } AgnGeneLocusSummary;
+
+/**
+ *
+ */
+void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary);
 
 /**
  * Add the locus' comparison statistics to a set of aggregate statistics.
@@ -47,11 +52,8 @@ typedef struct
  * @param[out] data     summary counts, stats, and results to which the locus
  *                      data will be aggregated
  */
-void agn_gene_locus_aggregate_results
-(
-  AgnGeneLocus *locus,
-  PeCompEvaluation *data
-);
+void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
+                                      PeCompEvaluation *data);
 
 #ifndef WITHOUT_CAIRO
 /**

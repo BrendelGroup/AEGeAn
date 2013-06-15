@@ -267,6 +267,17 @@ void agn_gene_locus_print_png(AgnGeneLocus *locus,
 }
 #endif
 
+void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary)
+{
+  summary->start = 0;
+  summary->end = 0;
+  summary->refrtrans = 0;
+  summary->predtrans = 0;
+  summary->reported = 0;
+  summary->total = 0;
+  agn_comp_summary_init(&summary->counts);
+}
+
 void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
 {
   const char *seqid = agn_gene_locus_get_seqid(locus);
