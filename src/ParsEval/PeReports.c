@@ -22,7 +22,7 @@ void agn_gene_locus_aggregate_results( AgnGeneLocus *locus,
                                       PeCompEvaluation *data )
 {
   unsigned long i;
-  GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
+  GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
   unsigned long pairs_to_report = gt_array_size(reported_pairs);
   gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
 
@@ -350,7 +350,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
   fprintf(outstream, "|----------\n");
 
-  unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+  unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
   if(npairs == 0)
   {
     fprintf(outstream, "     |\n");
@@ -368,7 +368,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   else
   {
     unsigned long k;
-    GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
+    GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
     unsigned long pairs_to_report = gt_array_size(reported_pairs);
     gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
     for(k = 0; k < pairs_to_report; k++)
@@ -608,13 +608,13 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
 void pe_gene_locus_print_results_csv(AgnGeneLocus *locus, FILE *outstream, PeOptions *options)
 {
   unsigned long i;
-  GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
+  GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
   unsigned long pairs_to_report = gt_array_size(reported_pairs);
 
   for(i = 0; i < pairs_to_report; i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
-    unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+    unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
 
     if( !(options->complimit != 0 && npairs > options->complimit) &&
         agn_clique_pair_needs_comparison(pair) )
@@ -721,7 +721,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
            agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
            agn_gene_locus_get_end(locus) );
 
-  unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+  unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
   if(options->complimit == 0 || npairs <= options->complimit)
   {
     fputs( "    <script type=\"text/javascript\""
@@ -736,7 +736,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
            "  }\n",
            outstream);
     unsigned long i;
-    GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
+    GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
     for(i = 0; i < gt_array_size(reported_pairs); i++)
     {
       fprintf( outstream,
@@ -888,7 +888,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
     fputs("      <h2 class=\"bottomspace\">Comparisons</h2>\n", outstream);
 
     unsigned long k;
-    GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
+    GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
     unsigned long pairs_to_report = gt_array_size(reported_pairs);
     gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
     for(k = 0; k < pairs_to_report; k++)

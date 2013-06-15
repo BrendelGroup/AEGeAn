@@ -72,16 +72,24 @@ unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
         agn_gene_locus_cds_length(LC, DEFAULTSOURCE)
 
 /**
- * For gene loci with multiple transcripts or transcript cliques, we do not want
- * to report every pairwise comparison of every reference clique with every
- * prediction clique. Instead, we report each reference clique along with its
- * best matching prediction clique. If there are any prediction cliques that are
- * not included in these matches, they are reported separately.
+ * Compare every reference transcript clique with every prediction transcript
+ * clique. For gene loci with multiple transcript cliques, each comparison is
+ * not necessarily reported. Instead, we report the set of clique pairs that
+ * provides the optimal pairing of reference and prediction transcripts. If
+ * there are more reference transcript cliques than prediction cliques (or vice
+ * versa), these unmatched cliques are reported separately.
  *
  * @param[in]  locus    the locus
- * @returns             the pairs to be reported
+ * @returns             the pairs to be reported; the first time this method is
+ *                      called, the comparative analysis is performed and the
+ *                      clique pairs are stored and returned; subsequence method
+ *                      calls simply return the previously stored results;
+ *                      the macro `agn_gene_locus_pairs_to_report(locus)' is
+ *                      provided for this use case
  */
 GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus);
+#define agn_gene_locus_pairs_to_report(LOC)\
+        agn_gene_locus_comparative_analysis(LOC)
 
 /**
  * Free the memory previously occupied by this locus object.
@@ -97,10 +105,18 @@ void agn_gene_locus_delete(AgnGeneLocus *locus);
  * reference cliques and prediction cliques is enumerated, to enable subsequent
  * pairwise comparison.
  *
- * @param[in] locus              the locus
- * @returns                      the number of clique pairs formed
+ * @param[in] locus    the locus
+ * @returns            the number of clique pairs formed; the first
+ *                     time this method is called, the clique pairs are
+ *                     enumerated and stored and their number is returned;
+ *                     subsequent method calls simply return the number of
+ *                     previously enumerated cliques; the macro
+ *                     `agn_gene_locus_num_clique_pairs(locus)' has been
+ *                     provided for this use case
  */
 unsigned long agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus);
+#define agn_gene_locus_num_clique_pairs(LOC)\
+        agn_gene_locus_enumerate_clique_pairs(LOC)
 
 /**
  * Get the number of exons for the locus. Rather than calling this function
