@@ -485,6 +485,7 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
 
 GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src)
 {
+fprintf(stderr, "DEBUG whatrudoinstahp genes: locus=%p, src=%d\n", locus, src);
   GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
   GtDlistelem *elem;
   for(elem = gt_dlist_first(locus->genes);
@@ -508,6 +509,7 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src)
 
 GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src)
 {
+fprintf(stderr, "DEBUG gene_ids: locus=%p, src=%d", locus, src);
   GtArray *ids = gt_array_new( sizeof(char *) );
   GtDlistelem *elem;
   for(elem = gt_dlist_first(locus->genes);
@@ -518,6 +520,7 @@ GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src)
     bool isrefr = gt_hashmap_get(locus->refr_genes, gene) != NULL;
     bool ispred = gt_hashmap_get(locus->pred_genes, gene) != NULL;
     const char *id = gt_feature_node_get_attribute(gene, "ID");
+fprintf(stderr, "DEBUG id=%s\n", id);
 
     if(src == DEFAULTSOURCE)
       gt_array_add(ids, id);

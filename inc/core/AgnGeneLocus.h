@@ -173,11 +173,11 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
  */
 GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_pred_gene_ids(LC)\
-        agn_gene_locus_genes(LC, PREDICTIONSOURCE)
+        agn_gene_locus_gene_ids(LC, PREDICTIONSOURCE)
 #define agn_gene_locus_refr_gene_ids(LC)\
-        agn_gene_locus_genes(LC, REFERENCESOURCE)
+        agn_gene_locus_gene_ids(LC, REFERENCESOURCE)
 #define agn_gene_locus_get_gene_ids(LC)\
-        agn_gene_locus_genes(LC, DEFAULTSOURCE)
+        agn_gene_locus_gene_ids(LC, DEFAULTSOURCE)
 
 /**
  * Get the number of genes for the locus. Rather than calling this function

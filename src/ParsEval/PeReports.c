@@ -311,34 +311,36 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
 
   fprintf(outstream, "|  reference genes:\n");
-  GtArray *refr_genes = agn_gene_locus_refr_genes(locus);
-  if(refr_genes == NULL || gt_array_size(refr_genes) == 0)
+  GtArray *refr_genes = agn_gene_locus_refr_gene_ids(locus);
+  if(gt_array_size(refr_genes) == 0)
     fprintf(outstream, "|    None!\n");
   else
   {
     unsigned long i;
     for(i = 0; i < gt_array_size(refr_genes); i++)
     {
-      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(refr_genes, i);
-      fprintf(outstream, "|    %s\n", gt_feature_node_get_attribute(gene, "ID"));
+      const char *gene = *(const char **)gt_array_get(refr_genes, i);
+      fprintf(outstream, "|    %s\n", gene);
     }
   }
   fprintf(outstream, "|\n");
+  gt_array_delete(refr_genes);
 
   fprintf(outstream, "|  prediction genes:\n");
-  GtArray *pred_genes = agn_gene_locus_pred_genes(locus);
-  if(pred_genes == NULL || gt_array_size(pred_genes) == 0)
+  GtArray *pred_genes = agn_gene_locus_pred_gene_ids(locus);
+  if(gt_array_size(pred_genes) == 0)
     fprintf(outstream, "|    None!\n");
   else
   {
     unsigned long i;
     for(i = 0; i < gt_array_size(pred_genes); i++)
     {
-      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(pred_genes, i);
-      fprintf(outstream, "|    %s\n", gt_feature_node_get_attribute(gene, "ID"));
+      const char *gene = *(const char **)gt_array_get(pred_genes, i);
+      fprintf(outstream, "|    %s\n", gene);
     }
   }
   fprintf(outstream, "|\n");
+  gt_array_delete(pred_genes);
 
   fprintf(outstream, "|  locus splice complexity:\n");
   fprintf(outstream, "|    reference:   %.3lf\n", agn_gene_locus_refr_splice_complexity(locus));
@@ -767,16 +769,16 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
          "      <table>\n"
          "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
          outstream );
-  GtArray *refr_genes = agn_gene_locus_refr_genes(locus); // FIXME free (text too)
-  GtArray *pred_genes = agn_gene_locus_pred_genes(locus); // FIXME free (text too)
+  GtArray *refr_genes = agn_gene_locus_refr_gene_ids(locus); // FIXME free (text too)
+  GtArray *pred_genes = agn_gene_locus_pred_gene_ids(locus); // FIXME free (text too)
   unsigned long i;
   for(i = 0; i < gt_array_size(refr_genes) || i < gt_array_size(pred_genes); i++)
   {
     fputs("        <tr>", outstream);
     if(i < gt_array_size(refr_genes))
     {
-      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(refr_genes, i);
-      fprintf(outstream, "<td>%s</td>", gt_feature_node_get_attribute(gene, "ID"));
+      const char *gid = *(const char **)gt_array_get(refr_genes, i);
+      fprintf(outstream, "<td>%s</td>", gid);
     }
     else
     {
@@ -788,8 +790,8 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
 
     if(i < gt_array_size(pred_genes))
     {
-      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(pred_genes, i);
-      fprintf(outstream, "<td>%s</td>", gt_feature_node_get_attribute(gene, "ID"));
+      const char *gid = *(const char **)gt_array_get(pred_genes, i);
+      fprintf(outstream, "<td>%s</td>", gid);
     }
     else
     {
@@ -801,6 +803,8 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
     fputs("</tr>\n", outstream);
   }
   fputs("      </table>\n\n", outstream);
+  gt_array_delete(refr_genes);
+  gt_array_delete(pred_genes);
 
   fputs( "      <h2>Transcript annotations</h2>\n"
          "      <table>\n"
@@ -839,12 +843,15 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
     fputs("</tr>\n", outstream);
   }
   fputs("      </table>\n\n", outstream);
+  gt_array_delete(refr_trns);
+  gt_array_delete(pred_trns);
 
   fputs("      <h2>Locus splice complexity</h2>\n", outstream);
   fputs("      <table>\n", outstream);
   fputs("        <tr><th>Reference</th><th>Prediction</th></tr>\n", outstream);
-  fprintf( outstream, "        <tr><td>%.3lf</td><td>%.3lf</td></tr>\n",
-           agn_gene_locus_refr_splice_complexity(locus), agn_gene_locus_pred_splice_complexity(locus) );
+  fprintf(outstream, "        <tr><td>%.3lf</td><td>%.3lf</td></tr>\n",
+          agn_gene_locus_refr_splice_complexity(locus),
+          agn_gene_locus_pred_splice_complexity(locus) );
   fputs("      </table>\n", outstream);
 
   if(options->locus_graphics)
@@ -852,13 +859,13 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
     fputs("      <div class=\"graphic\">\n      ", outstream);
     if(pe_gene_locus_get_graphic_width(locus) > AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
     {
-      fprintf( outstream, "<a href=\"%s_%lu-%lu.png\">",
-               agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
-               agn_gene_locus_get_end(locus) );
+      fprintf(outstream, "<a href=\"%s_%lu-%lu.png\">",
+              agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
+              agn_gene_locus_get_end(locus) );
     }
-    fprintf( outstream, "<img src=\"%s_%lu-%lu.png\" />\n",
-             agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
-             agn_gene_locus_get_end(locus) );
+    fprintf(outstream, "<img src=\"%s_%lu-%lu.png\" />\n",
+            agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
+            agn_gene_locus_get_end(locus) );
     if(pe_gene_locus_get_graphic_width(locus) > AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
     {
       fputs("</a>", outstream);
@@ -872,9 +879,9 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
   }
   else if(options->complimit != 0 && npairs > options->complimit)
   {
-    fprintf( outstream, "      <p>No comparisons were performed for this locus. The number "
-             "of transcript clique pairs (%lu) exceeds the limit of %d.</p>\n\n",
-             npairs, options->complimit );
+    fprintf(outstream, "      <p>No comparisons were performed for this locus. The number "
+            "of transcript clique pairs (%lu) exceeds the limit of %d.</p>\n\n",
+            npairs, options->complimit );
   }
   else
   {
