@@ -14,7 +14,7 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
   desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
 }
 
-void pe_comp_evalutation_combine(PeCompEvaluation *data,
+void pe_comp_evaluation_combine(PeCompEvaluation *data,
                                  PeCompEvaluation *data_to_add)
 {
   agn_comp_summary_combine(&data->counts, &data_to_add->counts);
@@ -22,7 +22,7 @@ void pe_comp_evalutation_combine(PeCompEvaluation *data,
   pe_comp_result_summary_combine(&data->results, &data_to_add->results);
 }
 
-void pe_comp_evalutation_init(PeCompEvaluation *data)
+void pe_comp_evaluation_init(PeCompEvaluation *data)
 {
   agn_comp_summary_init(&data->counts);
   agn_comparison_init(&data->stats);

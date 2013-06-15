@@ -72,11 +72,35 @@ unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
         agn_gene_locus_cds_length(LC, DEFAULTSOURCE)
 
 /**
+ * For gene loci with multiple transcripts or transcript cliques, we do not want
+ * to report every pairwise comparison of every reference clique with every
+ * prediction clique. Instead, we report each reference clique along with its
+ * best matching prediction clique. If there are any prediction cliques that are
+ * not included in these matches, they are reported separately.
+ *
+ * @param[in]  locus    the locus
+ * @returns             the pairs to be reported
+ */
+GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus);
+
+/**
  * Free the memory previously occupied by this locus object.
  *
  * @param[out] locus    locus to be deleted
  */
 void agn_gene_locus_delete(AgnGeneLocus *locus);
+
+/**
+ * We use the Bron-Kerbosch algorithm to enumerate maximal cliques of non-
+ * overlapping transcripts. This is done separately for the reference
+ * transcripts and the prediction transcripts. Every possible pairing of
+ * reference cliques and prediction cliques is enumerated, to enable subsequent
+ * pairwise comparison.
+ *
+ * @param[in] locus              the locus
+ * @returns                      the number of clique pairs formed
+ */
+unsigned long agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus);
 
 /**
  * Get the number of exons for the locus. Rather than calling this function
@@ -112,18 +136,6 @@ unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus,
 bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters);
 
 /**
- * For gene loci with multiple transcripts or transcript cliques, we do not want
- * to report every pairwise comparison of every reference clique with every
- * prediction clique. Instead, we report each reference clique along with its
- * best matching prediction clique. If there are any prediction cliques that are
- * not included in these matches, they are reported separately.
- *
- * @param[in]  locus    the locus
- * @returns             the pairs to be reported
- */
-GtArray *agn_gene_locus_find_best_pairs(AgnGeneLocus *locus);
-
-/**
  * Get the genes associated with this locus. Rather than calling this function
  * directly, users are encouraged to use one of the following macros:
  * `agn_gene_locus_pred_genes(locus)' to retrieve prediction genes,
@@ -157,7 +169,7 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
  * @param[in] src      REFERENCESOURCE will return only reference gene IDs,
  *                     PREDICTIONSOURCE will return only prediction gene IDs,
  *                     DEFAULTSOURCE will return all gene IDs
- * @returns            array containing the genes
+ * @returns            array containing the gene IDs
  */
 GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_pred_gene_ids(LC)\
@@ -189,26 +201,6 @@ unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
         agn_gene_locus_gene_num(LC, REFERENCESOURCE)
 #define agn_gene_locus_num_genes(LC)\
         agn_gene_locus_gene_num(LC, DEFAULTSOURCE)
-
-/**
- * We use the Bron-Kerbosch algorithm to separate reference transcripts and
- * prediction transcripts into a set of maximal cliques, or subsets of
- * transcripts that do not overlap within the group. We then compare each
- * reference clique with each prediction clique.
- *
- * @param[in] locus              the locus
- * @param[in] trans_per_locus    the maximum number of reference or prediction
- *                               mRNAs allowed for a given locus; since the
- *                               maximal clique enumeration algorithm used is of
- *                               exponential complexity, there needs to be a
- *                               reasonable limit to the number of mRNAs
- *                               considered when identifying transcript cliques
- * @returns                      an array of locus objects representing every
- *                               pair of a reference transcript with a
- *                               prediction transcript
- */
-GtArray* agn_gene_locus_get_clique_pairs(AgnGeneLocus *locus,
-                                         unsigned int trans_per_locus);
 
 /**
  * Get this locus' end coordinate.

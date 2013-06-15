@@ -101,13 +101,13 @@ int main(int argc, char * const argv[])
 
   // Counts and stats needed to print summary report
   PeCompEvaluation summary_data;
-  pe_comp_evalutation_init(&summary_data);
+  pe_comp_evaluation_init(&summary_data);
 
   // Counts and stats at the sequence level
   PeCompEvaluation *seqlevel_summary_data = gt_malloc( sizeof(PeCompEvaluation) * numseqs );
   for(i = 0; i < numseqs; i++)
   {
-    pe_comp_evalutation_init(&seqlevel_summary_data[i]);
+    pe_comp_evaluation_init(&seqlevel_summary_data[i]);
   }
 
   if(strcmp(options.outfmt, "csv") == 0)
@@ -192,7 +192,7 @@ int main(int argc, char * const argv[])
     #pragma omp parallel private(rank, j)
     {
       PeCompEvaluation summary_data_local;
-      pe_comp_evalutation_init(&summary_data_local);
+      pe_comp_evaluation_init(&summary_data_local);
 
       rank = omp_get_thread_num();
 
@@ -204,20 +204,14 @@ int main(int argc, char * const argv[])
         agn_comp_summary_init(&locus_summaries[j].counts);
         AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seq_loci, j);
 
-        GtArray *clique_pairs = agn_gene_locus_get_clique_pairs(locus, options.trans_per_locus);
-        unsigned long comparisons = 0;
-        if(clique_pairs != NULL)
-          comparisons = gt_array_size(clique_pairs);
-// fprintf(stderr, "DELETEME clique pairs: %lu\n", comparisons);
-// fprintf(stderr, "DELETEME one\n");
-
-        if(options.complimit != 0 && comparisons > options.complimit)
+        unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+        if(options.complimit != 0 && npairs > options.complimit)
         {
           if(options.debug)
             fprintf( stderr, "debug: locus %s[%lu, %lu] contains %lu transcript (or transcript"
                      " clique) pairs, exceeds the limit of %d, moving on\n",
                      agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
-                     agn_gene_locus_get_end(locus), comparisons, options.complimit );
+                     agn_gene_locus_get_end(locus), npairs, options.complimit );
         }
         else
         {
@@ -240,41 +234,38 @@ int main(int argc, char * const argv[])
             locus_summaries[j].length = agn_gene_locus_get_length(locus);
             locus_summaries[j].refr_transcripts = agn_gene_locus_num_refr_transcripts(locus);
             locus_summaries[j].pred_transcripts = agn_gene_locus_num_pred_transcripts(locus);
-            locus_summaries[j].total = comparisons;
+            locus_summaries[j].total = npairs;
           }
 
-          if( clique_pairs != NULL &&
-              (options.complimit == 0 || comparisons <= options.complimit) )
+          if( npairs != 0 &&
+              (options.complimit == 0 || npairs <= options.complimit) )
           {
-            unsigned long k;
             GtTimer *comp_timer = gt_timer_new();
             gt_timer_start(comp_timer);
-            for(k = 0; k < gt_array_size(clique_pairs); k++)
-            {
-// fprintf(stderr, "DELETEME k=%lu\n", k);
-              AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(clique_pairs, k);
-              agn_clique_pair_build_model_vectors(pair);
-              agn_clique_pair_comparative_analysis(pair);
-            }
+            GtArray *reportedpairs = agn_gene_locus_comparative_analysis(locus);
             gt_timer_stop(comp_timer);
 
             // Begin maybe delete
             if(options.debug)
             {
-              fprintf( stderr,
-                       "debug: (proc %d) locus: %s[%lu, %lu]; length: %lu, trans: %lu,%lu; pairs: ",
-                       rank, agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
-                       agn_gene_locus_get_end(locus), agn_gene_locus_get_length(locus),
-                       agn_gene_locus_num_refr_transcripts(locus),
-                       agn_gene_locus_num_pred_transcripts(locus) );
-              if(clique_pairs == NULL)
-                fprintf(stderr, "0; no comparison");
-              else if(options.complimit != 0 && gt_array_size(clique_pairs) > options.complimit)
-                fprintf(stderr, "%lu; no comparison", gt_array_size(clique_pairs));
+              fprintf(stderr, "debug: (proc %d) locus: %s[%lu, %lu]; length: "
+                      "%lu, trans: %lu,%lu; pairs: ", rank,
+                      agn_gene_locus_get_seqid(locus),
+                      agn_gene_locus_get_start(locus),
+                      agn_gene_locus_get_end(locus),
+                      agn_gene_locus_get_length(locus),
+                      agn_gene_locus_num_refr_transcripts(locus),
+                      agn_gene_locus_num_pred_transcripts(locus));
+              if(npairs == 0 || (options.complimit != 0 &&
+                                 npairs > options.complimit))
+              {
+                fprintf(stderr, "%lu; no comparison", npairs);
+              }
               else
               {
-                fprintf(stderr, "%lu, ", gt_array_size(clique_pairs));
-                gt_timer_show_formatted(comp_timer, "time: %ld.%06ld seconds", stderr);
+                fprintf(stderr, "%lu, ", npairs);
+                gt_timer_show_formatted(comp_timer, "time: %ld.%06ld seconds",
+                                        stderr);
               }
               fputs("\n", stderr);
             }
@@ -282,21 +273,15 @@ int main(int argc, char * const argv[])
             gt_timer_delete(comp_timer);
 
             PeCompEvaluation data;
-            //agn_gene_locus_get_summary_data(locus, &data);
+            pe_comp_evaluation_init(&data);
             agn_gene_locus_aggregate_results(locus, &data);
             agn_gene_locus_aggregate_results(locus, &summary_data_local);
-            GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
-            if(reported_pairs == NULL)
-              locus_summaries[j].reported = 0;
-            else
-              locus_summaries[j].reported = gt_array_size(reported_pairs);
+            locus_summaries[j].reported = gt_array_size(reportedpairs);
             locus_summaries[j].counts = data.counts;
           }
 
           if(!options.summary_only)
           {
-            //PeCompEvaluation data;
-            //agn_gene_locus_get_summary_data(locus, &data);
             if(options.html)
             {
               pe_gene_locus_print_results(locus, seqfile, &options);
@@ -310,7 +295,8 @@ int main(int argc, char * const argv[])
             if(options.locus_graphics)
             {
               AgnGeneLocusPngMetadata metadata;
-              pe_gene_locus_get_png_filename(locus, metadata.filename, options.outfilename);
+              pe_gene_locus_get_png_filename(locus, metadata.filename,
+                                             options.outfilename);
               metadata.graphic_width = pe_gene_locus_get_graphic_width(locus);
               sprintf(metadata.stylefile, "%s/pe.style", options.data_path);
               metadata.refrfile = options.refrfile;
@@ -323,19 +309,15 @@ int main(int argc, char * const argv[])
             }
 #endif
           }
-
-//          if(options.locusgff3)
-//            agn_gene_locus_to_gff3(locus, locusgff3file);
         }
-// fprintf(stderr, "DELETEME two\n");
         agn_gene_locus_delete(locus);
-// fprintf(stderr, "DELETEME three\n");
       } // End parallel for loop
 
       #pragma omp critical(aggregate_stats)
       {
-        pe_comp_evalutation_combine(&summary_data, &summary_data_local);
-        pe_comp_evalutation_combine(&seqlevel_summary_data[i], &summary_data_local);
+        pe_comp_evaluation_combine(&summary_data, &summary_data_local);
+        pe_comp_evaluation_combine(&seqlevel_summary_data[i],
+                                   &summary_data_local);
       }
     } // End pragma omp parallel
 
@@ -347,9 +329,13 @@ int main(int argc, char * const argv[])
         {
           AgnGeneLocusSummary *locus_summary = locus_summaries + j;
           if(locus_summary->start > 0 && locus_summary->end > 0)
-            pe_print_locus_to_seqfile( seqfile, locus_summary->start, locus_summary->end,
-                                       locus_summary->length, locus_summary->refr_transcripts,
-                                       locus_summary->pred_transcripts, &locus_summary->counts );
+          {
+            pe_print_locus_to_seqfile(seqfile, locus_summary->start,
+                                      locus_summary->end, locus_summary->length,
+                                      locus_summary->refr_transcripts,
+                                      locus_summary->pred_transcripts,
+                                      &locus_summary->counts);
+          }
         }
         pe_print_seqfile_footer(seqfile);
       }

@@ -70,7 +70,7 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
  *                            comparative analysis
  * @param[in]  data_to_add    a data set which will be added to the first
  */
-void pe_comp_evalutation_combine(PeCompEvaluation *data,
+void pe_comp_evaluation_combine(PeCompEvaluation *data,
                                  PeCompEvaluation *data_to_add);
 
 /**
@@ -78,7 +78,7 @@ void pe_comp_evalutation_combine(PeCompEvaluation *data,
  *
  * @param[in] data    the data
  */
-void pe_comp_evalutation_init(PeCompEvaluation *data);
+void pe_comp_evaluation_init(PeCompEvaluation *data);
 
 
 /**

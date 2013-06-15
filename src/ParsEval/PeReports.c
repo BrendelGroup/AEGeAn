@@ -22,7 +22,7 @@ void agn_gene_locus_aggregate_results( AgnGeneLocus *locus,
                                       PeCompEvaluation *data )
 {
   unsigned long i;
-  GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
+  GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
   unsigned long pairs_to_report = gt_array_size(reported_pairs);
   gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
 
@@ -348,25 +348,25 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
   fprintf(outstream, "|----------\n");
 
-  GtArray *locuspairs = agn_gene_locus_get_clique_pairs(locus, options->trans_per_locus);
-  if(locuspairs == NULL)
+  unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+  if(npairs == 0)
   {
     fprintf(outstream, "     |\n");
     fprintf(outstream, "     |  No comparisons were performed for this locus\n");
     fprintf(outstream, "     |\n");
   }
-  else if(options->complimit != 0 && gt_array_size(locuspairs) > options->complimit)
+  else if(options->complimit != 0 && npairs > options->complimit)
   {
     fprintf( outstream, "     |\n" );
     fprintf( outstream, "     |  No comparisons were performed for this locus. The number "
              "of transcript clique pairs (%lu) exceeds the limit of %d.\n",
-             gt_array_size(locuspairs), options->complimit );
+             npairs, options->complimit );
     fprintf( outstream, "     |\n" );
   }
   else
   {
     unsigned long k;
-    GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
+    GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
     unsigned long pairs_to_report = gt_array_size(reported_pairs);
     gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
     for(k = 0; k < pairs_to_report; k++)
@@ -606,22 +606,23 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
 void pe_gene_locus_print_results_csv(AgnGeneLocus *locus, FILE *outstream, PeOptions *options)
 {
   unsigned long i;
-  GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
+  GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
   unsigned long pairs_to_report = gt_array_size(reported_pairs);
 
   for(i = 0; i < pairs_to_report; i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
-    GtArray *clique_pairs = agn_gene_locus_get_clique_pairs(locus, options->trans_per_locus);
+    unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
 
-    if( !(options->complimit != 0 && gt_array_size(clique_pairs) > options->complimit) &&
+    if( !(options->complimit != 0 && npairs > options->complimit) &&
         agn_clique_pair_needs_comparison(pair) )
     {
       unsigned long j;
       GtArray *refr_ids = agn_gene_locus_refr_transcript_ids(locus);
       GtArray *pred_ids = agn_gene_locus_pred_transcript_ids(locus);
 
-      fprintf(outstream, "%s,%lu,%lu,", agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus));
+      fprintf(outstream, "%s,%lu,%lu,", agn_gene_locus_get_seqid(locus),
+              agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus));
       for(j = 0; j < gt_array_size(refr_ids); j++)
       {
         char *id = *(char **)gt_array_get(refr_ids, j);
@@ -718,9 +719,8 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
            agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
            agn_gene_locus_get_end(locus) );
 
-  GtArray *clique_pairs = agn_gene_locus_get_clique_pairs(locus, options->trans_per_locus);
-  if( clique_pairs != NULL &&
-      (options->complimit == 0 || gt_array_size(clique_pairs) <= options->complimit) )
+  unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+  if(options->complimit == 0 || npairs <= options->complimit)
   {
     fputs( "    <script type=\"text/javascript\""
            " src=\"../vendor/mootools-core-1.3.2-full-nocompat-yc.js\"></script>\n"
@@ -734,7 +734,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
            "  }\n",
            outstream);
     unsigned long i;
-    GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
+    GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
     for(i = 0; i < gt_array_size(reported_pairs); i++)
     {
       fprintf( outstream,
@@ -767,16 +767,16 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
          "      <table>\n"
          "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
          outstream );
-  GtArray *refr_genes = agn_gene_locus_refr_gene_ids(locus);
-  GtArray *pred_genes = agn_gene_locus_pred_gene_ids(locus);
+  GtArray *refr_genes = agn_gene_locus_refr_genes(locus); // FIXME free (text too)
+  GtArray *pred_genes = agn_gene_locus_pred_genes(locus); // FIXME free (text too)
   unsigned long i;
   for(i = 0; i < gt_array_size(refr_genes) || i < gt_array_size(pred_genes); i++)
   {
     fputs("        <tr>", outstream);
     if(i < gt_array_size(refr_genes))
     {
-      const char *id = *(char **)gt_array_get(refr_genes, i);
-      fprintf(outstream, "<td>%s</td>", id);
+      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(refr_genes, i);
+      fprintf(outstream, "<td>%s</td>", gt_feature_node_get_attribute(gene, "ID"));
     }
     else
     {
@@ -788,8 +788,8 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
 
     if(i < gt_array_size(pred_genes))
     {
-      const char *id = *(char **)gt_array_get(pred_genes, i);
-      fprintf(outstream, "<td>%s</td>", id);
+      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(pred_genes, i);
+      fprintf(outstream, "<td>%s</td>", gt_feature_node_get_attribute(gene, "ID"));
     }
     else
     {
@@ -866,22 +866,22 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
     fputs("      </div>\n\n", outstream);
   }
 
-  if(agn_gene_locus_get_clique_pairs(locus, options->trans_per_locus) == NULL)
+  if(npairs == 0)
   {
     // ???
   }
-  else if(options->complimit != 0 && gt_array_size(clique_pairs) > options->complimit)
+  else if(options->complimit != 0 && npairs > options->complimit)
   {
     fprintf( outstream, "      <p>No comparisons were performed for this locus. The number "
              "of transcript clique pairs (%lu) exceeds the limit of %d.</p>\n\n",
-             gt_array_size(clique_pairs), options->complimit );
+             npairs, options->complimit );
   }
   else
   {
     fputs("      <h2 class=\"bottomspace\">Comparisons</h2>\n", outstream);
 
     unsigned long k;
-    GtArray *reported_pairs = agn_gene_locus_find_best_pairs(locus);
+    GtArray *reported_pairs = agn_gene_locus_comparative_analysis(locus);
     unsigned long pairs_to_report = gt_array_size(reported_pairs);
     gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
     for(k = 0; k < pairs_to_report; k++)
