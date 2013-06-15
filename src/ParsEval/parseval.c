@@ -93,6 +93,59 @@ int main(int argc, char * const argv[])
   }
 
 
+  //---- Prep report output ----
+  //----------------------------
+  if(strcmp(options.outfmt, "csv") == 0)
+    pe_print_csv_header(options.outfile);
+
+  GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
+  for(i = 0; i < numseqs; i++)
+  {
+    FILE *seqfile = NULL;
+    if(!options.summary_only)
+    {
+      const char *seqid = gt_str_array_get(seqids, i);
+      char filename[512];
+      if(options.html)
+      {
+        char dircmd[512];
+        sprintf(dircmd, "mkdir %s/%s", options.outfilename, seqid);
+        if(system(dircmd) != 0)
+        {
+          fprintf(stderr, "error: could not open directory '%s/%s'\n",
+                  options.outfilename, seqid);
+          exit(1);
+        }
+        if(options.debug)
+          fprintf(stderr, "debug: opening directory '%s'\n", dircmd);
+
+        sprintf(dircmd, "ln -s ../LICENSE %s/%s/LICENSE", options.outfilename,
+                seqid);
+        if(system(dircmd) != 0)
+        {
+          fputs("warning: could not create symbolic link to LICENSE\n", stderr);
+        }
+
+        // Create summary page for this sequence
+        sprintf(filename, "%s/%s/index.html", options.outfilename, seqid);
+        if(options.debug)
+          fprintf(stderr, "debug: opening outfile '%s'\n", filename);
+        seqfile = agn_fopen(filename, "w");
+        pe_print_seqfile_header(seqfile, seqid);
+        gt_array_add(seqfiles, seqfile);
+      }
+      else
+      {
+        sprintf(filename, "%s.%s", options.outfilename, seqid);
+        if(options.debug)
+          fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
+        seqfile = agn_fopen(filename, "w");
+        gt_array_add(seqfiles, seqfile);
+      }
+    }
+  }
+
+
   //----- Locus comparison -----
   //----------------------------
   omp_set_num_threads(options.numprocs); // FIXME
@@ -102,94 +155,21 @@ int main(int argc, char * const argv[])
   // Counts and stats needed to print summary report
   PeCompEvaluation summary_data;
   pe_comp_evaluation_init(&summary_data);
-
-  // Counts and stats at the sequence level
   GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
-  PeCompEvaluation eval_template;
-  pe_comp_evaluation_init(&eval_template);
   for(i = 0; i < numseqs; i++)
-    gt_array_add(seqlevel_evals, eval_template);
-
-  if(strcmp(options.outfmt, "csv") == 0)
-  {
-    // Print header
-    fputs( "Sequence,Start,End,"
-           "Reference Transcript(s),Prediction Transcript(s),"
-           "Reference CDS segments,Prediction CDS segments,"
-           "Correct CDS segments,Missing CDS segments,Wrong CDS segments,"
-           "CDS structure sensitivity,CDS structure specificity,"
-           "CDS structure F1,CDS structure AED,"
-           "Reference exons,Prediction exons,"
-           "Correct exons,Missing exons,Wrong exons,"
-           "Exon sensitivity,Exon specificity,"
-           "Exon F1,Exon AED,"
-           "Reference UTR segments,Prediction UTR segments,"
-           "Correct UTR segments,Missing UTR segments,Wrong UTR segments,"
-           "UTR structure sensitivity,UTR structure specificity,"
-           "UTR structure F1,UTR structure AED,Overall identity,"
-           "CDS nucleotide matching coefficient,CDS nucleotide correlation coefficient,"
-           "CDS nucleotide sensitivity,CDS nucleotide specificity,"
-           "CDS nucleotide F1,CDS nucleotide AED,"
-           "UTR nucleotide matching coefficient,UTR nucleotide correlation coefficient,"
-           "UTR nucleotide sensitivity,UTR nucleotide specificity,"
-           "UTR nucleotide F1,UTR nucleotide AED\n", options.outfile );
-  }
+    gt_array_add(seqlevel_evals, summary_data);
 
   // Iterate over all the sequences
   for(i = 0; i < numseqs; i++)
   {
-    // For text output, write locus results to a temp file
-    // For HTML output, each sequence and each locus gets a dedicated .html file
-    FILE *seqfile = NULL;
+    int j;
+    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
     GtArray *seq_loci = *(GtArray **)gt_array_get(loci, i);
     AgnGeneLocusSummary loc_sum_template;
     agn_gene_locus_summary_init(&loc_sum_template);
     GtArray *locus_summaries = gt_array_new( sizeof(AgnGeneLocusSummary) );
-    int j;
     for(j = 0; j < gt_array_size(seq_loci); j++)
       gt_array_add(locus_summaries, loc_sum_template);
-
-    if(!options.summary_only)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-
-      char filename[512];
-      if(options.html)
-      {
-        // Create output directory for this sequence
-        char dircmd[512];
-        sprintf(dircmd, "mkdir %s/%s", options.outfilename, seqid);
-        if(system(dircmd) != 0)
-        {
-          fprintf(stderr, "error: could not open directory '%s/%s'\n", options.outfilename, seqid);
-          exit(1);
-        }
-        if(options.debug)
-          fprintf(stderr, "debug: opening directory '%s'\n", dircmd);
-
-        // Create symbolic link to LICENSE in root directory
-        sprintf( dircmd, "ln -s ../LICENSE %s/%s/LICENSE", options.outfilename,
-                 seqid );
-        if(system(dircmd) != 0)
-        {
-          fprintf(stderr, "warning: could not create symbolic link to LICENSE\n");
-        }
-
-        // Create summary page for this sequence
-        sprintf(filename, "%s/%s/index.html", options.outfilename, seqid);
-        if(options.debug)
-          fprintf(stderr, "debug: opening outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w");
-        pe_print_seqfile_header(seqfile, seqid);
-      }
-      else
-      {
-        sprintf(filename, "%s.%s", options.outfilename, seqid);
-        if(options.debug)
-          fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w");
-      }
-    }
 
     // Distribute the loci for this sequence across the p processors
     int rank;
@@ -202,8 +182,6 @@ int main(int argc, char * const argv[])
 
       #pragma omp for schedule(dynamic)
       for(j = 0; j < gt_array_size(seq_loci); j++)
-      // Begin parallelize loop
-      // Parallel loop over the loci, not the clique pairs
       {
         AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seq_loci, j);
         AgnGeneLocusSummary *lsum = gt_array_get(locus_summaries, j);
@@ -353,6 +331,7 @@ int main(int argc, char * const argv[])
     gt_array_delete(locus_summaries);
     gt_array_delete(seq_loci);
   } // End iterate over sequences
+  gt_array_delete(seqfiles);
 
   gt_timer_stop(timer_short);
   gt_timer_show_formatted( timer_short, "[ParsEval] Finished comparative analysis (%ld.%06ld "

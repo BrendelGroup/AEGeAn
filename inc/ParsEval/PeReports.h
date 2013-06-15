@@ -95,6 +95,11 @@ void pe_gene_locus_get_png_filename( AgnGeneLocus *locus,
                                      char *buffer, const char *dirpath );
 
 /**
+ *
+ */
+void pe_print_csv_header(FILE *outstream);
+
+/**
  * Write the report for this locus.
  *
  * @param[in]  locus        the locus

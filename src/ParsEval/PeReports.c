@@ -301,6 +301,32 @@ void pe_gene_locus_get_png_filename(AgnGeneLocus *locus, char *buffer, const cha
            agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus) );
 }
 
+void pe_print_csv_header(FILE *outstream)
+{
+  fputs("Sequence,Start,End,"
+        "Reference Transcript(s),Prediction Transcript(s),"
+        "Reference CDS segments,Prediction CDS segments,"
+        "Correct CDS segments,Missing CDS segments,Wrong CDS segments,"
+        "CDS structure sensitivity,CDS structure specificity,"
+        "CDS structure F1,CDS structure AED,"
+        "Reference exons,Prediction exons,"
+        "Correct exons,Missing exons,Wrong exons,"
+        "Exon sensitivity,Exon specificity,"
+        "Exon F1,Exon AED,"
+        "Reference UTR segments,Prediction UTR segments,"
+        "Correct UTR segments,Missing UTR segments,Wrong UTR segments,"
+        "UTR structure sensitivity,UTR structure specificity,"
+        "UTR structure F1,UTR structure AED,Overall identity,"
+        "CDS nucleotide matching coefficient,"
+        "CDS nucleotide correlation coefficient,"
+        "CDS nucleotide sensitivity,CDS nucleotide specificity,"
+        "CDS nucleotide F1,CDS nucleotide AED,"
+        "UTR nucleotide matching coefficient,"
+        "UTR nucleotide correlation coefficient,"
+        "UTR nucleotide sensitivity,UTR nucleotide specificity,"
+        "UTR nucleotide F1,UTR nucleotide AED\n", outstream);
+}
+
 void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions *options)
 {
   if(strcmp(options->outfmt, "csv") == 0)
