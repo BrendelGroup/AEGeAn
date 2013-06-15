@@ -104,11 +104,11 @@ int main(int argc, char * const argv[])
   pe_comp_evaluation_init(&summary_data);
 
   // Counts and stats at the sequence level
-  PeCompEvaluation *seqlevel_summary_data = gt_malloc( sizeof(PeCompEvaluation) * numseqs );
+  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
+  PeCompEvaluation eval_template;
+  pe_comp_evaluation_init(&eval_template);
   for(i = 0; i < numseqs; i++)
-  {
-    pe_comp_evaluation_init(&seqlevel_summary_data[i]);
-  }
+    gt_array_add(seqlevel_evals, eval_template);
 
   if(strcmp(options.outfmt, "csv") == 0)
   {
@@ -325,9 +325,9 @@ int main(int argc, char * const argv[])
 
       #pragma omp critical(aggregate_stats)
       {
+        PeCompEvaluation *seqlevel_eval = gt_array_get(seqlevel_evals, i);
+        pe_comp_evaluation_combine(seqlevel_eval, &summary_data_local);
         pe_comp_evaluation_combine(&summary_data, &summary_data_local);
-        pe_comp_evaluation_combine(&seqlevel_summary_data[i],
-                                   &summary_data_local);
       }
     } // End pragma omp parallel
 
@@ -364,8 +364,8 @@ int main(int argc, char * const argv[])
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
 
-  pe_print_summary( time_buffer, argc, argv, seqids, &summary_data, seqlevel_summary_data,
-                    options.outfile, &options );
+  pe_print_summary(time_buffer, argc, argv, seqids, &summary_data,
+                   seqlevel_evals, options.outfile, &options );
   if(options.outfile == stdout)
     fflush(stdout);
   else
@@ -409,7 +409,7 @@ int main(int argc, char * const argv[])
   // Free up remaining memory
   agn_logger_delete(logger);
   agn_locus_index_delete(locusindex);
-  gt_free(seqlevel_summary_data);
+  gt_array_delete(seqlevel_evals);
   gt_array_delete(loci);
   gt_timer_delete(timer_all);
   gt_timer_delete(timer_short);
