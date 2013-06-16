@@ -18,8 +18,8 @@ void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,
                                                    void *data);
 #endif
 
-void agn_gene_locus_aggregate_results( AgnGeneLocus *locus,
-                                      PeCompEvaluation *data )
+void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
+                                      PeCompEvaluation *data)
 {
   unsigned long i;
   GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);

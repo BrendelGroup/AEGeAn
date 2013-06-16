@@ -1,6 +1,5 @@
 #include <omp.h>
 #include "AgnLocusIndex.h"
-#include "AgnGeneLocus.h"
 #include "AgnUtils.h"
 
 //------------------------------------------------------------------------------
@@ -92,6 +91,50 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
 //------------------------------------------------------------------------------
 // Method implementations
 //------------------------------------------------------------------------------
+
+void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
+                                          int numprocs,
+                                          AgnLocusIndexVisitFunc preanalyfunc,
+                                          AgnLocusIndexVisitFunc postanalyfunc,
+                                          void *analyfuncdata,
+                                          AgnLogger *logger)
+{
+  int orig_numprocs = omp_get_num_threads();
+  omp_set_num_threads(numprocs);
+  
+  GtArray *seqloci = agn_locus_index_get(idx, seqid);
+  unsigned long nloci = gt_array_size(seqloci);
+
+  int i, rank;
+  #pragma omp parallel
+  {
+    rank = omp_get_thread_num();
+    #pragma omp for schedule(dynamic)
+    for(i = 0; i < nloci; i++)
+    {
+      GtTimer *timer = gt_timer_new();
+      gt_timer_start(timer);
+      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, i);
+      preanalyfunc(locus, analyfuncdata);
+      //unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+      agn_gene_locus_enumerate_clique_pairs(locus);
+      //GtArray *reportedpairs = agn_gene_locus_comparative_analysis(locus);
+      agn_gene_locus_comparative_analysis(locus);
+      postanalyfunc(locus, analyfuncdata);
+      gt_timer_stop(timer);
+      //agn_logger_log_status(logger, "proc=%d; locus=%s[%lu, %lu]; length=%lu; "
+      //    "trans=%lu,%lu; pairs=%lu,%lu", rank, agn_gene_locus_get_seqid(locus),
+      //    agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus),
+      //    agn_gene_locus_get_length(locus),
+      //    agn_gene_locus_num_refr_transcripts(locus),
+      //    agn_gene_locus_num_pred_transcripts(locus), npairs,
+      //    gt_array_size(reportedpairs));
+      gt_timer_delete(timer);
+    }
+  }
+  
+  omp_set_num_threads(orig_numprocs);
+}
 
 void agn_locus_index_delete(AgnLocusIndex *idx)
 {

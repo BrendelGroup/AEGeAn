@@ -2,10 +2,22 @@
 #define AEGEAN_LOCUS_INDEX
 
 #include "genometools.h"
-#include "AgnLogger.h"
 #include "AgnComparEval.h"
+#include "AgnGeneLocus.h"
+#include "AgnLogger.h"
 
 typedef struct AgnLocusIndex AgnLocusIndex;
+typedef void (*AgnLocusIndexVisitFunc)(AgnGeneLocus *, void *);
+
+/**
+ *
+ */
+void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
+                                          int numprocs,
+                                          AgnLocusIndexVisitFunc preanalyfunc,
+                                          AgnLocusIndexVisitFunc postanalyfunc,
+                                          void *analyfuncdata,
+                                          AgnLogger *logger);
 
 /**
  * Free memory allocated to the given locus index.
