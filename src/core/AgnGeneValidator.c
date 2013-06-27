@@ -379,7 +379,7 @@ bool agn_gene_validator_infer_introns(AgnGeneValidator *v, GtFeatureNode *mrna,
 
     if(first_range.end == second_range.start - 1)
     {
-      agn_logger_log_error(logger, "mRNA '%s' has directly adjacent exons\n",
+      agn_logger_log_error(logger, "mRNA '%s' has directly adjacent exons",
                            gt_feature_node_get_attribute(mrna, "ID"));
       gt_str_delete(aegean);
       return false;
@@ -461,6 +461,15 @@ bool agn_gene_validator_infer_mrna_features(AgnGeneValidator *v,
         "introns", gt_feature_node_get_attribute(mrna, "ID"),
         gt_genome_node_get_line_number((GtGenomeNode *)mrna),
         gt_array_size(v->exons), gt_array_size(v->introns)
+    );
+    isvalid = false;
+  }
+
+  if(gt_array_size(v->cdss) == 0)
+  {
+    agn_logger_log_warning(logger, "mRNA '%s' (line %u) has no CDS",
+        gt_feature_node_get_attribute(mrna, "ID"),
+        gt_genome_node_get_line_number((GtGenomeNode *)mrna)
     );
     isvalid = false;
   }

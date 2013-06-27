@@ -192,6 +192,7 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
     else
     {
       gt_genome_node_delete((GtGenomeNode *)fn);
+      // FIXME issue 34
       if(agn_logger_has_error(v->logger))
         return 1;
     }
