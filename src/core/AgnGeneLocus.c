@@ -219,7 +219,7 @@ unsigned long agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus)
   }
 
   locus->clique_pairs = gt_array_new( sizeof(AgnCliquePair *) );
-  
+
   unsigned long i,j;
   for(i = 0; i < gt_array_size(locus->refr_cliques); i++)
   {
