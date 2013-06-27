@@ -43,7 +43,7 @@ int main(int argc, char * const *argv)
     { "help", no_argument, NULL, 'h' },
     { "outfile", required_argument, NULL, 'o' },
     { "source", required_argument, NULL, 's' },
-    { "stdin", required_argument, NULL, 't' },
+    { "stdin", no_argument, NULL, 't' },
     { NULL, no_argument, NULL, 0 },
   };
 

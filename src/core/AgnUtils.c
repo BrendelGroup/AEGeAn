@@ -206,6 +206,7 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
   while(!(loaderror = gt_node_stream_next(gff3, &gn, error)) && gn)
   {
     gt_genome_node_accept(gn, nv, error);
+    // FIXME issue 34
     if(agn_logger_has_error(logger))
       break;
   }
