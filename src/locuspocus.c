@@ -119,11 +119,10 @@ int main(int argc, char **argv)
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
-    GtArray *seqloci = agn_locus_index_get(loci, seqid);
-    gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
+    GtArray *seqloci = agn_locus_index_interval_loci(loci, seqid, 500);
     if(options.verbose)
     {
-      fprintf(stderr, "[LocusPocus] found %lu loci for sequence '%s'\n",
+      fprintf(stderr,"[LocusPocus] found %lu interval loci for sequence '%s'\n",
               gt_array_size(seqloci), seqid);
     }
     for(j = 0; j < gt_array_size(seqloci); j++)

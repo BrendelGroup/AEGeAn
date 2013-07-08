@@ -56,17 +56,7 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2)
   AgnGeneLocus *l2 = *(AgnGeneLocus **)p2;
   GtRange l1r = l1->locus.range;
   GtRange l2r = l2->locus.range;
-
-  bool equal = l1r.start == l2r.start && l1r.end == l2r.end;
-  if(equal)
-    return 0;
-
-  bool l1startfirst = l1r.start <  l2r.start;
-  bool l1endfirst   = l1r.start == l2r.start && l1r.end < l2r.end;
-  if(l1startfirst || l1endfirst)
-    return -1;
-
-  return 1;
+  return gt_range_compare(&l1r, &l2r);
 }
 
 unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
@@ -635,6 +625,13 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 {
   return locus->locus.range;
+}
+
+void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
+                              unsigned long end)
+{
+  locus->locus.range.start = start;
+  locus->locus.range.end   = end;
 }
 
 double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,

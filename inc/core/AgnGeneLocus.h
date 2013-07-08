@@ -290,6 +290,16 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid);
 GtRange agn_gene_locus_range(AgnGeneLocus *locus);
 
 /**
+ * Set the range of this locus, no questions asked.
+ *
+ * @param[out] locus    locus object
+ * @param[in]  start    new start coordinate
+ * @param[in]  end      new end coordinate
+ */
+void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
+                              unsigned long end);
+
+/**
  * Calculate the splice complexity of this gene locus. Rather than calling this
  * method directly, users are recommended to use one of the following macros:
  * `agn_gene_locus_prep_splice_complexity(locus)' to calculate the splice

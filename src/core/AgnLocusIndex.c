@@ -123,6 +123,86 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
   return loci;
 }
 
+GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
+                                       unsigned long delta)
+{
+  GtArray *loci = agn_locus_index_get(idx, seqid);
+  if(loci == NULL)
+    return NULL;
+  gt_array_sort(loci, (GtCompare)agn_gene_locus_array_compare);
+
+  unsigned long nloci = gt_array_size(loci);
+  gt_assert(nloci > 0);
+  GtArray *iloci = gt_array_new( sizeof(AgnGeneLocus *) );
+  
+  // Handle intial iloci (unless there is only 1 gene locus)
+  AgnGeneLocus *l1 = *(AgnGeneLocus **)gt_array_get(loci, 0);
+  GtRange r1 = agn_gene_locus_range(l1);
+  if(r1.start > 1 && r1.start > delta + 1)
+  {
+    AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, 1, r1.start - delta - 1);
+    gt_array_add(iloci, ilocus);
+  }
+  if(nloci > 1)
+  {
+    AgnGeneLocus *l2 = *(AgnGeneLocus **)gt_array_get(loci, 1);
+    GtRange r2 = agn_gene_locus_range(l2);
+
+    unsigned long newstart, newend;
+    newstart = (r1.start > 1 && r1.start > delta + 1) ? r1.start - delta : 1;
+    newend   = (r1.end + delta < r2.start) ? r1.end + delta : r2.start - 1;
+    l1 = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(l1, newstart, newend);
+    gt_array_add(iloci, l1);
+
+    newstart = newend + 1;
+    newend   = (r2.start - delta >= newend) ? r2.start - delta :
+                                             r2.start - 1;
+    AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, newstart, newend);
+    gt_array_add(iloci, ilocus);
+  }
+
+  // Handle internal (not initial or terminal) iloci
+  unsigned long i;
+  for(i = 1; i < nloci - 1; i++)
+  {
+    AgnGeneLocus *llocus = *(AgnGeneLocus **)gt_array_get(loci, i-1);
+    AgnGeneLocus *locus  = *(AgnGeneLocus **)gt_array_get(loci, i);
+    AgnGeneLocus *rlocus = *(AgnGeneLocus **)gt_array_get(loci, i+1);
+    GtRange lrange = agn_gene_locus_range(llocus);
+    GtRange range = agn_gene_locus_range(locus);
+    GtRange rrange = agn_gene_locus_range(rlocus);
+
+    unsigned long newstart, newend;
+    newstart = (range.start - delta > lrange.end) ? range.start - delta :
+                                                    lrange.end + 1;
+    newend   = (range.end + delta < rrange.start) ? range.end + delta :
+                                                    rrange.start - 1;
+    AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, newstart, newend);
+    gt_array_add(iloci, ilocus);
+    
+    if(newend < rrange.start - 1)
+    {
+      newstart = newend + 1;
+      newend   = (rrange.start - delta > newend) ? rrange.start - delta :
+                                                   rrange.start - 1;
+      ilocus = agn_gene_locus_new(seqid);
+      agn_gene_locus_set_range(ilocus, newstart, newend);
+      gt_array_add(iloci, ilocus);
+    }
+  }
+
+  // FIXME Handle terminal ilocus
+  l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci-1);
+  r1 = agn_gene_locus_range(l1);
+
+  gt_array_delete(loci);
+  return iloci;
+}
+
 int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
 {
   GtArray *loci = (GtArray *)lp;
