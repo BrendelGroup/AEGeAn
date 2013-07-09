@@ -119,6 +119,7 @@ int main(int argc, char **argv)
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
+    // FIXME hardwired parameter 500bp
     GtArray *seqloci = agn_locus_index_interval_loci(loci, seqid, 500);
     if(options.verbose)
     {
