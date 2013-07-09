@@ -38,6 +38,15 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
         agn_gene_locus_add(LC, GN, DEFAULTSOURCE)
 
 /**
+ * Do a shallow copy of this data structure.
+ *
+ * @param[in] locus    a locus object
+ * @returns            a clone of the locus object, all of whose internal data
+ *                     point to the same objects
+ */
+AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus);
+
+/**
  * Analog of strcmp for comparing AgnGeneLocus objects, used for sorting GtArray
  * objects containing AgnGeneLocus objects.
  *
