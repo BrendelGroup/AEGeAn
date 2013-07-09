@@ -204,7 +204,6 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci-1);
   r1 = agn_gene_locus_range(l1);
   unsigned long prevend = seqrange->start - 1;
-fprintf(stderr, "seqrange: [%lu, %lu]\n", seqrange->start, seqrange->end);
   if(nloci > 1)
   {
     AgnGeneLocus *l2 = *(AgnGeneLocus **)gt_array_get(loci, nloci-2);
@@ -560,7 +559,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
       gt_feature_index_get_range_for_seqid(refrfeats, &refrrange, seqid, error);
       gt_feature_index_get_range_for_seqid(predfeats, &predrange, seqid, error);
       GtRange trange = gt_range_join(&refrrange, &predrange);
-      seqrange->start = 1; // trange.start;
+      seqrange->start = trange.start;
       seqrange->end   = trange.end;
       #pragma omp critical
       {
@@ -633,7 +632,7 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
       GtRange trange;
       GtError *error = gt_error_new();
       gt_feature_index_get_range_for_seqid(features, &trange, seqid, error);
-      seqrange->start = 1; // trange.start;
+      seqrange->start = trange.start;
       seqrange->end   = trange.end;
       #pragma omp critical
       {
