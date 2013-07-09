@@ -141,7 +141,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   // Handle intial iloci (unless there is only 1 gene locus)
   AgnGeneLocus *l1 = *(AgnGeneLocus **)gt_array_get(loci, 0);
   GtRange r1 = agn_gene_locus_range(l1);
-  if(r1.start > seqrange->start && r1.start > delta + 1)
+  if(r1.start > seqrange->start + delta)
   {
     AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
     agn_gene_locus_set_range(ilocus, seqrange->start, r1.start - delta - 1);
@@ -153,8 +153,8 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     GtRange r2 = agn_gene_locus_range(l2);
 
     unsigned long newstart, newend;
-    newstart = (r1.start > 1 && r1.start > delta + 1) ? r1.start - delta
-                                                      : seqrange->start;
+    newstart = (r1.start > seqrange->start + delta) ? r1.start - delta
+                                                    : seqrange->start;
     newend   = (r1.end + delta < r2.start) ? r1.end + delta : r2.start - 1;
     AgnGeneLocus *ilocus = agn_gene_locus_clone(l1);
     agn_gene_locus_set_range(ilocus, newstart, newend);
