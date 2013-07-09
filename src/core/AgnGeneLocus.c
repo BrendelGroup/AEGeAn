@@ -50,6 +50,22 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
     gt_hashmap_add(locus->pred_genes, gene, gene);
 }
 
+AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus)
+{
+  AgnGeneLocus *newlocus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
+  newlocus->locus = locus->locus;
+  newlocus->genes = locus->genes;
+  newlocus->refr_genes = locus->refr_genes;
+  newlocus->pred_genes = locus->pred_genes;
+  newlocus->refr_cliques = locus->refr_cliques;
+  newlocus->pred_cliques = locus->pred_cliques;
+  newlocus->clique_pairs = locus->clique_pairs;
+  newlocus->reported_pairs = locus->reported_pairs;
+  newlocus->unique_refr_cliques = locus->unique_refr_cliques;
+  newlocus->unique_pred_cliques = locus->unique_pred_cliques;
+  return newlocus;
+}
+
 int agn_gene_locus_array_compare(const void *p1, const void *p2)
 {
   AgnGeneLocus *l1 = *(AgnGeneLocus **)p1;
