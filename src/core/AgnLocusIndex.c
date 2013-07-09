@@ -134,11 +134,20 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   gt_array_sort(loci, (GtCompare)agn_gene_locus_array_compare);
 
   unsigned long nloci = gt_array_size(loci);
-  gt_assert(nloci > 0);
   GtArray *iloci = gt_array_new( sizeof(AgnGeneLocus *) );
   GtRange *seqrange = gt_hashmap_get(idx->seqranges, seqid);
 
-  // Handle intial iloci (unless there is only 1 gene locus)
+  // Handle trivial case
+  if(nloci == 0)
+  {
+    AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, seqrange->start, seqrange->end);
+    gt_array_add(iloci, ilocus);
+    gt_array_delete(loci);
+    return iloci;
+  }
+
+  // Handle initial iloci (unless there is only 1 gene locus)
   AgnGeneLocus *l1 = *(AgnGeneLocus **)gt_array_get(loci, 0);
   GtRange r1 = agn_gene_locus_range(l1);
   if(r1.start > seqrange->start + delta)
