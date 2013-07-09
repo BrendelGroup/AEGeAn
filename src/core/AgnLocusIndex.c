@@ -9,6 +9,7 @@
 struct AgnLocusIndex
 {
   GtStrArray *seqids;
+  GtHashmap *seqranges;
   GtHashmap *locus_trees;
   GtFree locusfreefunc;
 };
@@ -97,6 +98,7 @@ void agn_locus_index_delete(AgnLocusIndex *idx)
 {
   gt_hashmap_delete(idx->locus_trees);
   gt_str_array_delete(idx->seqids);
+  gt_hashmap_delete(idx->seqranges);
   gt_free(idx);
   idx = NULL;
 }
@@ -126,9 +128,7 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
 int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
 {
   GtArray *loci = (GtArray *)lp;
-  // Stored as a void* since we don't know whether these are AgnLocus objects or
-  // AgnGeneLocus objects.
-  void *locus = gt_interval_tree_node_get_data(itn);
+  AgnGeneLocus *locus = gt_interval_tree_node_get_data(itn);
   gt_array_add(loci, locus);
   return 0;
 }
@@ -137,6 +137,7 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete)
 {
   AgnLocusIndex *idx = gt_malloc( sizeof(AgnLocusIndex) );
   idx->seqids = gt_str_array_new();
+  idx->seqranges = gt_hashmap_new(GT_HASH_STRING, NULL, (GtFree)gt_free_func);
   idx->locus_trees = gt_hashmap_new(GT_HASH_STRING, NULL,
                                     (GtFree)gt_interval_tree_delete);
   idx->locusfreefunc = NULL;
@@ -220,8 +221,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
   unsigned long i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  //GtIntervalTree *loci = gt_interval_tree_new((GtFree)agn_locus_delete);
-  GtIntervalTree *loci = gt_interval_tree_new(NULL);
+  GtIntervalTree *loci = gt_interval_tree_new(idx->locusfreefunc);
 
   GtArray *seqfeatures = gt_feature_index_get_features_for_seqid(features,
                                  seqid, error);
@@ -448,10 +448,19 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                                                             refrfeats,
                                                             predfeats, filters,
                                                             logger);
+      GtRange *seqrange = gt_malloc( sizeof(GtRange) );
+      GtRange refrrange, predrange;
+      GtError *error = gt_error_new();
+      gt_feature_index_get_range_for_seqid(refrfeats, &refrrange, seqid, error);
+      gt_feature_index_get_range_for_seqid(predfeats, &predrange, seqid, error);
+      GtRange trange = gt_range_join(&refrrange, &predrange);
+      seqrange->start = 1; // trange.start;
+      seqrange->end   = trange.end;
       #pragma omp critical
       {
         totalloci += gt_interval_tree_size(loci);
         gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
+        gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
         agn_logger_log_status(logger, "loci for sequence '%s' identified by "
                               "processor %d", seqid, rank);
       }
@@ -513,10 +522,18 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
     {
       const char *seqid = gt_str_array_get(seqids, i);
       GtIntervalTree *loci = agn_locus_index_parse(idx,seqid,features,logger);
+
+      GtRange *seqrange = gt_malloc( sizeof(GtRange) );
+      GtRange trange;
+      GtError *error = gt_error_new();
+      gt_feature_index_get_range_for_seqid(features, &trange, seqid, error);
+      seqrange->start = 1; // trange.start;
+      seqrange->end   = trange.end;
       #pragma omp critical
       {
         totalloci += gt_interval_tree_size(loci);
         gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
+        gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
         agn_logger_log_status(logger, "loci for sequence '%s' identified by "
                               "processor %d", seqid, rank);
       }
