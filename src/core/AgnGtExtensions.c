@@ -1,6 +1,4 @@
 #include <string.h>
-#include "extended/feature_node_rep.h"
-#include "extended/feature_node.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
 
@@ -184,33 +182,6 @@ bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2)
   return gt_range_contains(&r1, &r2);
 }
 
-bool agn_gt_feature_node_remove_child(GtFeatureNode *root, GtFeatureNode *child)
-{
-  GtDlistelem *current;
-
-  if(root == NULL || root == child || root->children == NULL)
-    return false;
-
-  for
-  (
-    current = gt_dlist_first(root->children);
-    current != NULL;
-    current = gt_dlistelem_next(current)
-  )
-  {
-    GtFeatureNode *temp = (GtFeatureNode *)gt_dlistelem_get_data(current);
-    if(child == temp)
-    {
-      gt_dlist_remove(root->children, current);
-      return true;
-    }
-    if(agn_gt_feature_node_remove_child(temp, child))
-      return true;
-  }
-
-  return false;
-}
-
 void agn_gt_feature_node_resolve_pseudo_node(GtFeatureNode *root, GtArray *nodes)
 {
   if(gt_feature_node_is_pseudo(root))
@@ -248,7 +219,7 @@ void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
     //gt_feature_node_set_source(current, source);
 
     // This is the hack.
-    current->source = gt_str_ref(source);
+    // current->source = gt_str_ref(source);
   }
 }
 

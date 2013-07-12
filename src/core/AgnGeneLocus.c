@@ -1,6 +1,5 @@
 #include <math.h>
 #include <string.h>
-#include "extended/feature_node.h"
 #include "AgnGeneLocus.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"

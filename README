@@ -145,8 +145,6 @@ installation or if you want to customize your installation.
   - cairo=no         if your system does not have Cairo graphics libraries
                      installed (you will not be able to generate graphics)
   - GT_INSTALL_DIR=? if you did not install GenomeTools in `/usr/local'
-  - GT_COMPILE_DIR=? if you did not download and compile GenomeTools in
-                     `/usr/local/src/genometools'
   - prefix=?         to install AEGeAn in a directory other than
                      `/usr/local' (e.g. if you do not have admin privileges)
 
@@ -164,10 +162,8 @@ For example, if I need to install GenomeTools and AEGeAn in my home directory
   cd /home/alice/local/src
   git clone https://danielstandage@bitbucket.org/danielstandage/aegean.git
   cd aegean
-  make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local /
-       GT_COMPILE_DIR=/home/alice/local/src/genometools 64bit=yes
-  make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local /
-       GT_COMPILE_DIR=/home/alice/local/src/genometools 64bit=yes install
+  make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local
+  make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local install
 
 Remember that if you install the GenomeTools library in a non-standard location,
 you will need to make sure that the ParsEval program can find that library at

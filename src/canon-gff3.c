@@ -3,7 +3,6 @@
 #include "AgnCanonNodeVisitor.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
-#include "extended/feature_node.h"
 
 /**
  * Print the usage statement for CanonGFF3

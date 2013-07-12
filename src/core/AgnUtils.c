@@ -1,6 +1,5 @@
 #include <string.h>
 #include <time.h>
-#include "extended/feature_node.h"
 #include "AgnCanonNodeVisitor.h"
 #include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"

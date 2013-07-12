@@ -3,7 +3,6 @@
 
 prefix=/usr/local
 GT_INSTALL_DIR=$(prefix)
-GT_COMPILE_DIR=$(GT_INSTALL_DIR)/src/genometools
 
 #----End configuration----#
 #----End configuration----#
@@ -54,7 +53,7 @@ LDFLAGS=-lgenometools -lm -L$(GT_INSTALL_DIR)/lib
 ifdef lib
   LDFLAGS += -L$(lib)
 endif
-INCS=-I $(GT_INSTALL_DIR)/include/genometools/ -I $(GT_COMPILE_DIR)/src -I inc/core -I inc/ParsEval -I inc/VAnG -I /usr/include/cairo/ -I /sw/include/cairo/
+INCS=-I $(GT_INSTALL_DIR)/include/genometools/ -I inc/core -I inc/ParsEval -I inc/VAnG -I /usr/include/cairo/ -I /sw/include/cairo/
 
 # Targets
 all:		$(BINS)

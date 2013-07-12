@@ -587,13 +587,13 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
   else if(agn_gt_feature_node_is_start_codon_feature(child))
   {
     v->start_codon_range = gt_genome_node_get_range((GtGenomeNode *)child);
-    agn_gt_feature_node_remove_child(mrna, child);
+    gt_feature_node_remove_leaf(mrna, child);
   }
 
   else if(agn_gt_feature_node_is_stop_codon_feature(child))
   {
     v->stop_codon_range = gt_genome_node_get_range((GtGenomeNode *)child);
-    agn_gt_feature_node_remove_child(mrna, child);
+    gt_feature_node_remove_leaf(mrna, child);
   }
 
   else if(agn_gt_feature_node_is_exon_feature(child))
@@ -614,7 +614,7 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
           gt_genome_node_get_line_number((GtGenomeNode *)child),
           gt_feature_node_get_attribute(mrna, "ID")
       );
-      agn_gt_feature_node_remove_child(mrna, child);
+      gt_feature_node_remove_leaf(mrna, child);
       gt_genome_node_delete((GtGenomeNode *)child);
     }
   }
@@ -625,7 +625,7 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
         gt_genome_node_get_line_number((GtGenomeNode *)child),
         gt_feature_node_get_attribute(mrna, "ID")
     );
-    agn_gt_feature_node_remove_child(mrna, child);
+    gt_feature_node_remove_leaf(mrna, child);
     gt_genome_node_delete((GtGenomeNode *)child);
   }
 }

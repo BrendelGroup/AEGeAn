@@ -134,18 +134,6 @@ bool agn_gt_feature_node_overlap(GtFeatureNode *first, GtFeatureNode *second);
 bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2);
 
 /**
- * The GtFeatureNode class comes with a function to add a child feature, but
- * does not come with a function to remove a child. This function provides that
- * functionality.
- *
- * @param[in] root     the highest-level ancestor of the feature to be removed
- * @param[in] child    the child (or descendant) feature to be removed
- * @returns            true if child is found and removed, false if child is not
- *                     found
- */
-bool agn_gt_feature_node_remove_child(GtFeatureNode *root, GtFeatureNode *child);
-
-/**
  * Pseudo nodes are used when connected features have more than one top-level
  * element. This function takes any feature node as input; if it is a pseudo
  * node, it adds all the node's direct children to the provided array. If it is
