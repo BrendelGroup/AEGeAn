@@ -8,6 +8,7 @@
 struct AgnLocusIndex
 {
   GtStrArray *seqids;
+  GtHashmap *seqranges;
   GtHashmap *locus_trees;
   GtFree locusfreefunc;
 };
@@ -140,6 +141,7 @@ void agn_locus_index_delete(AgnLocusIndex *idx)
 {
   gt_hashmap_delete(idx->locus_trees);
   gt_str_array_delete(idx->seqids);
+  gt_hashmap_delete(idx->seqranges);
   gt_free(idx);
   idx = NULL;
 }
@@ -166,12 +168,124 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
   return loci;
 }
 
+GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
+                                       unsigned long delta)
+{
+  GtArray *loci = agn_locus_index_get(idx, seqid);
+  if(loci == NULL)
+    return NULL;
+  gt_array_sort(loci, (GtCompare)agn_gene_locus_array_compare);
+
+  unsigned long nloci = gt_array_size(loci);
+  GtArray *iloci = gt_array_new( sizeof(AgnGeneLocus *) );
+  GtRange *seqrange = gt_hashmap_get(idx->seqranges, seqid);
+
+  // Handle trivial case
+  if(nloci == 0)
+  {
+    AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, seqrange->start, seqrange->end);
+    gt_array_add(iloci, ilocus);
+    gt_array_delete(loci);
+    return iloci;
+  }
+
+  // Handle initial iloci (unless there is only 1 gene locus)
+  AgnGeneLocus *l1 = *(AgnGeneLocus **)gt_array_get(loci, 0);
+  GtRange r1 = agn_gene_locus_range(l1);
+  if(r1.start > seqrange->start + delta)
+  {
+    AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, seqrange->start, r1.start - delta - 1);
+    gt_array_add(iloci, ilocus);
+  }
+  if(nloci > 1)
+  {
+    AgnGeneLocus *l2 = *(AgnGeneLocus **)gt_array_get(loci, 1);
+    GtRange r2 = agn_gene_locus_range(l2);
+
+    unsigned long newstart, newend;
+    newstart = (r1.start > seqrange->start + delta) ? r1.start - delta
+                                                    : seqrange->start;
+    newend   = (r1.end + delta < r2.start) ? r1.end + delta : r2.start - 1;
+    AgnGeneLocus *ilocus = agn_gene_locus_clone(l1);
+    agn_gene_locus_set_range(ilocus, newstart, newend);
+    gt_array_add(iloci, ilocus);
+
+    if(r2.start - delta - 1 > newend)
+    {
+      newstart = newend + 1;
+      newend   = r2.start - delta - 1;
+      ilocus = agn_gene_locus_new(seqid);
+      agn_gene_locus_set_range(ilocus, newstart, newend);
+      gt_array_add(iloci, ilocus);
+    }
+  }
+
+  // Handle internal (not initial or terminal) iloci
+  unsigned long i;
+  for(i = 1; i < nloci - 1; i++)
+  {
+    AgnGeneLocus *llocus = *(AgnGeneLocus **)gt_array_get(loci, i-1);
+    AgnGeneLocus *locus  = *(AgnGeneLocus **)gt_array_get(loci, i);
+    AgnGeneLocus *rlocus = *(AgnGeneLocus **)gt_array_get(loci, i+1);
+    GtRange lrange = agn_gene_locus_range(llocus);
+    GtRange range = agn_gene_locus_range(locus);
+    GtRange rrange = agn_gene_locus_range(rlocus);
+
+    unsigned long newstart, newend;
+    newstart = (range.start - delta > lrange.end) ? range.start - delta :
+                                                    lrange.end + 1;
+    newend   = (range.end + delta < rrange.start) ? range.end + delta :
+                                                    rrange.start - 1;
+    AgnGeneLocus *ilocus = agn_gene_locus_clone(locus);
+    agn_gene_locus_set_range(ilocus, newstart, newend);
+    gt_array_add(iloci, ilocus);
+
+    if(newend < rrange.start - delta - 1)
+    {
+      newstart = newend + 1;
+      newend   = rrange.start - delta - 1;
+      ilocus = agn_gene_locus_new(seqid);
+      agn_gene_locus_set_range(ilocus, newstart, newend);
+      gt_array_add(iloci, ilocus);
+    }
+  }
+
+  // FIXME Handle terminal ilocus
+  l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci-1);
+  r1 = agn_gene_locus_range(l1);
+  unsigned long prevend = seqrange->start - 1;
+  if(nloci > 1)
+  {
+    AgnGeneLocus *l2 = *(AgnGeneLocus **)gt_array_get(loci, nloci-2);
+    GtRange r2 = agn_gene_locus_range(l2);
+    prevend = r2.end;
+  }
+  unsigned long newstart, newend;
+  newstart = (r1.start > prevend + delta) ? r1.start - delta : prevend + 1;
+  newend   = (r1.end + delta <= seqrange->end) ? r1.end + delta : seqrange->end;
+  AgnGeneLocus *ilocus = agn_gene_locus_clone(l1);
+  agn_gene_locus_set_range(ilocus, newstart, newend);
+  gt_array_add(iloci, ilocus);
+
+  if(newend < seqrange->end)
+  {
+    newstart = newend + 1;
+    newend = seqrange->end;
+    ilocus = agn_gene_locus_new(seqid);
+    agn_gene_locus_set_range(ilocus, newstart, newend);
+    gt_array_add(iloci, ilocus);
+  }
+
+  gt_array_delete(loci);
+  return iloci;
+}
+
 int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
 {
   GtArray *loci = (GtArray *)lp;
-  // Stored as a void* since we don't know whether these are AgnLocus objects or
-  // AgnGeneLocus objects.
-  void *locus = gt_interval_tree_node_get_data(itn);
+  AgnGeneLocus *locus = gt_interval_tree_node_get_data(itn);
   gt_array_add(loci, locus);
   return 0;
 }
@@ -180,6 +294,7 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete)
 {
   AgnLocusIndex *idx = gt_malloc( sizeof(AgnLocusIndex) );
   idx->seqids = gt_str_array_new();
+  idx->seqranges = gt_hashmap_new(GT_HASH_STRING, NULL, (GtFree)gt_free_func);
   idx->locus_trees = gt_hashmap_new(GT_HASH_STRING, NULL,
                                     (GtFree)gt_interval_tree_delete);
   idx->locusfreefunc = NULL;
@@ -263,8 +378,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
   unsigned long i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  //GtIntervalTree *loci = gt_interval_tree_new((GtFree)agn_locus_delete);
-  GtIntervalTree *loci = gt_interval_tree_new(NULL);
+  GtIntervalTree *loci = gt_interval_tree_new(idx->locusfreefunc);
 
   GtArray *seqfeatures = gt_feature_index_get_features_for_seqid(features,
                                  seqid, error);
@@ -434,7 +548,7 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
       }
       new_gene_count = new_pred_gene_count;
     } while(new_gene_count > 0);
-    
+
     bool failfilter = agn_gene_locus_filter(locus, filters);
     if(!failfilter)
     {
@@ -491,10 +605,21 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                                                             refrfeats,
                                                             predfeats, filters,
                                                             logger);
+      GtRange *seqrange = gt_malloc( sizeof(GtRange) );
+      GtRange refrrange, predrange;
+      GtError *error = gt_error_new();
+      gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
+                                                error);
+      gt_feature_index_get_orig_range_for_seqid(predfeats, &predrange, seqid,
+                                                error);
+      GtRange trange = gt_range_join(&refrrange, &predrange);
+      seqrange->start = trange.start;
+      seqrange->end   = trange.end;
       #pragma omp critical
       {
         totalloci += gt_interval_tree_size(loci);
         gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
+        gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
         agn_logger_log_status(logger, "loci for sequence '%s' identified by "
                               "processor %d", seqid, rank);
       }
@@ -556,10 +681,18 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
     {
       const char *seqid = gt_str_array_get(seqids, i);
       GtIntervalTree *loci = agn_locus_index_parse(idx,seqid,features,logger);
+
+      GtRange *seqrange = gt_malloc( sizeof(GtRange) );
+      GtRange trange;
+      GtError *error = gt_error_new();
+      gt_feature_index_get_orig_range_for_seqid(features, &trange, seqid,error);
+      seqrange->start = trange.start;
+      seqrange->end   = trange.end;
       #pragma omp critical
       {
         totalloci += gt_interval_tree_size(loci);
         gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
+        gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
         agn_logger_log_status(logger, "loci for sequence '%s' identified by "
                               "processor %d", seqid, rank);
       }

@@ -133,7 +133,7 @@ int main(int argc, char * const *argv)
   {
     const char *seqid = gt_str_array_get(seqids, i);
     GtRange seqrange;
-    int code = gt_feature_index_get_range_for_seqid(features, &seqrange, seqid, error);
+    int code = gt_feature_index_get_orig_range_for_seqid(features, &seqrange, seqid, error);
     if(gt_error_is_set(error))
     {
       fprintf(stderr, "[CanonGFF3] error fetching range for sequence '%s': %s", seqid, gt_error_get(error));

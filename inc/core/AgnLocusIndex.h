@@ -48,6 +48,19 @@ void agn_locus_index_find(AgnLocusIndex *idx, const char *seqid, GtRange *range,
 GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
 
 /**
+ * Compute interval loci (more detailed description forthcoming).
+ *
+ * @param[in] idx      locus index object
+ * @param[in] seqid    ID of the sequence of interest
+ * @param[in] delta    number of nucleotides to extend gene loci up- and down-
+ *                     stream assuming this does not cause overlap with a gene
+ *                     belonging to another locus
+ * @returns            a list of interval loci corresponding to this sequence
+ */
+GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
+                                       unsigned long delta);
+
+/**
  * Allocate memory for a new locus index object.
  *
  * @param[in] freeondelete    indicate whether the locus index object should
@@ -64,7 +77,7 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete);
  * @param[in]  refrfeats    reference annotations
  * @param[in]  predfeats    prediction annotations
  * @param[in]  numprocs     number of processors to use while identifying loci
- * @param[in] filters    filtering criteria
+ * @param[in]  filters      filtering criteria
  * @param[out] logger       object to which warning/error messages will be
  *                          written if necessary
  * @returns                 the number of loci identified
@@ -81,7 +94,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
  * @param[in]  refrfile     path to GFF3 file containing reference annotations
  * @param[in]  predfile     path to GFF3 file containing prediction annotations
  * @param[in]  numprocs     number of processors to use while identifying loci
- * @param[in] filters    filtering criteria
+ * @param[in]  filters      filtering criteria
  * @param[out] logger       object to which warning/error messages will be
  *                          written if necessary
  * @returns                 the number of loci identified

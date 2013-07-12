@@ -8,6 +8,8 @@
 typedef struct
 {
   bool debug;
+  bool intloci;
+  unsigned long delta;
   int numprocs;
   FILE *outstream;
   bool verbose;
@@ -22,7 +24,12 @@ void print_usage(FILE *outstream)
 "    -d|--debug            print detailed debugging messages to terminal\n"
 "                          (standard error)\n"
 "    -h|--help             print this help message and exit\n"
-"    -n|--numprocs:INT     number of processors to utilize; default is 1\n"
+"    -i|--intloci          parse and report interval loci rather than gene\n"
+"                          loci\n"
+"    -l|--delta: INT       when parsing interval loci, use the following\n"
+"                          delta to extend gene loci and include potential\n"
+"                          regulatory regions; default is 500\n"
+"    -n|--numprocs: INT    number of processors to utilize; default is 1\n"
 "    -o|--outfile: FILE    name of file to which results will be written;\n"
 "                          default is terminal (standard output)\n"
 "    -v|--verbose          print detailed log messages to terminal (standard error)\n\n" );
@@ -34,16 +41,18 @@ int main(int argc, char **argv)
   // Parse options from command line
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dhn:o:v";
+  const char *optstr = "dhil:n:o:v";
   const struct option locuspocus_options[] =
   {
-    { "debug",    no_argument, NULL, 'd' },
-    { "help",     no_argument, NULL, 'h' },
-    { "numprocs", no_argument, NULL, 'n' },
-    { "outfile",  no_argument, NULL, 'o' },
-    { "verbose",  no_argument, NULL, 'v' },
+    { "debug",    no_argument,       NULL, 'd' },
+    { "help",     no_argument,       NULL, 'h' },
+    { "intloci",  no_argument,       NULL, 'i' },
+    { "delta",    required_argument, NULL, 'l' },
+    { "numprocs", required_argument, NULL, 'n' },
+    { "outfile",  required_argument, NULL, 'o' },
+    { "verbose",  no_argument,       NULL, 'v' },
   };
-  LocusPocusOptions options = { 0, 0, stdout, 0 };
+  LocusPocusOptions options = { 0, 0, 500, 0, stdout, 0 };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex))
@@ -57,6 +66,17 @@ int main(int argc, char **argv)
       case 'h':
         print_usage(stdout);
         exit(0);
+        break;
+      case 'i':
+        options.intloci = 1;
+        break;
+      case 'l':
+        if(sscanf(optarg, "%lu", &options.delta) == EOF)
+        {
+          fprintf(stderr, "[LocusPocus] error: could not convert delta '%s' to "
+                  "an integer", optarg);
+          exit(1);
+        }
         break;
       case 'n':
         if(sscanf(optarg, "%d", &options.numprocs) == EOF)
@@ -119,11 +139,19 @@ int main(int argc, char **argv)
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
-    GtArray *seqloci = agn_locus_index_get(loci, seqid);
-    gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
+    GtArray *seqloci;
+    if(options.intloci)
+    {
+       seqloci = agn_locus_index_interval_loci(loci, seqid, options.delta);
+    }
+    else
+    {
+      seqloci = agn_locus_index_get(loci, seqid);
+      gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
+    }
     if(options.verbose)
     {
-      fprintf(stderr, "[LocusPocus] found %lu loci for sequence '%s'\n",
+      fprintf(stderr,"[LocusPocus] found %lu loci for sequence '%s'\n",
               gt_array_size(seqloci), seqid);
     }
     for(j = 0; j < gt_array_size(seqloci); j++)

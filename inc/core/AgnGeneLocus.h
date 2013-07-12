@@ -38,6 +38,15 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
         agn_gene_locus_add(LC, GN, DEFAULTSOURCE)
 
 /**
+ * Do a shallow copy of this data structure.
+ *
+ * @param[in] locus    a locus object
+ * @returns            a clone of the locus object, all of whose internal data
+ *                     point to the same objects
+ */
+AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus);
+
+/**
  * Analog of strcmp for comparing AgnGeneLocus objects, used for sorting GtArray
  * objects containing AgnGeneLocus objects.
  *
@@ -304,6 +313,16 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid);
  * @returns            its coordinates
  */
 GtRange agn_gene_locus_range(AgnGeneLocus *locus);
+
+/**
+ * Set the range of this locus, no questions asked.
+ *
+ * @param[out] locus    locus object
+ * @param[in]  start    new start coordinate
+ * @param[in]  end      new end coordinate
+ */
+void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
+                              unsigned long end);
 
 /**
  * Calculate the splice complexity of this gene locus. Rather than calling this
