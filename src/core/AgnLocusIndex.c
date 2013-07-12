@@ -169,7 +169,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     agn_gene_locus_set_range(ilocus, newstart, newend);
     gt_array_add(iloci, ilocus);
 
-    if(r2.start - delta > newend)
+    if(r2.start - delta - 1 > newend)
     {
       newstart = newend + 1;
       newend   = r2.start - delta - 1;
@@ -199,7 +199,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     agn_gene_locus_set_range(ilocus, newstart, newend);
     gt_array_add(iloci, ilocus);
 
-    if(newend < rrange.start - delta)
+    if(newend < rrange.start - delta - 1)
     {
       newstart = newend + 1;
       newend   = rrange.start - delta - 1;
