@@ -565,8 +565,10 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
       GtRange *seqrange = gt_malloc( sizeof(GtRange) );
       GtRange refrrange, predrange;
       GtError *error = gt_error_new();
-      gt_feature_index_get_range_for_seqid(refrfeats, &refrrange, seqid, error);
-      gt_feature_index_get_range_for_seqid(predfeats, &predrange, seqid, error);
+      gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
+                                                error);
+      gt_feature_index_get_orig_range_for_seqid(predfeats, &predrange, seqid,
+                                                error);
       GtRange trange = gt_range_join(&refrrange, &predrange);
       seqrange->start = trange.start;
       seqrange->end   = trange.end;
@@ -640,7 +642,7 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
       GtRange *seqrange = gt_malloc( sizeof(GtRange) );
       GtRange trange;
       GtError *error = gt_error_new();
-      gt_feature_index_get_range_for_seqid(features, &trange, seqid, error);
+      gt_feature_index_get_orig_range_for_seqid(features, &trange, seqid,error);
       seqrange->start = trange.start;
       seqrange->end   = trange.end;
       #pragma omp critical
