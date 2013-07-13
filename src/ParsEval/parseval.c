@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <omp.h>
 #include <string.h>
 #include <time.h>
@@ -6,6 +7,23 @@
 #include "AgnGeneLocus.h"
 #include "AgnUtils.h"
 #include "PeReports.h"
+
+void pe_seqid_check(const char *seqid, AgnLogger *logger)
+{
+  size_t n = strlen(seqid);
+  int i;
+  for(i = 0; i < n; i++)
+  {
+    char c = seqid[i];
+    if(!isalnum(c) && c != '.' && c != '-' && c != '_')
+    {
+      agn_logger_log_error(logger, "seqid '%s' contains illegal characters; "
+                           "only alphanumeric characters and . and _ and - are "
+                           "allowed.", seqid);
+      return;
+    }
+  }
+}
 
 // Main method
 int main(int argc, char * const argv[])
@@ -59,10 +77,15 @@ int main(int argc, char * const argv[])
   for(i = 0; i < numseqs; i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
+    pe_seqid_check(seqid, logger);
+
     GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
     gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
     gt_array_add(loci, seq_loci);
   }
+  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] checking "
+                                  "sequence IDs");
+  if(haderror) return EXIT_FAILURE;
   gt_timer_stop(timer_short);
   gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data and "
                           "parsing loci (%ld.%06ld seconds)\n", stderr);
