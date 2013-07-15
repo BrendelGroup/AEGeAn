@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------//
 struct AgnGeneLocus
 {
-  AgnLoc locus;
+  AgnSequenceRegion region;
   GtDlist *genes;
   GtHashmap *refr_genes;
   GtHashmap *pred_genes;
@@ -52,7 +52,7 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
 AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus)
 {
   AgnGeneLocus *newlocus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
-  newlocus->locus = locus->locus;
+  newlocus->region = locus->region;
   newlocus->genes = locus->genes;
   newlocus->refr_genes = locus->refr_genes;
   newlocus->pred_genes = locus->pred_genes;
@@ -69,8 +69,8 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2)
 {
   AgnGeneLocus *l1 = *(AgnGeneLocus **)p1;
   AgnGeneLocus *l2 = *(AgnGeneLocus **)p2;
-  GtRange l1r = l1->locus.range;
-  GtRange l2r = l2->locus.range;
+  GtRange l1r = l1->region.range;
+  GtRange l2r = l2->region.range;
   return gt_range_compare(&l1r, &l2r);
 }
 
@@ -200,7 +200,7 @@ void agn_gene_locus_delete(AgnGeneLocus *locus)
   if(locus->unique_pred_cliques != NULL)
     gt_array_delete(locus->unique_pred_cliques);
 
-  gt_free(locus->locus.seqid);
+  gt_free(locus->region.seqid);
   gt_free(locus);
   locus = NULL;
 }
@@ -233,9 +233,9 @@ unsigned long agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus)
     for(j = 0; j < gt_array_size(locus->pred_cliques); j++)
     {
       pred_clique = *(AgnTranscriptClique**)gt_array_get(locus->pred_cliques,j);
-      AgnCliquePair *pair = agn_clique_pair_new(locus->locus.seqid,
+      AgnCliquePair *pair = agn_clique_pair_new(locus->region.seqid,
                                                 refr_clique, pred_clique,
-                                                &locus->locus.range);
+                                                &locus->region.range);
       gt_array_add(locus->clique_pairs, pair);
     }
   }
@@ -560,12 +560,12 @@ unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
 
 unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus)
 {
-  return locus->locus.range.end;
+  return locus->region.range.end;
 }
 
 unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus)
 {
-  return gt_range_length(&locus->locus.range);
+  return gt_range_length(&locus->region.range);
 }
 
 AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
@@ -593,12 +593,12 @@ AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
 
 const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus)
 {
-  return locus->locus.seqid;
+  return locus->region.seqid;
 }
 
 unsigned long agn_gene_locus_get_start(AgnGeneLocus *locus)
 {
-  return locus->locus.range.start;
+  return locus->region.range.start;
 }
 
 GtArray *agn_gene_locus_get_unique_pred_cliques(AgnGeneLocus *locus)
@@ -621,9 +621,9 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 {
   AgnGeneLocus *locus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
 
-  locus->locus.seqid = gt_cstr_dup(seqid);
-  locus->locus.range.start = 0;
-  locus->locus.range.end = 0;
+  locus->region.seqid = gt_cstr_dup(seqid);
+  locus->region.range.start = 0;
+  locus->region.range.end = 0;
   locus->genes = gt_dlist_new( (GtCompare)gt_genome_node_cmp );
   locus->refr_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
   locus->pred_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
@@ -639,14 +639,14 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 
 GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 {
-  return locus->locus.range;
+  return locus->region.range;
 }
 
 void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
                               unsigned long end)
 {
-  locus->locus.range.start = start;
-  locus->locus.range.end   = end;
+  locus->region.range.start = start;
+  locus->region.range.end   = end;
 }
 
 double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,
@@ -666,8 +666,8 @@ void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
     src = source;
   fprintf(outstream,
           "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu\n",
-          locus->locus.seqid, src, locus->locus.range.start,
-          locus->locus.range.end, gt_dlist_size(locus->genes));
+          locus->region.seqid, src, locus->region.range.start,
+          locus->region.range.end, gt_dlist_size(locus->genes));
 }
 
 GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
@@ -778,8 +778,8 @@ unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
 void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   GtRange gene_range = gt_genome_node_get_range((GtGenomeNode *)gene);
-  if(locus->locus.range.start == 0 && locus->locus.range.end == 0)
-    locus->locus.range = gene_range;
+  if(locus->region.range.start == 0 && locus->region.range.end == 0)
+    locus->region.range = gene_range;
   else
-    locus->locus.range = gt_range_join(&locus->locus.range, &gene_range);
+    locus->region.range = gt_range_join(&locus->region.range, &gene_range);
 }

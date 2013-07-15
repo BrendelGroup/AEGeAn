@@ -15,7 +15,7 @@ typedef struct
 {
   char *seqid;
   GtRange range;
-} AgnLoc;
+} AgnSequenceRegion;
 
 /**
  * The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal
