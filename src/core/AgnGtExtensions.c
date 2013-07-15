@@ -231,12 +231,7 @@ void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
        current != NULL;
        current = gt_feature_node_iterator_next(iter) )
   {
-    //This function will not allow you to reset the source, so I'm hacking. I'll
-    //open a ticket to see if/why this is a bad idea.
-    //gt_feature_node_set_source(current, source);
-
-    // This is the hack.
-    // current->source = gt_str_ref(source);
+    gt_feature_node_set_source(current, source);
   }
 }
 
