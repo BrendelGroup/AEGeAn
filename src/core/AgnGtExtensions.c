@@ -182,6 +182,23 @@ bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2)
   return gt_range_contains(&r1, &r2);
 }
 
+void agn_gt_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
+{
+  gt_assert(root && fn);
+
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *child;
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
+  {
+    agn_gt_feature_node_remove_tree(root, child);
+    gt_feature_node_remove_leaf(fn, child);
+  }
+  gt_feature_node_iterator_delete(iter);
+  gt_feature_node_remove_leaf(root, fn);
+}
+
 void agn_gt_feature_node_resolve_pseudo_node(GtFeatureNode *root, GtArray *nodes)
 {
   if(gt_feature_node_is_pseudo(root))

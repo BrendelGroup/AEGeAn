@@ -4,6 +4,7 @@
 #include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
 #include "AgnGeneLocus.h"
+#include "AgnSimpleNodeVisitor.h"
 #include "AgnUtils.h"
 
 void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
@@ -188,16 +189,12 @@ FILE *agn_fopen(const char *filename, const char *mode)
   return fp;
 }
 
-GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
-                                     AgnLogger *logger)
+void agn_import(int numfiles, const char **filenames, GtNodeVisitor *nv,
+                AgnLogger *logger)
 {
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-
-  GtFeatureIndex *features = gt_feature_index_memory_new();
-  AgnGeneValidator *validator = agn_gene_validator_new();
-  GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator, logger);
 
   GtGenomeNode *gn;
   bool loaderror;
@@ -210,6 +207,17 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
       break;
   }
   gt_node_stream_delete(gff3);
+  gt_error_delete(error);
+}
+
+GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
+                                     AgnLogger *logger)
+{
+  GtFeatureIndex *features = gt_feature_index_memory_new();
+  AgnGeneValidator *validator = agn_gene_validator_new();
+  GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator, logger);
+
+  agn_import(numfiles, filenames, nv, logger);
   gt_node_visitor_delete(nv);
   agn_gene_validator_delete(validator);
 
@@ -218,8 +226,23 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
     gt_feature_index_delete(features);
     features = NULL;
   }
+  return features;
+}
 
-  gt_error_delete(error);
+GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
+                                  const char *type, AgnLogger *logger)
+{
+  GtFeatureIndex *features = gt_feature_index_memory_new();
+  GtNodeVisitor *nv = agn_simple_node_visitor_new(features, type, logger);
+
+  agn_import(numfiles, filenames, nv, logger);
+  gt_node_visitor_delete(nv);
+
+  if(agn_logger_has_error(logger))
+  {
+    gt_feature_index_delete(features);
+    features = NULL;
+  }
   return features;
 }
 

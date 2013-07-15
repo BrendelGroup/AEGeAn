@@ -1,6 +1,7 @@
 #include <omp.h>
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
+#include "AgnSimpleNodeVisitor.h"
 #include "AgnUtils.h"
 
 //------------------------------------------------------------------------------
@@ -266,8 +267,8 @@ unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
 {
   gt_assert(idx != NULL);
   unsigned long nloci;
-  // Do I want to use the import canonical function or the add_gff3 function?
-  GtFeatureIndex *features = agn_import_canonical(numfiles, filenames, logger);
+  GtFeatureIndex *features = agn_import_simple(numfiles, filenames, "gene",
+                                               logger);
   if(agn_logger_has_error(logger))
   {
     gt_feature_index_delete(features);

@@ -134,6 +134,16 @@ bool agn_gt_feature_node_overlap(GtFeatureNode *first, GtFeatureNode *second);
 bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2);
 
 /**
+ * The 'gt_feature_node_remove_leaf' function only allows removal of a leaf
+ * node. This function will remove all of a node's children so that it is a
+ * leaf node, which can then be removed.
+ *
+ * @param[in] root    a root or parent node to the node to be deleted
+ * @param[in] fn      the feature node to be removed
+ */
+void agn_gt_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
+
+/**
  * Pseudo nodes are used when connected features have more than one top-level
  * element. This function takes any feature node as input; if it is a pseudo
  * node, it adds all the node's direct children to the provided array. If it is
