@@ -160,7 +160,7 @@ For example, if I need to install GenomeTools and AEGeAn in my home directory
   make prefix=/home/alice/local 64bit=yes install
 
   cd /home/alice/local/src
-  git clone https://github.com/standage/AEGeAn.git
+  git clone git://github.com/standage/AEGeAn.git
   cd AEGeAn
   make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local
   make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local install
