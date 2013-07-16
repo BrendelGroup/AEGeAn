@@ -19,12 +19,9 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
   unsigned long length = 0;
   GtFeatureNode *current;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
-  for
-  (
-    current = gt_feature_node_iterator_next(iter);
-    current != NULL;
-    current = gt_feature_node_iterator_next(iter)
-  )
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
   {
     if(agn_gt_feature_node_is_cds_feature(current))
       length += gt_genome_node_get_length((GtGenomeNode *)current);
@@ -33,7 +30,9 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
 
   if(length % 3 != 0)
   {
-    fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, not a multiple of 3\n", gt_feature_node_get_attribute(transcript, "ID"), length);
+    const char *tid = gt_feature_node_get_attribute(transcript, "ID");
+    fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, "
+            "not a multiple of 3\n", tid, length);
   }
 
   return length / 3;

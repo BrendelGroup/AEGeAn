@@ -709,7 +709,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
 {
   char filename[512];
   pe_gene_locus_get_filename(locus, filename, options->outfilename);
-  FILE *outstream = agn_fopen(filename, "w");
+  FILE *outstream = agn_fopen(filename, "w", stderr);
 
   fprintf( outstream,
            "<!doctype html>\n"

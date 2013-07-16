@@ -58,7 +58,7 @@ int main(int argc, char * const *argv)
         break;
 
       case 'o':
-        outstream = agn_fopen(optarg, "w");
+        outstream = agn_fopen(optarg, "w", stderr);
         break;
 
       case 's':

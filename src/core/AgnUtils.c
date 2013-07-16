@@ -58,12 +58,10 @@ void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
 
 double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
 {
-// fprintf(stderr, "DELETEME newtest a\n");
   AgnTranscriptClique *clique1 = agn_transcript_clique_new();
   agn_transcript_clique_add(clique1, t1);
   AgnTranscriptClique *clique2 = agn_transcript_clique_new();
   agn_transcript_clique_add(clique2, t2);
-// fprintf(stderr, "DELETEME newtest b\n");
 
   GtGenomeNode *gn1 = (GtGenomeNode *)t1;
   GtRange r1 = gt_genome_node_get_range(gn1);
@@ -75,23 +73,17 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
     local_range.start = r2.start;
   if(r2.end > r1.end)
     local_range.end = r2.end;
-// fprintf(stderr, "DELETEME newtest c\n");
 
   AgnCliquePair *pair = agn_clique_pair_new(gt_str_get(seqid), clique1, clique2,
                                             &local_range);
   agn_clique_pair_build_model_vectors(pair);
   agn_clique_pair_comparative_analysis(pair);
-// fprintf(stderr, "DELETEME newtest d\n");
 
   double ed = agn_clique_pair_get_edit_distance(pair);
-// fprintf(stderr, "DELETEME newtest e\n");
 
   agn_transcript_clique_delete(clique1);
-// fprintf(stderr, "DELETEME newtest f\n");
   agn_transcript_clique_delete(clique2);
-// fprintf(stderr, "DELETEME newtest g\n");
   agn_clique_pair_delete(pair);
-// fprintf(stderr, "DELETEME newtest h\n");
 
   return ed;
 }
@@ -108,10 +100,8 @@ double agn_calc_splice_complexity(GtArray *transcripts)
     for(j = 0; j < i; j++)
     {
       GtFeatureNode *t_j = *(GtFeatureNode **)gt_array_get(transcripts, j);
-// fprintf(stderr, "DELETEME t_i,t_j=%p,%p\n", t_i, t_j);
       if(agn_gt_feature_node_overlap(t_i, t_j))
       {
-// fprintf(stderr, "DELETEME i,j=%lu,%lu\n", i, j);
         sc += agn_calc_edit_distance(t_i, t_j);
       }
     }
@@ -178,12 +168,12 @@ GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set)
   return neighbors;
 }
 
-FILE *agn_fopen(const char *filename, const char *mode)
+FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream)
 {
   FILE *fp = fopen(filename, mode);
   if(fp == NULL)
   {
-    fprintf(stderr, "error: could not open '%s'\n", filename);
+    fprintf(errstream, "error: could not open '%s'\n", filename);
     exit(1);
   }
   return fp;

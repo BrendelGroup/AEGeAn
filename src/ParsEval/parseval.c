@@ -198,7 +198,7 @@ int main(int argc, char * const argv[])
         sprintf(filename, "%s/%s/index.html", options.outfilename, seqid);
         if(options.debug)
           fprintf(stderr, "debug: opening outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w");
+        seqfile = agn_fopen(filename, "w", stderr);
         pe_print_seqfile_header(seqfile, seqid);
       }
       else
@@ -206,7 +206,7 @@ int main(int argc, char * const argv[])
         sprintf(filename, "%s.%s", options.outfilename, seqid);
         if(options.debug)
           fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w");
+        seqfile = agn_fopen(filename, "w", stderr);
       }
     }
 

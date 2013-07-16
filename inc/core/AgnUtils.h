@@ -78,10 +78,11 @@ GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set);
  *
  * @param[in] filename    name of the file
  * @param[in] mode        access mode for this file handle
+ * @param[in] errstream   output stream to which error messages will be written
  * @returns               a file handle to the opened file; will ungracefully
  *                        exit if file handle cannot be created
  */
-FILE *agn_fopen(const char *filename, const char *mode);
+FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream);
 
 /**
  * Load annotation data from the given GFF3 files into memory.
