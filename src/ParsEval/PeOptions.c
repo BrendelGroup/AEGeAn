@@ -46,7 +46,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       case 'c':
         if( sscanf(optarg, "%d", &options->complimit) == EOF )
         {
-          fprintf(stderr, "error: could not convert comparison limit '%s' to an integer", optarg);
+          fprintf(stderr, "error: could not convert comparison limit '%s' to "
+                  "an integer", optarg);
           exit(1);
         }
         break;
@@ -60,7 +61,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
             strcmp(optarg, "text") != 0 &&
             strcmp(optarg, "html") != 0 )
         {
-            fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' option\n\n", optarg);
+            fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
+                    "option\n\n", optarg);
             pe_print_usage();
             exit(1);
         }
@@ -89,7 +91,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       case 'n':
         if( sscanf(optarg, "%d", &options->numprocs) == EOF )
         {
-          fprintf(stderr, "error: could not convert number of processors '%s' to an integer", optarg);
+          fprintf(stderr, "error: could not convert number of processors '%s' "
+                  "to an integer", optarg);
           exit(1);
         }
         break;
@@ -101,8 +104,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       case 'p':
         options->locus_graphics = true;
 #ifdef WITHOUT_CAIRO
-        fputs( "error: ParsEval was compiled without graphics support. Please recompile to enable "
-               "this feature.\n", stderr);
+        fputs("error: ParsEval was compiled without graphics support. Please "
+              "recompile to enable this feature.\n", stderr);
         exit(1);
 #endif
         break;
@@ -113,12 +116,14 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         if(options->usefilter)
         {
           if(options->debug)
-            fprintf(stderr, "debug: opening filter file '%s'\n", options->filterfile);
+            fprintf(stderr, "debug: opening filter file '%s'\n",
+                    options->filterfile);
 
           FILE *filterfile = agn_fopen(options->filterfile, "r", stderr);
           AgnLogger *logger = agn_logger_new();
           agn_compare_filters_parse(&options->filters, filterfile, logger);
-          bool haderrors = agn_logger_print_all(logger, stderr, "[ParsEval] parsing filters");
+          bool haderrors = agn_logger_print_all(logger, stderr,
+                                                "[ParsEval] parsing filters");
           if(haderrors)
             exit(1);
           agn_logger_delete(logger);
@@ -135,7 +140,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       case 't':
         if( sscanf(optarg, "%d", &options->trans_per_locus) == EOF )
         {
-          fprintf(stderr, "error: could not convert transcript limit '%s' to an integer", optarg);
+          fprintf(stderr, "error: could not convert transcript limit '%s' to "
+                  "an integer", optarg);
           exit(1);
         }
         break;
@@ -205,8 +211,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         }
         else
         {
-          fprintf( stderr, "error: outfile '%s' exists; use '-w' to force overwrite\n",
-                   options->outfilename );
+          fprintf(stderr, "error: outfile '%s' exists; use '-w' to force "
+                  "overwrite\n", options->outfilename );
           exit(1);
         }
       }
@@ -217,8 +223,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       sprintf(filecmd, "test -f %s", options->outfilename);
       if(system(filecmd) == 0 && !options->overwrite)
       {
-          fprintf( stderr, "error: outfile '%s' exists; use '-w' to force overwrite\n",
-                   options->outfilename );
+          fprintf(stderr, "error: outfile '%s' exists; use '-w' to force "
+                  "overwrite\n", options->outfilename );
           exit(1);
       }
     }
@@ -228,8 +234,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
   {
     if(strcmp(options->outfilename, "STDOUT") == 0)
     {
-      fputs( "error: will not print results to terminal in HTML mode; must provide outfile\n\n",
-             stderr );
+      fputs("error: will not print results to terminal in HTML mode; must "
+            "provide outfile\n\n", stderr );
       pe_print_usage();
       exit(1);
     }
@@ -237,7 +243,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     sprintf(dircmd, "mkdir %s", options->outfilename);
     if(system(dircmd) != 0)
     {
-      fprintf(stderr, "error: cannot open output directory '%s'\n", options->outfilename);
+      fprintf(stderr, "error: cannot open output directory '%s'\n",
+              options->outfilename);
       exit(1);
     }
     char outname[256];
@@ -250,7 +257,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     }
 
     char copy_cmd[1024];
-    sprintf(copy_cmd, "cp -r %s/* %s", options->data_path, options->outfilename);
+    sprintf(copy_cmd,"cp -r %s/* %s", options->data_path, options->outfilename);
     if(options->debug)
       fprintf(stderr, "debug: copying shared data: '%s'\n", copy_cmd);
     if(system(copy_cmd) != 0)
@@ -261,15 +268,24 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
     if(options->summary_only && options->locus_graphics)
     {
-      fprintf(stderr, "warning: cannot print PNG graphics in summary only mode; ignoring\n");
+      fprintf(stderr, "warning: cannot print PNG graphics in summary only "
+              "mode; ignoring\n");
       options->locus_graphics = false;
     }
   }
   else
   {
+    if(options->numprocs != 1)
+    {
+      fprintf(stderr, "warning: multithreading only supported in HTML output "
+              "mode; using 1 processor");
+      options->numprocs = 1;
+    }
+
     if(options->locus_graphics)
     {
-      fputs("warning: will only generate PNG graphics when outformat='html'; ignoring\n\n", stderr);
+      fputs("warning: will only generate PNG graphics when outformat='html'; "
+            "ignoring\n\n", stderr);
       options->locus_graphics = false;
     }
     if(strcmp(options->outfilename, "STDOUT") != 0)
@@ -277,7 +293,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       options->outfile = fopen(options->outfilename, "w");
       if(options->outfile == NULL)
       {
-        fprintf(stderr, "error: cannot open output file '%s'\n", options->outfilename);
+        fprintf(stderr, "error: cannot open output file '%s'\n",
+                options->outfilename);
         exit(1);
       }
     }
@@ -302,42 +319,41 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
 void pe_print_usage()
 {
-  fprintf( stderr,
-           "Usage: parseval [options] reference prediction\n"
-           "  Options:\n"
-           "    -a|--datashare: STRING      Location from which to copy shared data for\n"
-           "                                HTML output (if `make install' has not yet\n"
-           "                                been run)\n"
-           "    -c|--complimit: INT         Maximum number of comparisons per locus; set\n"
-           "                                to 0 for no limit (default=512)\n"
-           "    -d|--debug:                 Print debugging messages\n"
-           "    -f|--outformat: STRING      Indicate desired output format; possible\n"
-           "                                options: 'csv', 'text', or 'html'\n"
-           "                                (default='text'); in 'text' or 'csv' mode,\n"
-           "                                will create a single file; in 'html' mode,\n"
-           "                                will create a directory\n"
-           "    -g|--printgff3:             Include GFF3 output corresponding to each\n"
-           "                                comparison\n"
-           "    -h|--help:                  Print help message and exit\n"
-           "    -k|--makefilter             Create a default configuration file for\n"
-           "                                filtering reported results\n"
-           "    -m|--vectors:               Print model vectors in output file\n"
-           "    -n|--numprocs: INT          Number of processors to use (default=1)\n"
-           "    -o|--outfile: FILENAME      File/directory to which output will be written;\n"
-           "                                default is the terminal (STDOUT)\n"
-           "    -p|--png:                   Generate individual PNG graphics for each gene\n"
-           "                                locus\n"
-           "    -r|--filterfile: STRING     Use the indicated configuration file to filter\n"
-           "                                reported results;\n"
-           "    -s|--summary:               Only print summary statistics, do not print\n"
-           "                                individual comparisons\n"
-           "    -t|--maxtrans: INT          The maximum number of transcripts that can be\n"
-           "                                annotated at a given gene locus; set to 0 for\n"
-           "                                no limit (default=32)\n"
-           "    -v|--verbose:               Print verbose warning messages\n"
-           "    -w|--overwrite:             Force overwrite of any existing output files\n"
-           "    -x|--refrlabel: STRING      Optional label for reference annotations\n"
-           "    -y|--predlabel: STRING      Optional label for prediction annotations\n" );
+  fprintf(stderr, "Usage: parseval [options] reference prediction\n"
+"  Options:\n"
+"    -a|--datashare: STRING      Location from which to copy shared data for\n"
+"                                HTML output (if `make install' has not yet\n"
+"                                been run)\n"
+"    -c|--complimit: INT         Maximum number of comparisons per locus; set\n"
+"                                to 0 for no limit (default=512)\n"
+"    -d|--debug:                 Print debugging messages\n"
+"    -f|--outformat: STRING      Indicate desired output format; possible\n"
+"                                options: 'csv', 'text', or 'html'\n"
+"                                (default='text'); in 'text' or 'csv' mode,\n"
+"                                will create a single file; in 'html' mode,\n"
+"                                will create a directory\n"
+"    -g|--printgff3:             Include GFF3 output corresponding to each\n"
+"                                comparison\n"
+"    -h|--help:                  Print help message and exit\n"
+"    -k|--makefilter             Create a default configuration file for\n"
+"                                filtering reported results\n"
+"    -m|--vectors:               Print model vectors in output file\n"
+"    -n|--numprocs: INT          Number of processors to use (default=1)\n"
+"    -o|--outfile: FILENAME      File/directory to which output will be\n"
+"                                written; default is the terminal (STDOUT)\n"
+"    -p|--png:                   Generate individual PNG graphics for each\n"
+"                                gene locus\n"
+"    -r|--filterfile: STRING     Use the indicated configuration file to\n"
+"                                filter reported results;\n"
+"    -s|--summary:               Only print summary statistics, do not print\n"
+"                                individual comparisons\n"
+"    -t|--maxtrans: INT          The maximum number of transcripts that can\n"
+"                                be annotated at a given gene locus; set to 0\n"
+"                                for no limit (default=32)\n"
+"    -v|--verbose:               Print verbose warning messages\n"
+"    -w|--overwrite:             Force overwrite of any existing output files\n"
+"    -x|--refrlabel: STRING      Optional label for reference annotations\n"
+"    -y|--predlabel: STRING      Optional label for prediction annotations\n");
 }
 
 void pe_set_option_defaults(PeOptions *options)

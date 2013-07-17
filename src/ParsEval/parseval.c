@@ -180,8 +180,6 @@ void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
 
   if(!data->options->summary_only)
   {
-    // FIXME This code assumes that text/csv output mode is not run in parallel.
-    // That is not enforced anywhere in the code.
     pe_gene_locus_print_results(locus, data->seqfile, data->options);
 
     AgnGeneLocusSummary *locsum = gt_hashmap_get(data->locus_summaries, locus);
