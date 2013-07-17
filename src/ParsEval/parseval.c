@@ -165,8 +165,13 @@ int main(int argc, char * const argv[])
     // For HTML output, each sequence and each locus gets a dedicated .html file
     FILE *seqfile = NULL;
     GtArray *seq_loci = *(GtArray **)gt_array_get(loci, i);
-    AgnGeneLocusSummary *locus_summaries = (AgnGeneLocusSummary *)
-                                  gt_malloc( sizeof(AgnGeneLocusSummary) * gt_array_size(seq_loci) );
+    GtArray *locus_summaries = gt_array_new( sizeof(AgnGeneLocusSummary) );
+    AgnGeneLocusSummary locsumtemplate;
+    agn_comp_summary_init(&locsumtemplate.counts);
+    while(gt_array_size(locus_summaries) < gt_array_size(seq_loci))
+    {
+      gt_array_add(locus_summaries, locsumtemplate);
+    }
 
     if(!options.summary_only)
     {
@@ -224,9 +229,7 @@ int main(int argc, char * const argv[])
       // Begin parallelize loop
       // Parallel loop over the loci, not the clique pairs
       {
-        agn_comp_summary_init(&locus_summaries[j].counts);
         AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seq_loci, j);
-
         unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
         if(options.complimit != 0 && npairs > options.complimit)
         {
@@ -252,12 +255,13 @@ int main(int argc, char * const argv[])
 
           if(options.html && !options.summary_only)
           {
-            locus_summaries[j].start = agn_gene_locus_get_start(locus);
-            locus_summaries[j].end = agn_gene_locus_get_end(locus);
-            locus_summaries[j].length = agn_gene_locus_get_length(locus);
-            locus_summaries[j].refr_transcripts = agn_gene_locus_num_refr_transcripts(locus);
-            locus_summaries[j].pred_transcripts = agn_gene_locus_num_pred_transcripts(locus);
-            locus_summaries[j].total = npairs;
+            AgnGeneLocusSummary *locsum = gt_array_get(locus_summaries, j);
+            locsum->start            = agn_gene_locus_get_start(locus);
+            locsum->end              = agn_gene_locus_get_end(locus);
+            locsum->length           = agn_gene_locus_get_length(locus);
+            locsum->refr_transcripts = agn_gene_locus_num_refr_transcripts(locus);
+            locsum->pred_transcripts = agn_gene_locus_num_pred_transcripts(locus);
+            locsum->total            = npairs;
           }
 
           if( npairs != 0 &&
@@ -299,8 +303,9 @@ int main(int argc, char * const argv[])
             pe_comp_evaluation_init(&data);
             agn_gene_locus_aggregate_results(locus, &data);
             agn_gene_locus_aggregate_results(locus, &summary_data_local);
-            locus_summaries[j].reported = gt_array_size(reportedpairs);
-            locus_summaries[j].counts = data.counts;
+            AgnGeneLocusSummary *locsum = gt_array_get(locus_summaries, j);
+            locsum->reported = gt_array_size(reportedpairs);
+            locsum->counts = data.counts;
           }
 
           if(!options.summary_only)
@@ -350,7 +355,7 @@ int main(int argc, char * const argv[])
       {
         for(j = 0; j < gt_array_size(seq_loci); j++)
         {
-          AgnGeneLocusSummary *locus_summary = locus_summaries + j;
+          AgnGeneLocusSummary *locus_summary = gt_array_get(locus_summaries, j);
           if(locus_summary->start > 0 && locus_summary->end > 0)
           {
             pe_print_locus_to_seqfile(seqfile, locus_summary->start,
@@ -365,7 +370,7 @@ int main(int argc, char * const argv[])
       fclose(seqfile);
     }
 
-    gt_free(locus_summaries);
+    gt_array_delete(locus_summaries);
     gt_array_delete(seq_loci);
   } // End iterate over sequences
 
