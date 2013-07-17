@@ -45,9 +45,9 @@ void pe_seqid_check(const char *seqid, AgnLogger *logger)
   }
 }
 
-unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp, GtArray **locip,
-                                     GtStrArray **seqidsp, PeOptions *options,
-                                     AgnLogger *logger)
+unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp,
+                                     GtArray **locip, GtStrArray **seqidsp,
+                                     PeOptions *options, AgnLogger *logger)
 {
   GtTimer *timer = gt_timer_new();
   gt_timer_start(timer);
@@ -318,6 +318,62 @@ void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
                           "level results (%ld.%06ld seconds)\n", stderr);
 }
 
+void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
+                             PeOptions *options)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
+
+  if(!options->summary_only)
+  {
+    unsigned long i;
+    for(i = 0; i < gt_str_array_size(seqids); i++)
+    {
+      FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
+      if(options->html)
+        pe_print_seqfile_footer(seqfile);
+      fclose(seqfile);
+    }
+  }
+
+  if(options->outfile == stdout)
+    fflush(stdout);
+  else
+    fclose(options->outfile);
+  if(!options->html && !options->summary_only)
+  {
+    int result;
+    unsigned long i;
+    for(i = 0; i < gt_str_array_size(seqids); i++)
+    {
+      const char *seqid = gt_str_array_get(seqids, i);
+      char command[1024];
+      sprintf(command, "cat %s.%s >> %s && rm %s.%s", options->outfilename,
+              seqid, options->outfilename, options->outfilename, seqid );
+      if(options->outfile == stdout)
+      {
+        sprintf(command, "cat %s.%s && rm %s.%s", options->outfilename, seqid,
+                options->outfilename, seqid );
+      }
+      if(options->debug)
+        fprintf(stderr, "debug: merging output files: %s\n", command);
+      result = system(command);
+      if(result)
+      {
+        fprintf(stderr, "[ParsEval] error: issue merging GFF3 files: %s\n",
+                command);
+        exit(1);
+      }
+    }
+  }
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished printing summary, "
+                          "combining output (%ld.%06ld seconds)\n", stderr);
+  if(options->outfile == stdout)
+    fclose(stdout);
+}
+
 // Main method
 int main(int argc, char * const argv[])
 {
@@ -383,73 +439,23 @@ int main(int argc, char * const argv[])
                  locus_summaries, &options);
 
   // Print summary statistics, combine output
-  GtTimer *timer_short = gt_timer_new();
-  gt_timer_start(timer_short);
-  fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
-
   pe_print_summary(start_time_str, argc, argv, seqids, &overall_eval,
-                   seqlevel_evals, options.outfile, &options );
-  if(!options.summary_only)
-  {
-    unsigned long i;
-    for(i = 0; i < gt_str_array_size(seqids); i++)
-    {
-      FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-      if(options.html)
-        pe_print_seqfile_footer(seqfile);
-      fclose(seqfile);
-    }
-  }
-  gt_array_delete(seqfiles);
-
-  if(options.outfile == stdout)
-    fflush(stdout);
-  else
-    fclose(options.outfile);
-  if(!options.html && !options.summary_only)
-  {
-    int result;
-    unsigned long i;
-    for(i = 0; i < gt_str_array_size(seqids); i++)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      char command[1024];
-      sprintf( command, "cat %s.%s >> %s && rm %s.%s", options.outfilename, seqid,
-               options.outfilename, options.outfilename, seqid );
-      if(options.outfile == stdout)
-      {
-        sprintf( command, "cat %s.%s && rm %s.%s", options.outfilename, seqid, options.outfilename,
-                 seqid );
-      }
-      if(options.debug)
-        fprintf(stderr, "debug: merging output files: %s\n", command);
-      result = system(command);
-      if(result)
-      {
-        fprintf(stderr, "[ParsEval] error: issue merging GFF3 files: %s\n", command);
-        exit(1);
-      }
-    }
-  }
-  gt_timer_stop(timer_short);
-  gt_timer_show_formatted( timer_short, "[ParsEval] Finished printing summary, combining output "
-                           "(%ld.%06ld seconds)\n", stderr );
-  if(options.outfile == stdout)
-    fclose(stdout);
+                   seqlevel_evals, options.outfile, &options);
+  pe_print_combine_output(seqids, seqfiles, &options);
 
 
   // All done!
   gt_timer_stop(timer);
-  gt_timer_show_formatted( timer,"[ParsEval] ParsEval complete! (total runtime: %ld.%06ld "
-                           "seconds)\n\n", stderr );
+  gt_timer_show_formatted(timer, "[ParsEval] ParsEval complete! (total runtime:"
+                          " %ld.%06ld seconds)\n\n", stderr );
 
   // Free up remaining memory
+  gt_array_delete(seqfiles);
   gt_hashmap_delete(comp_evals);
   agn_logger_delete(logger);
   agn_locus_index_delete(locusindex);
   gt_array_delete(seqlevel_evals);
   gt_timer_delete(timer);
-  gt_timer_delete(timer_short); // FIXME remove
   if(gt_lib_clean() != 0)
   {
     fputs("error: issue cleaning GenomeTools library\n", stderr);
