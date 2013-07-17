@@ -61,10 +61,9 @@ unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp, GtArray **loci
 
   // Collect IDs of all sequences annotated by input files
   GtStrArray *seqids = agn_locus_index_seqids(locusindex);
-  unsigned long numseqs = gt_str_array_size(seqids);
   GtArray *loci = gt_array_new( sizeof(GtArray *) );
   int i;
-  for(i = 0; i < numseqs; i++)
+  for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
     pe_seqid_check(seqid, logger);
@@ -88,13 +87,12 @@ unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp, GtArray **loci
 GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
 {
   GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
-  unsigned long numseqs = gt_str_array_size(seqids);
 
   if(strcmp(options->outfmt, "csv") == 0)
     pe_print_csv_header(options->outfile);
 
   unsigned long i;
-  for(i = 0; i < numseqs; i++)
+  for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     FILE *seqfile = NULL;
     if(!options->summary_only)
@@ -161,9 +159,11 @@ void pe_pre_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
     PeCompEvaluation *compeval = gt_hashmap_get(data->comp_evals, locus);
     compeval->counts.num_loci++;
     compeval->counts.refr_genes += agn_gene_locus_num_refr_genes(locus);
-    compeval->counts.refr_transcripts += agn_gene_locus_num_refr_transcripts(locus);
     compeval->counts.pred_genes += agn_gene_locus_num_pred_genes(locus);
-    compeval->counts.pred_transcripts += agn_gene_locus_num_pred_transcripts(locus);
+    unsigned long rt = agn_gene_locus_num_refr_transcripts(locus);
+    unsigned long pt = agn_gene_locus_num_pred_transcripts(locus);
+    compeval->counts.refr_transcripts += rt;
+    compeval->counts.pred_transcripts += pt;
     if(agn_gene_locus_num_refr_genes(locus) == 0)
       compeval->counts.unique_pred++;
     else if(agn_gene_locus_num_pred_genes(locus) == 0)
@@ -211,6 +211,65 @@ void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
   }
 
   agn_gene_locus_delete(locus);
+}
+
+void pe_comp_eval(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
+                  GtHashmap **locus_summariesp, GtStrArray *seqids,
+                  GtArray *seqfiles, GtArray *loci, PeOptions *options)
+{
+  GtHashmap *comp_evals;
+  GtHashmap *locus_summaries;
+
+  AgnLogger *logger = agn_logger_new();
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin comparative analysis\n", stderr);
+  locus_summaries = gt_hashmap_new(GT_HASH_DIRECT, NULL, (GtFree)gt_free_mem);
+  comp_evals = gt_hashmap_new(GT_HASH_DIRECT, NULL, (GtFree)gt_free_mem);
+
+  int i, j;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
+    PeAnalysisData analysis_data;
+    analysis_data.seqfile = *(FILE **)gt_array_get(seqfiles, i);
+    analysis_data.options = options;
+
+    for(j = 0; j < gt_array_size(seqloci); j++)
+    {
+      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
+      PeCompEvaluation *compeval = gt_malloc( sizeof(PeCompEvaluation) );
+      pe_comp_evaluation_init(compeval);
+      gt_hashmap_add(comp_evals, locus, compeval);
+      AgnGeneLocusSummary *locsum = gt_malloc( sizeof(AgnGeneLocusSummary) );
+      agn_gene_locus_summary_init(locsum);
+      gt_hashmap_add(locus_summaries, locus, locsum);
+    }
+    analysis_data.comp_evals = comp_evals;
+    analysis_data.locus_summaries = locus_summaries;
+
+    agn_locus_index_comparative_analysis(locusindex, seqid, options->numprocs,
+                                     (AgnLocusIndexVisitFunc)pe_pre_analysis,
+                                     (AgnLocusIndexVisitFunc)pe_post_analysis,
+                                     &analysis_data, logger);
+    if(options->debug)
+      agn_logger_print_status(logger, stderr, "comparative analysis");
+    if(agn_logger_has_error(logger))
+    {
+      agn_logger_print_error(logger, stderr, "issues with comparative analysis "
+                             "of sequence '%s'", seqid);
+      exit(1);
+    }
+  }
+
+  *comp_evalsp = comp_evals;
+  *locus_summariesp = locus_summaries;
+
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished comparative "
+                          "analysis (%ld.%06ld seconds)\n", stderr);
+  agn_logger_delete(logger);
 }
 
 // Main method
@@ -265,62 +324,20 @@ int main(int argc, char * const argv[])
 
   // Prep report output
   GtArray *seqfiles = pe_prep_output(seqids, &options);
-  unsigned long numseqs = gt_str_array_size(seqids);
 
   // Comparative analysis of loci
-  GtTimer *timer_short = gt_timer_new();
-  gt_timer_start(timer_short);
-  fputs("[ParsEval] Begin comparative analysis\n", stderr);
-  GtHashmap *locus_summaries = gt_hashmap_new(GT_HASH_DIRECT,
-                                              NULL, (GtFree)gt_free_mem);
-  GtHashmap *comp_evals = gt_hashmap_new(GT_HASH_DIRECT,
-                                         NULL, (GtFree)gt_free_mem);
-  int i, j;
-  for(i = 0; i < numseqs; i++)
-  {
-    const char *seqid = gt_str_array_get(seqids, i);
-    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
-    PeAnalysisData analysis_data;
-    analysis_data.seqfile = *(FILE **)gt_array_get(seqfiles, i);
-    analysis_data.options = &options;
-
-    for(j = 0; j < gt_array_size(seqloci); j++)
-    {
-      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
-      PeCompEvaluation *compeval = gt_malloc( sizeof(PeCompEvaluation) );
-      pe_comp_evaluation_init(compeval);
-      gt_hashmap_add(comp_evals, locus, compeval);
-      AgnGeneLocusSummary *locsum = gt_malloc( sizeof(AgnGeneLocusSummary) );
-      agn_gene_locus_summary_init(locsum);
-      gt_hashmap_add(locus_summaries, locus, locsum);
-    }
-    analysis_data.comp_evals = comp_evals;
-    analysis_data.locus_summaries = locus_summaries;
-
-    agn_locus_index_comparative_analysis(locusindex, seqid, options.numprocs,
-                                         (AgnLocusIndexVisitFunc)pe_pre_analysis,
-                                         (AgnLocusIndexVisitFunc)pe_post_analysis,
-                                         &analysis_data, logger);
-    if(options.debug)
-      agn_logger_print_status(logger, stderr, "comparative analysis");
-    if(agn_logger_has_error(logger))
-    {
-      agn_logger_print_error(logger, stderr, "issues with comparative analysis "
-                             "of sequence '%s'", seqid);
-      exit(1);
-    }
-  }
-  gt_timer_stop(timer_short);
-  gt_timer_show_formatted(timer_short, "[ParsEval] Finished comparative "
-                          "analysis (%ld.%06ld seconds)\n", stderr);
+  GtHashmap *comp_evals, *locus_summaries;
+  pe_comp_eval(locusindex, &comp_evals, &locus_summaries, seqids, seqfiles, loci, &options);
 
   // Aggregate locus-level results at the sequence level and overall
+  GtTimer *timer_short = gt_timer_new();
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
   PeCompEvaluation overall_eval;
   pe_comp_evaluation_init(&overall_eval);
   GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
-  for(i = 0; i < numseqs; i++)
+  unsigned long i;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
     PeCompEvaluation seqeval;
@@ -359,7 +376,7 @@ int main(int argc, char * const argv[])
                    seqlevel_evals, options.outfile, &options );
   if(!options.summary_only)
   {
-    for(i = 0; i < numseqs; i++)
+    for(i = 0; i < gt_str_array_size(seqids); i++)
     {
       FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
       if(options.html)
@@ -376,7 +393,7 @@ int main(int argc, char * const argv[])
   if(!options.html && !options.summary_only)
   {
     int result;
-    for(i = 0; i < numseqs; i++)
+    for(i = 0; i < gt_str_array_size(seqids); i++)
     {
       const char *seqid = gt_str_array_get(seqids, i);
       char command[1024];
@@ -415,7 +432,7 @@ int main(int argc, char * const argv[])
   agn_locus_index_delete(locusindex);
   gt_array_delete(seqlevel_evals);
   gt_timer_delete(timer);
-  gt_timer_delete(timer_short);
+  gt_timer_delete(timer_short); // FIXME remove
   if(gt_lib_clean() != 0)
   {
     fputs("error: issue cleaning GenomeTools library\n", stderr);
