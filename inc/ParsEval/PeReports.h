@@ -151,7 +151,16 @@ void pe_print_seqfile_header(FILE *outstream, const char *seqid);
 void pe_print_seqfile_footer(FILE *outstream);
 
 /**
- * Print the ParsEval summary. FIXME
+ * Print the ParsEval summary. FIXME this could use refactoring
+ *
+ * @param[in] start_time          time at which ParsEval was launched
+ * @param[in] argc                number of command-line arguments
+ * @param[in] argv                vector of command-line arguments
+ * @param[in] seqids              list of sequence IDs
+ * @param[in] summary_data        overall comparison evaluations
+ * @param[in] seq_summary_data    sequence-level comparison evaluations
+ * @param[in] outstream           file stream to which summary will be written
+ * @param[in] options             ParsEval parameter values
  */
 void pe_print_summary(const char *start_time, int argc, char * const argv[],
                       GtStrArray *seqids, PeCompEvaluation *summary_data,

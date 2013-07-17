@@ -353,9 +353,10 @@ void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,void *data);
 
 #ifndef WITHOUT_CAIRO
 /**
- * Print a PNG graphic for this locus. FIXME
+ * Print a PNG graphic for this locus.
  *
- * @param[in] locus    the locus
+ * @param[in] locus       the locus
+ * @param[in] metadata    additional data needed for graphics printing
  */
 void agn_gene_locus_print_png(AgnGeneLocus *locus,
                               AgnGeneLocusPngMetadata *metadata);
@@ -406,7 +407,9 @@ double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,
         agn_gene_locus_splice_complexity(LC, DEFAULTSOURCE)
 
 /**
- * FIXME
+ * Initialize a locus summary data structure.
+ *
+ * @param[out] summary    the data structure to be initialized
  */
 void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary);
 

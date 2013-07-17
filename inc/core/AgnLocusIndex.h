@@ -107,7 +107,7 @@ unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
  * Identify loci given an index of annotation features.
  *
  * @param[out] idx          locus index object to be populated
- * @param[in]  features     index containing valid annotation features (FIXME)
+ * @param[in]  features     index containing gene features
  * @param[in]  numprocs     number of processors to use while identifying loci
  * @param[out] logger       object to which warning/error messages will be
  *                          written if necessary

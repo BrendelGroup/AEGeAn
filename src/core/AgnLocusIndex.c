@@ -254,7 +254,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     }
   }
 
-  // FIXME Handle terminal ilocus
+  // Handle terminal ilocus
   l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci-1);
   r1 = agn_gene_locus_range(l1);
   unsigned long prevend = seqrange->start - 1;
