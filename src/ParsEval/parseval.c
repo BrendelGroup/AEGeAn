@@ -16,6 +16,75 @@ typedef struct
   FILE *seqfile;
 } PeAnalysisData;
 
+char *pe_get_start_time()
+{
+  time_t start_time;
+  struct tm *start_time_info;
+  time(&start_time);
+  start_time_info = localtime(&start_time);
+
+  char timestr[128];
+  strftime(timestr, 128, "%d %b %Y, %I:%M%p", start_time_info);
+  return gt_cstr_dup(timestr);
+}
+
+void pe_seqid_check(const char *seqid, AgnLogger *logger)
+{
+  size_t n = strlen(seqid);
+  int i;
+  for(i = 0; i < n; i++)
+  {
+    char c = seqid[i];
+    if(!isalnum(c) && c != '.' && c != '-' && c != '_')
+    {
+      agn_logger_log_error(logger, "seqid '%s' contains illegal characters; "
+                           "only alphanumeric characters and . and _ and - are "
+                           "allowed.", seqid);
+      return;
+    }
+  }
+}
+
+unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp, GtArray **locip,
+                                     GtStrArray **seqidsp, PeOptions *options,
+                                     AgnLogger *logger)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin loading data and parsing loci\n", stderr);
+
+  // Load loci into memory
+  AgnLocusIndex *locusindex = agn_locus_index_new(false);
+  unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
+                            options->refrfile, options->predfile,
+                            options->numprocs, &options->filters, logger);
+
+  // Collect IDs of all sequences annotated by input files
+  GtStrArray *seqids = agn_locus_index_seqids(locusindex);
+  unsigned long numseqs = gt_str_array_size(seqids);
+  GtArray *loci = gt_array_new( sizeof(GtArray *) );
+  int i;
+  for(i = 0; i < numseqs; i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    pe_seqid_check(seqid, logger);
+
+    GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
+    gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
+    gt_array_add(loci, seq_loci);
+  }
+
+  *locusindexp = locusindex;
+  *locip = loci;
+  *seqidsp = seqids;
+
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished loading data and "
+                          "parsing loci (%ld.%06ld seconds)\n", stderr);
+  gt_timer_delete(timer);
+  return total;
+}
+
 GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
 {
   GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
@@ -146,26 +215,16 @@ void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
   agn_gene_locus_delete(locus);
 }
 
-void pe_seqid_check(const char *seqid, AgnLogger *logger)
-{
-  size_t n = strlen(seqid);
-  int i;
-  for(i = 0; i < n; i++)
-  {
-    char c = seqid[i];
-    if(!isalnum(c) && c != '.' && c != '-' && c != '_')
-    {
-      agn_logger_log_error(logger, "seqid '%s' contains illegal characters; "
-                           "only alphanumeric characters and . and _ and - are "
-                           "allowed.", seqid);
-      return;
-    }
-  }
-}
-
 // Main method
 int main(int argc, char * const argv[])
 {
+  // Initialize ParsEval
+  gt_lib_init();
+  char *start_time_str = pe_get_start_time();
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin ParsEval\n", stderr);
+
   // Parse command-line arguments
   PeOptions options;
   pe_set_option_defaults(&options);
@@ -178,66 +237,26 @@ int main(int argc, char * const argv[])
     return EXIT_FAILURE;
   }
 
-  // Grab start time
-  time_t start_time;
-  struct tm *start_time_info;
-  char time_buffer[128];
-  time(&start_time);
-  start_time_info = localtime(&start_time);
-  strftime(time_buffer, 128, "%d %b %Y, %I:%M%p", start_time_info);
-
-  // Initialize ParsEval
-  gt_lib_init();
-  GtTimer *timer_all = gt_timer_new();
-  gt_timer_start(timer_all);
-  GtTimer *timer_short = gt_timer_new();
-  fputs("[ParsEval] Begin ParsEval\n", stderr);
-
   // Load data into memory and parse loci
-  gt_timer_start(timer_short);
-  fputs("[ParsEval] Begin loading data and parsing loci\n", stderr);
-
+  AgnLocusIndex *locusindex;
+  GtArray *loci;
+  GtStrArray *seqids;
   AgnLogger *logger = agn_logger_new();
-  AgnLocusIndex *locusindex = agn_locus_index_new(false);
-  unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
-                            options.refrfile, options.predfile,
-                            options.numprocs, &options.filters, logger);
-  bool haderror = agn_logger_print_all(logger, stderr, "[ParsEval] parsing "
-                                       "annotations from files '%s' and '%s'",
-                                       options.refrfile, options.predfile);
-  if(haderror) return EXIT_FAILURE;
-  agn_logger_unset(logger);
-
-  GtStrArray *seqids = agn_locus_index_seqids(locusindex);
-  unsigned long numseqs = gt_str_array_size(seqids);
-  GtArray *loci = gt_array_new( sizeof(GtArray *) );
-  int i;
-  for(i = 0; i < numseqs; i++)
-  {
-    const char *seqid = gt_str_array_get(seqids, i);
-    pe_seqid_check(seqid, logger);
-
-    GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
-    gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
-    gt_array_add(loci, seq_loci);
-  }
-  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] checking "
-                                  "sequence IDs");
-  if(haderror) return EXIT_FAILURE;
-  gt_timer_stop(timer_short);
-  gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data and "
-                          "parsing loci (%ld.%06ld seconds)\n", stderr);
+  unsigned long totalloci = pe_load_and_parse_loci(&locusindex, &loci, &seqids,
+                                                   &options, logger);
+  bool haderror = agn_logger_print_all(logger, stderr, NULL);
+  if(haderror)
+    return EXIT_FAILURE;
 
   // Stop now if there are no loci
-  if(total == 0)
+  if(totalloci == 0)
   {
     fprintf(stderr, "[ParsEval] Warning: found no loci to analyze");
-    gt_timer_stop(timer_all);
-    gt_timer_show_formatted(timer_all,"[ParsEval] ParsEval complete! (total "
+    gt_timer_stop(timer);
+    gt_timer_show_formatted(timer,"[ParsEval] ParsEval complete! (total "
                             "runtime: %ld.%06ld seconds)\n\n", stderr );
     fclose(options.outfile);
-    gt_timer_delete(timer_all);
-    gt_timer_delete(timer_short);
+    gt_timer_delete(timer);
     if(gt_lib_clean() != 0)
     {
       fputs("error: issue cleaning GenomeTools library\n", stderr);
@@ -248,14 +267,17 @@ int main(int argc, char * const argv[])
 
   // Prep report output
   GtArray *seqfiles = pe_prep_output(seqids, &options);
+  unsigned long numseqs = gt_str_array_size(seqids);
 
   // Comparative analysis of loci
+  GtTimer *timer_short = gt_timer_new();
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin comparative analysis\n", stderr);
   GtHashmap *locus_summaries = gt_hashmap_new(GT_HASH_DIRECT,
                                               NULL, (GtFree)gt_free_mem);
   GtHashmap *comp_evals = gt_hashmap_new(GT_HASH_DIRECT,
                                          NULL, (GtFree)gt_free_mem);
+  int i, j;
   for(i = 0; i < numseqs; i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
@@ -264,7 +286,6 @@ int main(int argc, char * const argv[])
     analysis_data.seqfile = *(FILE **)gt_array_get(seqfiles, i);
     analysis_data.options = &options;
 
-    int j;
     for(j = 0; j < gt_array_size(seqloci); j++)
     {
       AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
@@ -336,7 +357,7 @@ int main(int argc, char * const argv[])
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
 
-  pe_print_summary(time_buffer, argc, argv, seqids, &overall_eval,
+  pe_print_summary(start_time_str, argc, argv, seqids, &overall_eval,
                    seqlevel_evals, options.outfile, &options );
   if(!options.summary_only)
   {
@@ -386,8 +407,8 @@ int main(int argc, char * const argv[])
 
 
   // All done!
-  gt_timer_stop(timer_all);
-  gt_timer_show_formatted( timer_all,"[ParsEval] ParsEval complete! (total runtime: %ld.%06ld "
+  gt_timer_stop(timer);
+  gt_timer_show_formatted( timer,"[ParsEval] ParsEval complete! (total runtime: %ld.%06ld "
                            "seconds)\n\n", stderr );
 
   // Free up remaining memory
@@ -395,7 +416,7 @@ int main(int argc, char * const argv[])
   agn_logger_delete(logger);
   agn_locus_index_delete(locusindex);
   gt_array_delete(seqlevel_evals);
-  gt_timer_delete(timer_all);
+  gt_timer_delete(timer);
   gt_timer_delete(timer_short);
   if(gt_lib_clean() != 0)
   {
