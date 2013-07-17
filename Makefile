@@ -103,3 +103,7 @@ $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 
 inc/core/AgnVersion.h:	
 			perl data/share/version.pl > inc/core/AgnVersion.h
+
+test:		$(BINS)
+		@- test/AT1G05320.sh
+		@- test/FBgn0035002.sh
