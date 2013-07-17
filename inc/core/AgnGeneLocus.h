@@ -14,6 +14,38 @@ enum AgnComparisonSource { REFERENCESOURCE, PREDICTIONSOURCE, DEFAULTSOURCE };
 typedef enum AgnComparisonSource AgnComparisonSource;
 
 /**
+* This data structure provides a convenient container for metadata needed to
+* produce a PNG graphic for pairwise comparison loci.
+*/
+typedef struct
+{
+  char filename[512];
+  char stylefile[512];
+  const char *refrfile;
+  const char *predfile;
+  const char *refrlabel;
+  const char *predlabel;
+  unsigned long graphic_width;
+  int (*track_order_func)(const char *s1, const char *s2, void *data);
+} AgnGeneLocusPngMetadata;
+
+/**
+* This data structure provides a summary of the data and comparisons associated
+* with a given locus.
+*/
+typedef struct
+{
+  unsigned long start;
+  unsigned long end;
+  unsigned long length;
+  unsigned long refrtrans;
+  unsigned long predtrans;
+  unsigned long reported;
+  unsigned long total;
+  AgnCompSummary counts;
+} AgnGeneLocusSummary;
+
+/**
  * Associate the given gene annotation with this gene locus. Rather than calling
  * this function directly, users are recommended to use one of the following
  * macros: agn_gene_locus_add_pred_gene(locus, gene)' and
@@ -306,6 +338,29 @@ bool agn_gene_locus_is_complex(AgnGeneLocus *locus);
  */
 AgnGeneLocus* agn_gene_locus_new(const char *seqid);
 
+#ifndef WITHOUT_CAIRO
+/**
+ * Track selector function for generating PNG graphics of pairwise comparison
+ * loci.
+ *
+ * @param[in]  block    the object to be printed in the graphic
+ * @param[out] track    string to which the appropriate track name will be
+ *                      written
+ * @param[in]  data     any auxilliary data needed
+ */
+void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,void *data);
+#endif
+
+#ifndef WITHOUT_CAIRO
+/**
+ * Print a PNG graphic for this locus. FIXME
+ *
+ * @param[in] locus    the locus
+ */
+void agn_gene_locus_print_png(AgnGeneLocus *locus,
+                              AgnGeneLocusPngMetadata *metadata);
+#endif
+
 /**
  * Return the coordinates of this locus.
  *
@@ -349,6 +404,11 @@ double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,
         agn_gene_locus_splice_complexity(LC, REFERENCESOURCE)
 #define agn_gene_locus_calc_splice_complexity(LC)\
         agn_gene_locus_splice_complexity(LC, DEFAULTSOURCE)
+
+/**
+ * FIXME
+ */
+void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary);
 
 
 /**

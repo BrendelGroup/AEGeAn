@@ -8,21 +8,54 @@
 #include "AgnVersion.h"
 #include "PeReports.h"
 
-#ifndef WITHOUT_CAIRO
-/**
- * Track selector function for PNG graphics
- *
- * @param[in]  block    the object to be printed in the graphic
- * @param[out] track    string to which the appropriate track name will be
- *                      written
- * @param[in]  data     any auxilliary data needed
- */
-void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,
-                                                   void *data);
-#endif
+void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
+                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
+                    GtHashmap *locus_summaries, PeOptions *options)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
 
-void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
-                                      PeCompEvaluation *data)
+  pe_comp_evaluation_init(overall_eval);
+  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
+  unsigned long i;
+  for(i = 0; i < gt_array_size(seqfiles); i++)
+  {
+    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
+    PeCompEvaluation seqeval;
+    pe_comp_evaluation_init(&seqeval);
+
+    int j;
+    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
+    for(j = 0; j < gt_array_size(seqloci); j++)
+    {
+      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
+      PeCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
+      pe_comp_evaluation_combine(&seqeval, eval);
+      pe_comp_evaluation_combine(overall_eval, eval);
+      AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
+      if(options->html && !options->summary_only)
+      {
+        pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
+                                  locsum->length, locsum->refrtrans,
+                                  locsum->predtrans, &locsum->counts);
+      }
+    }
+    gt_array_add(seqlevel_evals, seqeval);
+    gt_array_delete(seqloci);
+  }
+
+  *seqlevel_evalsp = seqlevel_evals;
+
+  gt_hashmap_delete(locus_summaries);
+  gt_array_delete(loci);
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
+                          "level results (%ld.%06ld seconds)\n", stderr);
+  gt_timer_delete(timer);
+}
+
+void pe_gene_locus_aggregate_results(AgnGeneLocus *locus,PeCompEvaluation *data)
 {
   unsigned long i;
   GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
@@ -126,208 +159,6 @@ void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
   }
 }
 
-#ifndef WITHOUT_CAIRO
-void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
-{
-  GtFeatureNode *fn = gt_block_get_top_level_feature(block);
-  GtGenomeNode *gn = (GtGenomeNode *)fn;
-  const char *filename = gt_genome_node_get_filename(gn);
-  AgnGeneLocusPngMetadata *metadata =
-                                 (AgnGeneLocusPngMetadata *)data;
-  char trackname[512];
-
-  if(strcmp(filename, metadata->refrfile) == 0)
-  {
-    if(strcmp(metadata->refrlabel, "") == 0)
-    {
-      sprintf(trackname, "Reference annotations (%s)", metadata->refrfile);
-      gt_str_set(track, trackname);
-    }
-    else
-    {
-      sprintf(trackname, "%s (Reference)", metadata->refrlabel);
-      gt_str_set(track, trackname);
-    }
-    return;
-  }
-  else if(strcmp(filename, metadata->predfile) == 0)
-  {
-    if(strcmp(metadata->predlabel, "") == 0)
-    {
-      sprintf(trackname, "Prediction annotations (%s)", metadata->predfile);
-      gt_str_set(track, trackname);
-    }
-    else
-    {
-      sprintf(trackname, "%s (Prediction)", metadata->predlabel);
-      gt_str_set(track, trackname);
-    }
-    return;
-  }
-  else
-  {
-    fprintf(stderr, "Error: unknown filename '%s'\n", filename);
-    exit(1);
-  }
-}
-
-// FIXME this function should use an AgnLogger
-void agn_gene_locus_print_png(AgnGeneLocus *locus,
-                              AgnGeneLocusPngMetadata *metadata)
-{
-  GtError *error = gt_error_new();
-  GtFeatureIndex *index = gt_feature_index_memory_new();
-  unsigned long i;
-
-  GtArray *refr_genes = agn_gene_locus_refr_genes(locus);
-  for(i = 0; i < gt_array_size(refr_genes); i++)
-  {
-    GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(refr_genes, i);
-    gt_feature_index_add_feature_node(index, gene, error);
-    if(gt_error_is_set(error))
-    {
-      fprintf(stderr, "error: %s\n", gt_error_get(error));
-      exit(1);
-    }
-  }
-  gt_array_delete(refr_genes);
-
-  GtArray *pred_genes = agn_gene_locus_pred_genes(locus);
-  for(i = 0; i < gt_array_size(pred_genes); i++)
-  {
-    GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(pred_genes, i);
-    gt_feature_index_add_feature_node(index, gene, error);
-    if(gt_error_is_set(error))
-    {
-      fprintf(stderr, "error: %s\n", gt_error_get(error));
-      exit(1);
-    }
-  }
-  gt_array_delete(pred_genes);
-
-  // Generate the graphic...this is going to get a bit hairy
-  GtStyle *style;
-  if(!(style = gt_style_new(error)))
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-  if(gt_style_load_file(style, metadata->stylefile, error))
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-  const char *seqid = agn_gene_locus_get_seqid(locus);
-  GtRange locusrange = agn_gene_locus_range(locus);
-  GtDiagram *diagram = gt_diagram_new( index, seqid, &locusrange,
-                                       style, error );
-  gt_diagram_set_track_selector_func
-  (
-    diagram,
-    (GtTrackSelectorFunc)agn_gene_locus_png_track_selector,
-    metadata
-  );
-  GtLayout *layout = gt_layout_new(diagram, metadata->graphic_width, style, error);
-  if(!layout)
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-  gt_layout_set_track_ordering_func( layout,
-                                     (GtTrackOrderingFunc)metadata->track_order_func,
-                                     NULL );
-  unsigned long image_height;
-  if(gt_layout_get_height(layout, &image_height, error))
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-  GtCanvas *canvas = gt_canvas_cairo_file_new( style, GT_GRAPHICS_PNG,
-                                               metadata->graphic_width, image_height, NULL,
-                                               error );
-  if(!canvas)
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-  if(gt_layout_sketch(layout, canvas, error))
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-  if(gt_canvas_cairo_file_to_file((GtCanvasCairoFile*) canvas, metadata->filename, error))
-  {
-    fprintf(stderr, "error: %s\n", gt_error_get(error));
-    exit(EXIT_FAILURE);
-  }
-
-  gt_feature_index_delete(index);
-  gt_canvas_delete(canvas);
-  gt_layout_delete(layout);
-  gt_diagram_delete(diagram);
-  gt_style_delete(style);
-  gt_error_delete(error);
-}
-#endif
-
-void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary)
-{
-  summary->start = 0;
-  summary->end = 0;
-  summary->refrtrans = 0;
-  summary->predtrans = 0;
-  summary->reported = 0;
-  summary->total = 0;
-  agn_comp_summary_init(&summary->counts);
-}
-
-void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
-                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
-                    GtHashmap *locus_summaries, PeOptions *options)
-{
-  GtTimer *timer = gt_timer_new();
-  gt_timer_start(timer);
-  fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
-
-  pe_comp_evaluation_init(overall_eval);
-  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
-  unsigned long i;
-  for(i = 0; i < gt_array_size(seqfiles); i++)
-  {
-    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-    PeCompEvaluation seqeval;
-    pe_comp_evaluation_init(&seqeval);
-
-    int j;
-    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
-    for(j = 0; j < gt_array_size(seqloci); j++)
-    {
-      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
-      PeCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
-      pe_comp_evaluation_combine(&seqeval, eval);
-      pe_comp_evaluation_combine(overall_eval, eval);
-      AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
-      if(options->html && !options->summary_only)
-      {
-        pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
-                                  locsum->length, locsum->refrtrans,
-                                  locsum->predtrans, &locsum->counts);
-      }
-    }
-    gt_array_add(seqlevel_evals, seqeval);
-    gt_array_delete(seqloci);
-  }
-
-  *seqlevel_evalsp = seqlevel_evals;
-
-  gt_hashmap_delete(locus_summaries);
-  gt_array_delete(loci);
-  gt_timer_stop(timer);
-  gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
-                          "level results (%ld.%06ld seconds)\n", stderr);
-  gt_timer_delete(timer);
-}
-
 void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
 {
   const char *seqid = agn_gene_locus_get_seqid(locus);
@@ -339,8 +170,8 @@ unsigned long pe_gene_locus_get_graphic_width(AgnGeneLocus *locus)
 {
   double scaling_factor = 0.05;
   unsigned long graphic_width = agn_gene_locus_get_length(locus) * scaling_factor;
-  if(graphic_width < AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
-    graphic_width = AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH;
+  if(graphic_width < PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
+    graphic_width = PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH;
   return graphic_width;
 }
 
@@ -956,7 +787,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
   if(options->locus_graphics)
   {
     fputs("      <div class=\"graphic\">\n      ", outstream);
-    if(pe_gene_locus_get_graphic_width(locus) > AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
+    if(pe_gene_locus_get_graphic_width(locus) > PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
     {
       fprintf(outstream, "<a href=\"%s_%lu-%lu.png\">",
               agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
@@ -965,7 +796,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
     fprintf(outstream, "<img src=\"%s_%lu-%lu.png\" />\n",
             agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
             agn_gene_locus_get_end(locus) );
-    if(pe_gene_locus_get_graphic_width(locus) > AGN_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
+    if(pe_gene_locus_get_graphic_width(locus) > PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
     {
       fputs("</a>", outstream);
     }

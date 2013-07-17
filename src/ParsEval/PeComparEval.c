@@ -173,7 +173,7 @@ void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
   PeCompEvaluation *compeval = gt_hashmap_get(data->comp_evals, locus);
   GtArray *pairs = agn_gene_locus_pairs_to_report(locus);
   if(gt_array_size(pairs) > 0)
-    agn_gene_locus_aggregate_results(locus, compeval);
+    pe_gene_locus_aggregate_results(locus, compeval);
 
   if(!data->options->summary_only)
   {
