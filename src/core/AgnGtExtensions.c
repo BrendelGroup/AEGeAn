@@ -1,6 +1,4 @@
 #include <string.h>
-#include "extended/feature_node_rep.h"
-#include "extended/feature_node.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
 
@@ -21,12 +19,9 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
   unsigned long length = 0;
   GtFeatureNode *current;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
-  for
-  (
-    current = gt_feature_node_iterator_next(iter);
-    current != NULL;
-    current = gt_feature_node_iterator_next(iter)
-  )
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
   {
     if(agn_gt_feature_node_is_cds_feature(current))
       length += gt_genome_node_get_length((GtGenomeNode *)current);
@@ -35,7 +30,9 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
 
   if(length % 3 != 0)
   {
-    fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, not a multiple of 3\n", gt_feature_node_get_attribute(transcript, "ID"), length);
+    const char *tid = gt_feature_node_get_attribute(transcript, "ID");
+    fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, "
+            "not a multiple of 3\n", tid, length);
   }
 
   return length / 3;
@@ -184,31 +181,21 @@ bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2)
   return gt_range_contains(&r1, &r2);
 }
 
-bool agn_gt_feature_node_remove_child(GtFeatureNode *root, GtFeatureNode *child)
+void agn_gt_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 {
-  GtDlistelem *current;
+  gt_assert(root && fn);
 
-  if(root == NULL || root == child || root->children == NULL)
-    return false;
-
-  for
-  (
-    current = gt_dlist_first(root->children);
-    current != NULL;
-    current = gt_dlistelem_next(current)
-  )
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *child;
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
   {
-    GtFeatureNode *temp = (GtFeatureNode *)gt_dlistelem_get_data(current);
-    if(child == temp)
-    {
-      gt_dlist_remove(root->children, current);
-      return true;
-    }
-    if(agn_gt_feature_node_remove_child(temp, child))
-      return true;
+    agn_gt_feature_node_remove_tree(root, child);
+    gt_feature_node_remove_leaf(fn, child);
   }
-
-  return false;
+  gt_feature_node_iterator_delete(iter);
+  gt_feature_node_remove_leaf(root, fn);
 }
 
 void agn_gt_feature_node_resolve_pseudo_node(GtFeatureNode *root, GtArray *nodes)
@@ -243,12 +230,7 @@ void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
        current != NULL;
        current = gt_feature_node_iterator_next(iter) )
   {
-    //This function will not allow you to reset the source, so I'm hacking. I'll
-    //open a ticket to see if/why this is a bad idea.
-    //gt_feature_node_set_source(current, source);
-
-    // This is the hack.
-    current->source = gt_str_ref(source);
+    gt_feature_node_set_source(current, source);
   }
 }
 

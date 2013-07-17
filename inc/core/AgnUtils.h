@@ -15,7 +15,7 @@ typedef struct
 {
   char *seqid;
   GtRange range;
-} AgnLoc;
+} AgnSequenceRegion;
 
 /**
  * The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal
@@ -78,13 +78,26 @@ GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set);
  *
  * @param[in] filename    name of the file
  * @param[in] mode        access mode for this file handle
+ * @param[in] errstream   output stream to which error messages will be written
  * @returns               a file handle to the opened file; will ungracefully
  *                        exit if file handle cannot be created
  */
-FILE *agn_fopen(const char *filename, const char *mode);
+FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream);
 
 /**
  * Load annotation data from the given GFF3 files into memory.
+ *
+ * @param[in] numfiles     number of files to be parsed
+ * @param[in] filenames    list of filenames
+ * @param[in] nv           node visitor to use when loading features
+ * @param[in] logger       object for logging error/warning messages
+ * @returns                a feature index containing annotations for all files
+ */
+void agn_import(int numfiles, const char **filenames, GtNodeVisitor *nv,
+                AgnLogger *logger);
+
+/**
+ * Load canonical protein-coding genes from the given GFF3 files into memory.
  *
  * @param[in] numfiles     number of files to be parsed
  * @param[in] filenames    list of filenames
@@ -93,6 +106,18 @@ FILE *agn_fopen(const char *filename, const char *mode);
  */
 GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
                                      AgnLogger *logger);
+
+/**
+ * Load simple features from the given GFF3 files into memory.
+ *
+ * @param[in] numfiles     number of files to be parsed
+ * @param[in] filenames    list of filenames
+ * @param[in] type         feature type to load into memory
+ * @param[in] logger       object for logging error/warning messages
+ * @returns                a feature index containing annotations for all files
+ */
+GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
+                                  const char *type, AgnLogger *logger);
 
 /**
  * Given an exon and the start/stop codons associated with its corresponding

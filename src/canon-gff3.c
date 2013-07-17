@@ -3,7 +3,6 @@
 #include "AgnCanonNodeVisitor.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
-#include "extended/feature_node.h"
 
 /**
  * Print the usage statement for CanonGFF3
@@ -59,7 +58,7 @@ int main(int argc, char * const *argv)
         break;
 
       case 'o':
-        outstream = agn_fopen(optarg, "w");
+        outstream = agn_fopen(optarg, "w", stderr);
         break;
 
       case 's':

@@ -2,6 +2,7 @@
 #define AEGEAN_COMPARATIVE_EVALUATION
 
 #include <stdio.h>
+#include "AgnLogger.h"
 
 /**
  * This struct is used to aggregate counts and statistics regarding the
@@ -157,8 +158,10 @@ void agn_compare_filters_init(AgnCompareFilters *filters);
  *
  * @param[out] filters     set of filters to be set
  * @param[in]  instream    pointer to the filter config file
+ * @param[out] logger      in which error/warning messages will be stored
  */
-void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream);
+void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream,
+                               AgnLogger *logger);
 
 /**
  * Initialize comparison counts/stats to default values.

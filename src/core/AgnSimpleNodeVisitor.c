@@ -1,21 +1,21 @@
 #include "extended/feature_index_memory_api.h"
 #include "core/ma_api.h"
 #include "core/unused_api.h"
-#include "AgnCanonNodeVisitor.h"
+#include "AgnSimpleNodeVisitor.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
 
-#define agn_canon_node_visitor_cast(GV)\
-        gt_node_visitor_cast(agn_canon_node_visitor_class(), GV)
+#define agn_simple_node_visitor_cast(GV)\
+        gt_node_visitor_cast(agn_simple_node_visitor_class(), GV)
 
 //----------------------------------------------------------------------------//
 // Data structure definition
 //----------------------------------------------------------------------------//
-struct AgnCanonNodeVisitor
+struct AgnSimpleNodeVisitor
 {
   const GtNodeVisitor parent_instance;
   GtFeatureIndex *index;
-  AgnGeneValidator *validator;
+  const char *type;
   AgnLogger *logger;
 };
 
@@ -25,18 +25,18 @@ struct AgnCanonNodeVisitor
 //----------------------------------------------------------------------------//
 
 /**
- * Cast a node visitor object as a AgnCanonNodeVisitor
+ * Cast a node visitor object as a AgnSimpleNodeVisitor
  *
- * @returns    a node visitor object cast as a AgnCanonNodeVisitor
+ * @returns    a node visitor object cast as a AgnSimpleNodeVisitor
  */
-const GtNodeVisitorClass* agn_canon_node_visitor_class();
+const GtNodeVisitorClass* agn_simple_node_visitor_class();
 
 /**
- * Destructor for the AgnCanonNodeVisitor class
+ * Destructor for the AgnSimpleNodeVisitor class
  *
  * @param[in] nv    the node visitor object
  */
-static void agn_canon_node_visitor_free(GtNodeVisitor *nv);
+static void agn_simple_node_visitor_free(GtNodeVisitor *nv);
 
 /**
  * Delete any comment nodes encountered while loading the data
@@ -47,7 +47,7 @@ static void agn_canon_node_visitor_free(GtNodeVisitor *nv);
  *                      written
  * @returns             0 for success
  */
-static int agn_canon_node_visitor_visit_comment_node(GtNodeVisitor *nv,
+static int agn_simple_node_visitor_visit_comment_node(GtNodeVisitor *nv,
                                                      GtCommentNode *cn,
                                                      GT_UNUSED GtError *error);
 
@@ -60,7 +60,7 @@ static int agn_canon_node_visitor_visit_comment_node(GtNodeVisitor *nv,
  *                      written
  * @returns             0 for success
  */
-static int agn_canon_node_visitor_visit_eof_node(GtNodeVisitor *nv,
+static int agn_simple_node_visitor_visit_eof_node(GtNodeVisitor *nv,
                                                  GtEOFNode *en,
                                                  GT_UNUSED GtError *error);
 
@@ -73,7 +73,7 @@ static int agn_canon_node_visitor_visit_eof_node(GtNodeVisitor *nv,
  *                      written
  * @returns             0 for success
  */
-static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
+static int agn_simple_node_visitor_visit_feature_node(GtNodeVisitor *nv,
                                                      GtFeatureNode *fn,
                                                      GT_UNUSED GtError *error);
 
@@ -86,7 +86,7 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
  *                      written
  * @returns             0 for success
  */
-static int agn_canon_node_visitor_visit_region_node(GtNodeVisitor *nv,
+static int agn_simple_node_visitor_visit_region_node(GtNodeVisitor *nv,
                                                     GtRegionNode *rn,
                                                     GT_UNUSED GtError *error);
 
@@ -100,7 +100,7 @@ static int agn_canon_node_visitor_visit_region_node(GtNodeVisitor *nv,
  *                      written
  * @returns             0 for success
  */
-static int agn_canon_node_visitor_visit_sequence_node(GtNodeVisitor *nv,
+static int agn_simple_node_visitor_visit_sequence_node(GtNodeVisitor *nv,
                                                       GtSequenceNode *sn,
                                                       GT_UNUSED GtError *error);
 
@@ -108,52 +108,52 @@ static int agn_canon_node_visitor_visit_sequence_node(GtNodeVisitor *nv,
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
-const GtNodeVisitorClass* agn_canon_node_visitor_class()
+const GtNodeVisitorClass* agn_simple_node_visitor_class()
 {
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (AgnCanonNodeVisitor),
-                                    agn_canon_node_visitor_free,
-                                    agn_canon_node_visitor_visit_comment_node,
-                                    agn_canon_node_visitor_visit_feature_node,
-                                    agn_canon_node_visitor_visit_region_node,
-                                    agn_canon_node_visitor_visit_sequence_node,
-                                    agn_canon_node_visitor_visit_eof_node);
+    nvc = gt_node_visitor_class_new(sizeof (AgnSimpleNodeVisitor),
+                                    agn_simple_node_visitor_free,
+                                    agn_simple_node_visitor_visit_comment_node,
+                                    agn_simple_node_visitor_visit_feature_node,
+                                    agn_simple_node_visitor_visit_region_node,
+                                    agn_simple_node_visitor_visit_sequence_node,
+                                    agn_simple_node_visitor_visit_eof_node);
   }
   return nvc;
 }
 
-static void agn_canon_node_visitor_free(GtNodeVisitor *nv)
+static void agn_simple_node_visitor_free(GtNodeVisitor *nv)
 {
-  GT_UNUSED AgnCanonNodeVisitor *aiv = agn_canon_node_visitor_cast(nv);
+  GT_UNUSED AgnSimpleNodeVisitor *aiv = agn_simple_node_visitor_cast(nv);
 }
 
-GtNodeVisitor* agn_canon_node_visitor_new(GtFeatureIndex *index,
-                                          AgnGeneValidator *validator,
-                                          AgnLogger *logger)
+GtNodeVisitor* agn_simple_node_visitor_new(GtFeatureIndex *index,
+                                           const char *type,
+                                           AgnLogger *logger)
 {
   GtNodeVisitor *nv;
-  nv = gt_node_visitor_create(agn_canon_node_visitor_class());
-  AgnCanonNodeVisitor *v = agn_canon_node_visitor_cast(nv);
+  nv = gt_node_visitor_create(agn_simple_node_visitor_class());
+  AgnSimpleNodeVisitor *v = agn_simple_node_visitor_cast(nv);
 
   v->index = index;
-  v->validator = validator;
+  v->type = type;
   v->logger = logger;
 
   return nv;
 }
 
-static int agn_canon_node_visitor_visit_comment_node(GtNodeVisitor *nv,
-                                                     GtCommentNode *cn,
-                                                     GT_UNUSED GtError *error)
+static int agn_simple_node_visitor_visit_comment_node(GtNodeVisitor *nv,
+                                                      GtCommentNode *cn,
+                                                      GT_UNUSED GtError *error)
 {
   gt_error_check(error);
   gt_genome_node_delete((GtGenomeNode *)cn);
   return 0;
 }
 
-static int agn_canon_node_visitor_visit_eof_node(GtNodeVisitor *nv,
+static int agn_simple_node_visitor_visit_eof_node(GtNodeVisitor *nv,
                                                  GtEOFNode *en,
                                                  GT_UNUSED GtError *error)
 {
@@ -162,50 +162,46 @@ static int agn_canon_node_visitor_visit_eof_node(GtNodeVisitor *nv,
   return 0;
 }
 
-static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
-                                                     GtFeatureNode *fn,
-                                                     GT_UNUSED GtError *error)
+static int agn_simple_node_visitor_visit_feature_node(GtNodeVisitor *nv,
+                                                      GtFeatureNode *fn,
+                                                      GT_UNUSED GtError *error)
 {
-  AgnCanonNodeVisitor *v;
+  AgnSimpleNodeVisitor *v;
   gt_error_check(error);
-  v = agn_canon_node_visitor_cast(nv);
+  v = agn_simple_node_visitor_cast(nv);
 
-  GtArray *features = gt_array_new( sizeof(GtFeatureNode *) );
-  agn_gt_feature_node_resolve_pseudo_node(fn, features);
-  while(gt_array_size(features) > 0)
+  if(gt_feature_node_has_type(fn, v->type))
   {
-    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(features);
-    bool isvalid = agn_gene_validator_validate_gene(v->validator,fn,v->logger);
-    if(isvalid)
+    gt_feature_index_add_feature_node(v->index, fn, error);
+    return 0;
+  }
+  
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    if(gt_feature_node_has_type(feature, v->type))
     {
-      bool adderror = gt_feature_index_add_feature_node(v->index, fn, error);
-      if(adderror)
-      {
-        agn_logger_log_error(v->logger, "%s", gt_error_get(error));
-        gt_error_unset(error);
-        return 1;
-      }
-    }
-    else
-    {
-      gt_genome_node_delete((GtGenomeNode *)fn);
-      // FIXME issue 34
-      if(agn_logger_has_error(v->logger))
-        return 1;
+      gt_genome_node_ref((GtGenomeNode *)feature);
+      if(feature != fn)
+        agn_gt_feature_node_remove_tree(fn, feature);
+      gt_feature_index_add_feature_node(v->index, feature, error);
     }
   }
-  gt_array_delete(features);
-
+  gt_feature_node_iterator_delete(iter);
+  gt_genome_node_delete((GtGenomeNode *)fn);
   return 0;
 }
 
-static int agn_canon_node_visitor_visit_region_node(GtNodeVisitor *nv,
-                                                    GtRegionNode *rn,
-                                                    GT_UNUSED GtError *error)
+static int agn_simple_node_visitor_visit_region_node(GtNodeVisitor *nv,
+                                                     GtRegionNode *rn,
+                                                     GT_UNUSED GtError *error)
 {
-  AgnCanonNodeVisitor *v;
+  AgnSimpleNodeVisitor *v;
   gt_error_check(error);
-  v = agn_canon_node_visitor_cast(nv);
+  v = agn_simple_node_visitor_cast(nv);
 
   if(gt_feature_index_add_region_node(v->index, rn, error))
   {
@@ -219,9 +215,9 @@ static int agn_canon_node_visitor_visit_region_node(GtNodeVisitor *nv,
   return 0;
 }
 
-static int agn_canon_node_visitor_visit_sequence_node(GtNodeVisitor *nv,
-                                                      GtSequenceNode *sn,
-                                                      GT_UNUSED GtError *error)
+static int agn_simple_node_visitor_visit_sequence_node(GtNodeVisitor *nv,
+                                                       GtSequenceNode *sn,
+                                                       GT_UNUSED GtError *error)
 {
   gt_error_check(error);
   gt_genome_node_delete((GtGenomeNode *)sn);

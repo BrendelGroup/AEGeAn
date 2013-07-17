@@ -110,7 +110,6 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 
 void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
 {
-// fprintf(stderr, "test a\n");
   unsigned long i, j;
   unsigned long locus_length = gt_range_length(pair->locus_range);
 
@@ -137,7 +136,6 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
   unsigned long pred_utr_starts[MAX_UTRS];
   unsigned long refr_utr_ends[MAX_UTRS];
   unsigned long pred_utr_ends[MAX_UTRS];
-// fprintf(stderr, "test b\n");
 
   // Collect counts
   for(i = 0; i < locus_length; i++)
@@ -269,8 +267,6 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
     }
   }
 
-// fprintf(stderr, "test c\n");
-
   // Calculate nucleotide-level statistics from counts
   agn_comp_stats_scaled_resolve(&pair->stats.cds_nuc_stats);
   agn_comp_stats_scaled_resolve(&pair->stats.utr_nuc_stats);
@@ -371,7 +367,6 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       pair->stats.utr_struc_stats.wrong++;
   }
   agn_comp_stats_binary_resolve(&pair->stats.utr_struc_stats);
-// fprintf(stderr, "test d\n");
 }
 
 unsigned int agn_clique_pair_classify(AgnCliquePair *pair)

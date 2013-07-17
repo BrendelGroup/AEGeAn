@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <omp.h>
 #include <string.h>
 #include <time.h>
@@ -87,6 +88,23 @@ void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
   agn_gene_locus_delete(locus);
 }
 
+void pe_seqid_check(const char *seqid, AgnLogger *logger)
+{
+  size_t n = strlen(seqid);
+  int i;
+  for(i = 0; i < n; i++)
+  {
+    char c = seqid[i];
+    if(!isalnum(c) && c != '.' && c != '-' && c != '_')
+    {
+      agn_logger_log_error(logger, "seqid '%s' contains illegal characters; "
+                           "only alphanumeric characters and . and _ and - are "
+                           "allowed.", seqid);
+      return;
+    }
+  }
+}
+
 // Main method
 int main(int argc, char * const argv[])
 {
@@ -131,7 +149,7 @@ int main(int argc, char * const argv[])
                                        options.refrfile, options.predfile);
   if(haderror) return EXIT_FAILURE;
   agn_logger_unset(logger);
-  
+
   GtStrArray *seqids = agn_locus_index_seqids(locusindex);
   unsigned long numseqs = gt_str_array_size(seqids);
   GtArray *loci = gt_array_new( sizeof(GtArray *) );
@@ -139,10 +157,16 @@ int main(int argc, char * const argv[])
   for(i = 0; i < numseqs; i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
+    pe_seqid_check(seqid, logger);
+
     GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
     gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
     gt_array_add(loci, seq_loci);
   }
+  haderror = agn_logger_print_all(logger, stderr, "[ParsEval] checking "
+                                  "sequence IDs");
+  if(haderror) return EXIT_FAILURE;
+  gt_timer_stop(timer_short);
   gt_timer_show_formatted(timer_short, "[ParsEval] Finished loading data and "
                           "parsing loci (%ld.%06ld seconds)\n", stderr);
 
@@ -200,7 +224,7 @@ int main(int argc, char * const argv[])
         sprintf(filename, "%s/%s/index.html", options.outfilename, seqid);
         if(options.debug)
           fprintf(stderr, "debug: opening outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w");
+        seqfile = agn_fopen(filename, "w", stderr);
         pe_print_seqfile_header(seqfile, seqid);
         gt_array_add(seqfiles, seqfile);
       }
@@ -209,7 +233,7 @@ int main(int argc, char * const argv[])
         sprintf(filename, "%s.%s", options.outfilename, seqid);
         if(options.debug)
           fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w");
+        seqfile = agn_fopen(filename, "w", stderr);
         gt_array_add(seqfiles, seqfile);
       }
     }
@@ -315,7 +339,7 @@ int main(int argc, char * const argv[])
     }
   }
   gt_array_delete(seqfiles);
-  
+
   if(options.outfile == stdout)
     fflush(stdout);
   else

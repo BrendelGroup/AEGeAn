@@ -1,6 +1,7 @@
 #include <getopt.h>
 #include <omp.h>
 #include <string.h>
+#include "AgnUtils.h"
 #include "PeOptions.h"
 
 int pe_parse_options(int argc, char * const argv[], PeOptions *options)
@@ -113,13 +114,14 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         {
           if(options->debug)
             fprintf(stderr, "debug: opening filter file '%s'\n", options->filterfile);
-          FILE *filterfile = fopen(options->filterfile, "r");
-          if(!filterfile)
-          {
-            fprintf(stderr, "error: could not open filter file '%s'\n", options->filterfile);
+
+          FILE *filterfile = agn_fopen(options->filterfile, "r", stderr);
+          AgnLogger *logger = agn_logger_new();
+          agn_compare_filters_parse(&options->filters, filterfile, logger);
+          bool haderrors = agn_logger_print_all(logger, stderr, "[ParsEval] parsing filters");
+          if(haderrors)
             exit(1);
-          }
-          agn_compare_filters_parse(&options->filters, filterfile);
+          agn_logger_delete(logger);
           if(options->debug)
             fprintf(stderr, "debug: closing filter file\n");
           fclose(filterfile);

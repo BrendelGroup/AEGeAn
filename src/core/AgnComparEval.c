@@ -107,7 +107,8 @@ void agn_compare_filters_init(AgnCompareFilters *filters)
   filters->MaxPredictionCDSLength = 0;
 }
 
-void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream)
+void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream,
+                               AgnLogger *logger)
 {
   char buffer[256];
   while(fgets(buffer, 255, instream))
@@ -229,8 +230,8 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream)
       }
       else
       {
-        fprintf(stderr, "error: unrecognized filter option '%s'\n", key);
-        exit(1);
+        agn_logger_log_error(logger, "unrecognized filter option '%s'\n", key);
+        return;
       }
     }
   }
