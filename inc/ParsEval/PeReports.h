@@ -165,15 +165,15 @@ void pe_print_seqfile_footer(FILE *outstream);
 /**
  * Print the ParsEval summary.
  */
-void pe_print_summary(const char *start_time, int argc, char * const argv[],
-                      GtStrArray *seqids, PeCompEvaluation *summary_data,
-                      GtArray *seq_summary_data, FILE *outstream,
-                      PeOptions *options);
-void pe_print_summary_html(const char *start_time, int argc,
-                           char * const argv[], GtStrArray *seqids,
-                           PeCompEvaluation *summary_data,
-                           GtArray *seq_summary_data, FILE *outstream,
-                           PeOptions *options);
+void pe_print_summary( const char *start_time, int argc, char * const argv[],
+                       GtStrArray *seqids, PeCompEvaluation *summary_data,
+                       PeCompEvaluation *seq_summary_data, FILE *outstream,
+                       PeOptions *options );
+void pe_print_summary_html( const char *start_time, int argc,
+                            char * const argv[], GtStrArray *seqids,
+                            PeCompEvaluation *summary_data,
+                            PeCompEvaluation *seq_summary_data, FILE *outstream,
+                            PeOptions *options );
 
 /**
  * Comparison function used to set the track order in PNG graphics.
