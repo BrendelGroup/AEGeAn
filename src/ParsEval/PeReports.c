@@ -1293,9 +1293,10 @@ void pe_print_seqfile_footer(FILE *outstream)
   fputs("</html>\n", outstream);
 }
 
-void pe_print_summary( const char *start_time, int argc, char * const argv[], GtStrArray *seqids,
-                       PeCompEvaluation *summary_data, PeCompEvaluation *seq_summary_data,
-                       FILE *outstream, PeOptions *options )
+void pe_print_summary(const char *start_time, int argc, char * const argv[],
+                      GtStrArray *seqids, PeCompEvaluation *summary_data,
+                      GtArray *seq_summary_data, FILE *outstream,
+                      PeOptions *options)
 {
   // Calculate nucleotide-level statistics
   agn_comp_stats_scaled_resolve(&summary_data->stats.cds_nuc_stats);
@@ -1310,8 +1311,8 @@ void pe_print_summary( const char *start_time, int argc, char * const argv[], Gt
 
   if(options->html)
   {
-    pe_print_summary_html( start_time, argc, argv, seqids, summary_data, seq_summary_data,
-                           outstream, options );
+    pe_print_summary_html(start_time, argc, argv, seqids, summary_data,
+                          seq_summary_data, outstream, options);
     return;
   }
 
@@ -1628,9 +1629,11 @@ void pe_print_summary( const char *start_time, int argc, char * const argv[], Gt
   fprintf(outstream, "\n\n\n");
 }
 
-void pe_print_summary_html( const char *start_time, int argc, char * const argv[],
-                            GtStrArray *seqids, PeCompEvaluation *summary_data,
-                            PeCompEvaluation *seq_summary_data, FILE *outstream, PeOptions *options )
+void pe_print_summary_html(const char *start_time, int argc,
+                           char * const argv[], GtStrArray *seqids,
+                           PeCompEvaluation *summary_data,
+                           GtArray *seq_summary_data, FILE *outstream,
+                           PeOptions *options)
 {
   // Print header
   fputs( "<!doctype html>\n"
@@ -1700,11 +1703,12 @@ void pe_print_summary_html( const char *start_time, int argc, char * const argv[
   unsigned long i;
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
+    PeCompEvaluation *compeval = gt_array_get(seq_summary_data, i);
     const char *seqid = gt_str_array_get(seqids, i);
-    if(options->summary_only || seq_summary_data[i].counts.num_loci == 0)
+    if(options->summary_only || compeval->counts.num_loci == 0)
     {
       fprintf( outstream, "        <tr><td>%s</td><td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
-               seqid, seq_summary_data[i].counts.refr_genes, seq_summary_data[i].counts.pred_genes, seq_summary_data[i].counts.num_loci );
+               seqid, compeval->counts.refr_genes, compeval->counts.pred_genes, compeval->counts.num_loci );
 
       char cmd[512];
       sprintf(cmd, "rm -r %s/%s", options->outfilename, seqid);
@@ -1712,7 +1716,7 @@ void pe_print_summary_html( const char *start_time, int argc, char * const argv[
     }
     else
       fprintf( outstream, "        <tr><td><a href=\"%s/index.html\">%s</a></td><td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
-               seqid, seqid, seq_summary_data[i].counts.refr_genes, seq_summary_data[i].counts.pred_genes, seq_summary_data[i].counts.num_loci );
+               seqid, seqid, compeval->counts.refr_genes, compeval->counts.pred_genes, compeval->counts.num_loci );
   }
   fputs("        </tbody>\n\n"
         "      </table>\n\n", outstream);
