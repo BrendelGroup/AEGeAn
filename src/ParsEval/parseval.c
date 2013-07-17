@@ -16,6 +16,64 @@ typedef struct
   FILE *seqfile;
 } PeAnalysisData;
 
+GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
+{
+  GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
+  unsigned long numseqs = gt_str_array_size(seqids);
+
+  if(strcmp(options->outfmt, "csv") == 0)
+    pe_print_csv_header(options->outfile);
+
+  unsigned long i;
+  for(i = 0; i < numseqs; i++)
+  {
+    FILE *seqfile = NULL;
+    if(!options->summary_only)
+    {
+      const char *seqid = gt_str_array_get(seqids, i);
+      char filename[512];
+      if(options->html)
+      {
+        char dircmd[512];
+        sprintf(dircmd, "mkdir %s/%s", options->outfilename, seqid);
+        if(system(dircmd) != 0)
+        {
+          fprintf(stderr, "error: could not open directory '%s/%s'\n",
+                  options->outfilename, seqid);
+          exit(1);
+        }
+        if(options->debug)
+          fprintf(stderr, "debug: opening directory '%s'\n", dircmd);
+
+        sprintf(dircmd, "ln -s ../LICENSE %s/%s/LICENSE", options->outfilename,
+                seqid);
+        if(system(dircmd) != 0)
+        {
+          fputs("warning: could not create symbolic link to LICENSE\n", stderr);
+        }
+
+        // Create summary page for this sequence
+        sprintf(filename, "%s/%s/index.html", options->outfilename, seqid);
+        if(options->debug)
+          fprintf(stderr, "debug: opening outfile '%s'\n", filename);
+        seqfile = agn_fopen(filename, "w", stderr);
+        pe_print_seqfile_header(seqfile, seqid);
+        gt_array_add(seqfiles, seqfile);
+      }
+      else
+      {
+        sprintf(filename, "%s.%s", options->outfilename, seqid);
+        if(options->debug)
+          fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
+        seqfile = agn_fopen(filename, "w", stderr);
+        gt_array_add(seqfiles, seqfile);
+      }
+    }
+  }
+
+  return seqfiles;
+}
+
 void pe_pre_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
 {
   unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
@@ -189,63 +247,15 @@ int main(int argc, char * const argv[])
   }
 
   // Prep report output
-  if(strcmp(options.outfmt, "csv") == 0)
-    pe_print_csv_header(options.outfile);
-
-  GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
-  for(i = 0; i < numseqs; i++)
-  {
-    FILE *seqfile = NULL;
-    if(!options.summary_only)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      char filename[512];
-      if(options.html)
-      {
-        char dircmd[512];
-        sprintf(dircmd, "mkdir %s/%s", options.outfilename, seqid);
-        if(system(dircmd) != 0)
-        {
-          fprintf(stderr, "error: could not open directory '%s/%s'\n",
-                  options.outfilename, seqid);
-          exit(1);
-        }
-        if(options.debug)
-          fprintf(stderr, "debug: opening directory '%s'\n", dircmd);
-
-        sprintf(dircmd, "ln -s ../LICENSE %s/%s/LICENSE", options.outfilename,
-                seqid);
-        if(system(dircmd) != 0)
-        {
-          fputs("warning: could not create symbolic link to LICENSE\n", stderr);
-        }
-
-        // Create summary page for this sequence
-        sprintf(filename, "%s/%s/index.html", options.outfilename, seqid);
-        if(options.debug)
-          fprintf(stderr, "debug: opening outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w", stderr);
-        pe_print_seqfile_header(seqfile, seqid);
-        gt_array_add(seqfiles, seqfile);
-      }
-      else
-      {
-        sprintf(filename, "%s.%s", options.outfilename, seqid);
-        if(options.debug)
-          fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w", stderr);
-        gt_array_add(seqfiles, seqfile);
-      }
-    }
-  }
+  GtArray *seqfiles = pe_prep_output(seqids, &options);
 
   // Comparative analysis of loci
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin comparative analysis\n", stderr);
-  GtHashmap *locus_summaries = gt_hashmap_new(GT_HASH_DIRECT, NULL,
-                                              (GtFree)gt_free_mem);
-  GtHashmap *comp_evals = gt_hashmap_new(GT_HASH_DIRECT, NULL,
-                                         (GtFree)gt_free_mem);
+  GtHashmap *locus_summaries = gt_hashmap_new(GT_HASH_DIRECT,
+                                              NULL, (GtFree)gt_free_mem);
+  GtHashmap *comp_evals = gt_hashmap_new(GT_HASH_DIRECT,
+                                         NULL, (GtFree)gt_free_mem);
   for(i = 0; i < numseqs; i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
