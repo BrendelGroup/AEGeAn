@@ -1,6 +1,9 @@
+#include <ctype.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 #include "AgnGtExtensions.h"
+#include "AgnLocusIndex.h"
 #include "AgnUtils.h"
 #include "AgnVersion.h"
 #include "PeReports.h"
@@ -170,7 +173,7 @@ void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
 
 // FIXME this function should use an AgnLogger
 void agn_gene_locus_print_png(AgnGeneLocus *locus,
-                                AgnGeneLocusPngMetadata *metadata)
+                              AgnGeneLocusPngMetadata *metadata)
 {
   GtError *error = gt_error_new();
   GtFeatureIndex *index = gt_feature_index_memory_new();
@@ -278,6 +281,53 @@ void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary)
   agn_comp_summary_init(&summary->counts);
 }
 
+void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
+                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
+                    GtHashmap *locus_summaries, PeOptions *options)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
+
+  pe_comp_evaluation_init(overall_eval);
+  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
+  unsigned long i;
+  for(i = 0; i < gt_array_size(seqfiles); i++)
+  {
+    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
+    PeCompEvaluation seqeval;
+    pe_comp_evaluation_init(&seqeval);
+
+    int j;
+    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
+    for(j = 0; j < gt_array_size(seqloci); j++)
+    {
+      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
+      PeCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
+      pe_comp_evaluation_combine(&seqeval, eval);
+      pe_comp_evaluation_combine(overall_eval, eval);
+      AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
+      if(options->html && !options->summary_only)
+      {
+        pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
+                                  locsum->length, locsum->refrtrans,
+                                  locsum->predtrans, &locsum->counts);
+      }
+    }
+    gt_array_add(seqlevel_evals, seqeval);
+    gt_array_delete(seqloci);
+  }
+
+  *seqlevel_evalsp = seqlevel_evals;
+
+  gt_hashmap_delete(locus_summaries);
+  gt_array_delete(loci);
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
+                          "level results (%ld.%06ld seconds)\n", stderr);
+  gt_timer_delete(timer);
+}
+
 void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
 {
   const char *seqid = agn_gene_locus_get_seqid(locus);
@@ -299,6 +349,18 @@ void pe_gene_locus_get_png_filename(AgnGeneLocus *locus, char *buffer, const cha
   const char *seqid = agn_gene_locus_get_seqid(locus);
   sprintf( buffer, "%s/%s/%s_%lu-%lu.png", dirpath, seqid, seqid,
            agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus) );
+}
+
+char *pe_get_start_time()
+{
+  time_t start_time;
+  struct tm *start_time_info;
+  time(&start_time);
+  start_time_info = localtime(&start_time);
+
+  char timestr[128];
+  strftime(timestr, 128, "%d %b %Y, %I:%M%p", start_time_info);
+  return gt_cstr_dup(timestr);
 }
 
 void pe_print_csv_header(FILE *outstream)
@@ -1197,6 +1259,160 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
          outstream );
 
   fclose(outstream);
+}
+
+unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp,
+                                     GtArray **locip, GtStrArray **seqidsp,
+                                     PeOptions *options, AgnLogger *logger)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin loading data and parsing loci\n", stderr);
+
+  // Load loci into memory
+  AgnLocusIndex *locusindex = agn_locus_index_new(false);
+  unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
+                            options->refrfile, options->predfile,
+                            options->numprocs, &options->filters, logger);
+
+  // Collect IDs of all sequences annotated by input files
+  GtStrArray *seqids = agn_locus_index_seqids(locusindex);
+  GtArray *loci = gt_array_new( sizeof(GtArray *) );
+  int i;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    pe_seqid_check(seqid, logger);
+
+    GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
+    gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
+    gt_array_add(loci, seq_loci);
+  }
+
+  *locusindexp = locusindex;
+  *locip = loci;
+  *seqidsp = seqids;
+
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished loading data and "
+                          "parsing loci (%ld.%06ld seconds)\n", stderr);
+  gt_timer_delete(timer);
+  return total;
+}
+
+GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
+{
+  GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
+
+  if(strcmp(options->outfmt, "csv") == 0)
+    pe_print_csv_header(options->outfile);
+
+  unsigned long i;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    FILE *seqfile = NULL;
+    if(!options->summary_only)
+    {
+      const char *seqid = gt_str_array_get(seqids, i);
+      char filename[512];
+      if(options->html)
+      {
+        char dircmd[512];
+        sprintf(dircmd, "mkdir %s/%s", options->outfilename, seqid);
+        if(system(dircmd) != 0)
+        {
+          fprintf(stderr, "error: could not open directory '%s/%s'\n",
+                  options->outfilename, seqid);
+          exit(1);
+        }
+        if(options->debug)
+          fprintf(stderr, "debug: opening directory '%s'\n", dircmd);
+
+        sprintf(dircmd, "ln -s ../LICENSE %s/%s/LICENSE", options->outfilename,
+                seqid);
+        if(system(dircmd) != 0)
+        {
+          fputs("warning: could not create symbolic link to LICENSE\n", stderr);
+        }
+
+        // Create summary page for this sequence
+        sprintf(filename, "%s/%s/index.html", options->outfilename, seqid);
+        if(options->debug)
+          fprintf(stderr, "debug: opening outfile '%s'\n", filename);
+        seqfile = agn_fopen(filename, "w", stderr);
+        pe_print_seqfile_header(seqfile, seqid);
+        gt_array_add(seqfiles, seqfile);
+      }
+      else
+      {
+        sprintf(filename, "%s.%s", options->outfilename, seqid);
+        if(options->debug)
+          fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
+        seqfile = agn_fopen(filename, "w", stderr);
+        gt_array_add(seqfiles, seqfile);
+      }
+    }
+  }
+
+  return seqfiles;
+}
+
+void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
+                             PeOptions *options)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
+
+  if(!options->summary_only)
+  {
+    unsigned long i;
+    for(i = 0; i < gt_str_array_size(seqids); i++)
+    {
+      FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
+      if(options->html)
+        pe_print_seqfile_footer(seqfile);
+      fclose(seqfile);
+    }
+  }
+
+  if(options->outfile == stdout)
+    fflush(stdout);
+  else
+    fclose(options->outfile);
+  if(!options->html && !options->summary_only)
+  {
+    int result;
+    unsigned long i;
+    for(i = 0; i < gt_str_array_size(seqids); i++)
+    {
+      const char *seqid = gt_str_array_get(seqids, i);
+      char command[1024];
+      sprintf(command, "cat %s.%s >> %s && rm %s.%s", options->outfilename,
+              seqid, options->outfilename, options->outfilename, seqid );
+      if(options->outfile == stdout)
+      {
+        sprintf(command, "cat %s.%s && rm %s.%s", options->outfilename, seqid,
+                options->outfilename, seqid );
+      }
+      if(options->debug)
+        fprintf(stderr, "debug: merging output files: %s\n", command);
+      result = system(command);
+      if(result)
+      {
+        fprintf(stderr, "[ParsEval] error: issue merging GFF3 files: %s\n",
+                command);
+        exit(1);
+      }
+    }
+  }
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished printing summary, "
+                          "combining output (%ld.%06ld seconds)\n", stderr);
+  if(options->outfile == stdout)
+    fclose(stdout);
+  
+  gt_timer_delete(timer);
 }
 
 void pe_print_html_footer(FILE *outstream)
@@ -2150,6 +2366,23 @@ void pe_print_summary_html(const char *start_time, int argc,
          "  </body>\n"
          "</html>\n",
          outstream );
+}
+
+void pe_seqid_check(const char *seqid, AgnLogger *logger)
+{
+  size_t n = strlen(seqid);
+  int i;
+  for(i = 0; i < n; i++)
+  {
+    char c = seqid[i];
+    if(!isalnum(c) && c != '.' && c != '-' && c != '_')
+    {
+      agn_logger_log_error(logger, "seqid '%s' contains illegal characters; "
+                           "only alphanumeric characters and . and _ and - are "
+                           "allowed.", seqid);
+      return;
+    }
+  }
 }
 
 int pe_track_order(const char *s1, const char *s2, void *data)

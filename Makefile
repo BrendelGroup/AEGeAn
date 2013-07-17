@@ -91,7 +91,7 @@ $(PE_EXE):	src/ParsEval/parseval.c $(AGN_OBJS) $(PE_OBJS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@- mkdir -p bin # Remove obj/PeComparEval.o on next line ASAP
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) obj/PeComparEval.o src/canon-gff3.c $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) obj/PeComparEval.o obj/PeReports.o src/canon-gff3.c $(LDFLAGS)
 		
 $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 		@- mkdir -p bin
@@ -99,7 +99,7 @@ $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@- mkdir -p bin # Remove obj/PeComparEval.o on next line ASAP
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) obj/PeComparEval.o src/locuspocus.c $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) obj/PeComparEval.o obj/PeReports.o src/locuspocus.c $(LDFLAGS)
 
 inc/core/AgnVersion.h:	
 			perl data/share/version.pl > inc/core/AgnVersion.h

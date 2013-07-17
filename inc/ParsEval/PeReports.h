@@ -3,6 +3,8 @@
 
 #include "genometools.h"
 #include "AgnGeneLocus.h"
+#include "AgnLocusIndex.h"
+#include "AgnLogger.h"
 #include "PeComparEval.h"
 #include "PeOptions.h"
 
@@ -61,12 +63,16 @@ void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
  *
  * @param[in] locus    the locus
  */
-void agn_gene_locus_print_png
-(
-  AgnGeneLocus *locus,
-  AgnGeneLocusPngMetadata *metadata
-);
+void agn_gene_locus_print_png(AgnGeneLocus *locus,
+                              AgnGeneLocusPngMetadata *metadata);
 #endif
+
+/**
+ *
+ */
+void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
+                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
+                    GtHashmap *locus_summaries, PeOptions *options);
 
 /**
  * Get the filename for printing this locus' results.
@@ -93,6 +99,11 @@ unsigned long pe_gene_locus_get_graphic_width(AgnGeneLocus *locus);
  */
 void pe_gene_locus_get_png_filename( AgnGeneLocus *locus,
                                      char *buffer, const char *dirpath );
+
+/**
+ *
+ */
+char *pe_get_start_time();
 
 /**
  *
@@ -124,6 +135,24 @@ void pe_gene_locus_print_results_csv( AgnGeneLocus *locus,
  */
 void pe_gene_locus_print_results_html( AgnGeneLocus *locus,
                                        PeOptions *options );
+
+/**
+ *
+ */
+unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp,
+                                     GtArray **locip, GtStrArray **seqidsp,
+                                     PeOptions *options, AgnLogger *logger);
+
+/**
+ *
+ */
+GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options);
+
+/**
+ *
+ */
+void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
+                             PeOptions *options);
 
 /**
  * Print footer for HTML files.
@@ -181,6 +210,11 @@ void pe_print_summary_html(const char *start_time, int argc,
                            PeCompEvaluation *summary_data,
                            GtArray *seq_summary_data, FILE *outstream,
                            PeOptions *options);
+
+/**
+ *
+ */
+void pe_seqid_check(const char *seqid, AgnLogger *logger);
 
 /**
  * Comparison function used to set the track order in PNG graphics.

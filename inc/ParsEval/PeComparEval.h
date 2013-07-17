@@ -3,6 +3,19 @@
 
 #include "AgnCliquePair.h"
 #include "AgnComparEval.h"
+#include "AgnLocusIndex.h"
+#include "PeOptions.h"
+
+/**
+ *
+ */
+typedef struct
+{
+  GtHashmap *comp_evals;
+  GtHashmap *locus_summaries;
+  PeOptions *options;
+  FILE *seqfile;
+} PeAnalysisData;
 
 /**
  * Each transcript clique pair that is compared is classified as one of the
@@ -64,6 +77,13 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
                                             PeCompResultDesc *desc);
 
 /**
+ *
+ */
+void pe_comp_eval(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
+                  GtHashmap **locus_summariesp, GtStrArray *seqids,
+                  GtArray *seqfiles, GtArray *loci, PeOptions *options);
+
+/**
  * Take values from one data set and add them to the other.
  *
  * @param[out] data           stats, counts, and descriptions relevant to
@@ -118,5 +138,15 @@ void pe_comp_result_desc_combine(PeCompResultDesc *desc,
  */
 //void pe_classification_characteristics_init
 void pe_comp_result_desc_init(PeCompResultDesc *desc);
+
+/**
+ *
+ */
+void pe_pre_analysis(AgnGeneLocus *locus, PeAnalysisData *data);
+
+/**
+ *
+ */
+void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data);
 
 #endif
