@@ -272,6 +272,52 @@ void pe_comp_eval(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
   agn_logger_delete(logger);
 }
 
+void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
+                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
+                    GtHashmap *locus_summaries, PeOptions *options)
+{
+  GtTimer *timer = gt_timer_new();
+  gt_timer_start(timer);
+  fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
+
+  pe_comp_evaluation_init(overall_eval);
+  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
+  unsigned long i;
+  for(i = 0; i < gt_array_size(seqfiles); i++)
+  {
+    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
+    PeCompEvaluation seqeval;
+    pe_comp_evaluation_init(&seqeval);
+
+    int j;
+    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
+    for(j = 0; j < gt_array_size(seqloci); j++)
+    {
+      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
+      PeCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
+      pe_comp_evaluation_combine(&seqeval, eval);
+      pe_comp_evaluation_combine(overall_eval, eval);
+      AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
+      if(options->html && !options->summary_only)
+      {
+        pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
+                                  locsum->length, locsum->refrtrans,
+                                  locsum->predtrans, &locsum->counts);
+      }
+    }
+    gt_array_add(seqlevel_evals, seqeval);
+    gt_array_delete(seqloci);
+  }
+
+  *seqlevel_evalsp = seqlevel_evals;
+
+  gt_hashmap_delete(locus_summaries);
+  gt_array_delete(loci);
+  gt_timer_stop(timer);
+  gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
+                          "level results (%ld.%06ld seconds)\n", stderr);
+}
+
 // Main method
 int main(int argc, char * const argv[])
 {
@@ -327,48 +373,17 @@ int main(int argc, char * const argv[])
 
   // Comparative analysis of loci
   GtHashmap *comp_evals, *locus_summaries;
-  pe_comp_eval(locusindex, &comp_evals, &locus_summaries, seqids, seqfiles, loci, &options);
+  pe_comp_eval(locusindex, &comp_evals, &locus_summaries, seqids, seqfiles,
+               loci, &options);
 
   // Aggregate locus-level results at the sequence level and overall
-  GtTimer *timer_short = gt_timer_new();
-  gt_timer_start(timer_short);
-  fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
   PeCompEvaluation overall_eval;
-  pe_comp_evaluation_init(&overall_eval);
-  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
-  unsigned long i;
-  for(i = 0; i < gt_str_array_size(seqids); i++)
-  {
-    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-    PeCompEvaluation seqeval;
-    pe_comp_evaluation_init(&seqeval);
-
-    int j;
-    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
-    for(j = 0; j < gt_array_size(seqloci); j++)
-    {
-      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
-      PeCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
-      pe_comp_evaluation_combine(&seqeval, eval);
-      pe_comp_evaluation_combine(&overall_eval, eval);
-      AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
-      if(options.html && !options.summary_only)
-      {
-        pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
-                                  locsum->length, locsum->refrtrans,
-                                  locsum->predtrans, &locsum->counts);
-      }
-    }
-    gt_array_add(seqlevel_evals, seqeval);
-    gt_array_delete(seqloci);
-  }
-  gt_hashmap_delete(locus_summaries);
-  gt_array_delete(loci);
-  gt_timer_stop(timer_short);
-  gt_timer_show_formatted(timer_short, "[ParsEval] Finished aggregating locus-"
-                          "level results (%ld.%06ld seconds)\n", stderr);
+  GtArray *seqlevel_evals;
+  pe_agg_results(&overall_eval, &seqlevel_evals, loci, seqfiles, comp_evals,
+                 locus_summaries, &options);
 
   // Print summary statistics, combine output
+  GtTimer *timer_short = gt_timer_new();
   gt_timer_start(timer_short);
   fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
 
@@ -376,6 +391,7 @@ int main(int argc, char * const argv[])
                    seqlevel_evals, options.outfile, &options );
   if(!options.summary_only)
   {
+    unsigned long i;
     for(i = 0; i < gt_str_array_size(seqids); i++)
     {
       FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
@@ -393,6 +409,7 @@ int main(int argc, char * const argv[])
   if(!options.html && !options.summary_only)
   {
     int result;
+    unsigned long i;
     for(i = 0; i < gt_str_array_size(seqids); i++)
     {
       const char *seqid = gt_str_array_get(seqids, i);
