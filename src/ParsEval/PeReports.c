@@ -47,7 +47,6 @@ void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
 
   *seqlevel_evalsp = seqlevel_evals;
 
-  gt_hashmap_delete(locus_summaries);
   gt_array_delete(loci);
   gt_timer_stop(timer);
   gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
