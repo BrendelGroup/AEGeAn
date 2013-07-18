@@ -56,22 +56,26 @@ endif
 INCS=-I $(GT_INSTALL_DIR)/include/genometools/ -I inc/core -I inc/ParsEval -I inc/VAnG -I /usr/include/cairo/ -I /sw/include/cairo/
 
 # Targets
-all:		$(BINS)
+all:		$(BINS) libaegean.a
 		
 
 install:	all
 		@- test -d $(prefix)/bin || mkdir $(prefix)/bin
 		cp $(BINS) $(prefix)/bin/.
+		cp libaegean.a $(prefix)/lib/.
+		@- test -d $(prefix)/include/aegean || mkdir $(prefix)/include/aegean
+		@- rm -f $(prefix)/include/aegean/*
+		cp inc/core/*.h $(prefix)/include/aegean/.
 		@- test -d $(prefix)/share || mkdir $(prefix)/share
 		@- test -d $(prefix)/share/aegean || mkdir $(prefix)/share/aegean
-		cp data/share/* $(prefix)/share/aegean/.
+		cp -r data/share/* $(prefix)/share/aegean/.
 
 uninstall:	
 		rm -r $(prefix)/$(PE_EXE)
 		rm -r $(prefix)/share/parseval
 
 clean:		
-		rm -f $(BINS) $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
+		rm -f $(BINS) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
@@ -100,6 +104,9 @@ $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
+
+libaegean.a:	$(AGN_OBJS)
+		ar ru libaegean.a $(AGN_OBJS)
 
 inc/core/AgnVersion.h:	
 			perl data/share/version.pl > inc/core/AgnVersion.h
