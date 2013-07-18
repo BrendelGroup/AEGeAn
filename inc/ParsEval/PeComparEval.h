@@ -168,7 +168,7 @@ void pe_pre_analysis(AgnGeneLocus *locus, PeAnalysisData *data);
  *
  * @param[in]  locus    locus object
  * @param[out] data     data structures to store the needed information
- * /
+ */
 void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data);
 
 #endif

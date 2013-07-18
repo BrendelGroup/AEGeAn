@@ -104,14 +104,15 @@ void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
 {
   int orig_numprocs = omp_get_num_threads();
   omp_set_num_threads(numprocs);
-  
+
   GtArray *seqloci = agn_locus_index_get(idx, seqid);
   unsigned long nloci = gt_array_size(seqloci);
 
-  int i, rank;
+  //int i, rank;
+  int i;
   #pragma omp parallel
   {
-    rank = omp_get_thread_num();
+    //rank = omp_get_thread_num();
     #pragma omp for schedule(dynamic)
     for(i = 0; i < nloci; i++)
     {
