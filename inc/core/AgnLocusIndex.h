@@ -10,7 +10,19 @@ typedef struct AgnLocusIndex AgnLocusIndex;
 typedef void (*AgnLocusIndexVisitFunc)(AgnGeneLocus *, void *);
 
 /**
+ * Perform a comparative analysis of each locus associate with the given
+ * sequence ID in this index.
  *
+ * @param[in] idx              the locus index
+ * @param[in] seqid            the seqid for which loci will be analyzed
+ * @param[in] numprocs         number of processors to use in the anlaysis
+ * @param[in] preanalyfunc     optional callback function to execute directly
+ *                             prior to comparative analysis
+ * @param[in] postanalyfunc    optional callback function to execute directly
+ *                             following comparative analysis
+ * @param[in] analyfuncdata    optional pointer to any additional data needed
+ *                             for pre- and post- analysis callback functions
+ * @param[in] logger           object for logging warning and error messages
  */
 void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
                                           int numprocs,

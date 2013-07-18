@@ -156,13 +156,19 @@ void pe_comp_result_desc_combine(PeCompResultDesc *desc,
 void pe_comp_result_desc_init(PeCompResultDesc *desc);
 
 /**
+ * Collect information from the given locus prior to comparative analysis.
  *
+ * @param[in]  locus    locus object
+ * @param[out] data     data structures to store the needed information
  */
 void pe_pre_analysis(AgnGeneLocus *locus, PeAnalysisData *data);
 
 /**
+ * Collect information from the given locus following comparative analysis.
  *
- */
+ * @param[in]  locus    locus object
+ * @param[out] data     data structures to store the needed information
+ * /
 void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data);
 
 #endif

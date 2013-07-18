@@ -1,5 +1,5 @@
-#ifndef AEGEAN_GT_EXTENSIONS
-#define AEGEAN_GT_EXTENSIONS
+#ifndef AEGEAN_GT_EXTENSIONS_MODULE
+#define AEGEAN_GT_EXTENSIONS_MODULE
 
 /**
  * A collection of extensions to core GenomeTools classes.

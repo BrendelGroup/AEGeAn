@@ -1,8 +1,9 @@
+#ifndef AEGEAN_UTILS_MODULE
+#define AEGEAN_UTILS_MODULE
+
 /**
  * A collection of assorted utility functions for ParsEval.
  */
-#ifndef AEGEAN_UTILS
-#define AEGEAN_UTILS
 
 #include "genometools.h"
 #include "AgnLogger.h"
