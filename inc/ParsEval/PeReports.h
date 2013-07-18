@@ -68,12 +68,17 @@ void pe_gene_locus_get_png_filename(AgnGeneLocus *locus, char *buffer,
                                     const char *dirpath );
 
 /**
- * FIXME
+ * Generate a string containing the current time. User is responsible to free
+ * the string.
+ *
+ * @returns    new string containing current time
  */
 char *pe_get_start_time();
 
 /**
- * FIXME
+ * Print the first row of the CSV output file, containing column headers.
+ *
+ * @param[out] oustream    file stream to which the header will be printed
  */
 void pe_print_csv_header(FILE *outstream);
 
@@ -103,19 +108,37 @@ void pe_gene_locus_print_results_csv(AgnGeneLocus *locus, FILE *outstream,
 void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options);
 
 /**
- * FIXME
+ * Load gene annotations into memory and identify gene loci.
+ *
+ * @param[out] locusindexp    pointer to a locus index object to be populated
+ * @param[out] locip          pointer to an array of locus arrays, to be
+ *                            populated
+ * @param[out] seqidsp        pointer to an array of sequence IDs, to be
+ *                            populated
+ * @param[in]  options        ParsEval options
+ * @param[in]  logger         object to which error/warning messages are written
  */
 unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp,
                                      GtArray **locip, GtStrArray **seqidsp,
                                      PeOptions *options, AgnLogger *logger);
 
 /**
- * FIXME
+ * Prepare output files.
+ *
+ * @param[in] seqids     list of sequence IDs
+ * @param[in] options    ParsEval options
+ * @returns              list of file handles for temporary (text/csv) or
+ *                       permanent (HTML) output files
  */
 GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options);
 
 /**
- * FIXME
+ * Print the ParsEval summary and, if necessary, combine temporary output files
+ * to create the final output.
+ *
+ * @param[in] seqids      list of sequence IDs
+ * @param[in] seqfiles    list of file handles to output files
+ * @param[in] options     ParsEval options
  */
 void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
                              PeOptions *options);
@@ -187,7 +210,13 @@ void pe_print_summary_html(const char *start_time, int argc,
                            PeOptions *options);
 
 /**
- * FIXME
+ * ParsEval uses sequence IDs to create temporary and permanent output files.
+ * Sequence IDs that contain characters that are not supported for POSIX
+ * filenames cause problems. This function checks for those problems.
+ *
+ * @param[in]  seqid     the sequence ID to be checked
+ * @param[out] logger    object to which an error message will be written if the
+ *                       seqid is invalid
  */
 void pe_seqid_check(const char *seqid, AgnLogger *logger);
 

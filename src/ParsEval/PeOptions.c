@@ -314,6 +314,8 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     }
   }
 
+  options->refrfile = argv[optind];
+  options->predfile = argv[optind + 1];
   return optind;
 }
 

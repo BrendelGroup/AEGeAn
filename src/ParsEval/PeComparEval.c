@@ -1,8 +1,8 @@
 #include "PeComparEval.h"
 #include "PeReports.h"
 
-void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
-                                            PeCompResultDesc *desc)
+void pe_clique_pair_record_characteristics(AgnCliquePair *pair,
+                                           PeCompResultDesc *desc)
 {
   AgnTranscriptClique *refr = agn_clique_pair_get_refr_clique(pair);
   AgnTranscriptClique *pred = agn_clique_pair_get_refr_clique(pair);

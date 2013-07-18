@@ -7,7 +7,7 @@
 #include "PeOptions.h"
 
 /**
- *
+ * Supplemental data structure used during comparative analysis of gene loci.
  */
 typedef struct
 {
@@ -68,14 +68,13 @@ typedef struct
 } PeCompEvaluation;
 
 /**
- * Add information about this clique pair to a set of aggregate characteristics.
- * FIXME
+ * Add information about a clique pair to a set of aggregate characteristics.
  *
  * @param[in]  pair               the clique pair
  * @param[out] characteristics    a set of aggregate characteristics
  */
-void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
-                                            PeCompResultDesc *desc);
+void pe_clique_pair_record_characteristics(AgnCliquePair *pair,
+                                           PeCompResultDesc *desc);
 
 /**
  * Perform comparison of annotations (reference vs prediction) for each locus in

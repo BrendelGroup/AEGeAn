@@ -75,56 +75,34 @@ void pe_gene_locus_aggregate_results(AgnGeneLocus *locus,PeCompEvaluation *data)
     {
       case PE_CLIQUE_PAIR_PERFECT_MATCH:
         data->counts.num_perfect++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.perfect_matches
-        );
+        pe_clique_pair_record_characteristics(pair,
+                                              &data->results.perfect_matches);
         break;
 
       case PE_CLIQUE_PAIR_MISLABELED:
         data->counts.num_mislabeled++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.perfect_mislabeled
-        );
+        pe_clique_pair_record_characteristics(pair,
+                                             &data->results.perfect_mislabeled);
         break;
 
       case PE_CLIQUE_PAIR_CDS_MATCH:
         data->counts.num_cds_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.cds_matches
-        );
+        pe_clique_pair_record_characteristics(pair, &data->results.cds_matches);
         break;
 
       case PE_CLIQUE_PAIR_EXON_MATCH:
         data->counts.num_exon_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.exon_matches
-        );
+        pe_clique_pair_record_characteristics(pair,&data->results.exon_matches);
         break;
 
       case PE_CLIQUE_PAIR_UTR_MATCH:
         data->counts.num_utr_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.utr_matches
-        );
+        pe_clique_pair_record_characteristics(pair, &data->results.utr_matches);
         break;
 
       case PE_CLIQUE_PAIR_NON_MATCH:
         data->counts.non_match++;
-        agn_clique_pair_record_characteristics
-        (
-          pair,
-          &data->results.non_matches
-        );
+        pe_clique_pair_record_characteristics(pair, &data->results.non_matches);
         break;
 
       default:

@@ -24,12 +24,8 @@ int main(int argc, char * const argv[])
   timer = gt_timer_new();
   gt_timer_start(timer);
   fputs("[ParsEval] Begin ParsEval\n", stderr);
-
-  // Parse command-line arguments
   pe_set_option_defaults(&options);
-  int optind = pe_parse_options(argc, argv, &options);
-  options.refrfile = argv[optind];
-  options.predfile = argv[optind + 1];
+  pe_parse_options(argc, argv, &options);
   if(options.refrfile == NULL || options.predfile == NULL)
   {
     fprintf(stderr, "[ParsEval] error: could not parse input filenames\n");
