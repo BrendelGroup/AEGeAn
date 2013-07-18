@@ -11,11 +11,25 @@
 #define PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH 650
 
 /**
- * FIXME
+ * Aggregate locus-specific comparison statistics at the sequence level and over
+ * all sequences.
+ *
+ * @param[out] overall_eval       comparison statistics aggregated over all data
+ * @param[out] seqlevel_evalsp    pointer to an array for storing comparison
+ *                                statistics aggregated at the level of distinct
+ *                                sequences
+ * @param[in]  loci               array of arrays, each subarray containing loci
+ *                                for a given sequence, sorted by position
+ * @param[in]  seqfiles           list of sequence-specific output files (for
+ *                                HTML mode only)
+ * @param[in]  comp_evals         comparison results by locus
+ * @param[in]  locus_summaries    locus comparison summaries
+ * @param[in]  options            ParsEval options
  */
-void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
-                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
-                    GtHashmap *locus_summaries, PeOptions *options);
+void pe_aggregate_results(PeCompEvaluation *overall_eval,
+                          GtArray **seqlevel_evalsp, GtArray *loci,
+                          GtArray *seqfiles, GtHashmap *comp_evals,
+                          GtHashmap *locus_summaries, PeOptions *options);
 
 /**
  * Add the locus' comparison statistics to a set of aggregate statistics.

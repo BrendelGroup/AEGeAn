@@ -69,6 +69,7 @@ typedef struct
 
 /**
  * Add information about this clique pair to a set of aggregate characteristics.
+ * FIXME
  *
  * @param[in]  pair               the clique pair
  * @param[out] characteristics    a set of aggregate characteristics
@@ -77,11 +78,27 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
                                             PeCompResultDesc *desc);
 
 /**
+ * Perform comparison of annotations (reference vs prediction) for each locus in
+ * the given locus index.
  *
+ * @param[in]  locusindex          data structure in which all loci are stored
+ * @param[out] comp_evalsp         pointer to a hashmap for storing comparison
+ *                                 results; key=memory address for locus,
+ *                                 value=pointer to PeCompEvaluation struct
+ * @param[out] locus_summariesp    pointer to a hashmap for storing locus
+ *                                 summaries; key=memory address for locus,
+ *                                 value=pointer to AgnGeneLocusSummary struct
+ * @param[in]  seqids              list of sequence IDs
+ * @param[in]  seqfiles            list of sequence-specific output files (for
+ *                                 HTML mode only)
+ * @param[in]  loci                array of arrays, each sub-array containing
+ *                                 loci for a given sequence, sorted by position
+ * @param[in]  options             ParsEval options
  */
-void pe_comp_eval(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
-                  GtHashmap **locus_summariesp, GtStrArray *seqids,
-                  GtArray *seqfiles, GtArray *loci, PeOptions *options);
+void pe_comparative_analysis(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
+                             GtHashmap **locus_summariesp, GtStrArray *seqids,
+                             GtArray *seqfiles, GtArray *loci,
+                             PeOptions *options);
 
 /**
  * Take values from one data set and add them to the other.

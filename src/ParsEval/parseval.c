@@ -58,10 +58,10 @@ int main(int argc, char * const argv[])
     GtArray *        seqfiles; 
 
     seqfiles = pe_prep_output(seqids, &options);
-    pe_comp_eval(locusindex, &comp_evals, &locus_summaries, seqids, seqfiles,
-                 loci, &options);
-    pe_agg_results(&overall_eval, &seqlevel_evals, loci, seqfiles, comp_evals,
-                   locus_summaries, &options);
+    pe_comparative_analysis(locusindex, &comp_evals, &locus_summaries, seqids,
+                            seqfiles,loci, &options);
+    pe_aggregate_results(&overall_eval, &seqlevel_evals, loci, seqfiles,
+                         comp_evals, locus_summaries, &options);
     pe_print_summary(start_time_str, argc, argv, seqids, &overall_eval,
                      seqlevel_evals, options.outfile, &options);
     pe_print_combine_output(seqids, seqfiles, &options);
@@ -78,6 +78,7 @@ int main(int argc, char * const argv[])
                           " %ld.%06ld seconds)\n\n", stderr );
 
   // Free up memory
+  gt_array_delete(loci);
   gt_free(start_time_str);
   agn_logger_delete(logger);
   agn_locus_index_delete(locusindex);

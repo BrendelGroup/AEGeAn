@@ -8,9 +8,10 @@
 #include "AgnVersion.h"
 #include "PeReports.h"
 
-void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
-                    GtArray *loci, GtArray *seqfiles, GtHashmap *comp_evals,
-                    GtHashmap *locus_summaries, PeOptions *options)
+void pe_aggregate_results(PeCompEvaluation *overall_eval,
+                          GtArray **seqlevel_evalsp, GtArray *loci,
+                          GtArray *seqfiles, GtHashmap *comp_evals,
+                          GtHashmap *locus_summaries, PeOptions *options)
 {
   GtTimer *timer = gt_timer_new();
   gt_timer_start(timer);
@@ -34,6 +35,7 @@ void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
       pe_comp_evaluation_combine(&seqeval, eval);
       pe_comp_evaluation_combine(overall_eval, eval);
       AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
+      // FIXME Should this block be placed elsewhere?
       if(options->html && !options->summary_only)
       {
         pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
@@ -47,7 +49,6 @@ void pe_agg_results(PeCompEvaluation *overall_eval, GtArray **seqlevel_evalsp,
 
   *seqlevel_evalsp = seqlevel_evals;
 
-  gt_array_delete(loci);
   gt_timer_stop(timer);
   gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
                           "level results (%ld.%06ld seconds)\n", stderr);

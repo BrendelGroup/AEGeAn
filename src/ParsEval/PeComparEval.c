@@ -15,9 +15,10 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
   desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
 }
 
-void pe_comp_eval(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
-                  GtHashmap **locus_summariesp, GtStrArray *seqids,
-                  GtArray *seqfiles, GtArray *loci, PeOptions *options)
+void pe_comparative_analysis(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
+                             GtHashmap **locus_summariesp, GtStrArray *seqids,
+                             GtArray *seqfiles, GtArray *loci,
+                             PeOptions *options)
 {
   GtHashmap *comp_evals;
   GtHashmap *locus_summaries;
