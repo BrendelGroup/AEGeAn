@@ -17,6 +17,14 @@
 GtArray* agn_gt_array_copy(GtArray *source, size_t size);
 
 /**
+ * Write the given feature index to GFF3 format.
+ *
+ * @param[in]  index        feature index containing the data
+ * @param[out] outstream    file to which output will be written
+ */
+void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream);
+
+/**
  * Calculate the length of the given transcript's coding sequence
  *
  * @param[in] transcript    the transcript
@@ -177,9 +185,9 @@ void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
  *                               default exclusion list
  * @param[in]  prefix            optional prefix
  */
-void agn_gt_feature_node_to_gff3( GtFeatureNode *feature, FILE *outstream,
-                                  bool printchildren, char *prefix,
-                                  GtHashmap *filtered_types );
+void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream,
+                                 bool printchildren, char *prefix,
+                                 GtHashmap *filtered_types);
 
 /**
  * Comparison function to be used for sorting GtGenomeNode objects stored in a

@@ -14,6 +14,39 @@ GtArray* agn_gt_array_copy(GtArray *source, size_t size)
   return new;
 }
 
+void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
+{
+  fputs("##gff-version   3\n", outstream);
+  GtError *error = gt_error_new();
+  GtStrArray *seqids = gt_feature_index_get_seqids(index, error);
+  unsigned long i;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtRange seqrange;
+    gt_feature_index_get_range_for_seqid(index, &seqrange, seqid, error);
+    fprintf(outstream, "##sequence-region   %s %lu %lu\n", seqid,
+            seqrange.start, seqrange.end);
+  }
+
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtArray *features = gt_feature_index_get_features_for_seqid(index, seqid,
+                                                                error);
+    unsigned long j;
+    for(j = 0; j < gt_array_size(features); j++)
+    {
+      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(features, j);
+      agn_gt_feature_node_to_gff3(fn, outstream, true, NULL, NULL);
+      fputs("###\n", outstream);
+    }
+  }
+  
+  gt_error_delete(error);
+  gt_str_array_delete(seqids);
+}
+
 unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
 {
   unsigned long length = 0;
