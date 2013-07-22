@@ -51,7 +51,7 @@ int main(int argc, char * const argv[])
     GtHashmap *      locus_summaries;
     PeCompEvaluation overall_eval;
     GtArray *        seqlevel_evals;
-    GtArray *        seqfiles; 
+    GtArray *        seqfiles;
 
     seqfiles = pe_prep_output(seqids, &options);
     pe_comparative_analysis(locusindex, &comp_evals, &locus_summaries, seqids,

@@ -674,7 +674,7 @@ void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
     }
     return;
   }
-  
+
   fprintf(stderr, "Error: unknown filename '%s'\n", filename);
   exit(1);
 }

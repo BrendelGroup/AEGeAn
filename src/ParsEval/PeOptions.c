@@ -299,7 +299,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       }
     }
   }
-  
+
   if(options->trans_per_locus > 0)
   {
     if(options->filters.MaxReferenceTranscriptModels == 0 ||

@@ -19,7 +19,7 @@ void agn_transcript_clique_add( AgnTranscriptClique *clique,
                                 GtFeatureNode *transcript )
 {
   if(clique->transcripts == NULL)
-    clique->transcripts = gt_dlist_new( (GtCompare)gt_genome_node_cmp );
+    clique->transcripts = gt_dlist_new((GtCompare)gt_genome_node_cmp);
 
   gt_dlist_add(clique->transcripts, transcript);
   agn_transcript_clique_reset(clique);
@@ -29,9 +29,9 @@ unsigned long agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
 {
   unsigned long length = 0;
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(clique->transcripts);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(clique->transcripts);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
     length += agn_gt_feature_node_cds_length(transcript);
@@ -57,13 +57,13 @@ void agn_transcript_clique_delete(AgnTranscriptClique *clique)
   clique = NULL;
 }
 
-bool agn_transcript_clique_has_id_in_hash( AgnTranscriptClique *clique,
-                                           GtHashmap *map )
+bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
+                                          GtHashmap *map)
 {
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(clique->transcripts);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(clique->transcripts);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
     const char *tid = gt_feature_node_get_attribute(transcript, "ID");
@@ -76,10 +76,7 @@ bool agn_transcript_clique_has_id_in_hash( AgnTranscriptClique *clique,
 
 AgnTranscriptClique* agn_transcript_clique_new()
 {
-  AgnTranscriptClique *clique = (AgnTranscriptClique *)gt_malloc
-  (
-    sizeof(AgnTranscriptClique)
-  );
+  AgnTranscriptClique *clique = gt_malloc(sizeof(AgnTranscriptClique));
   clique->transcripts = NULL;
   agn_transcript_clique_reset(clique);
   return clique;
@@ -103,16 +100,16 @@ unsigned long agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
 {
   unsigned long exon_count = 0;
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(clique->transcripts);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(clique->transcripts);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
     GtFeatureNode *current;
-    for( current = gt_feature_node_iterator_next(iter);
-         current != NULL;
-         current = gt_feature_node_iterator_next(iter) )
+    for(current = gt_feature_node_iterator_next(iter);
+        current != NULL;
+        current = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_exon_feature(current))
         exon_count++;
@@ -126,16 +123,16 @@ unsigned long agn_transcript_clique_num_utrs(AgnTranscriptClique *clique)
 {
   unsigned long utr_count = 0;
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(clique->transcripts);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(clique->transcripts);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
     GtFeatureNode *current;
-    for( current = gt_feature_node_iterator_next(iter);
-         current != NULL;
-         current = gt_feature_node_iterator_next(iter) )
+    for(current = gt_feature_node_iterator_next(iter);
+        current != NULL;
+        current = gt_feature_node_iterator_next(iter))
     {
       if(agn_gt_feature_node_is_utr_feature(current))
         utr_count++;
@@ -145,8 +142,8 @@ unsigned long agn_transcript_clique_num_utrs(AgnTranscriptClique *clique)
   return utr_count;
 }
 
-void agn_transcript_clique_print_ids( AgnTranscriptClique *clique,
-                                      FILE *outstream )
+void agn_transcript_clique_print_ids(AgnTranscriptClique *clique,
+                                     FILE *outstream)
 {
   if(clique->transcripts == NULL || gt_dlist_size(clique->transcripts) == 0)
   {
@@ -162,9 +159,9 @@ void agn_transcript_clique_print_ids( AgnTranscriptClique *clique,
   {
     fprintf(outstream, "[");
     GtDlistelem *elem;
-    for( elem = gt_dlist_first(clique->transcripts);
-         elem != NULL;
-         elem = gt_dlistelem_next(elem) )
+    for(elem = gt_dlist_first(clique->transcripts);
+        elem != NULL;
+        elem = gt_dlistelem_next(elem))
     {
       if(elem != gt_dlist_first(clique->transcripts))
         fprintf(outstream, ", ");
@@ -176,13 +173,13 @@ void agn_transcript_clique_print_ids( AgnTranscriptClique *clique,
   }
 }
 
-void agn_transcript_clique_put_ids_in_hash( AgnTranscriptClique *clique,
-                                            GtHashmap *map )
+void agn_transcript_clique_put_ids_in_hash(AgnTranscriptClique *clique,
+                                           GtHashmap *map)
 {
   GtDlistelem *elem;
-  for( elem = gt_dlist_first(clique->transcripts);
-       elem != NULL;
-       elem = gt_dlistelem_next(elem) )
+  for(elem = gt_dlist_first(clique->transcripts);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
   {
     GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
     const char *tid = gt_feature_node_get_attribute(transcript, "ID");

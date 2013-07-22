@@ -42,7 +42,7 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
       fputs("###\n", outstream);
     }
   }
-  
+
   gt_error_delete(error);
   gt_str_array_delete(seqids);
 }

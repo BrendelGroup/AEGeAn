@@ -175,7 +175,7 @@ static int agn_simple_node_visitor_visit_feature_node(GtNodeVisitor *nv,
     gt_feature_index_add_feature_node(v->index, fn, error);
     return 0;
   }
-  
+
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
   GtFeatureNode *feature;
   for(feature  = gt_feature_node_iterator_next(iter);

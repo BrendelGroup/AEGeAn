@@ -12,7 +12,8 @@ PE_EXE=bin/parseval
 CN_EXE=bin/canon-gff3
 VN_EXE=bin/vang
 LP_EXE=bin/locuspocus
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE)
+UT_EXE=bin/unittests
+BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(UT_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -104,6 +105,10 @@ $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
+
+$(UT_EXE):	test/unittests.c $(AGN_OBJS)
+		@- mkdir -p bin
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
 		ar ru libaegean.a $(AGN_OBJS)

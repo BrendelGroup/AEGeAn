@@ -136,7 +136,7 @@ void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
       gt_timer_delete(timer);
     }
   }
-  
+
   omp_set_num_threads(orig_numprocs);
 }
 

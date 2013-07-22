@@ -17,8 +17,8 @@ typedef struct AgnTranscriptClique AgnTranscriptClique;
  * @param[out] clique        the clique
  * @param[in]  transcript    the transcript feature
  */
-void agn_transcript_clique_add( AgnTranscriptClique *clique,
-                                GtFeatureNode *transcript );
+void agn_transcript_clique_add(AgnTranscriptClique *clique,
+                               GtFeatureNode *transcript);
 
 /**
  * Get the CDS length for this transcript clique.
@@ -52,8 +52,8 @@ void agn_transcript_clique_delete(AgnTranscriptClique *clique);
  * @returns             true if the hashmap contains any of the clique's IDs,
  *                      false otherwise
  */
-bool agn_transcript_clique_has_id_in_hash( AgnTranscriptClique *clique,
-                                           GtHashmap *map );
+bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
+                                          GtHashmap *map);
 
 /**
  * Allocate some memory for a new transcript clique.
@@ -95,8 +95,8 @@ unsigned long agn_transcript_clique_num_utrs(AgnTranscriptClique *clique);
  * @param[in]  clique       the clique
  * @param[out] outstream    the output stream to which the IDs will be printed
  */
-void agn_transcript_clique_print_ids( AgnTranscriptClique *clique,
-                                      FILE *outstream );
+void agn_transcript_clique_print_ids(AgnTranscriptClique *clique,
+                                     FILE *outstream);
 
 /**
  * Add all of the IDs associated with this clique to the given hash map.
@@ -104,8 +104,8 @@ void agn_transcript_clique_print_ids( AgnTranscriptClique *clique,
  * @param[in]  clique    the clique
  * @param[out] map       the hash map to which the IDs will be written
  */
-void agn_transcript_clique_put_ids_in_hash( AgnTranscriptClique *clique,
-                                            GtHashmap *map );
+void agn_transcript_clique_put_ids_in_hash(AgnTranscriptClique *clique,
+                                           GtHashmap *map);
 
 /**
  * Reset the internal iterator used by the `agn_transcript_clique_next'

@@ -1220,7 +1220,7 @@ void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
                           "combining output (%ld.%06ld seconds)\n", stderr);
   if(options->outfile == stdout)
     fclose(stdout);
-  
+
   gt_timer_delete(timer);
 }
 
