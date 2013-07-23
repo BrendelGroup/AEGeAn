@@ -91,6 +91,7 @@ rest of the installation instructions before proceeding.
 
   # Test AEGeAn: print usage statement
   canon-gff3 -h
+  locuspocus -h
   parseval -h
   vang -h
 

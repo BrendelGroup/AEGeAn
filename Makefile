@@ -3,6 +3,9 @@
 
 prefix=/usr/local
 GT_INSTALL_DIR=$(prefix)
+AGN_LINK=https://github.com/standage/AEGeAn
+AGN_DATE=2013
+AGN_VERSION=0.9.3-rc
 
 #----End configuration----#
 #----End configuration----#
@@ -114,7 +117,7 @@ libaegean.a:	$(AGN_OBJS)
 		ar ru libaegean.a $(AGN_OBJS)
 
 inc/core/AgnVersion.h:	
-			perl data/share/version.pl > inc/core/AgnVersion.h
+			bash -c "if [ -d .git ]; then perl data/share/version.pl > inc/core/AgnVersion.h; else perl data/share/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
 test:		$(BINS)
 		@- test/AT1G05320.sh
