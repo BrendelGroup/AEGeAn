@@ -78,7 +78,7 @@ rest of the installation instructions before proceeding.
 
   # Install GenomeTools and AEGeAn (platform-independent)
   cd /usr/local/src
-  git clone git://genometools.org/genometools.git
+  git clone git://github.com/genometools/genometools.git
   cd genometools
   make 64bit=yes
   make install
