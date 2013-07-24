@@ -1,9 +1,0 @@
-##gff-version   3
-##sequence-region   seq 1 500
-seq	nano	gene	1	500	.	+	.	ID=gene
-seq	nano	mRNA	1	500	.	+	.	ID=transcript;Parent=gene
-seq	nano	five_prime_UTR	1	99	.	+	.	Parent=transcript
-seq	nano	exon	1	500	.	+	.	Parent=transcript
-seq	nano	CDS	100	450	.	+	0	Parent=transcript
-seq	nano	three_prime_UTR	451	500	.	+	.	Parent=transcript
-###
