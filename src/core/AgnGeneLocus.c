@@ -463,12 +463,12 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
   unsigned long refr_cds_length = agn_gene_locus_refr_cds_length(locus);
   if(filters->MinReferenceCDSLength > 0)
   {
-    if(refr_cds_length < filters->MinReferenceCDSLength)
+    if(refr_cds_length / 3 < filters->MinReferenceCDSLength)
       return true;
   }
   if(filters->MaxReferenceCDSLength > 0)
   {
-    if(refr_cds_length > filters->MaxReferenceCDSLength)
+    if(refr_cds_length / 3 > filters->MaxReferenceCDSLength)
       return true;
   }
 
@@ -476,12 +476,12 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
   unsigned long pred_cds_length = agn_gene_locus_pred_cds_length(locus);
   if(filters->MinPredictionCDSLength > 0)
   {
-    if(pred_cds_length < filters->MinPredictionCDSLength)
+    if(pred_cds_length / 3 < filters->MinPredictionCDSLength)
       return true;
   }
   if(filters->MaxPredictionCDSLength > 0)
   {
-    if(pred_cds_length > filters->MaxPredictionCDSLength)
+    if(pred_cds_length / 3 > filters->MaxPredictionCDSLength)
       return true;
   }
 

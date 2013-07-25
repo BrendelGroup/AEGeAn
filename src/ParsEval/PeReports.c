@@ -1462,7 +1462,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.perfect_matches.pred_exon_count /
              (double)summary_data->results.perfect_matches.transcript_count );
     fprintf( outstream, "      avg. refr CDS length.................%.2lf aa\n",
-             (double)summary_data->results.perfect_matches.refr_cds_length /
+             (double)summary_data->results.perfect_matches.refr_cds_length / 3 /
              (double)summary_data->results.perfect_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
              (double)summary_data->results.perfect_matches.pred_cds_length /
@@ -1483,7 +1483,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.perfect_mislabeled.pred_exon_count /
              (double)summary_data->results.perfect_mislabeled.transcript_count );
     fprintf( outstream, "      avg. refr CDS length.................%.2lf aa\n",
-             (double)summary_data->results.perfect_mislabeled.refr_cds_length /
+             (double)summary_data->results.perfect_mislabeled.refr_cds_length / 3 /
              (double)summary_data->results.perfect_mislabeled.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
              (double)summary_data->results.perfect_mislabeled.pred_cds_length /
@@ -1504,7 +1504,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.cds_matches.pred_exon_count /
              (double)summary_data->results.cds_matches.transcript_count );
     fprintf( outstream, "      avg. refr CDS length.................%.2lf aa\n",
-             (double)summary_data->results.cds_matches.refr_cds_length /
+             (double)summary_data->results.cds_matches.refr_cds_length / 3 /
              (double)summary_data->results.cds_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
              (double)summary_data->results.cds_matches.pred_cds_length /
@@ -1525,7 +1525,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.exon_matches.pred_exon_count /
              (double)summary_data->results.exon_matches.transcript_count );
     fprintf( outstream, "      avg. refr CDS length.................%.2lf aa\n",
-             (double)summary_data->results.exon_matches.refr_cds_length /
+             (double)summary_data->results.exon_matches.refr_cds_length / 3 /
              (double)summary_data->results.exon_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
              (double)summary_data->results.exon_matches.pred_cds_length /
@@ -1546,7 +1546,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.utr_matches.pred_exon_count /
              (double)summary_data->results.utr_matches.transcript_count );
     fprintf( outstream, "      avg. refr CDS length.................%.2lf aa\n",
-             (double)summary_data->results.utr_matches.refr_cds_length /
+             (double)summary_data->results.utr_matches.refr_cds_length / 3 /
              (double)summary_data->results.utr_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
              (double)summary_data->results.utr_matches.pred_cds_length /
@@ -1567,7 +1567,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.non_matches.pred_exon_count /
              (double)summary_data->results.non_matches.transcript_count );
     fprintf( outstream, "      avg. refr CDS length.................%.2lf aa\n",
-             (double)summary_data->results.non_matches.refr_cds_length /
+             (double)summary_data->results.non_matches.refr_cds_length / 3 /
              (double)summary_data->results.non_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
              (double)summary_data->results.non_matches.pred_cds_length /
@@ -1868,7 +1868,7 @@ void pe_print_summary_html(const char *start_time, int argc,
              (double)summary_data->results.perfect_matches.transcript_count,
              (double)summary_data->results.perfect_matches.pred_exon_count /
              (double)summary_data->results.perfect_matches.transcript_count,
-             (double)summary_data->results.perfect_matches.refr_cds_length /
+             (double)summary_data->results.perfect_matches.refr_cds_length / 3 /
              (double)summary_data->results.perfect_matches.transcript_count,
              (double)summary_data->results.perfect_matches.pred_cds_length /
              (double)summary_data->results.perfect_matches.transcript_count );
@@ -1899,7 +1899,7 @@ void pe_print_summary_html(const char *start_time, int argc,
              (double)summary_data->results.perfect_mislabeled.transcript_count,
              (double)summary_data->results.perfect_mislabeled.pred_exon_count /
              (double)summary_data->results.perfect_mislabeled.transcript_count,
-             (double)summary_data->results.perfect_mislabeled.refr_cds_length /
+             (double)summary_data->results.perfect_mislabeled.refr_cds_length / 3 /
              (double)summary_data->results.perfect_mislabeled.transcript_count,
              (double)summary_data->results.perfect_mislabeled.pred_cds_length /
              (double)summary_data->results.perfect_mislabeled.transcript_count );
@@ -1930,7 +1930,7 @@ void pe_print_summary_html(const char *start_time, int argc,
              (double)summary_data->results.cds_matches.transcript_count,
              (double)summary_data->results.cds_matches.pred_exon_count /
              (double)summary_data->results.cds_matches.transcript_count,
-             (double)summary_data->results.cds_matches.refr_cds_length /
+             (double)summary_data->results.cds_matches.refr_cds_length / 3 /
              (double)summary_data->results.cds_matches.transcript_count,
              (double)summary_data->results.cds_matches.pred_cds_length /
              (double)summary_data->results.cds_matches.transcript_count );
@@ -1961,7 +1961,7 @@ void pe_print_summary_html(const char *start_time, int argc,
              (double)summary_data->results.exon_matches.transcript_count,
              (double)summary_data->results.exon_matches.pred_exon_count /
              (double)summary_data->results.exon_matches.transcript_count,
-             (double)summary_data->results.exon_matches.refr_cds_length /
+             (double)summary_data->results.exon_matches.refr_cds_length / 3 /
              (double)summary_data->results.exon_matches.transcript_count,
              (double)summary_data->results.exon_matches.pred_cds_length /
              (double)summary_data->results.exon_matches.transcript_count );
@@ -1992,7 +1992,7 @@ void pe_print_summary_html(const char *start_time, int argc,
              (double)summary_data->results.utr_matches.transcript_count,
              (double)summary_data->results.utr_matches.pred_exon_count /
              (double)summary_data->results.utr_matches.transcript_count,
-             (double)summary_data->results.utr_matches.refr_cds_length /
+             (double)summary_data->results.utr_matches.refr_cds_length / 3 /
              (double)summary_data->results.utr_matches.transcript_count,
              (double)summary_data->results.utr_matches.pred_cds_length /
              (double)summary_data->results.utr_matches.transcript_count );
@@ -2019,7 +2019,7 @@ void pe_print_summary_html(const char *start_time, int argc,
              (double)summary_data->results.non_matches.transcript_count,
              (double)summary_data->results.non_matches.pred_exon_count /
              (double)summary_data->results.non_matches.transcript_count,
-             (double)summary_data->results.non_matches.refr_cds_length /
+             (double)summary_data->results.non_matches.refr_cds_length / 3 /
              (double)summary_data->results.non_matches.transcript_count,
              (double)summary_data->results.non_matches.pred_cds_length /
              (double)summary_data->results.non_matches.transcript_count );

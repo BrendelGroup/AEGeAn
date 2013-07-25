@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 testname="FBgn0035002"
-echo "Test '$testname'"
+echo "    GFF3 I/O: '$testname'"
 for test in codons sansexons sansutrs
 do
   tempfile="${testname}-${test}-temp.gff3"
@@ -10,10 +10,10 @@ do
        diff $tempfile data/gff3/FBgn0035002-altsort1.gff3 >/dev/null || \
        diff $tempfile data/gff3/FBgn0035002-altsort2.gff3 >/dev/null
   status=$?
-  result="fail"
+  result="FAIL"
   if [ $status == 0 ]; then
-    result="pass"
+    result="PASS"
   fi
-  printf "%12s: %s\n" $test $result
+  printf "        | %-30s| %s\n" $test $result
   rm $tempfile
 done

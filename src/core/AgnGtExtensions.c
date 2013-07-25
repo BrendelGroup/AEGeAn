@@ -68,7 +68,7 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
             "not a multiple of 3\n", tid, length);
   }
 
-  return length / 3;
+  return length;
 }
 
 bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,

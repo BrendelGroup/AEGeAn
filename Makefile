@@ -120,5 +120,7 @@ inc/core/AgnVersion.h:
 			bash -c "if [ -d .git ]; then perl data/share/version.pl > inc/core/AgnVersion.h; else perl data/share/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
 test:		$(BINS)
+		@- bin/unittests
+		@- echo AEGeAn Functional Tests
 		@- test/AT1G05320.sh
 		@- test/FBgn0035002.sh
