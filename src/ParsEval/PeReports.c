@@ -8,7 +8,7 @@
 #include "AgnVersion.h"
 #include "PeReports.h"
 
-void pe_aggregate_results(PeCompEvaluation *overall_eval,
+void pe_aggregate_results(AgnCompEvaluation *overall_eval,
                           GtArray **seqlevel_evalsp, GtArray *loci,
                           GtArray *seqfiles, GtHashmap *comp_evals,
                           GtHashmap *locus_summaries, PeOptions *options)
@@ -17,23 +17,23 @@ void pe_aggregate_results(PeCompEvaluation *overall_eval,
   gt_timer_start(timer);
   fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
 
-  pe_comp_evaluation_init(overall_eval);
-  GtArray *seqlevel_evals = gt_array_new( sizeof(PeCompEvaluation) );
+  agn_comp_evaluation_init(overall_eval);
+  GtArray *seqlevel_evals = gt_array_new( sizeof(AgnCompEvaluation) );
   unsigned long i;
   for(i = 0; i < gt_array_size(seqfiles); i++)
   {
     FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-    PeCompEvaluation seqeval;
-    pe_comp_evaluation_init(&seqeval);
+    AgnCompEvaluation seqeval;
+    agn_comp_evaluation_init(&seqeval);
 
     int j;
     GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
     for(j = 0; j < gt_array_size(seqloci); j++)
     {
       AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
-      PeCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
-      pe_comp_evaluation_combine(&seqeval, eval);
-      pe_comp_evaluation_combine(overall_eval, eval);
+      AgnCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
+      agn_comp_evaluation_combine(&seqeval, eval);
+      agn_comp_evaluation_combine(overall_eval, eval);
       AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
       // FIXME Should this block be placed elsewhere?
       if(options->html && !options->summary_only)
@@ -53,88 +53,6 @@ void pe_aggregate_results(PeCompEvaluation *overall_eval,
   gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
                           "level results (%ld.%06ld seconds)\n", stderr);
   gt_timer_delete(timer);
-}
-
-void pe_gene_locus_aggregate_results(AgnGeneLocus *locus,PeCompEvaluation *data)
-{
-  unsigned long i;
-  GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
-  unsigned long pairs_to_report = gt_array_size(reported_pairs);
-  gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
-
-  for(i = 0; i < pairs_to_report; i++)
-  {
-    AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
-    gt_assert(agn_clique_pair_needs_comparison(pair));
-
-    data->counts.num_comparisons++;
-
-    // Classify this comparison: perfect match, CDS match, etc.
-    AgnCliquePairClassification compareclass = agn_clique_pair_classify(pair);
-    switch(compareclass)
-    {
-      case AGN_CLIQUE_PAIR_PERFECT_MATCH:
-        data->counts.num_perfect++;
-        pe_clique_pair_record_characteristics(pair,
-                                              &data->results.perfect_matches);
-        break;
-
-      case AGN_CLIQUE_PAIR_MISLABELED:
-        data->counts.num_mislabeled++;
-        pe_clique_pair_record_characteristics(pair,
-                                             &data->results.perfect_mislabeled);
-        break;
-
-      case AGN_CLIQUE_PAIR_CDS_MATCH:
-        data->counts.num_cds_match++;
-        pe_clique_pair_record_characteristics(pair, &data->results.cds_matches);
-        break;
-
-      case AGN_CLIQUE_PAIR_EXON_MATCH:
-        data->counts.num_exon_match++;
-        pe_clique_pair_record_characteristics(pair,&data->results.exon_matches);
-        break;
-
-      case AGN_CLIQUE_PAIR_UTR_MATCH:
-        data->counts.num_utr_match++;
-        pe_clique_pair_record_characteristics(pair, &data->results.utr_matches);
-        break;
-
-      case AGN_CLIQUE_PAIR_NON_MATCH:
-        data->counts.non_match++;
-        pe_clique_pair_record_characteristics(pair, &data->results.non_matches);
-        break;
-
-      default:
-        fprintf(stderr, "error: unknown classification %d\n", compareclass);
-        exit(1);
-        break;
-    }
-
-    // Record structure-level counts
-    AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
-    data->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
-    data->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
-    data->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
-    data->stats.exon_struc_stats.correct += pairstats->exon_struc_stats.correct;
-    data->stats.exon_struc_stats.missing += pairstats->exon_struc_stats.missing;
-    data->stats.exon_struc_stats.wrong   += pairstats->exon_struc_stats.wrong;
-    data->stats.utr_struc_stats.correct  += pairstats->utr_struc_stats.correct;
-    data->stats.utr_struc_stats.missing  += pairstats->utr_struc_stats.missing;
-    data->stats.utr_struc_stats.wrong    += pairstats->utr_struc_stats.wrong;
-
-    // Record nucleotide-level counts
-    data->stats.cds_nuc_stats.tp += pairstats->cds_nuc_stats.tp;
-    data->stats.cds_nuc_stats.fn += pairstats->cds_nuc_stats.fn;
-    data->stats.cds_nuc_stats.fp += pairstats->cds_nuc_stats.fp;
-    data->stats.cds_nuc_stats.tn += pairstats->cds_nuc_stats.tn;
-    data->stats.utr_nuc_stats.tp += pairstats->utr_nuc_stats.tp;
-    data->stats.utr_nuc_stats.fn += pairstats->utr_nuc_stats.fn;
-    data->stats.utr_nuc_stats.fp += pairstats->utr_nuc_stats.fp;
-    data->stats.utr_nuc_stats.tn += pairstats->utr_nuc_stats.tn;
-    data->stats.overall_matches  += pairstats->overall_matches;
-    data->stats.overall_length   += agn_gene_locus_get_length(locus);
-  }
 }
 
 void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
@@ -1356,7 +1274,7 @@ void pe_print_seqfile_footer(FILE *outstream)
 }
 
 void pe_print_summary(const char *start_time, int argc, char * const argv[],
-                      GtStrArray *seqids, PeCompEvaluation *summary_data,
+                      GtStrArray *seqids, AgnCompEvaluation *summary_data,
                       GtArray *seq_summary_data, FILE *outstream,
                       PeOptions *options)
 {
@@ -1693,7 +1611,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
 
 void pe_print_summary_html(const char *start_time, int argc,
                            char * const argv[], GtStrArray *seqids,
-                           PeCompEvaluation *summary_data,
+                           AgnCompEvaluation *summary_data,
                            GtArray *seq_summary_data, FILE *outstream,
                            PeOptions *options)
 {
@@ -1766,7 +1684,7 @@ void pe_print_summary_html(const char *start_time, int argc,
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
-    PeCompEvaluation *seqeval = gt_array_get(seq_summary_data, i);
+    AgnCompEvaluation *seqeval = gt_array_get(seq_summary_data, i);
     if(options->summary_only || seqeval->counts.num_loci == 0)
     {
       fprintf(outstream, "        <tr><td>%s</td><td>%lu</td><td>%lu</td>"

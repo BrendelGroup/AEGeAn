@@ -52,7 +52,7 @@ void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene);
 // Method implementations
 //----------------------------------------------------------------------------//
 void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
-                             AgnComparisonSource source)
+                        AgnComparisonSource source)
 {
   gt_dlist_add(locus->genes, gene);
   agn_gene_locus_update_range(locus, gene);
@@ -60,6 +60,90 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
     gt_hashmap_add(locus->refr_genes, gene, gene);
   else if(source == PREDICTIONSOURCE)
     gt_hashmap_add(locus->pred_genes, gene, gene);
+}
+
+void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
+                                      AgnCompEvaluation *data)
+{
+  unsigned long i;
+  GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
+  unsigned long pairs_to_report = gt_array_size(reported_pairs);
+  gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
+
+  for(i = 0; i < pairs_to_report; i++)
+  {
+    AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
+    gt_assert(agn_clique_pair_needs_comparison(pair));
+
+    data->counts.num_comparisons++;
+
+    // Classify this comparison: perfect match, CDS match, etc.
+    AgnCliquePairClassification compareclass = agn_clique_pair_classify(pair);
+    switch(compareclass)
+    {
+      case AGN_CLIQUE_PAIR_PERFECT_MATCH:
+        data->counts.num_perfect++;
+        agn_clique_pair_record_characteristics(pair,
+                                               &data->results.perfect_matches);
+        break;
+
+      case AGN_CLIQUE_PAIR_MISLABELED:
+        data->counts.num_mislabeled++;
+        agn_clique_pair_record_characteristics(pair,
+                                             &data->results.perfect_mislabeled);
+        break;
+
+      case AGN_CLIQUE_PAIR_CDS_MATCH:
+        data->counts.num_cds_match++;
+        agn_clique_pair_record_characteristics(pair,&data->results.cds_matches);
+        break;
+
+      case AGN_CLIQUE_PAIR_EXON_MATCH:
+        data->counts.num_exon_match++;
+        agn_clique_pair_record_characteristics(pair,
+                                               &data->results.exon_matches);
+        break;
+
+      case AGN_CLIQUE_PAIR_UTR_MATCH:
+        data->counts.num_utr_match++;
+        agn_clique_pair_record_characteristics(pair,&data->results.utr_matches);
+        break;
+
+      case AGN_CLIQUE_PAIR_NON_MATCH:
+        data->counts.non_match++;
+        agn_clique_pair_record_characteristics(pair,&data->results.non_matches);
+        break;
+
+      default:
+        fprintf(stderr, "error: unknown classification %d\n", compareclass);
+        exit(1);
+        break;
+    }
+
+    // Record structure-level counts
+    AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
+    data->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
+    data->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
+    data->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
+    data->stats.exon_struc_stats.correct += pairstats->exon_struc_stats.correct;
+    data->stats.exon_struc_stats.missing += pairstats->exon_struc_stats.missing;
+    data->stats.exon_struc_stats.wrong   += pairstats->exon_struc_stats.wrong;
+    data->stats.utr_struc_stats.correct  += pairstats->utr_struc_stats.correct;
+    data->stats.utr_struc_stats.missing  += pairstats->utr_struc_stats.missing;
+    data->stats.utr_struc_stats.wrong    += pairstats->utr_struc_stats.wrong;
+
+    // Record nucleotide-level counts
+    data->stats.cds_nuc_stats.tp += pairstats->cds_nuc_stats.tp;
+    data->stats.cds_nuc_stats.fn += pairstats->cds_nuc_stats.fn;
+    data->stats.cds_nuc_stats.fp += pairstats->cds_nuc_stats.fp;
+    data->stats.cds_nuc_stats.tn += pairstats->cds_nuc_stats.tn;
+    data->stats.utr_nuc_stats.tp += pairstats->utr_nuc_stats.tp;
+    data->stats.utr_nuc_stats.fn += pairstats->utr_nuc_stats.fn;
+    data->stats.utr_nuc_stats.fp += pairstats->utr_nuc_stats.fp;
+    data->stats.utr_nuc_stats.tn += pairstats->utr_nuc_stats.tn;
+    data->stats.overall_matches  += pairstats->overall_matches;
+    data->stats.overall_length   += agn_gene_locus_get_length(locus);
+  }
 }
 
 AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus)

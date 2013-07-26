@@ -47,11 +47,11 @@ int main(int argc, char * const argv[])
   }
   else
   {
-    GtHashmap *      comp_evals;
-    GtHashmap *      locus_summaries;
-    PeCompEvaluation overall_eval;
-    GtArray *        seqlevel_evals;
-    GtArray *        seqfiles;
+    GtHashmap *       comp_evals;
+    GtHashmap *       locus_summaries;
+    AgnCompEvaluation overall_eval;
+    GtArray *         seqlevel_evals;
+    GtArray *         seqfiles;
 
     seqfiles = pe_prep_output(seqids, &options);
     pe_comparative_analysis(locusindex, &comp_evals, &locus_summaries, seqids,

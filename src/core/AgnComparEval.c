@@ -3,6 +3,69 @@
 #include <string.h>
 #include "AgnComparEval.h"
 
+void agn_comp_evaluation_combine(AgnCompEvaluation *data,
+                                 AgnCompEvaluation *data_to_add)
+{
+  agn_comp_summary_combine(&data->counts, &data_to_add->counts);
+  agn_comparison_combine(&data->stats, &data_to_add->stats);
+  agn_comp_result_summary_combine(&data->results, &data_to_add->results);
+}
+
+void agn_comp_evaluation_init(AgnCompEvaluation *data)
+{
+  agn_comp_summary_init(&data->counts);
+  agn_comparison_init(&data->stats);
+  agn_comp_result_summary_init(&data->results);
+}
+
+void agn_comp_result_summary_combine(AgnCompResultSummary *desc,
+                                     AgnCompResultSummary *desc_to_add)
+{
+  agn_comp_result_desc_combine(&desc->perfect_matches,
+                               &desc_to_add->perfect_matches);
+  agn_comp_result_desc_combine(&desc->perfect_mislabeled,
+                               &desc_to_add->perfect_mislabeled);
+  agn_comp_result_desc_combine(&desc->cds_matches,
+                               &desc_to_add->cds_matches);
+  agn_comp_result_desc_combine(&desc->exon_matches,
+                               &desc_to_add->exon_matches);
+  agn_comp_result_desc_combine(&desc->utr_matches,
+                               &desc_to_add->utr_matches);
+  agn_comp_result_desc_combine(&desc->non_matches,
+                               &desc_to_add->non_matches);
+}
+
+void agn_comp_result_summary_init(AgnCompResultSummary *desc)
+{
+  agn_comp_result_desc_init(&desc->perfect_matches);
+  agn_comp_result_desc_init(&desc->perfect_mislabeled);
+  agn_comp_result_desc_init(&desc->cds_matches);
+  agn_comp_result_desc_init(&desc->exon_matches);
+  agn_comp_result_desc_init(&desc->utr_matches);
+  agn_comp_result_desc_init(&desc->non_matches);
+}
+
+void agn_comp_result_desc_combine(AgnCompResultDesc *desc,
+                                  AgnCompResultDesc *desc_to_add)
+{
+  desc->total_length     += desc_to_add->total_length;
+  desc->transcript_count += desc_to_add->transcript_count;
+  desc->refr_cds_length  += desc_to_add->refr_cds_length;
+  desc->pred_cds_length  += desc_to_add->pred_cds_length;
+  desc->refr_exon_count  += desc_to_add->refr_exon_count;
+  desc->pred_exon_count  += desc_to_add->pred_exon_count;
+}
+
+void agn_comp_result_desc_init(AgnCompResultDesc *desc)
+{
+  desc->total_length = 0;
+  desc->transcript_count = 0;
+  desc->refr_cds_length = 0;
+  desc->pred_cds_length = 0;
+  desc->refr_exon_count = 0;
+  desc->pred_exon_count = 0;
+}
+
 void agn_comp_summary_combine(AgnCompSummary *s1, AgnCompSummary *s2)
 {
   s1->unique_refr      += s2->unique_refr;

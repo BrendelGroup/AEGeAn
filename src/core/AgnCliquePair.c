@@ -571,3 +571,17 @@ AgnCliquePair* agn_clique_pair_new(const char *seqid,
 
   return pair;
 }
+
+void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
+                                            AgnCompResultDesc *desc)
+{
+  AgnTranscriptClique *refr = agn_clique_pair_get_refr_clique(pair);
+  AgnTranscriptClique *pred = agn_clique_pair_get_refr_clique(pair);
+
+  desc->transcript_count += 1;
+  desc->total_length += agn_clique_pair_length(pair);
+  desc->refr_cds_length += agn_transcript_clique_cds_length(refr);
+  desc->pred_cds_length += agn_transcript_clique_cds_length(pred);
+  desc->refr_exon_count += agn_transcript_clique_num_exons(refr);
+  desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
+}

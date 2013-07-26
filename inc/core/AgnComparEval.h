@@ -87,6 +87,56 @@ typedef struct
 } AgnComparison;
 
 /**
+ * Each transcript clique pair that is compared is classified as one of the
+ * following.
+ *   - perfect match
+ *   - perfect match with mislabeled UTRs
+ *   - CDS match
+ *   - exon structure match
+ *   - UTR structure match
+ *   - non-match
+ *
+ * When reporting the results of a comparative analysis, it may be useful to (as
+ * is done by ParsEval) show some basic information about clique pairs that fall
+ * under each classification category. The counts in this struct are necessary
+ * to calculate those summary characteristics.
+ */
+typedef struct
+{
+  unsigned long total_length;
+  unsigned long transcript_count;
+  unsigned long refr_cds_length;
+  unsigned long pred_cds_length;
+  unsigned long refr_exon_count;
+  unsigned long pred_exon_count;
+} AgnCompResultDesc;
+
+/**
+ * This struct is used to aggregate characteristics for all of the
+ * classification categories.
+ */
+typedef struct
+{
+  AgnCompResultDesc perfect_matches;
+  AgnCompResultDesc perfect_mislabeled;
+  AgnCompResultDesc cds_matches;
+  AgnCompResultDesc exon_matches;
+  AgnCompResultDesc utr_matches;
+  AgnCompResultDesc non_matches;
+} AgnCompResultSummary;
+
+/**
+ * This struct provides a convenient way to manage the counts, stats, and
+ * results corresponding to one or more comparisons.
+ */
+typedef struct
+{
+  AgnCompSummary counts;
+  AgnComparison stats;
+  AgnCompResultSummary results;
+} AgnCompEvaluation;
+
+/**
  * This struct contains a list of filters to be used in determining which loci
  * should be included/excluded in a comparative analysis.
  */
@@ -115,6 +165,60 @@ typedef struct
   unsigned long MinPredictionCDSLength;
   unsigned long MaxPredictionCDSLength;
 } AgnCompareFilters;
+
+/**
+ * Take values from one data set and add them to the other.
+ *
+ * @param[out] data           stats, counts, and descriptions relevant to
+ *                            comparative analysis
+ * @param[in]  data_to_add    a data set which will be added to the first
+ */
+void agn_comp_evaluation_combine(AgnCompEvaluation *data,
+                                 AgnCompEvaluation *data_to_add);
+
+/**
+ * Initialize to default values.
+ *
+ * @param[in] data    the data
+ */
+void agn_comp_evaluation_init(AgnCompEvaluation *data);
+
+
+/**
+ * Take values from one description and add them to the other.
+ *
+ * @param[out] desc           a set of descriptive values relevant to
+ *                            comparative analysis
+ * @param[in]  desc_to_add    a set of descriptive values which will be added to
+ *                            the first
+ */
+void agn_comp_result_summary_combine(AgnCompResultSummary *desc,
+                                     AgnCompResultSummary *desc_to_add);
+
+/**
+ * Initialize to default values.
+ *
+ * @param[in] results    the descriptive values
+ */
+void agn_comp_result_summary_init(AgnCompResultSummary *desc);
+
+/**
+ * Take the counts from one description and add them to a larger aggregate set
+ * of counts.
+ *
+ * @param[out] desc           a set of aggregate descriptive counts
+ * @param[in]  desc_to_add    a smaller set of counts which will be added to the
+ *                            first set
+ */
+void agn_comp_result_desc_combine(AgnCompResultDesc *desc,
+                                  AgnCompResultDesc *desc_to_add);
+
+/**
+ * Initialize characteristics to default values.
+ *
+ * @param[in] characteristics    the counts/stats
+ */
+void agn_comp_result_desc_init(AgnCompResultDesc *desc);
 
 /**
  * Take one set of values and add them to the other.

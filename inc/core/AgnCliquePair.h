@@ -159,6 +159,14 @@ bool agn_clique_pair_has_utrs(AgnCliquePair *pair);
 bool agn_clique_pair_is_simple(AgnCliquePair *pair);
 
 /**
+ * Get the length of the locus to which this clique pair belongs.
+ *
+ * @param[in] pair    the clique pair
+ * @returns           the length (in bp) of the corresponding locus
+ */
+unsigned long agn_clique_pair_length(AgnCliquePair *pair);
+
+/**
  * Determine whether this clique pair needs comparison (i.e., whether there are
  * both reference and prediction transcripts).
  *
@@ -183,11 +191,12 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid,
                                     GtRange *locus_range );
 
 /**
- * Get the length of the locus to which this clique pair belongs.
+ * Add information about a clique pair to a set of aggregate characteristics.
  *
- * @param[in] pair    the clique pair
- * @returns           the length (in bp) of the corresponding locus
+ * @param[in]  pair               the clique pair
+ * @param[out] characteristics    a set of aggregate characteristics
  */
-unsigned long agn_clique_pair_length(AgnCliquePair *pair);
+void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
+                                            AgnCompResultDesc *desc);
 
 #endif

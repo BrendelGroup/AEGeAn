@@ -74,6 +74,16 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
         agn_gene_locus_add(LC, GN, DEFAULTSOURCE)
 
 /**
+ * Add the locus' comparison statistics to a set of aggregate statistics.
+ *
+ * @param[in]  locus    the locus annotation
+ * @param[out] data     summary counts, stats, and results to which the locus
+ *                      data will be aggregated
+ */
+void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
+                                      AgnCompEvaluation *data);
+
+/**
  * Do a shallow copy of this data structure.
  *
  * @param[in] locus    a locus object

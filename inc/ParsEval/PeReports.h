@@ -26,20 +26,10 @@
  * @param[in]  locus_summaries    locus comparison summaries
  * @param[in]  options            ParsEval options
  */
-void pe_aggregate_results(PeCompEvaluation *overall_eval,
+void pe_aggregate_results(AgnCompEvaluation *overall_eval,
                           GtArray **seqlevel_evalsp, GtArray *loci,
                           GtArray *seqfiles, GtHashmap *comp_evals,
                           GtHashmap *locus_summaries, PeOptions *options);
-
-/**
- * Add the locus' comparison statistics to a set of aggregate statistics.
- *
- * @param[in]  locus    the locus annotation
- * @param[out] data     summary counts, stats, and results to which the locus
- *                      data will be aggregated
- */
-void pe_gene_locus_aggregate_results(AgnGeneLocus *locus,
-                                     PeCompEvaluation *data);
 
 /**
  * Get the filename for printing this locus' results.
@@ -200,12 +190,12 @@ void pe_print_seqfile_footer(FILE *outstream);
  * @param[in] options             ParsEval parameter values
  */
 void pe_print_summary(const char *start_time, int argc, char * const argv[],
-                      GtStrArray *seqids, PeCompEvaluation *summary_data,
+                      GtStrArray *seqids, AgnCompEvaluation *summary_data,
                       GtArray *seq_summary_data, FILE *outstream,
                       PeOptions *options);
 void pe_print_summary_html(const char *start_time, int argc,
                            char * const argv[], GtStrArray *seqids,
-                           PeCompEvaluation *summary_data,
+                           AgnCompEvaluation *summary_data,
                            GtArray *seq_summary_data, FILE *outstream,
                            PeOptions *options);
 
