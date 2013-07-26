@@ -70,37 +70,37 @@ void pe_gene_locus_aggregate_results(AgnGeneLocus *locus,PeCompEvaluation *data)
     data->counts.num_comparisons++;
 
     // Classify this comparison: perfect match, CDS match, etc.
-    unsigned int compareclass = agn_clique_pair_classify(pair);
+    AgnCliquePairClassification compareclass = agn_clique_pair_classify(pair);
     switch(compareclass)
     {
-      case PE_CLIQUE_PAIR_PERFECT_MATCH:
+      case AGN_CLIQUE_PAIR_PERFECT_MATCH:
         data->counts.num_perfect++;
         pe_clique_pair_record_characteristics(pair,
                                               &data->results.perfect_matches);
         break;
 
-      case PE_CLIQUE_PAIR_MISLABELED:
+      case AGN_CLIQUE_PAIR_MISLABELED:
         data->counts.num_mislabeled++;
         pe_clique_pair_record_characteristics(pair,
                                              &data->results.perfect_mislabeled);
         break;
 
-      case PE_CLIQUE_PAIR_CDS_MATCH:
+      case AGN_CLIQUE_PAIR_CDS_MATCH:
         data->counts.num_cds_match++;
         pe_clique_pair_record_characteristics(pair, &data->results.cds_matches);
         break;
 
-      case PE_CLIQUE_PAIR_EXON_MATCH:
+      case AGN_CLIQUE_PAIR_EXON_MATCH:
         data->counts.num_exon_match++;
         pe_clique_pair_record_characteristics(pair,&data->results.exon_matches);
         break;
 
-      case PE_CLIQUE_PAIR_UTR_MATCH:
+      case AGN_CLIQUE_PAIR_UTR_MATCH:
         data->counts.num_utr_match++;
         pe_clique_pair_record_characteristics(pair, &data->results.utr_matches);
         break;
 
-      case PE_CLIQUE_PAIR_NON_MATCH:
+      case AGN_CLIQUE_PAIR_NON_MATCH:
         data->counts.non_match++;
         pe_clique_pair_record_characteristics(pair, &data->results.non_matches);
         break;

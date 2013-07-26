@@ -369,49 +369,42 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
   agn_comp_stats_binary_resolve(&pair->stats.utr_struc_stats);
 }
 
-unsigned int agn_clique_pair_classify(AgnCliquePair *pair)
+AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair)
 {
-  if
-  (
-    pair->stats.overall_identity == 1.0 ||
-    fabs(pair->stats.overall_identity - 1.0) < pair->stats.tolerance
-  )
+  if(pair->stats.overall_identity == 1.0 ||
+     fabs(pair->stats.overall_identity - 1.0) < pair->stats.tolerance)
   {
-    return PE_CLIQUE_PAIR_PERFECT_MATCH;
+    return AGN_CLIQUE_PAIR_PERFECT_MATCH;
   }
-  else if
-  (
-    pair->stats.cds_struc_stats.missing == 0 &&
-    pair->stats.cds_struc_stats.wrong == 0
-  )
+  else if(pair->stats.cds_struc_stats.missing == 0 &&
+          pair->stats.cds_struc_stats.wrong   == 0)
   {
-    if(pair->stats.exon_struc_stats.missing == 0 && pair->stats.exon_struc_stats.wrong == 0)
+    if(pair->stats.exon_struc_stats.missing == 0 &&
+       pair->stats.exon_struc_stats.wrong   == 0)
     {
-      return PE_CLIQUE_PAIR_MISLABELED;
+      return AGN_CLIQUE_PAIR_MISLABELED;
     }
     else
     {
-      return PE_CLIQUE_PAIR_CDS_MATCH;
+      return AGN_CLIQUE_PAIR_CDS_MATCH;
     }
   }
   else
   {
-    if(pair->stats.exon_struc_stats.missing == 0 && pair->stats.exon_struc_stats.wrong == 0)
+    if(pair->stats.exon_struc_stats.missing == 0 &&
+       pair->stats.exon_struc_stats.wrong   == 0)
     {
-      return PE_CLIQUE_PAIR_EXON_MATCH;
+      return AGN_CLIQUE_PAIR_EXON_MATCH;
     }
-    else if
-    (
-      pair->stats.utr_struc_stats.missing == 0 &&
-      pair->stats.utr_struc_stats.wrong == 0 &&
-      agn_clique_pair_has_utrs(pair)
-    )
+    else if(pair->stats.utr_struc_stats.missing == 0 &&
+            pair->stats.utr_struc_stats.wrong   == 0 &&
+            agn_clique_pair_has_utrs(pair))
     {
-      return PE_CLIQUE_PAIR_UTR_MATCH;
+      return AGN_CLIQUE_PAIR_UTR_MATCH;
     }
   }
 
-  return PE_CLIQUE_PAIR_NON_MATCH;
+  return AGN_CLIQUE_PAIR_NON_MATCH;
 }
 
 int agn_clique_pair_compare(void *p1, void *p2)
@@ -436,16 +429,20 @@ int agn_clique_pair_compare_direct(AgnCliquePair *p1, AgnCliquePair *p2)
     return -1;
 
   // Now check whether there is a CDS structure match
-  bool p1_cds = p1->stats.cds_struc_stats.missing == 0 && p1->stats.cds_struc_stats.wrong == 0;
-  bool p2_cds = p2->stats.cds_struc_stats.missing == 0 && p2->stats.cds_struc_stats.wrong == 0;
+  bool p1_cds = p1->stats.cds_struc_stats.missing == 0 &&
+                p1->stats.cds_struc_stats.wrong   == 0;
+  bool p2_cds = p2->stats.cds_struc_stats.missing == 0 &&
+                p2->stats.cds_struc_stats.wrong   == 0;
   if(p1_cds && !p2_cds)
     return 1;
   else if(!p1_cds && p2_cds)
     return -1;
 
   // Now check whether there is an exon structure match
-  bool p1_exon = p1->stats.exon_struc_stats.missing == 0 && p1->stats.exon_struc_stats.wrong == 0;
-  bool p2_exon = p2->stats.exon_struc_stats.missing == 0 && p2->stats.exon_struc_stats.wrong == 0;
+  bool p1_exon = p1->stats.exon_struc_stats.missing == 0 &&
+                 p1->stats.exon_struc_stats.wrong   == 0;
+  bool p2_exon = p2->stats.exon_struc_stats.missing == 0 &&
+                 p2->stats.exon_struc_stats.wrong   == 0;
   if(p1_exon && !p2_exon)
     return 1;
   else if(!p1_exon && p2_exon)
@@ -550,10 +547,12 @@ unsigned long agn_clique_pair_length(AgnCliquePair *pair)
   return gt_range_length(pair->locus_range);
 }
 
-AgnCliquePair* agn_clique_pair_new( const char *seqid, AgnTranscriptClique *refr_clique,
-                                  AgnTranscriptClique *pred_clique, GtRange *locus_range )
+AgnCliquePair* agn_clique_pair_new(const char *seqid,
+                                   AgnTranscriptClique *refr_clique,
+                                   AgnTranscriptClique *pred_clique,
+                                   GtRange *locus_range)
 {
-  gt_assert( refr_clique != NULL && pred_clique != NULL );
+  gt_assert(refr_clique != NULL && pred_clique != NULL);
 
   AgnCliquePair *pair = (AgnCliquePair *)gt_malloc(sizeof(AgnCliquePair));
   pair->seqid = seqid;

@@ -8,20 +8,27 @@
 #define MAX_EXONS 512
 #define MAX_UTRS  64
 
-// Classification codes for agn_clique_pair_classify
-#define PE_CLIQUE_PAIR_PERFECT_MATCH 0
-#define PE_CLIQUE_PAIR_MISLABELED    1
-#define PE_CLIQUE_PAIR_CDS_MATCH     2
-#define PE_CLIQUE_PAIR_EXON_MATCH    3
-#define PE_CLIQUE_PAIR_UTR_MATCH     4
-#define PE_CLIQUE_PAIR_NON_MATCH     5
-
 /**
  * The purpose of the AgnCliquePair class is to associate all of the data needed
  * to compare transcripts from two alternative sources of annotation for the
  * same sequence.
  */
 typedef struct AgnCliquePair AgnCliquePair;
+
+/**
+ * This enumerated type refers to all the possible outcomes when transcript
+ * cliques from two different sources are compared.
+ */
+typedef enum
+{
+  AGN_CLIQUE_PAIR_UNCLASSIFIED,
+  AGN_CLIQUE_PAIR_PERFECT_MATCH,
+  AGN_CLIQUE_PAIR_MISLABELED,
+  AGN_CLIQUE_PAIR_CDS_MATCH,
+  AGN_CLIQUE_PAIR_EXON_MATCH,
+  AGN_CLIQUE_PAIR_UTR_MATCH,
+  AGN_CLIQUE_PAIR_NON_MATCH
+} AgnCliquePairClassification;
 
 /**
  * Build a pair of model vectors to represent this pair of maximal transcript
@@ -38,7 +45,7 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair);
  * @param[in] pair    a clique pair
  * @returns           a classification code (see codes above)
  */
-unsigned int agn_clique_pair_classify(AgnCliquePair *pair);
+AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair);
 
 /**
  * Compare the annotations for this pair, reference vs prediction.
