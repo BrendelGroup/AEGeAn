@@ -141,7 +141,7 @@ void pe_comp_result_desc_init(PeCompResultDesc *desc)
 
 void pe_pre_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
 {
-  unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
+  unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
   if(data->options->complimit != 0 && npairs > data->options->complimit)
   {
     if(data->options->debug)

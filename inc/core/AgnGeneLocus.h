@@ -6,12 +6,16 @@
 
 /**
  * The purpose of the AgnGeneLocus class is to store all of the data
- * associated with a distinct locus to facilitate the comparison of two sets of
- * gene structure annotations for that locus.
+ * associated with a distinct locus, in many cases to facilitate the comparison
+ * of two sets of gene structure annotations for that locus.
  */
 typedef struct AgnGeneLocus AgnGeneLocus;
-enum AgnComparisonSource { REFERENCESOURCE, PREDICTIONSOURCE, DEFAULTSOURCE };
-typedef enum AgnComparisonSource AgnComparisonSource;
+typedef enum
+{
+  REFERENCESOURCE,
+  PREDICTIONSOURCE,
+  DEFAULTSOURCE
+} AgnComparisonSource;
 
 /**
 * This data structure provides a convenient container for metadata needed to
@@ -140,26 +144,6 @@ GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus);
 void agn_gene_locus_delete(AgnGeneLocus *locus);
 
 /**
- * We use the Bron-Kerbosch algorithm to enumerate maximal cliques of non-
- * overlapping transcripts. This is done separately for the reference
- * transcripts and the prediction transcripts. Every possible pairing of
- * reference cliques and prediction cliques is enumerated, to enable subsequent
- * pairwise comparison.
- *
- * @param[in] locus    the locus
- * @returns            the number of clique pairs formed; the first
- *                     time this method is called, the clique pairs are
- *                     enumerated and stored and their number is returned;
- *                     subsequent method calls simply return the number of
- *                     previously enumerated cliques; the macro
- *                     `agn_gene_locus_num_clique_pairs(locus)' has been
- *                     provided for this use case
- */
-unsigned long agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus);
-#define agn_gene_locus_num_clique_pairs(LOC)\
-        agn_gene_locus_enumerate_clique_pairs(LOC)
-
-/**
  * Get the number of exons for the locus. Rather than calling this function
  * directly, users are encouraged to use one of the following macros:
  * `agn_gene_locus_num_pred_exons(locus)' for the number of prediction exons,
@@ -276,18 +260,6 @@ unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus);
 unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus);
 
 /**
- * Given a reference transcript, find the clique pair with the best scores of
- * which the transcript is a part.
- *
- * @param[in] locus          the locus
- * @param[in] refr_clique    a reference transcript clique belonging to the
- * @returns                  locus the pair containing the transcript that has
- *                           the highest comparison scores
- */
-AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
-                                              AgnTranscriptClique *refr_clique);
-
-/**
  * Get this locus' sequence ID.
  *
  * @param[in] locus    the locus
@@ -322,21 +294,17 @@ GtArray *agn_gene_locus_get_unique_pred_cliques(AgnGeneLocus *locus);
 GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus);
 
 /**
- * Loci with more than one reference transcript clique and/or more than one
- * prediction transcript clique are complex and require special handling.
- *
- * @param[in] locus    a gene locus
- * @returns            boolean indicating whether the locus is complex
- */
-bool agn_gene_locus_is_complex(AgnGeneLocus *locus);
-
-/**
  * Allocate some memory for a locus object.
  *
  * @param[in] seqid       ID of the locus' sequence
  * @returns               pointer to a new locus object
  */
 AgnGeneLocus* agn_gene_locus_new(const char *seqid);
+
+/**
+ * FIXME returns num reported pairs
+ */
+unsigned long agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus);
 
 #ifndef WITHOUT_CAIRO
 /**

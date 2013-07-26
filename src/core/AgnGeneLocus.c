@@ -13,9 +13,6 @@ struct AgnGeneLocus
   GtDlist *genes;
   GtHashmap *refr_genes;
   GtHashmap *pred_genes;
-  GtArray *refr_cliques;
-  GtArray *pred_cliques;
-  GtArray *clique_pairs;
   GtArray *reported_pairs;
   GtArray *unique_refr_cliques;
   GtArray *unique_pred_cliques;
@@ -25,6 +22,22 @@ struct AgnGeneLocus
 //----------------------------------------------------------------------------//
 // Prototypes for private method(s)
 //----------------------------------------------------------------------------//
+
+/**
+ * We use the Bron-Kerbosch algorithm to enumerate maximal cliques of non-
+ * overlapping transcripts. This is done separately for the reference
+ * transcripts and the prediction transcripts. Every possible pairing of
+ * reference cliques and prediction cliques is enumerated, to enable subsequent
+ * pairwise comparison.
+ *
+ * @param[in] locus           the locus
+ * @param[in] refr_cliques    maximal cliques of transcripts from the reference
+ * @param[in] pred_cliques    maximal cliques of transcripts from the prediction
+ * @returns                   the clique pairs formed
+ */
+GtArray *agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus,
+                                               GtArray *refr_cliques,
+                                               GtArray *pred_cliques);
 
 /**
  * Update this locus' start and end coordinates based on the gene being merged.
@@ -56,9 +69,6 @@ AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus)
   newlocus->genes = locus->genes;
   newlocus->refr_genes = locus->refr_genes;
   newlocus->pred_genes = locus->pred_genes;
-  newlocus->refr_cliques = locus->refr_cliques;
-  newlocus->pred_cliques = locus->pred_cliques;
-  newlocus->clique_pairs = locus->clique_pairs;
   newlocus->reported_pairs = locus->reported_pairs;
   newlocus->unique_refr_cliques = locus->unique_refr_cliques;
   newlocus->unique_pred_cliques = locus->unique_pred_cliques;
@@ -89,26 +99,50 @@ unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
 }
 
 GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
-{
+{  
   if(locus->reported_pairs != NULL)
     return locus->reported_pairs;
 
-  unsigned long i;
-  for(i = 0; i < gt_array_size(locus->clique_pairs); i++)
+  GtArray *refr_cliques = NULL;
+  GtArray *pred_cliques = NULL;
+  if(agn_gene_locus_num_refr_transcripts(locus) > 0)
   {
-    AgnCliquePair *p = *(AgnCliquePair **)gt_array_get(locus->clique_pairs, i);
+    GtArray *refr_trans = agn_gene_locus_refr_transcripts(locus);
+    refr_cliques = agn_enumerate_feature_cliques(refr_trans);
+    gt_array_delete(refr_trans);
+  }
+  if(agn_gene_locus_num_pred_transcripts(locus) > 0)
+  {
+    GtArray *pred_trans = agn_gene_locus_pred_transcripts(locus);
+    pred_cliques = agn_enumerate_feature_cliques(pred_trans);
+    gt_array_delete(pred_trans);
+  }
+
+  GtArray *clique_pairs = agn_gene_locus_enumerate_clique_pairs(locus,
+                              refr_cliques, pred_cliques);
+  unsigned long num_clique_pairs = 0;
+  if(clique_pairs != NULL)
+    num_clique_pairs = gt_array_size(clique_pairs);
+
+  unsigned long i;
+  for(i = 0; i < num_clique_pairs; i++)
+  {
+    AgnCliquePair *p = *(AgnCliquePair **)gt_array_get(clique_pairs, i);
     agn_clique_pair_build_model_vectors(p);
     agn_clique_pair_comparative_analysis(p);
   }
-  gt_array_sort(locus->clique_pairs,(GtCompare)agn_clique_pair_compare_reverse);
+  if(clique_pairs != NULL)
+    gt_array_sort(clique_pairs,(GtCompare)agn_clique_pair_compare_reverse);
 
   GtHashmap *refr_cliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   GtHashmap *pred_cliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  GtHashmap *pairs2delete = gt_hashmap_new(GT_HASH_DIRECT, NULL,
+                                           (GtFree)agn_clique_pair_delete);
   locus->reported_pairs = gt_array_new( sizeof(AgnCliquePair *) );
-  for(i = 0; i < gt_array_size(locus->clique_pairs); i++)
+  for(i = 0; i < num_clique_pairs; i++)
   {
     AgnCliquePair *pair;
-    pair = *(AgnCliquePair **)gt_array_get(locus->clique_pairs, i);
+    pair = *(AgnCliquePair **)gt_array_get(clique_pairs, i);
     AgnTranscriptClique *rclique = agn_clique_pair_get_refr_clique(pair);
     AgnTranscriptClique *pclique = agn_clique_pair_get_pred_clique(pair);
     if(!agn_transcript_clique_has_id_in_hash(rclique, refr_cliques_acctd) &&
@@ -118,13 +152,17 @@ GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
       agn_transcript_clique_put_ids_in_hash(rclique, refr_cliques_acctd);
       agn_transcript_clique_put_ids_in_hash(pclique, pred_cliques_acctd);
     }
+    else
+    {
+      gt_hashmap_add(pairs2delete, pair, pair);
+    }
   }
 
   locus->unique_refr_cliques = gt_array_new( sizeof(AgnTranscriptClique *) );
-  for(i = 0; i < gt_array_size(locus->refr_cliques); i++)
+  for(i = 0; i < gt_array_size(refr_cliques); i++)
   {
     AgnTranscriptClique *refr_clique;
-    refr_clique = *(AgnTranscriptClique **)gt_array_get(locus->refr_cliques, i);
+    refr_clique = *(AgnTranscriptClique **)gt_array_get(refr_cliques, i);
     if(!agn_transcript_clique_has_id_in_hash(refr_clique, refr_cliques_acctd))
     {
       gt_array_add(locus->unique_refr_cliques, refr_clique);
@@ -133,10 +171,10 @@ GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
   }
 
   locus->unique_pred_cliques = gt_array_new( sizeof(AgnTranscriptClique *) );
-  for(i = 0; i < gt_array_size(locus->pred_cliques); i++)
+  for(i = 0; i < gt_array_size(pred_cliques); i++)
   {
     AgnTranscriptClique *pred_clique;
-    pred_clique= *(AgnTranscriptClique **)gt_array_get(locus->pred_cliques, i);
+    pred_clique = *(AgnTranscriptClique **)gt_array_get(pred_cliques, i);
     if(!agn_transcript_clique_has_id_in_hash(pred_clique, pred_cliques_acctd))
     {
       gt_array_add(locus->unique_pred_cliques, pred_clique);
@@ -146,6 +184,13 @@ GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
 
   gt_hashmap_delete(refr_cliques_acctd);
   gt_hashmap_delete(pred_cliques_acctd);
+  gt_hashmap_delete(pairs2delete);
+  if(refr_cliques != NULL)
+    gt_array_delete(refr_cliques);
+  if(pred_cliques != NULL)
+    gt_array_delete(pred_cliques);
+  if(clique_pairs != NULL)
+    gt_array_delete(clique_pairs);
   return locus->reported_pairs;
 }
 
@@ -164,83 +209,60 @@ void agn_gene_locus_delete(AgnGeneLocus *locus)
   gt_hashmap_delete(locus->pred_genes);
 
   AgnTranscriptClique *clique;
-  if(locus->refr_cliques != NULL)
+  while(gt_array_size(locus->reported_pairs) > 0)
   {
-    while(gt_array_size(locus->refr_cliques) > 0)
-    {
-      clique = *(AgnTranscriptClique **)gt_array_pop(locus->refr_cliques);
-      agn_transcript_clique_delete(clique);
-    }
-    gt_array_delete(locus->refr_cliques);
+    AgnCliquePair *pair = *(AgnCliquePair**)gt_array_pop(locus->reported_pairs);
+    clique = agn_clique_pair_get_refr_clique(pair);
+    agn_transcript_clique_delete(clique);
+    clique = agn_clique_pair_get_pred_clique(pair);
+    agn_transcript_clique_delete(clique);
+    agn_clique_pair_delete(pair);
   }
-  if(locus->pred_cliques != NULL)
-  {
-    while(gt_array_size(locus->pred_cliques) > 0)
-    {
-      clique = *(AgnTranscriptClique **)gt_array_pop(locus->pred_cliques);
-      agn_transcript_clique_delete(clique);
-    }
-    gt_array_delete(locus->pred_cliques);
-  }
+  gt_array_delete(locus->reported_pairs);
 
-  if(locus->clique_pairs != NULL)
+  while(gt_array_size(locus->unique_refr_cliques) > 0)
   {
-    while(gt_array_size(locus->clique_pairs) > 0)
-    {
-      AgnCliquePair *pair = *(AgnCliquePair**)gt_array_pop(locus->clique_pairs);
-      agn_clique_pair_delete(pair);
-    }
-    gt_array_delete(locus->clique_pairs);
+    clique = *(AgnTranscriptClique **)gt_array_pop(locus->unique_refr_cliques);
+    agn_transcript_clique_delete(clique);
   }
+  gt_array_delete(locus->unique_refr_cliques);
 
-  if(locus->reported_pairs != NULL)
-    gt_array_delete(locus->reported_pairs);
-  if(locus->unique_refr_cliques != NULL)
-    gt_array_delete(locus->unique_refr_cliques);
-  if(locus->unique_pred_cliques != NULL)
-    gt_array_delete(locus->unique_pred_cliques);
+  while(gt_array_size(locus->unique_pred_cliques) > 0)
+  {
+    clique = *(AgnTranscriptClique **)gt_array_pop(locus->unique_pred_cliques);
+    agn_transcript_clique_delete(clique);
+  }
+  gt_array_delete(locus->unique_pred_cliques);
 
   gt_free(locus->region.seqid);
   gt_free(locus);
   locus = NULL;
 }
 
-unsigned long agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus)
+GtArray *agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus,
+                                               GtArray *refr_cliques,
+                                               GtArray *pred_cliques)
 {
-  if(locus->clique_pairs != NULL)
-    return gt_array_size(locus->clique_pairs);
+  if(refr_cliques == NULL || pred_cliques == NULL)
+    return NULL;
 
-  if(agn_gene_locus_num_refr_transcripts(locus) > 0)
-  {
-    GtArray *refr_trans = agn_gene_locus_refr_transcripts(locus);
-    locus->refr_cliques = agn_enumerate_feature_cliques(refr_trans);
-    gt_array_delete(refr_trans);
-  }
-  if(agn_gene_locus_num_pred_transcripts(locus) > 0)
-  {
-    GtArray *pred_trans = agn_gene_locus_pred_transcripts(locus);
-    locus->pred_cliques = agn_enumerate_feature_cliques(pred_trans);
-    gt_array_delete(pred_trans);
-  }
-
-  locus->clique_pairs = gt_array_new( sizeof(AgnCliquePair *) );
-
+  GtArray *clique_pairs = gt_array_new( sizeof(AgnCliquePair *) );
   unsigned long i,j;
-  for(i = 0; i < gt_array_size(locus->refr_cliques); i++)
+  for(i = 0; i < gt_array_size(refr_cliques); i++)
   {
     AgnTranscriptClique *refr_clique, *pred_clique;
-    refr_clique = *(AgnTranscriptClique **)gt_array_get(locus->refr_cliques, i);
-    for(j = 0; j < gt_array_size(locus->pred_cliques); j++)
+    refr_clique = *(AgnTranscriptClique **)gt_array_get(refr_cliques, i);
+    for(j = 0; j < gt_array_size(pred_cliques); j++)
     {
-      pred_clique = *(AgnTranscriptClique**)gt_array_get(locus->pred_cliques,j);
+      pred_clique = *(AgnTranscriptClique**)gt_array_get(pred_cliques,j);
       AgnCliquePair *pair = agn_clique_pair_new(locus->region.seqid,
                                                 refr_clique, pred_clique,
                                                 &locus->region.range);
-      gt_array_add(locus->clique_pairs, pair);
+      gt_array_add(clique_pairs, pair);
     }
   }
 
-  return gt_array_size(locus->clique_pairs);
+  return clique_pairs;
 }
 
 unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus,
@@ -568,29 +590,6 @@ unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus)
   return gt_range_length(&locus->region.range);
 }
 
-AgnCliquePair* agn_gene_locus_get_optimal_clique_pair(AgnGeneLocus *locus,
-                                              AgnTranscriptClique *refr_clique)
-{
-  AgnCliquePair *bestpair = NULL;
-  unsigned long i;
-
-  for(i = 0; i < gt_array_size(locus->clique_pairs); i++)
-  {
-    AgnCliquePair *currentpair;
-    currentpair = *(AgnCliquePair **)gt_array_get(locus->clique_pairs, i);
-    if(refr_clique == agn_clique_pair_get_refr_clique(currentpair))
-    {
-      if(bestpair == NULL ||
-         agn_clique_pair_compare_direct(bestpair, currentpair) == -1)
-      {
-        bestpair = currentpair;
-      }
-    }
-  }
-
-  return bestpair;
-}
-
 const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus)
 {
   return locus->region.seqid;
@@ -611,12 +610,6 @@ GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus)
   return locus->unique_refr_cliques;
 }
 
-bool agn_gene_locus_is_complex(AgnGeneLocus *locus)
-{
-  return gt_array_size(locus->refr_cliques) > 1 ||
-         gt_array_size(locus->pred_cliques) > 1;
-}
-
 AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 {
   AgnGeneLocus *locus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
@@ -627,14 +620,16 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
   locus->genes = gt_dlist_new( (GtCompare)gt_genome_node_cmp );
   locus->refr_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
   locus->pred_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-  locus->clique_pairs = NULL;
-  locus->refr_cliques = NULL;
-  locus->pred_cliques = NULL;
   locus->reported_pairs = NULL;
   locus->unique_refr_cliques = NULL;
   locus->unique_pred_cliques = NULL;
 
   return locus;
+}
+
+unsigned long agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus)
+{
+  return gt_array_size(locus->reported_pairs);
 }
 
 #ifndef WITHOUT_CAIRO

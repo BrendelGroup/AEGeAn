@@ -120,9 +120,6 @@ void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
       gt_timer_start(timer);
       AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, i);
       preanalyfunc(locus, analyfuncdata);
-      //unsigned long npairs = agn_gene_locus_enumerate_clique_pairs(locus);
-      agn_gene_locus_enumerate_clique_pairs(locus);
-      //GtArray *reportedpairs = agn_gene_locus_comparative_analysis(locus);
       agn_gene_locus_comparative_analysis(locus);
       postanalyfunc(locus, analyfuncdata);
       gt_timer_stop(timer);
