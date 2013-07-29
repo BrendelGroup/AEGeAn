@@ -16,12 +16,21 @@ struct AgnGeneLocus
   GtArray *reported_pairs;
   GtArray *unique_refr_cliques;
   GtArray *unique_pred_cliques;
+  AgnCompEvaluation eval;
 };
 
 
 //----------------------------------------------------------------------------//
 // Prototypes for private method(s)
 //----------------------------------------------------------------------------//
+
+/**
+ * Collect comparison statistics for this locus and aggregate from individual
+ * clique pairs.
+ *
+ * @param[in]  locus    the locus annotatio
+ */
+void agn_gene_locus_aggregate_results_internal(AgnGeneLocus *locus);
 
 /**
  * We use the Bron-Kerbosch algorithm to enumerate maximal cliques of non-
@@ -63,55 +72,61 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
 }
 
 void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
-                                      AgnCompEvaluation *data)
+                                      AgnCompEvaluation *eval)
 {
-  unsigned long i;
-  GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
-  unsigned long pairs_to_report = gt_array_size(reported_pairs);
-  gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
+  gt_assert(locus->reported_pairs != NULL &&
+            gt_array_size(locus->reported_pairs) > 0);
+  agn_comp_evaluation_combine(eval, &locus->eval);
+}
 
-  for(i = 0; i < pairs_to_report; i++)
+void agn_gene_locus_aggregate_results_internal(AgnGeneLocus *locus)
+{
+  AgnCompEvaluation *eval = &locus->eval;
+
+  unsigned long i;
+  AgnCliquePair *pair;
+  for(i = 0; i < gt_array_size(locus->reported_pairs); i++)
   {
-    AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
+    pair = *(AgnCliquePair **)gt_array_get(locus->reported_pairs, i);
     gt_assert(agn_clique_pair_needs_comparison(pair));
 
-    data->counts.num_comparisons++;
+    eval->counts.num_comparisons++;
 
     // Classify this comparison: perfect match, CDS match, etc.
     AgnCliquePairClassification compareclass = agn_clique_pair_classify(pair);
     switch(compareclass)
     {
       case AGN_CLIQUE_PAIR_PERFECT_MATCH:
-        data->counts.num_perfect++;
+        eval->counts.num_perfect++;
         agn_clique_pair_record_characteristics(pair,
-                                               &data->results.perfect_matches);
+                                               &eval->results.perfect_matches);
         break;
 
       case AGN_CLIQUE_PAIR_MISLABELED:
-        data->counts.num_mislabeled++;
+        eval->counts.num_mislabeled++;
         agn_clique_pair_record_characteristics(pair,
-                                             &data->results.perfect_mislabeled);
+                                             &eval->results.perfect_mislabeled);
         break;
 
       case AGN_CLIQUE_PAIR_CDS_MATCH:
-        data->counts.num_cds_match++;
-        agn_clique_pair_record_characteristics(pair,&data->results.cds_matches);
+        eval->counts.num_cds_match++;
+        agn_clique_pair_record_characteristics(pair,&eval->results.cds_matches);
         break;
 
       case AGN_CLIQUE_PAIR_EXON_MATCH:
-        data->counts.num_exon_match++;
+        eval->counts.num_exon_match++;
         agn_clique_pair_record_characteristics(pair,
-                                               &data->results.exon_matches);
+                                               &eval->results.exon_matches);
         break;
 
       case AGN_CLIQUE_PAIR_UTR_MATCH:
-        data->counts.num_utr_match++;
-        agn_clique_pair_record_characteristics(pair,&data->results.utr_matches);
+        eval->counts.num_utr_match++;
+        agn_clique_pair_record_characteristics(pair,&eval->results.utr_matches);
         break;
 
       case AGN_CLIQUE_PAIR_NON_MATCH:
-        data->counts.non_match++;
-        agn_clique_pair_record_characteristics(pair,&data->results.non_matches);
+        eval->counts.non_match++;
+        agn_clique_pair_record_characteristics(pair,&eval->results.non_matches);
         break;
 
       default:
@@ -122,27 +137,27 @@ void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
 
     // Record structure-level counts
     AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
-    data->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
-    data->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
-    data->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
-    data->stats.exon_struc_stats.correct += pairstats->exon_struc_stats.correct;
-    data->stats.exon_struc_stats.missing += pairstats->exon_struc_stats.missing;
-    data->stats.exon_struc_stats.wrong   += pairstats->exon_struc_stats.wrong;
-    data->stats.utr_struc_stats.correct  += pairstats->utr_struc_stats.correct;
-    data->stats.utr_struc_stats.missing  += pairstats->utr_struc_stats.missing;
-    data->stats.utr_struc_stats.wrong    += pairstats->utr_struc_stats.wrong;
+    eval->stats.cds_struc_stats.correct  += pairstats->cds_struc_stats.correct;
+    eval->stats.cds_struc_stats.missing  += pairstats->cds_struc_stats.missing;
+    eval->stats.cds_struc_stats.wrong    += pairstats->cds_struc_stats.wrong;
+    eval->stats.exon_struc_stats.correct += pairstats->exon_struc_stats.correct;
+    eval->stats.exon_struc_stats.missing += pairstats->exon_struc_stats.missing;
+    eval->stats.exon_struc_stats.wrong   += pairstats->exon_struc_stats.wrong;
+    eval->stats.utr_struc_stats.correct  += pairstats->utr_struc_stats.correct;
+    eval->stats.utr_struc_stats.missing  += pairstats->utr_struc_stats.missing;
+    eval->stats.utr_struc_stats.wrong    += pairstats->utr_struc_stats.wrong;
 
     // Record nucleotide-level counts
-    data->stats.cds_nuc_stats.tp += pairstats->cds_nuc_stats.tp;
-    data->stats.cds_nuc_stats.fn += pairstats->cds_nuc_stats.fn;
-    data->stats.cds_nuc_stats.fp += pairstats->cds_nuc_stats.fp;
-    data->stats.cds_nuc_stats.tn += pairstats->cds_nuc_stats.tn;
-    data->stats.utr_nuc_stats.tp += pairstats->utr_nuc_stats.tp;
-    data->stats.utr_nuc_stats.fn += pairstats->utr_nuc_stats.fn;
-    data->stats.utr_nuc_stats.fp += pairstats->utr_nuc_stats.fp;
-    data->stats.utr_nuc_stats.tn += pairstats->utr_nuc_stats.tn;
-    data->stats.overall_matches  += pairstats->overall_matches;
-    data->stats.overall_length   += agn_gene_locus_get_length(locus);
+    eval->stats.cds_nuc_stats.tp += pairstats->cds_nuc_stats.tp;
+    eval->stats.cds_nuc_stats.fn += pairstats->cds_nuc_stats.fn;
+    eval->stats.cds_nuc_stats.fp += pairstats->cds_nuc_stats.fp;
+    eval->stats.cds_nuc_stats.tn += pairstats->cds_nuc_stats.tn;
+    eval->stats.utr_nuc_stats.tp += pairstats->utr_nuc_stats.tp;
+    eval->stats.utr_nuc_stats.fn += pairstats->utr_nuc_stats.fn;
+    eval->stats.utr_nuc_stats.fp += pairstats->utr_nuc_stats.fp;
+    eval->stats.utr_nuc_stats.tn += pairstats->utr_nuc_stats.tn;
+    eval->stats.overall_matches  += pairstats->overall_matches;
+    eval->stats.overall_length   += agn_gene_locus_get_length(locus);
   }
 }
 
@@ -275,6 +290,8 @@ GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
     gt_array_delete(pred_cliques);
   if(clique_pairs != NULL)
     gt_array_delete(clique_pairs);
+
+  agn_gene_locus_aggregate_results_internal(locus);
   return locus->reported_pairs;
 }
 
@@ -707,6 +724,7 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid)
   locus->reported_pairs = NULL;
   locus->unique_refr_cliques = NULL;
   locus->unique_pred_cliques = NULL;
+  agn_comp_evaluation_init(&locus->eval);
 
   return locus;
 }

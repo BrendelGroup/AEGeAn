@@ -626,7 +626,6 @@ void agn_gene_validator_mrna_typecheck(AgnGeneValidator *v, GtFeatureNode *mrna,
         gt_feature_node_get_attribute(mrna, "ID")
     );
     gt_feature_node_remove_leaf(mrna, child);
-    gt_genome_node_delete((GtGenomeNode *)child);
   }
 }
 
@@ -712,12 +711,9 @@ bool agn_gene_validator_validate_gene(AgnGeneValidator *v, GtFeatureNode *gene,
   GtFeatureNode *childfeature;
   bool isvalid = true;
   unsigned int num_mrnas = 0;
-  for
-  (
-    childfeature = gt_feature_node_iterator_next(iter);
-    childfeature != NULL;
-    childfeature = gt_feature_node_iterator_next(iter)
-  )
+  for(childfeature = gt_feature_node_iterator_next(iter);
+      childfeature != NULL;
+      childfeature = gt_feature_node_iterator_next(iter))
   {
     if(agn_gene_validator_validate_mrna(v, gene, childfeature, logger))
     {

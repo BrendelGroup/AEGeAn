@@ -174,11 +174,12 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
   agn_gt_feature_node_resolve_pseudo_node(fn, features);
   while(gt_array_size(features) > 0)
   {
-    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(features);
-    bool isvalid = agn_gene_validator_validate_gene(v->validator,fn,v->logger);
+    GtFeatureNode *feat = *(GtFeatureNode **)gt_array_pop(features);
+    bool isvalid = agn_gene_validator_validate_gene(v->validator, feat,
+                                                    v->logger);
     if(isvalid)
     {
-      bool adderror = gt_feature_index_add_feature_node(v->index, fn, error);
+      bool adderror = gt_feature_index_add_feature_node(v->index, feat, error);
       if(adderror)
       {
         agn_logger_log_error(v->logger, "%s", gt_error_get(error));
@@ -188,12 +189,13 @@ static int agn_canon_node_visitor_visit_feature_node(GtNodeVisitor *nv,
     }
     else
     {
-      gt_genome_node_delete((GtGenomeNode *)fn);
+      gt_genome_node_delete((GtGenomeNode *)feat);
       // FIXME issue 34
       if(agn_logger_has_error(v->logger))
         return 1;
     }
   }
+  // FIXME free pseudo node?
   gt_array_delete(features);
 
   return 0;
