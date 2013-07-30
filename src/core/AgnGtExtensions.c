@@ -267,96 +267,58 @@ void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,
   }
 }
 
-void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool printchildren, char *prefix, GtHashmap *filtered_types)
+void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream,
+                                 bool printchildren, char *prefix,
+                                 GtHashmap *filtered_types)
 {
-  if(printchildren)
+  bool default_filter = false;
+  if(filtered_types == NULL)
   {
-    bool default_filter = false;
-    if(filtered_types == NULL)
-    {
-      default_filter = true;
-      filtered_types = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
-      gt_hashmap_add(filtered_types, "intron", filtered_types);
-    }
-
-    GtFeatureNode *current;
-    GtFeatureNodeIterator *iter;
-    iter = gt_feature_node_iterator_new(feature);
-    for( current = gt_feature_node_iterator_next(iter);
-         current != NULL;
-         current = gt_feature_node_iterator_next(iter) )
-    {
-      const char *type = gt_feature_node_get_type(current);
-      if(gt_hashmap_get(filtered_types, type) != NULL)
-        continue;
-
-      GtGenomeNode *gn = (GtGenomeNode *)current;
-      GtStr *seqid = gt_genome_node_get_seqid(gn);
-      const char *source = gt_feature_node_get_source(current);
-      unsigned long start = gt_genome_node_get_start(gn);
-      unsigned long end = gt_genome_node_get_end(gn);
-      char score_string[16];
-      if(gt_feature_node_score_is_defined(current))
-      {
-        float score = gt_feature_node_get_score(current);
-        sprintf(score_string, "%.2f", score);
-      }
-      else
-        sprintf(score_string, "%s", ".");
-      GtStrand strand = gt_feature_node_get_strand(current);
-      GtPhase phase = gt_feature_node_get_phase(current);
-
-      if(prefix != NULL && strcmp(prefix, "") != 0)
-        fputs(prefix, outstream);
-
-      fprintf( outstream, "%s\t%s\t%s\t%lu\t%lu\t%s\t%c\t%c\t", gt_str_get(seqid), source, type, start,
-               end, score_string, agn_gt_strand_to_char(strand), agn_gt_phase_to_char(phase) );
-
-      GtStrArray *attributes = gt_feature_node_get_attribute_list(current);
-      unsigned long num_attrs = gt_str_array_size(attributes);
-      unsigned long i;
-      for(i = 0; i < num_attrs; i++)
-      {
-        const char *attr_name = gt_str_array_get(attributes, i);
-        if(i > 0)
-          fputs(";", outstream);
-        fprintf( outstream, "%s=%s", attr_name, gt_feature_node_get_attribute(current, attr_name) );
-      }
-      fputs("\n", outstream);
-      gt_str_array_delete(attributes);
-    }
-    gt_feature_node_iterator_delete(iter);
-    if(default_filter)
-    {
-      gt_hashmap_delete(filtered_types);
-    }
+    default_filter = true;
+    filtered_types = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+    gt_hashmap_add(filtered_types, "intron", filtered_types);
   }
-  else
+
+  GtFeatureNode *current;
+  GtFeatureNodeIterator *iter;
+  GtHashmap *printed = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
+  iter = gt_feature_node_iterator_new(feature);
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
   {
-    GtGenomeNode *gn = (GtGenomeNode *)feature;
+    const char *type = gt_feature_node_get_type(current);
+    if(gt_hashmap_get(filtered_types, type) != NULL ||
+       gt_hashmap_get(printed, current) != NULL ||
+       (!printchildren && current != feature))
+    {
+      continue;
+    }
+
+    GtGenomeNode *gn = (GtGenomeNode *)current;
     GtStr *seqid = gt_genome_node_get_seqid(gn);
-    const char *source = gt_feature_node_get_source(feature);
-    const char *type = gt_feature_node_get_type(feature);
+    const char *source = gt_feature_node_get_source(current);
     unsigned long start = gt_genome_node_get_start(gn);
     unsigned long end = gt_genome_node_get_end(gn);
     char score_string[16];
-    if(gt_feature_node_score_is_defined(feature))
+    if(gt_feature_node_score_is_defined(current))
     {
-      float score = gt_feature_node_get_score(feature);
+      float score = gt_feature_node_get_score(current);
       sprintf(score_string, "%.2f", score);
     }
     else
       sprintf(score_string, "%s", ".");
-    GtStrand strand = gt_feature_node_get_strand(feature);
-    GtPhase phase = gt_feature_node_get_phase(feature);
+    GtStrand strand = gt_feature_node_get_strand(current);
+    GtPhase phase = gt_feature_node_get_phase(current);
 
     if(prefix != NULL && strcmp(prefix, "") != 0)
       fputs(prefix, outstream);
 
-    fprintf( outstream, "%s\t%s\t%s\t%lu\t%lu\t%s\t%c\t%c\t", gt_str_get(seqid), source, type, start,
-             end, score_string, agn_gt_strand_to_char(strand), agn_gt_phase_to_char(phase) );
+    fprintf(outstream, "%s\t%s\t%s\t%lu\t%lu\t%s\t%c\t%c\t", gt_str_get(seqid),
+            source, type, start, end, score_string,
+            agn_gt_strand_to_char(strand), agn_gt_phase_to_char(phase));
 
-    GtStrArray *attributes = gt_feature_node_get_attribute_list(feature);
+    GtStrArray *attributes = gt_feature_node_get_attribute_list(current);
     unsigned long num_attrs = gt_str_array_size(attributes);
     unsigned long i;
     for(i = 0; i < num_attrs; i++)
@@ -364,11 +326,19 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool p
       const char *attr_name = gt_str_array_get(attributes, i);
       if(i > 0)
         fputs(";", outstream);
-      fprintf( outstream, "%s=%s", attr_name, gt_feature_node_get_attribute(feature, attr_name) );
+      fprintf(outstream, "%s=%s", attr_name,
+              gt_feature_node_get_attribute(current, attr_name));
     }
     fputs("\n", outstream);
     gt_str_array_delete(attributes);
+    gt_hashmap_add(printed, current, current);
   }
+  gt_feature_node_iterator_delete(iter);
+  if(default_filter)
+  {
+    gt_hashmap_delete(filtered_types);
+  }
+  gt_hashmap_delete(printed);
 }
 
 int agn_gt_genome_node_compare(const void *n1, const void *n2)
