@@ -62,15 +62,19 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
 /**
  * Compute interval loci (more detailed description forthcoming).
  *
- * @param[in] idx      locus index object
- * @param[in] seqid    ID of the sequence of interest
- * @param[in] delta    number of nucleotides to extend gene loci up- and down-
- *                     stream assuming this does not cause overlap with a gene
- *                     belonging to another locus
- * @returns            a list of interval loci corresponding to this sequence
+ * @param[in] idx             locus index object
+ * @param[in] seqid           ID of the sequence of interest
+ * @param[in] delta           number of nucleotides to extend gene loci up- and
+ *                            down-stream assuming this does not cause overlap
+ *                            with a gene belonging to another locus
+ * @param[in] skipterminal    whether or not to exclude terminal iloci, such as
+ *                            with incomplete (scaffold) genomic sequences
+ * @returns                   a list of interval loci corresponding to this
+ *                            sequence
  */
 GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
-                                       unsigned long delta);
+                                       unsigned long delta,
+                                       bool skipterminal);
 
 /**
  * Allocate memory for a new locus index object.

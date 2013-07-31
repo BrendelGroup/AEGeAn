@@ -16,7 +16,7 @@ CN_EXE=bin/canon-gff3
 VN_EXE=bin/vang
 LP_EXE=bin/locuspocus
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(UT_EXE)
+BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -60,7 +60,7 @@ endif
 INCS=-I $(GT_INSTALL_DIR)/include/genometools/ -I inc/core -I inc/ParsEval -I inc/VAnG -I /usr/include/cairo/ -I /sw/include/cairo/
 
 # Targets
-all:		$(BINS) libaegean.a
+all:		$(BINS) $(UT_EXE) libaegean.a
 		
 
 install:	all
@@ -79,7 +79,7 @@ uninstall:
 		rm -r $(prefix)/share/parseval
 
 clean:		
-		rm -f $(BINS) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
+		rm -f $(BINS) $(UT_EXE) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
@@ -119,7 +119,7 @@ libaegean.a:	$(AGN_OBJS)
 inc/core/AgnVersion.h:	
 			@- bash -c "if [ -d .git ]; then perl data/share/version.pl > inc/core/AgnVersion.h; else perl data/share/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
-test:		$(BINS)
+test:		$(BINS) $(UT_EXE)
 		@- bin/unittests
 		@- echo AEGeAn Functional Tests
 		@- test/AT1G05320.sh

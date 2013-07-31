@@ -12,6 +12,7 @@ typedef struct
   unsigned long delta;
   int numprocs;
   FILE *outstream;
+  bool skipends;
   bool verbose;
 } LocusPocusOptions;
 
@@ -32,7 +33,10 @@ void print_usage(FILE *outstream)
 "    -n|--numprocs: INT    number of processors to utilize; default is 1\n"
 "    -o|--outfile: FILE    name of file to which results will be written;\n"
 "                          default is terminal (standard output)\n"
-"    -v|--verbose          print detailed log messages to terminal (standard error)\n\n" );
+"    -s|--skipends         when enumerating interval loci, exclude gene-less\n"
+"                          iloci at either end of the sequence\n"
+"    -v|--verbose          print detailed log messages to terminal (standard\n"
+"                          error)\n\n" );
 }
 
 // Main program
@@ -41,7 +45,7 @@ int main(int argc, char **argv)
   // Parse options from command line
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dhil:n:o:v";
+  const char *optstr = "dhil:n:o:sv";
   const struct option locuspocus_options[] =
   {
     { "debug",    no_argument,       NULL, 'd' },
@@ -50,9 +54,10 @@ int main(int argc, char **argv)
     { "delta",    required_argument, NULL, 'l' },
     { "numprocs", required_argument, NULL, 'n' },
     { "outfile",  required_argument, NULL, 'o' },
+    { "skipends", no_argument,       NULL, 's' },
     { "verbose",  no_argument,       NULL, 'v' },
   };
-  LocusPocusOptions options = { 0, 0, 500, 0, stdout, 0 };
+  LocusPocusOptions options = { 0, 0, 500, 0, stdout, 0, 0 };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex))
@@ -94,6 +99,9 @@ int main(int argc, char **argv)
                    optarg );
           exit(1);
         }
+        break;
+      case 's':
+        options.skipends = 1;
         break;
       case 'v':
         options.verbose = 1;
@@ -142,7 +150,8 @@ int main(int argc, char **argv)
     GtArray *seqloci;
     if(options.intloci)
     {
-       seqloci = agn_locus_index_interval_loci(loci, seqid, options.delta);
+       seqloci = agn_locus_index_interval_loci(loci, seqid, options.delta,
+                                               options.skipends);
     }
     else
     {
