@@ -29,37 +29,66 @@ typedef struct
 //----------------------------------------------------------------------------//
 
 /**
+ * Traversal function for determining length of CDS(s) for the transcript(s) in
+ * this clique.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] cdslength     pointer to an unsigned long for storing the CDS
+ *                           length
  */
 void clique_cds_length(GtFeatureNode *transcript, void *cdslength);
 
 /**
+ * Traversal function for copying the contents of one clique to another.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] clique        new clique to which the transcript will be added
  */
 void clique_copy(GtFeatureNode *transcript, void *clique);
 
 /**
+ * Traversal function for checking whether the clique includes one or more
+ * transcripts whose IDs are associated with the provided data.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] data          TranscriptIdCheckData, including a hashmap of IDs
+ *                           and a boolean indicating whether the ID is in the
+ *                           hashmap
  */
 void clique_id_check(GtFeatureNode *transcript, void *data);
 
 /**
+ * Traversal function for placing all transcript IDs associated with this clique
+ * in the provided hashmap.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] map           hashmap of transcript IDs
  */
 void clique_ids_put(GtFeatureNode *transcript, void *map);
 
 /**
+ * Traversal function for determining the number of exons belonging to this
+ * transcript clique.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] numexons      pointer to an unsigned long for tracking exon #
  */
 void clique_num_exons(GtFeatureNode *transcript, void *numexons);
 
 /**
+ * Traversal function for determining the number of UTR segments belonging to
+ * this transcript clique.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] numutrs       pointer to an unsigned long for tracking UTR #
  */
 void clique_num_utrs(GtFeatureNode *transcript, void *numutrs);
 
 /**
+ * Traversal function for copying contents of this clique to an array.
  *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] array         array to which transcripts will be added
  */
 void clique_to_array(GtFeatureNode *transcript, void *array);
 
