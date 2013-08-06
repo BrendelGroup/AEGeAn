@@ -1425,7 +1425,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.cds_matches.refr_cds_length / 3 /
              (double)summary_data->results.cds_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
-             (double)summary_data->results.cds_matches.pred_cds_length / 3 / 3 /
+             (double)summary_data->results.cds_matches.pred_cds_length / 3 /
              (double)summary_data->results.cds_matches.transcript_count );
   }
   fprintf( outstream, "    exon structure matches.................%d (%.1f%%)\n",
@@ -1446,7 +1446,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.exon_matches.refr_cds_length / 3 /
              (double)summary_data->results.exon_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
-             (double)summary_data->results.exon_matches.pred_cds_length / 3 / 3 /
+             (double)summary_data->results.exon_matches.pred_cds_length / 3 /
              (double)summary_data->results.exon_matches.transcript_count );
   }
   fprintf( outstream, "    UTR structure matches..................%d (%.1f%%)\n",
@@ -1467,7 +1467,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.utr_matches.refr_cds_length / 3 /
              (double)summary_data->results.utr_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
-             (double)summary_data->results.utr_matches.pred_cds_length / 3 / 3 /
+             (double)summary_data->results.utr_matches.pred_cds_length / 3 /
              (double)summary_data->results.utr_matches.transcript_count );
   }
   fprintf( outstream, "    non-matches............................%d (%.1f%%)\n",
@@ -1488,7 +1488,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              (double)summary_data->results.non_matches.refr_cds_length / 3 /
              (double)summary_data->results.non_matches.transcript_count );
     fprintf( outstream, "      avg. pred CDS length.................%.2lf aa\n",
-             (double)summary_data->results.non_matches.pred_cds_length / 3 / 3 /
+             (double)summary_data->results.non_matches.pred_cds_length / 3 /
              (double)summary_data->results.non_matches.transcript_count );
   }
   fputs("\n", outstream);
