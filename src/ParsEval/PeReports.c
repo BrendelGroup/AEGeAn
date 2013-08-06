@@ -8,6 +8,31 @@
 #include "AgnVersion.h"
 #include "PeReports.h"
 
+//------------------------------------------------------------------------------
+// Prototype(s) for private function(s)
+//------------------------------------------------------------------------------
+
+/**
+ * Take given feature node ID, trim the end and add an elipsis if necessary, and
+ * write to the provided buffer.
+ *
+ * @param[in]  feature      the feature ID
+ * @param[out] buffer       the string to which the trimmed ID will be written
+ * @param[in]  maxlength    the number of characters at which to trim the ID
+ */
+void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
+                                    size_t maxlength);
+
+/**
+ * FIXME
+ */
+void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream);
+
+
+//------------------------------------------------------------------------------
+// Method/function implementations
+//------------------------------------------------------------------------------
+
 void pe_aggregate_results(AgnCompEvaluation *overall_eval,
                           GtArray **seqlevel_evalsp, GtArray *loci,
                           GtArray *seqfiles, GtHashmap *comp_evals,
@@ -53,6 +78,23 @@ void pe_aggregate_results(AgnCompEvaluation *overall_eval,
   gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
                           "level results (%ld.%06ld seconds)\n", stderr);
   gt_timer_delete(timer);
+}
+
+void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
+                                    size_t maxlength)
+{
+  if(strlen(fid) <= maxlength)
+  {
+    strcpy(buffer, fid);
+  }
+  else
+  {
+    strncpy(buffer, fid, maxlength - 3);
+    buffer[maxlength - 3] = '.';
+    buffer[maxlength - 2] = '.';
+    buffer[maxlength - 1] = '.';
+    buffer[maxlength]     = '\0';
+  }
 }
 
 void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
@@ -209,31 +251,24 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
         fprintf(outstream, "     |---- Begin Comparison ----\n");
         fprintf(outstream, "     |--------------------------\n");
         fprintf(outstream, "     |\n");
+
+        AgnTranscriptClique *refrclique = agn_clique_pair_get_refr_clique(pair);
+        AgnTranscriptClique *predclique = agn_clique_pair_get_pred_clique(pair);
+
         fprintf(outstream, "     |  reference transcripts:\n");
-
-        GtFeatureNode *transcript;
-        AgnTranscriptClique *refr_clique = agn_clique_pair_get_refr_clique(pair);
-        AgnTranscriptClique *pred_clique = agn_clique_pair_get_pred_clique(pair);
-
-        while((transcript = agn_transcript_clique_next(refr_clique)))
-        {
-          fprintf( outstream, "     |    %s\n",
-                   gt_feature_node_get_attribute(transcript, "ID"));
-        }
+        agn_transcript_clique_traverse(refrclique,
+            (AgnCliqueVisitFunc)pe_print_transcript_id, outstream);
         fprintf(outstream, "     |  prediction transcripts:\n");
-        while((transcript = agn_transcript_clique_next(pred_clique)))
-        {
-          fprintf( outstream, "     |    %s\n",
-                   gt_feature_node_get_attribute(transcript, "ID"));
-        }
+        agn_transcript_clique_traverse(predclique,
+            (AgnCliqueVisitFunc)pe_print_transcript_id, outstream);
         fprintf(outstream, "     |\n");
 
         if(options->gff3)
         {
           fprintf(outstream, "     |  reference GFF3:\n");
-          agn_transcript_clique_to_gff3(refr_clique, outstream, "     |    ");
+          agn_transcript_clique_to_gff3(refrclique, outstream, "     |    ");
           fprintf(outstream, "     |  prediction GFF3:\n");
-          agn_transcript_clique_to_gff3(pred_clique, outstream, "     |    ");
+          agn_transcript_clique_to_gff3(predclique, outstream, "     |    ");
           fprintf(outstream, "     |\n");
         }
 
@@ -724,19 +759,16 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
       // Do I just use arbitrary numbers?
       if(agn_clique_pair_is_simple(pair))
       {
-        char refr_id[20 + 1], pred_id[20 + 1];
-        GtFeatureNode *refr_trans = agn_transcript_clique_next(refrclique);
-        GtFeatureNode *pred_trans = agn_transcript_clique_next(predclique);
-        agn_transcript_clique_reset(refrclique);
-        agn_transcript_clique_reset(predclique);
-
-        agn_gt_feature_node_get_trimmed_id(refr_trans, refr_id, 20);
-        agn_gt_feature_node_get_trimmed_id(pred_trans, pred_id, 20);
+        char refr_id_trim[20 + 1], pred_id_trim[20 + 1];
+        const char *refrid = agn_transcript_clique_id(refrclique);
+        const char *predid = agn_transcript_clique_id(predclique);
+        pe_feature_node_get_trimmed_id(refrid, refr_id_trim, 20);
+        pe_feature_node_get_trimmed_id(predid, pred_id_trim, 20);
 
         fprintf( outstream,
                  "      <h3 class=\"compare-header\">%s vs %s "
                  "<a id=\"toggle_compare_%lu\" href=\"#\">(show details)</a></h3>\n",
-                 refr_id, pred_id, k );
+                 refr_id_trim, pred_id_trim, k );
       }
       else
       {
@@ -2082,6 +2114,13 @@ void pe_print_summary_html(const char *start_time, int argc,
          "  </body>\n"
          "</html>\n",
          outstream );
+}
+
+void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream)
+{
+  FILE *out = outstream;
+  const char *tid = gt_feature_node_get_attribute(transcript, "ID");
+  fprintf(out, "     |    %s\n", tid);
 }
 
 void pe_seqid_check(const char *seqid, AgnLogger *logger)

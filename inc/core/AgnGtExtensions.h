@@ -41,17 +41,6 @@ bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,
                                               GtFeatureNode *parent);
 
 /**
- * Extract the ID attribute from the given feature node, trim the end and add
- * an elipsis if necessary, and write to the provided buffer.
- *
- * @param[out] buffer       the string to which the trimmed ID will be written
- * @param[in]  feature      the feature whose ID we want
- * @param[in]  maxlength    the number of characters at which to trim the ID
- */
-void agn_gt_feature_node_get_trimmed_id( GtFeatureNode *feature, char * buffer,
-                                         size_t maxlength );
-
-/**
  * Determine whether the given feature belongs to a CDS.
  *
  * @param[in] fn    the feature to be tested

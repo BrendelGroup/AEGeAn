@@ -98,23 +98,6 @@ bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,
   return success;
 }
 
-void agn_gt_feature_node_get_trimmed_id(GtFeatureNode *feature, char * buffer, size_t maxlength)
-{
-  const char *fid = gt_feature_node_get_attribute(feature, "ID");
-  if(strlen(fid) <= maxlength)
-  {
-    strcpy(buffer, fid);
-  }
-  else
-  {
-    strncpy(buffer, fid, maxlength - 3);
-    buffer[maxlength - 3] = '.';
-    buffer[maxlength - 2] = '.';
-    buffer[maxlength - 1] = '.';
-    buffer[maxlength]     = '\0';
-  }
-}
-
 bool agn_gt_feature_node_is_cds_feature(GtFeatureNode *feature)
 {
   return gt_feature_node_has_type(feature, "CDS") ||

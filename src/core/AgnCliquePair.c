@@ -4,7 +4,7 @@
 #include "AgnUtils.h"
 
 //----------------------------------------------------------------------------//
-// Data structure definition
+// Data structure definitions
 //----------------------------------------------------------------------------//
 struct AgnCliquePair
 {
@@ -17,41 +17,47 @@ struct AgnCliquePair
   AgnComparison stats;
 };
 
+typedef struct
+{
+  char *modelvector;
+  GtRange *locusrange;
+} ModelVectorData;
+
 
 //----------------------------------------------------------------------------//
 // Prototypes for private method(s)
 //----------------------------------------------------------------------------//
+
 /**
  * Add a transcript and all its features to a model vector.
  *
- * @param[in]  pair          the clique pair to which the transcript belongs
- * @param[out] vector        the vector to which the transcript will be added
- * @param[in]  transcript    the transcript feature
+ * @param[in]  transcript     a transcript in the clique
+ * @param[out] modelvector    ModelVectorData for the vector being built
  */
-void agn_clique_pair_add_to_vector( AgnCliquePair *pair, char *vector,
-                                    GtFeatureNode *transcript );
+void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
+                                          void *data);
 
 
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
-void agn_clique_pair_add_to_vector( AgnCliquePair *pair, char *vector,
-                                    GtFeatureNode *transcript )
+void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
+                                          void *data)
 {
+  ModelVectorData *mvd = data;
   GtFeatureNode *fn;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
-
-  for( fn = gt_feature_node_iterator_next(iter);
-       fn != NULL;
-       fn = gt_feature_node_iterator_next(iter) )
+  for(fn = gt_feature_node_iterator_next(iter);
+      fn != NULL;
+      fn = gt_feature_node_iterator_next(iter))
   {
     char c;
     if(agn_gt_feature_node_is_cds_feature(fn))
       c = 'C';
     else if(agn_gt_feature_node_is_utr_feature(fn))
     {
-      gt_assert( gt_feature_node_has_type(fn, "five_prime_UTR") ||
-                 gt_feature_node_has_type(fn, "three_prime_UTR") );
+      gt_assert(gt_feature_node_has_type(fn, "five_prime_UTR") ||
+                gt_feature_node_has_type(fn, "three_prime_UTR"));
       if(gt_feature_node_has_type(fn, "five_prime_UTR"))
         c = 'F';
       else
@@ -68,22 +74,19 @@ void agn_clique_pair_add_to_vector( AgnCliquePair *pair, char *vector,
       unsigned long fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
       unsigned long i;
 
-      for( i = fn_start - pair->locus_range->start;
-           i < fn_end - pair->locus_range->start + 1;
-           i++ )
+      for(i = fn_start - mvd->locusrange->start;
+          i < fn_end - mvd->locusrange->start + 1;
+          i++)
       {
-        vector[i] = c;
+        mvd->modelvector[i] = c;
       }
     }
   }
-
   gt_feature_node_iterator_delete(iter);
 }
 
 void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 {
-  GtFeatureNode *transcript;
-
   int vector_length = gt_range_length(pair->locus_range) + 1;
   pair->refr_vector = (char *)gt_malloc(sizeof(char) * (vector_length));
   pair->pred_vector = (char *)gt_malloc(sizeof(char) * (vector_length));
@@ -97,15 +100,12 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
     pair->pred_vector[i] = 'G';
   }
 
-  while((transcript = agn_transcript_clique_next(pair->refr_clique)))
-  {
-    agn_clique_pair_add_to_vector(pair, pair->refr_vector, transcript);
-  }
-
-  while((transcript = agn_transcript_clique_next(pair->pred_clique)))
-  {
-    agn_clique_pair_add_to_vector(pair, pair->pred_vector, transcript);
-  }
+  ModelVectorData data = { pair->refr_vector, pair->locus_range };
+  agn_transcript_clique_traverse(pair->refr_clique,
+      (AgnCliqueVisitFunc)clique_pair_add_transcript_to_vector, &data);
+  data.modelvector = pair->pred_vector;
+  agn_transcript_clique_traverse(pair->pred_clique,
+      (AgnCliqueVisitFunc)clique_pair_add_transcript_to_vector, &data);
 }
 
 void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)

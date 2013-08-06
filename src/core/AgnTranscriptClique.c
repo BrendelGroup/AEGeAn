@@ -3,12 +3,18 @@
 #include "AgnUtils.h"
 
 //----------------------------------------------------------------------------//
-// Data structure definition
+// Data structure definitions
 //----------------------------------------------------------------------------//
+
+/**
+ * This data structure is pretty minimal. At one point it contained more than a
+ * single member, and it may yet again in the future. For now though, there is
+ * enough logic built around these data that a class is still necessary, even if
+ * much of the core logic belongs to the GtDlist class.
+ */
 struct AgnTranscriptClique
 {
   GtDlist *transcripts;
-  GtDlistelem *current;
 };
 
 typedef struct
@@ -191,7 +197,6 @@ void agn_transcript_clique_add(AgnTranscriptClique *clique,
                                GtFeatureNode *transcript)
 {
   gt_dlist_add(clique->transcripts, transcript);
-  agn_transcript_clique_reset(clique);
 }
 
 unsigned long agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
@@ -225,24 +230,19 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
   return data.idfound;
 }
 
+const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
+{
+  gt_assert(agn_transcript_clique_size(clique) == 1);
+  GtDlistelem *elem = gt_dlist_first(clique->transcripts);
+  GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
+  return gt_feature_node_get_attribute(transcript, "ID");
+}
+
 AgnTranscriptClique* agn_transcript_clique_new()
 {
   AgnTranscriptClique *clique = gt_malloc(sizeof(AgnTranscriptClique));
   clique->transcripts = gt_dlist_new((GtCompare)gt_genome_node_cmp);
-  agn_transcript_clique_reset(clique);
   return clique;
-}
-
-GtFeatureNode* agn_transcript_clique_next(AgnTranscriptClique *clique)
-{
-  if(clique->current == NULL)
-  {
-    agn_transcript_clique_reset(clique);
-    return NULL;
-  }
-  GtFeatureNode *transcript = gt_dlistelem_get_data(clique->current);
-  clique->current = gt_dlistelem_next(clique->current);
-  return transcript;
 }
 
 unsigned long agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
@@ -283,14 +283,6 @@ void agn_transcript_clique_put_ids_in_hash(AgnTranscriptClique *clique,
                                            GtHashmap *map)
 {
   agn_transcript_clique_traverse(clique, clique_ids_put, map);
-}
-
-void agn_transcript_clique_reset(AgnTranscriptClique *clique)
-{
-  if(gt_dlist_size(clique->transcripts) == 0)
-    clique->current = NULL;
-  else
-    clique->current = gt_dlist_first(clique->transcripts);
 }
 
 unsigned long agn_transcript_clique_size(AgnTranscriptClique *clique)

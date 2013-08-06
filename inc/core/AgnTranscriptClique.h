@@ -62,22 +62,16 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
                                           GtHashmap *map);
 
 /**
+ * FIXME
+ */
+const char *agn_transcript_clique_id(AgnTranscriptClique *clique);
+
+/**
  * Allocate some memory for a new transcript clique.
  *
  * @returns    a pointer to the newly allocated memory
  */
 AgnTranscriptClique* agn_transcript_clique_new();
-
-/**
- * An iterator-like function for iterating through all the transcripts in the
- * clique. Unless explicitly reset, the iterator only resets when all of the
- * transcripts have been cycled through.
- *
- * @param[in] clique    the clique
- * @returns             a pointer to the next transcript, or NULL if all of the
- *                      transcripts have been iterated over.
- */
-GtFeatureNode* agn_transcript_clique_next(AgnTranscriptClique *clique);
 
 /**
  * Get the number of exons in this clique.
@@ -112,14 +106,6 @@ void agn_transcript_clique_print_ids(AgnTranscriptClique *clique,
  */
 void agn_transcript_clique_put_ids_in_hash(AgnTranscriptClique *clique,
                                            GtHashmap *map);
-
-/**
- * Reset the internal iterator used by the `agn_transcript_clique_next'
- * function.
- *
- * @param[out] clique    the clique
- */
-void agn_transcript_clique_reset(AgnTranscriptClique *clique);
 
 /**
  * Get the number of transcripts in this clique.

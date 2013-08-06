@@ -135,8 +135,7 @@ bool agn_transcript_clique_unit_test()
     {
       numtranspass = false;
     }
-    GtFeatureNode *mrna = agn_transcript_clique_next(tc);
-    const char *mrnaid = gt_feature_node_get_attribute(mrna, "ID");
+    const char *mrnaid = agn_transcript_clique_id(tc);
     unsigned long cdslength = agn_transcript_clique_cds_length(tc);
     if(strcmp(mrnaid, "EDEN.1") == 0)
     {
