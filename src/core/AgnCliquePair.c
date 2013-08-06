@@ -576,7 +576,7 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
                                             AgnCompResultDesc *desc)
 {
   AgnTranscriptClique *refr = agn_clique_pair_get_refr_clique(pair);
-  AgnTranscriptClique *pred = agn_clique_pair_get_refr_clique(pair);
+  AgnTranscriptClique *pred = agn_clique_pair_get_pred_clique(pair);
 
   desc->transcript_count += 1;
   desc->total_length += agn_clique_pair_length(pair);

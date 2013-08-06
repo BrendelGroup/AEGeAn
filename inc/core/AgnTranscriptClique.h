@@ -12,6 +12,12 @@
 typedef struct AgnTranscriptClique AgnTranscriptClique;
 
 /**
+ * Prototype functions much match to be applied to each transcript in the given
+ * clique.
+ */
+typedef void (*AgnCliqueVisitFunc)(GtFeatureNode*, void*);
+
+/**
  * Add a transcript to this clique.
  *
  * @param[out] clique        the clique
@@ -130,5 +136,15 @@ unsigned long agn_transcript_clique_size(AgnTranscriptClique *clique);
  * @returns             an array of all the transcripts
  */
 GtArray* agn_transcript_clique_to_array(AgnTranscriptClique *clique);
+
+/**
+ * Apply the given function to each transcript in the clique.
+ *
+ * @param[in] clique      transcript clique
+ * @param[in] func        function to be applied to each transcript
+ * @param[in] funcdata    optional pointer to data to be used in the function
+ */
+void agn_transcript_clique_traverse(AgnTranscriptClique *clique,
+                                    AgnCliqueVisitFunc func, void *funcdata);
 
 #endif
