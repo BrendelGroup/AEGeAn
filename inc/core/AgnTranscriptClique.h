@@ -138,6 +138,18 @@ unsigned long agn_transcript_clique_size(AgnTranscriptClique *clique);
 GtArray* agn_transcript_clique_to_array(AgnTranscriptClique *clique);
 
 /**
+ * Print the transcript clique to the given outstream in GFF3 format.
+ *
+ * @param[in] clique       the clique
+ * @param[in] outstream    file to which output will be written
+ * @param[in] prefix       optional prefix to print at the beginning of each
+ *                         line of output; if NULL is provided, not prefix is
+ *                         printed
+ */
+void agn_transcript_clique_to_gff3(AgnTranscriptClique *clique, FILE *outstream,
+                                   const char *prefix);
+
+/**
  * Apply the given function to each transcript in the clique.
  *
  * @param[in] clique      transcript clique

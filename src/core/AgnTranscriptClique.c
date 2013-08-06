@@ -92,6 +92,14 @@ void clique_num_utrs(GtFeatureNode *transcript, void *numutrs);
  */
 void clique_to_array(GtFeatureNode *transcript, void *array);
 
+/**
+ * Traversal function for copying contents of this clique to an array.
+ *
+ * @param[in]  transcript    transcript in the clique
+ * @param[out] nv            node visitor for generating GFF3 output
+ */
+void clique_to_gff3(GtFeatureNode *transcript, void *nv);
+
 
 //----------------------------------------------------------------------------//
 // Method implementations
@@ -167,6 +175,16 @@ void clique_to_array(GtFeatureNode *transcript, void *array)
 {
   GtArray *ar = (GtArray *)array;
   gt_array_add(ar, transcript);
+}
+
+void clique_to_gff3(GtFeatureNode *transcript, void *nv)
+{
+  GtNodeVisitor *visitor = nv;
+  GtError *error = gt_error_new();
+  gt_genome_node_accept((GtGenomeNode *)transcript, visitor, error);
+  if(gt_error_is_set(error))
+    fprintf(stderr, "error with GFF3 output: %s\n", gt_error_get(error));
+  gt_error_delete(error);
 }
 
 void agn_transcript_clique_add(AgnTranscriptClique *clique,
@@ -300,4 +318,16 @@ void agn_transcript_clique_traverse(AgnTranscriptClique *clique,
     GtFeatureNode *transcript = gt_dlistelem_get_data(elem);
     func(transcript, funcdata);
   }
+}
+
+void agn_transcript_clique_to_gff3(AgnTranscriptClique *clique, FILE *outstream,
+                                   const char *prefix)
+{
+  GtFile *outfile = gt_file_new_from_fileptr(outstream);
+  GtNodeVisitor *nv = gt_gff3_visitor_new(outfile);
+  gt_gff3_visitor_set_output_prefix((GtGFF3Visitor *)nv, prefix);
+  gt_gff3_visitor_retain_id_attributes((GtGFF3Visitor *)nv);
+  agn_transcript_clique_traverse(clique,(AgnCliqueVisitFunc)clique_to_gff3, nv);
+  gt_node_visitor_delete(nv);
+  gt_file_delete_without_handle(outfile);
 }

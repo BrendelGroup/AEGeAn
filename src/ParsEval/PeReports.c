@@ -231,13 +231,9 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
         if(options->gff3)
         {
           fprintf(outstream, "     |  reference GFF3:\n");
-          while((transcript = agn_transcript_clique_next(refr_clique)))
-            agn_gt_feature_node_to_gff3(transcript, outstream, true, "     |    ", NULL);
-
+          agn_transcript_clique_to_gff3(refr_clique, outstream, "     |    ");
           fprintf(outstream, "     |  prediction GFF3:\n");
-          while((transcript = agn_transcript_clique_next(pred_clique)))
-            agn_gt_feature_node_to_gff3(transcript, outstream, true, "     |    ", NULL);
-
+          agn_transcript_clique_to_gff3(pred_clique, outstream, "     |    ");
           fprintf(outstream, "     |\n");
         }
 
@@ -753,20 +749,13 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
       fprintf(outstream, "      <div id=\"compare_wrapper_%lu\" class=\"compare-wrapper\">\n", k);
       if(options->gff3)
       {
-        GtFeatureNode *transcript;
-
-        fputs( "        <h3>Reference GFF3</h3>\n"
-               "        <pre class=\"gff3 refr\">\n",
-               outstream);
-        while((transcript = agn_transcript_clique_next(refrclique)))
-          agn_gt_feature_node_to_gff3(transcript, outstream, true, NULL, NULL);
+        fputs("        <h3>Reference GFF3</h3>\n"
+              "        <pre class=\"gff3 refr\">\n",outstream);
+        agn_transcript_clique_to_gff3(refrclique, outstream, NULL);
         fputs("</pre>\n", outstream);
-
-        fputs( "        <h3>Prediction GFF3</h3>\n"
-               "        <pre class=\"gff3 pred\">\n",
-               outstream);
-        while((transcript = agn_transcript_clique_next(predclique)))
-          agn_gt_feature_node_to_gff3(transcript, outstream, true, NULL, NULL);
+        fputs("        <h3>Prediction GFF3</h3>\n"
+              "        <pre class=\"gff3 pred\">\n", outstream);
+        agn_transcript_clique_to_gff3(predclique, outstream, NULL);
         fputs("</pre>\n", outstream);
       }
 
