@@ -317,7 +317,8 @@ void agn_transcript_clique_to_gff3(AgnTranscriptClique *clique, FILE *outstream,
 {
   GtFile *outfile = gt_file_new_from_fileptr(outstream);
   GtNodeVisitor *nv = gt_gff3_visitor_new(outfile);
-  gt_gff3_visitor_set_output_prefix((GtGFF3Visitor *)nv, prefix);
+  // Patch is not yet available from core GenomeTools repo
+  // gt_gff3_visitor_set_output_prefix((GtGFF3Visitor *)nv, prefix);
   gt_gff3_visitor_retain_id_attributes((GtGFF3Visitor *)nv);
   agn_transcript_clique_traverse(clique,(AgnCliqueVisitFunc)clique_to_gff3, nv);
   gt_node_visitor_delete(nv);
