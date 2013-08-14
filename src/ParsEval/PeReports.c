@@ -1588,7 +1588,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
              ((float)summary_data->stats.utr_struc_stats.missing/(float)
              (summary_data->stats.utr_struc_stats.correct+summary_data->stats.utr_struc_stats.missing))*100 );
   }
-  fprintf( outstream, "    prediction UTR segments..................%lu\n",
+  fprintf( outstream, "    prediction UTR segments................%lu\n",
            summary_data->stats.utr_struc_stats.correct + summary_data->stats.utr_struc_stats.wrong );
   if(summary_data->stats.utr_struc_stats.correct + summary_data->stats.utr_struc_stats.wrong > 0)
   {

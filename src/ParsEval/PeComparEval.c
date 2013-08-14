@@ -22,7 +22,8 @@ void pe_comparative_analysis(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
     const char *seqid = gt_str_array_get(seqids, i);
     GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
     PeAnalysisData analysis_data;
-    analysis_data.seqfile = *(FILE **)gt_array_get(seqfiles, i);
+    if(!options->summary_only)
+      analysis_data.seqfile = *(FILE **)gt_array_get(seqfiles, i);
     analysis_data.options = options;
 
     for(j = 0; j < gt_array_size(seqloci); j++)

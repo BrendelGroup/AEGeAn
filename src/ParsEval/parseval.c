@@ -42,7 +42,7 @@ int main(int argc, char * const argv[])
   // Main comparison procedure
   if(totalloci == 0)
   {
-    fprintf(stderr, "[ParsEval] Warning: found no loci to analyze");
+    fprintf(stderr, "[ParsEval] Warning: found no loci to analyze\n");
     fclose(options.outfile);
   }
   else
