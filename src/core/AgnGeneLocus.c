@@ -28,7 +28,7 @@ struct AgnGeneLocus
  * Collect comparison statistics for this locus and aggregate from individual
  * clique pairs.
  *
- * @param[in]  locus    the locus annotatio
+ * @param[in]  locus    the locus annotation
  */
 void agn_gene_locus_aggregate_results_internal(AgnGeneLocus *locus);
 
@@ -911,10 +911,45 @@ void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
   const char *src = "AEGeAn";
   if(source != NULL)
     src = source;
+
+  GtDlistelem *elem;
+  GtArray *mrnacounts = gt_array_new( sizeof(unsigned long) );
+  for(elem = gt_dlist_first(locus->genes);
+      elem != NULL;
+      elem = gt_dlistelem_next(elem))
+  {
+    GtFeatureNode *gene = gt_dlistelem_get_data(elem);
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
+    GtFeatureNode *child;
+    unsigned long mrnacount = 0;
+    for(child  = gt_feature_node_iterator_next(iter);
+        child != NULL;
+        child  = gt_feature_node_iterator_next(iter))
+    {
+      if(agn_gt_feature_node_is_mrna_feature(child))
+        mrnacount++;
+    }
+    gt_array_add(mrnacounts, mrnacount);
+  }
+
   fprintf(outstream,
-          "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu\n",
+          "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu",
           locus->region.seqid, src, locus->region.range.start,
           locus->region.range.end, gt_dlist_size(locus->genes));
+  unsigned long i;
+  if(gt_array_size(mrnacounts) > 0)
+  {
+    fputs(";mrnas_per_gene=", outstream);
+    for(i = 0; i < gt_array_size(mrnacounts); i++)
+    {
+      unsigned long *mrnacount = gt_array_get(mrnacounts, i);
+      if(i > 0)
+        fputc(',', outstream);
+      fprintf(outstream, "%lu", *mrnacount);
+    }
+  }
+  fputc('\n', outstream);
+  gt_array_delete(mrnacounts);
 }
 
 GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
