@@ -1059,7 +1059,11 @@ GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     FILE *seqfile = NULL;
-    if(!options->summary_only)
+    if(options->summary_only)
+    {
+      gt_array_add(seqfiles, seqfile);
+    }
+    else
     {
       const char *seqid = gt_str_array_get(seqids, i);
       char filename[512];

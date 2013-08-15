@@ -100,18 +100,18 @@ void pe_post_analysis(AgnGeneLocus *locus, PeAnalysisData *data)
   if(gt_array_size(pairs) > 0)
     agn_gene_locus_aggregate_results(locus, compeval);
 
+  AgnGeneLocusSummary *locsum = gt_hashmap_get(data->locus_summaries, locus);
+  locsum->start = agn_gene_locus_get_start(locus);
+  locsum->end = agn_gene_locus_get_end(locus);
+  locsum->length = agn_gene_locus_get_length(locus);
+  locsum->refrtrans = agn_gene_locus_num_refr_transcripts(locus);
+  locsum->predtrans = agn_gene_locus_num_pred_transcripts(locus);
+  locsum->reported = gt_array_size(pairs);
+  locsum->counts = compeval->counts;
+
   if(!data->options->summary_only)
   {
     pe_gene_locus_print_results(locus, data->seqfile, data->options);
-
-    AgnGeneLocusSummary *locsum = gt_hashmap_get(data->locus_summaries, locus);
-    locsum->start = agn_gene_locus_get_start(locus);
-    locsum->end = agn_gene_locus_get_end(locus);
-    locsum->length = agn_gene_locus_get_length(locus);
-    locsum->refrtrans = agn_gene_locus_num_refr_transcripts(locus);
-    locsum->predtrans = agn_gene_locus_num_pred_transcripts(locus);
-    locsum->reported = gt_array_size(pairs);
-    locsum->counts = compeval->counts;
 
 #ifndef WITHOUT_CAIRO
     if(data->options->locus_graphics)
