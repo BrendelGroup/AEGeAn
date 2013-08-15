@@ -71,6 +71,24 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
   return length;
 }
 
+GtArray *agn_gt_feature_node_children_of_type(GtFeatureNode *fn,
+                                              const char *type)
+{
+  GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *current;
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
+  {
+    if(gt_feature_node_has_type(current, type))
+      gt_array_add(children, current);
+  }
+  gt_feature_node_iterator_delete(iter);
+  gt_array_sort(children, (GtCompare)agn_gt_genome_node_compare);
+  return children;
+}
+
 bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature,
                                               GtFeatureNode *parent)
 {
