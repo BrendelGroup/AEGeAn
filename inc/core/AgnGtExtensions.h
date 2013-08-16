@@ -33,10 +33,10 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream);
 unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript);
 
 /**
- *
+ * FIXME
  */
 GtArray *agn_gt_feature_node_children_of_type(GtFeatureNode *fn,
-                                              const char *type);
+                                         bool (*typetestfunc)(GtFeatureNode *));
 
 /**
  * When a feature has multiple parents but only one of them is valid, this

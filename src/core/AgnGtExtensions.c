@@ -72,7 +72,7 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
 }
 
 GtArray *agn_gt_feature_node_children_of_type(GtFeatureNode *fn,
-                                              const char *type)
+                                         bool (*typetestfunc)(GtFeatureNode *))
 {
   GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
@@ -81,7 +81,7 @@ GtArray *agn_gt_feature_node_children_of_type(GtFeatureNode *fn,
       current != NULL;
       current = gt_feature_node_iterator_next(iter))
   {
-    if(gt_feature_node_has_type(current, type))
+    if(typetestfunc(current))
       gt_array_add(children, current);
   }
   gt_feature_node_iterator_delete(iter);
