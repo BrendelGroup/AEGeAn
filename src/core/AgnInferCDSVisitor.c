@@ -55,6 +55,11 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
                               GtError *error);
 
 /**
+ * FIXME
+ */
+void visit_mrna_check_cds_multi(GtNodeVisitor *nv);
+
+/**
  * If start codon is provided explicitly, ensure it agrees with CDS, whether the
  * CDS is provided explicitly or implicitly inferred. If start codon is not
  * provided explicitly, infer it from CDS if possible.
@@ -87,10 +92,6 @@ void visit_mrna_infer_cds(GtNodeVisitor *nv);
  * @param[in]  nv   the node visitor
  */
 void visit_mrna_infer_utrs(GtNodeVisitor *nv);
-
-/**
- * FIXME set multi feature status and multifeature reprsentatives?
- */
 
 
 //----------------------------------------------------------------------------//
@@ -157,6 +158,7 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
       visit_mrna_check_start(nv);
       visit_mrna_check_stop(nv);
       visit_mrna_infer_utrs(nv);
+      visit_mrna_check_cds_multi(nv);
 
       v->mrna = NULL;
       gt_array_delete(v->cds);
@@ -169,6 +171,33 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
   gt_feature_node_iterator_delete(iter);
   
   return 0;
+}
+
+void visit_mrna_check_cds_multi(GtNodeVisitor *nv)
+{
+  AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
+  const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
+  unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
+  if(gt_array_size(v->cds) <= 1)
+  {
+    if(gt_array_size(v->cds) == 0)
+    {
+      agn_logger_log_error(v->logger, "error inferring CDS from codons and "
+                           "exons for mRNA '%s' (line %u)", mrnaid, ln);
+    }
+    return;
+  }
+
+  GtFeatureNode **firstsegment = gt_array_get(v->cds, 0);
+  unsigned long i;
+  for(i = 0; i < gt_array_size(v->cds); i++)
+  {
+    GtFeatureNode **segment = gt_array_get(v->cds, i);
+    if(!gt_feature_node_is_multi(*segment))
+    {
+      gt_feature_node_set_multi_representative(*segment, *firstsegment);
+    }
+  }
 }
 
 void visit_mrna_check_start(GtNodeVisitor *nv)
@@ -330,12 +359,6 @@ void visit_mrna_infer_cds(GtNodeVisitor *nv)
       gt_feature_node_add_attribute((GtFeatureNode *)cdsfeat, "Parent", mrnaid);
       gt_array_add(v->cds, cdsfeat);
     }
-  }
-
-  if(gt_array_size(v->cds) == 0)
-  {
-    agn_logger_log_error(v->logger, "error inferring CDS from codons and exons "
-                         "for mRNA '%s' (line %u)", mrnaid, ln);
   }
 }
 
