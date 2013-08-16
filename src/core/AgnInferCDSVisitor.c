@@ -29,6 +29,11 @@ struct AgnInferCDSVisitor
 //----------------------------------------------------------------------------//
 
 /**
+ * FIXME check phase!
+ * FIXME check UTR type!
+ */
+
+/**
  * Cast a node visitor object as a AgnInferCDSVisitor
  *
  * @returns    a node visitor object cast as a AgnInferCDSVisitor
@@ -55,9 +60,12 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
                               GtError *error);
 
 /**
- * FIXME
+ * If the mRNA's CDS is discontinuous, ensure each CDS feature is labeled as a
+ * multifeature.
+ *
+ * @param[in]  nv   the node visitor
  */
-void visit_mrna_check_cds_multi(GtNodeVisitor *nv);
+void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v);
 
 /**
  * If start codon is provided explicitly, ensure it agrees with CDS, whether the
@@ -66,7 +74,7 @@ void visit_mrna_check_cds_multi(GtNodeVisitor *nv);
  * 
  * @param[in]  nv   the node visitor
  */
-void visit_mrna_check_start(GtNodeVisitor *nv);
+void visit_mrna_check_start(AgnInferCDSVisitor *v);
 
 /**
  * If stop codon is provided explicitly, ensure it agrees with CDS, whether the
@@ -75,7 +83,7 @@ void visit_mrna_check_start(GtNodeVisitor *nv);
  * 
  * @param[in]  nv   the node visitor
  */
-void visit_mrna_check_stop(GtNodeVisitor *nv);
+void visit_mrna_check_stop(AgnInferCDSVisitor *v);
 
 /**
  * Infer CDS for any mRNAs that have none specified but have exons and
@@ -83,7 +91,7 @@ void visit_mrna_check_stop(GtNodeVisitor *nv);
  * 
  * @param[in]  nv   the node visitor
  */
-void visit_mrna_infer_cds(GtNodeVisitor *nv);
+void visit_mrna_infer_cds(AgnInferCDSVisitor *v);
 
 /**
  * Infer UTRs for any mRNAs that have none specified but do have exons and
@@ -91,7 +99,7 @@ void visit_mrna_infer_cds(GtNodeVisitor *nv);
  * 
  * @param[in]  nv   the node visitor
  */
-void visit_mrna_infer_utrs(GtNodeVisitor *nv);
+void visit_mrna_infer_utrs(AgnInferCDSVisitor *v);
 
 
 //----------------------------------------------------------------------------//
@@ -140,42 +148,41 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
       current != NULL;
       current  = gt_feature_node_iterator_next(iter))
   {
-    if(agn_gt_feature_node_is_mrna_feature(current))
-    {
-      v->cds    = agn_gt_feature_node_children_of_type(current,
+    if(!agn_gt_feature_node_is_mrna_feature(current))
+      continue;
+
+    v->cds    = agn_gt_feature_node_children_of_type(current,
                                             agn_gt_feature_node_is_cds_feature);
-      v->utrs   = agn_gt_feature_node_children_of_type(current,
+    v->utrs   = agn_gt_feature_node_children_of_type(current,
                                             agn_gt_feature_node_is_utr_feature);
-      v->exons  = agn_gt_feature_node_children_of_type(current,
+    v->exons  = agn_gt_feature_node_children_of_type(current,
                                            agn_gt_feature_node_is_exon_feature);
-      v->starts = agn_gt_feature_node_children_of_type(current,
+    v->starts = agn_gt_feature_node_children_of_type(current,
                                     agn_gt_feature_node_is_start_codon_feature);
-      v->stops  = agn_gt_feature_node_children_of_type(current,
+    v->stops  = agn_gt_feature_node_children_of_type(current,
                                      agn_gt_feature_node_is_stop_codon_feature);
-      v->mrna   = current;
+    v->mrna   = current;
 
-      visit_mrna_infer_cds(nv);
-      visit_mrna_check_start(nv);
-      visit_mrna_check_stop(nv);
-      visit_mrna_infer_utrs(nv);
-      visit_mrna_check_cds_multi(nv);
+    visit_mrna_infer_cds(v);
+    visit_mrna_check_start(v);
+    visit_mrna_check_stop(v);
+    visit_mrna_infer_utrs(v);
+    visit_mrna_check_cds_multi(v);
 
-      v->mrna = NULL;
-      gt_array_delete(v->cds);
-      gt_array_delete(v->utrs);
-      gt_array_delete(v->exons);
-      gt_array_delete(v->starts);
-      gt_array_delete(v->stops);
-    }
+    v->mrna = NULL;
+    gt_array_delete(v->cds);
+    gt_array_delete(v->utrs);
+    gt_array_delete(v->exons);
+    gt_array_delete(v->starts);
+    gt_array_delete(v->stops);
   }
   gt_feature_node_iterator_delete(iter);
   
   return 0;
 }
 
-void visit_mrna_check_cds_multi(GtNodeVisitor *nv)
+void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
 {
-  AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   if(gt_array_size(v->cds) <= 1)
@@ -200,9 +207,8 @@ void visit_mrna_check_cds_multi(GtNodeVisitor *nv)
   }
 }
 
-void visit_mrna_check_start(GtNodeVisitor *nv)
+void visit_mrna_check_start(AgnInferCDSVisitor *v)
 {
-  AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtStrand strand = gt_feature_node_get_strand(v->mrna);
@@ -251,9 +257,8 @@ void visit_mrna_check_start(GtNodeVisitor *nv)
   }
 }
 
-void visit_mrna_check_stop(GtNodeVisitor *nv)
+void visit_mrna_check_stop(AgnInferCDSVisitor *v)
 {
-  AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtStrand strand = gt_feature_node_get_strand(v->mrna);
@@ -302,10 +307,8 @@ void visit_mrna_check_stop(GtNodeVisitor *nv)
   }
 }
 
-void visit_mrna_infer_cds(GtNodeVisitor *nv)
+void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
 {
-  AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
-
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtFeatureNode *start_codon, *stop_codon;
@@ -362,10 +365,8 @@ void visit_mrna_infer_cds(GtNodeVisitor *nv)
   }
 }
 
-void visit_mrna_infer_utrs(GtNodeVisitor *nv)
+void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
 {
-  AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
-
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtFeatureNode *start_codon, *stop_codon;
