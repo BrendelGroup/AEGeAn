@@ -5,7 +5,7 @@ struct AgnCanonGeneStream
 {
   const GtNodeStream parent_instance;
   GtNodeStream *in_stream;
-  GtArray *cache;
+  GtQueue *cache;
 };
 
 #define canon_gene_stream_cast(GS)\
@@ -20,11 +20,9 @@ static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   gt_error_check(error);
   stream = canon_gene_stream_cast(ns);
 
-  if(gt_array_size(stream->cache) > 0)
+  if(gt_queue_size(stream->cache) > 0)
   {
-    gt_array_reverse(stream->cache);
-    gn = gt_array_pop(stream->cache);
-    gt_array_reverse(stream->cache);
+    *gn = gt_queue_get(stream->cache);
     return 0;
   }
   
@@ -46,19 +44,17 @@ static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
         current != NULL;
         current  = gt_feature_node_iterator_next(iter))
     {
-      if(agn_gt_feature_node_is_gene_feature(fn))
+      if(agn_gt_feature_node_is_gene_feature(current))
       {
         gt_genome_node_ref((GtGenomeNode *)current);
-        gt_array_add(stream->cache, current);
+        gt_queue_add(stream->cache, current);
       }
     }
     gt_feature_node_iterator_delete(iter);
     gt_genome_node_delete((GtGenomeNode *)fn);
-    if(gt_array_size(stream->cache) > 0)
+    if(gt_queue_size(stream->cache) > 0)
     {
-      gt_array_reverse(stream->cache);
-      gn = gt_array_pop(stream->cache);
-      gt_array_reverse(stream->cache);
+      *gn = gt_queue_get(stream->cache);
       return 0;
     }
   }
@@ -70,20 +66,18 @@ static void canon_gene_stream_free(GtNodeStream *ns)
 {
   AgnCanonGeneStream *stream = canon_gene_stream_cast(ns);
   gt_node_stream_delete(stream->in_stream);
-  gt_array_delete(stream->cache);
+  gt_queue_delete(stream->cache);
 }
 
 const GtNodeStreamClass *agn_canon_gene_stream_class(void)
 {
   static const GtNodeStreamClass *nsc = NULL;
-  gt_class_alloc_lock_enter();
   if(!nsc)
   {
     nsc = gt_node_stream_class_new(sizeof (AgnCanonGeneStream),
                                    canon_gene_stream_free,
                                    canon_gene_stream_next);
   }
-  gt_class_alloc_lock_leave();
   return nsc;
 }
 
@@ -92,10 +86,10 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream)
   GtNodeStream *ns;
   AgnCanonGeneStream *stream;
   gt_assert(in_stream);
-  ns = gt_node_stream_create(agn_canon_gene_stream_class(), true);
+  ns = gt_node_stream_create(agn_canon_gene_stream_class(), false);
   stream = canon_gene_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
-  stream->cache = gt_array_new( sizeof(GtFeatureNode *) );
+  stream->cache = gt_queue_new();
   return ns;
 }
 

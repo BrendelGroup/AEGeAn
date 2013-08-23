@@ -196,6 +196,7 @@ void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
   }
 
   GtFeatureNode **firstsegment = gt_array_get(v->cds, 0);
+  gt_feature_node_make_multi_representative(*firstsegment);
   unsigned long i;
   for(i = 0; i < gt_array_size(v->cds); i++)
   {
@@ -222,7 +223,7 @@ void visit_mrna_check_start(AgnInferCDSVisitor *v)
     unsigned long fiveprimeindex = gt_array_size(v->cds) - 1;
     fiveprimesegment = gt_array_get(v->cds, fiveprimeindex);
     startrange = gt_genome_node_get_range(*fiveprimesegment);
-    startrange.start = startrange.end - 1;
+    startrange.start = startrange.end - 2;
   }
 
   if(gt_array_size(v->starts) > 1)
@@ -293,7 +294,7 @@ void visit_mrna_check_stop(AgnInferCDSVisitor *v)
                            mrnaid);
     }
   }
-  else // gt_assert(gt_array_size(v->starts) == 0)
+  else // gt_assert(gt_array_size(v->stops) == 0)
   {
     GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)v->mrna);
     GtGenomeNode *codonfeature = gt_feature_node_new(seqid, "stop_codon",
@@ -303,7 +304,7 @@ void visit_mrna_check_stop(AgnInferCDSVisitor *v)
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
     gt_feature_node_add_attribute(cf, "Parent", mrnaid);
-    gt_array_add(v->starts, cf);
+    gt_array_add(v->stops, cf);
   }
 }
 
@@ -311,7 +312,7 @@ void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
 {
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
-  GtFeatureNode *start_codon, *stop_codon;
+  GtFeatureNode **start_codon, **stop_codon;
 
   bool exonsexplicit    = gt_array_size(v->exons) > 0;
   bool startcodon_check = gt_array_size(v->starts) == 1 &&
@@ -332,12 +333,12 @@ void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
   }
 
   GtRange left_codon_range, right_codon_range;
-  left_codon_range  = gt_genome_node_get_range((GtGenomeNode *)start_codon);
-  right_codon_range = gt_genome_node_get_range((GtGenomeNode *)stop_codon);
+  left_codon_range  = gt_genome_node_get_range(*(GtGenomeNode **)start_codon);
+  right_codon_range = gt_genome_node_get_range(*(GtGenomeNode **)stop_codon);
   if(gt_feature_node_get_strand(v->mrna) == GT_STRAND_REVERSE)
   {
-    left_codon_range  = gt_genome_node_get_range((GtGenomeNode *)stop_codon);
-    right_codon_range = gt_genome_node_get_range((GtGenomeNode *)start_codon);
+    left_codon_range  = gt_genome_node_get_range(*(GtGenomeNode **)stop_codon);
+    right_codon_range = gt_genome_node_get_range(*(GtGenomeNode **)start_codon);
   }
   unsigned long i;
   for(i = 0; i < gt_array_size(v->exons); i++)

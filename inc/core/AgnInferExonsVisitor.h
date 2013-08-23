@@ -13,6 +13,6 @@ typedef struct AgnInferExonsVisitor AgnInferExonsVisitor;
  * @param[in]  logger    object for storing error/warning messages
  * @returns              a node visitor object
  */
-GtNodeVisitor* agn_infer_structure_visitor_new(AgnLogger *logger);
+GtNodeVisitor* agn_infer_exons_visitor_new(AgnLogger *logger);
 
 #endif

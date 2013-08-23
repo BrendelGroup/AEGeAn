@@ -1,9 +1,13 @@
 #include <string.h>
 #include <time.h>
+#include "extended/feature_out_stream_api.h"
+#include "AgnCanonGeneStream.h"
 #include "AgnCanonNodeVisitor.h"
 #include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
 #include "AgnGeneLocus.h"
+#include "AgnInferCDSVisitor.h"
+#include "AgnInferExonsVisitor.h"
 #include "AgnSimpleNodeVisitor.h"
 #include "AgnUtils.h"
 
@@ -204,18 +208,34 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
                                      AgnLogger *logger)
 {
   GtFeatureIndex *features = gt_feature_index_memory_new();
-  AgnGeneValidator *validator = agn_gene_validator_new();
-  GtNodeVisitor *nv = agn_canon_node_visitor_new(features, validator, logger);
+  GtNodeVisitor *icnv = agn_infer_cds_visitor_new(logger);
+  GtNodeVisitor *ienv = agn_infer_exons_visitor_new(logger);
 
-  agn_import(numfiles, filenames, nv, logger);
-  gt_node_visitor_delete(nv);
-  agn_gene_validator_delete(validator);
+  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
+
+  GtNodeStream *icnv_stream = gt_visitor_stream_new(gff3, icnv);
+  GtNodeStream *ienv_stream = gt_visitor_stream_new(icnv_stream, ienv);
+  GtNodeStream *aistream = gt_add_introns_stream_new(ienv_stream);
+  GtNodeStream *cgstream = agn_canon_gene_stream_new(aistream);
+  GtNodeStream *featstream = gt_feature_stream_new(cgstream, features);
+
+  GtError *error = gt_error_new();
+  int result = gt_node_stream_pull(featstream, error);
+  if(result == -1)
+  {
+    agn_logger_log_error(logger, "error processing node stream: %s",
+                         gt_error_get(error));
+  }
+  gt_error_delete(error);
 
   if(agn_logger_has_error(logger))
   {
     gt_feature_index_delete(features);
     features = NULL;
   }
+  gt_node_stream_delete(featstream);
   return features;
 }
 
