@@ -1,14 +1,12 @@
 #include <string.h>
 #include <time.h>
-#include "extended/feature_out_stream_api.h"
 #include "AgnCanonGeneStream.h"
-#include "AgnCanonNodeVisitor.h"
+#include "AgnFilterStream.h"
 #include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
 #include "AgnGeneLocus.h"
 #include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
-#include "AgnSimpleNodeVisitor.h"
 #include "AgnUtils.h"
 
 void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
@@ -183,27 +181,6 @@ FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream)
   return fp;
 }
 
-void agn_import(int numfiles, const char **filenames, GtNodeVisitor *nv,
-                AgnLogger *logger)
-{
-  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-
-  GtGenomeNode *gn;
-  bool loaderror;
-  GtError *error = gt_error_new();
-  while(!(loaderror = gt_node_stream_next(gff3, &gn, error)) && gn)
-  {
-    gt_genome_node_accept(gn, nv, error);
-    // FIXME issue 34
-    if(agn_logger_has_error(logger))
-      break;
-  }
-  gt_node_stream_delete(gff3);
-  gt_error_delete(error);
-}
-
 GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
                                      AgnLogger *logger)
 {
@@ -219,7 +196,7 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
   GtNodeStream *ienv_stream = gt_visitor_stream_new(icnv_stream, ienv);
   GtNodeStream *aistream = gt_add_introns_stream_new(ienv_stream);
   GtNodeStream *cgstream = agn_canon_gene_stream_new(aistream);
-  GtNodeStream *featstream = gt_feature_stream_new(cgstream, features);
+  GtNodeStream *featstream = gt_feature_in_stream_new(cgstream, features);
 
   GtError *error = gt_error_new();
   int result = gt_node_stream_pull(featstream, error);
@@ -240,19 +217,36 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
 }
 
 GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
-                                  const char *type, AgnLogger *logger)
+                                  char *type, AgnLogger *logger)
 {
   GtFeatureIndex *features = gt_feature_index_memory_new();
-  GtNodeVisitor *nv = agn_simple_node_visitor_new(features, type, logger);
 
-  agn_import(numfiles, filenames, nv, logger);
-  gt_node_visitor_delete(nv);
+  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
+
+  GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(typestokeep, type, type);
+  GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep, NULL);
+
+  GtNodeStream *featstream = gt_feature_in_stream_new(filterstream, features);
+
+  GtError *error = gt_error_new();
+  int result = gt_node_stream_pull(featstream, error);
+  if(result == -1)
+  {
+    agn_logger_log_error(logger, "error processing node stream: %s",
+                         gt_error_get(error));
+  }
+  gt_error_delete(error);
 
   if(agn_logger_has_error(logger))
   {
     gt_feature_index_delete(features);
     features = NULL;
   }
+  // FIXME Memory leak
+  // gt_node_stream_delete(featstream);
   return features;
 }
 

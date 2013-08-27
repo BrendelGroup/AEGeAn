@@ -1,6 +1,5 @@
 #include <getopt.h>
 #include <string.h>
-#include "AgnCanonNodeVisitor.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
 

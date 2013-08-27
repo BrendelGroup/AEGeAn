@@ -1,7 +1,6 @@
 #include <omp.h>
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
-#include "AgnSimpleNodeVisitor.h"
 #include "AgnUtils.h"
 
 //------------------------------------------------------------------------------

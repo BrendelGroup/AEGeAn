@@ -1,5 +1,4 @@
 #include <string.h>
-#include "AgnCanonNodeVisitor.h"
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
 #include "AgnUtils.h"
