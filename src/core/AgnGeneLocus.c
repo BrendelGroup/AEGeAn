@@ -63,6 +63,7 @@ void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene);
 void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
                         AgnComparisonSource source)
 {
+  gt_genome_node_ref((GtGenomeNode *)gene);
   gt_dlist_add(locus->genes, gene);
   agn_gene_locus_update_range(locus, gene);
   if(source == REFERENCESOURCE)

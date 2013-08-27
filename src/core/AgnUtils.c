@@ -245,8 +245,7 @@ GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
     gt_feature_index_delete(features);
     features = NULL;
   }
-  // FIXME Memory leak
-  // gt_node_stream_delete(featstream);
+  gt_node_stream_delete(featstream);
   return features;
 }
 
