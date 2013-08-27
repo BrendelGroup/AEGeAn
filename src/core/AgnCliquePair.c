@@ -8,10 +8,9 @@
 //----------------------------------------------------------------------------//
 struct AgnCliquePair
 {
-  const char *seqid;
+  AgnSequenceRegion region;
   AgnTranscriptClique *refr_clique;
   AgnTranscriptClique *pred_clique;
-  GtRange *locus_range;
   char *refr_vector;
   char *pred_vector;
   AgnComparison stats;
@@ -87,7 +86,7 @@ void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
 
 void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 {
-  int vector_length = gt_range_length(pair->locus_range) + 1;
+  int vector_length = agn_clique_pair_length(pair) + 1;
   pair->refr_vector = (char *)gt_malloc(sizeof(char) * (vector_length));
   pair->pred_vector = (char *)gt_malloc(sizeof(char) * (vector_length));
 
@@ -100,7 +99,7 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
     pair->pred_vector[i] = 'G';
   }
 
-  ModelVectorData data = { pair->refr_vector, pair->locus_range };
+  ModelVectorData data = { pair->refr_vector, &pair->region.range };
   agn_transcript_clique_traverse(pair->refr_clique,
       (AgnCliqueVisitFunc)clique_pair_add_transcript_to_vector, &data);
   data.modelvector = pair->pred_vector;
@@ -111,7 +110,7 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
 {
   unsigned long i, j;
-  unsigned long locus_length = gt_range_length(pair->locus_range);
+  unsigned long locus_length = agn_clique_pair_length(pair);
 
   // Counts for exon structure
   int num_refr_exons = 0;
@@ -544,7 +543,7 @@ bool agn_clique_pair_needs_comparison(AgnCliquePair *pair)
 
 unsigned long agn_clique_pair_length(AgnCliquePair *pair)
 {
-  return gt_range_length(pair->locus_range);
+  return gt_range_length(&pair->region.range);
 }
 
 AgnCliquePair* agn_clique_pair_new(const char *seqid,
@@ -555,13 +554,13 @@ AgnCliquePair* agn_clique_pair_new(const char *seqid,
   gt_assert(refr_clique != NULL && pred_clique != NULL);
 
   AgnCliquePair *pair = (AgnCliquePair *)gt_malloc(sizeof(AgnCliquePair));
-  pair->seqid = seqid;
+  pair->region.seqid = (char *)seqid;
+  pair->region.range = *locus_range;
   pair->refr_clique = refr_clique;
   pair->pred_clique = pred_clique;
-  pair->locus_range = locus_range;
 
   agn_comparison_init(&pair->stats);
-  double perc = 1.0 / (double)gt_range_length(pair->locus_range);
+  double perc = 1.0 / (double)gt_range_length(locus_range);
   pair->stats.tolerance = 1.0;
   while(pair->stats.tolerance > perc)
     pair->stats.tolerance /= 10;
