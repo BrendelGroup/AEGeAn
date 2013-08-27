@@ -121,7 +121,7 @@ int main(int argc, char **argv)
   gt_lib_init();
   omp_set_num_threads(1);
   AgnLogger *logger = agn_logger_new();
-  AgnLocusIndex *loci = agn_locus_index_new(false);
+  AgnLocusIndex *loci = agn_locus_index_new(true);
   unsigned long numloci = agn_locus_index_parse_disk(loci, numfiles,
                               (const char **)argv + optind, options.numprocs,
                               logger);
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "[LocusPocus] found %lu sequences\n",
             gt_str_array_size(seqids));
   }
-  unsigned long i,j;
+  unsigned long i;
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
@@ -156,17 +156,20 @@ int main(int argc, char **argv)
     else
     {
       seqloci = agn_locus_index_get(loci, seqid);
-      gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
     }
+    gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
+    gt_array_reverse(seqloci);
     if(options.verbose)
     {
       fprintf(stderr,"[LocusPocus] found %lu loci for sequence '%s'\n",
               gt_array_size(seqloci), seqid);
     }
-    for(j = 0; j < gt_array_size(seqloci); j++)
+    while(gt_array_size(seqloci) > 0)
     {
-      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
-      agn_gene_locus_to_gff3(locus, options.outstream, "AEGeAn::LocusPocus");
+      AgnGeneLocus **locus = gt_array_pop(seqloci);
+      agn_gene_locus_to_gff3(*locus, options.outstream, "AEGeAn::LocusPocus");
+      if(options.intloci)
+        agn_gene_locus_delete(*locus);
     }
     gt_array_delete(seqloci);
   }

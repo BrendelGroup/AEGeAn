@@ -682,8 +682,8 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
 
       GtRange *seqrange = gt_malloc( sizeof(GtRange) );
       GtRange trange;
-      GtError *error = gt_error_new();
-      gt_feature_index_get_orig_range_for_seqid(features, &trange, seqid,error);
+      GtError *err = gt_error_new();
+      gt_feature_index_get_orig_range_for_seqid(features, &trange, seqid, err);
       seqrange->start = trange.start;
       seqrange->end   = trange.end;
       #pragma omp critical
@@ -694,11 +694,12 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
         agn_logger_log_status(logger, "loci for sequence '%s' identified by "
                               "processor %d", seqid, rank);
       }
+      gt_error_delete(err);
     } // End parallelize
   }
   omp_set_num_threads(orig_numprocs);
-
   gt_error_delete(error);
+
   return totalloci;
 }
 

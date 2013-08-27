@@ -212,6 +212,11 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
     gt_feature_index_delete(features);
     features = NULL;
   }
+  gt_node_stream_delete(gff3);
+  gt_node_stream_delete(icnv_stream);
+  gt_node_stream_delete(ienv_stream);
+  gt_node_stream_delete(aistream);
+  gt_node_stream_delete(cgstream);
   gt_node_stream_delete(featstream);
   return features;
 }
@@ -245,6 +250,8 @@ GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
     gt_feature_index_delete(features);
     features = NULL;
   }
+  gt_node_stream_delete(gff3);
+  gt_node_stream_delete(filterstream);
   gt_node_stream_delete(featstream);
   return features;
 }

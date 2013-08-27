@@ -164,14 +164,27 @@ void agn_gene_locus_aggregate_results_internal(AgnGeneLocus *locus)
 
 AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus)
 {
-  AgnGeneLocus *newlocus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
-  newlocus->region = locus->region;
-  newlocus->genes = locus->genes;
-  newlocus->refr_genes = locus->refr_genes;
-  newlocus->pred_genes = locus->pred_genes;
-  newlocus->reported_pairs = locus->reported_pairs;
-  newlocus->unique_refr_cliques = locus->unique_refr_cliques;
-  newlocus->unique_pred_cliques = locus->unique_pred_cliques;
+  AgnGeneLocus *newlocus = gt_malloc(sizeof(AgnGeneLocus));
+  GtDlistelem *elem;
+
+  newlocus->region.seqid = gt_cstr_dup(locus->region.seqid);
+  newlocus->region.range = locus->region.range;
+  newlocus->genes = gt_dlist_new( (GtCompare)gt_genome_node_cmp );
+  for(elem  = gt_dlist_first(locus->genes);
+      elem != NULL;
+      elem  = gt_dlistelem_next(elem))
+  {
+    GtGenomeNode *gene = gt_dlistelem_get_data(elem);
+    gt_dlist_add(newlocus->genes, gt_genome_node_ref(gene));
+  }
+  newlocus->refr_genes = gt_hashmap_ref(locus->refr_genes);
+  newlocus->pred_genes = gt_hashmap_ref(locus->pred_genes);
+  newlocus->reported_pairs = gt_array_ref(locus->reported_pairs);
+  newlocus->unique_refr_cliques = gt_array_ref(locus->unique_refr_cliques);
+  newlocus->unique_pred_cliques = gt_array_ref(locus->unique_pred_cliques);
+  agn_comp_evaluation_init(&newlocus->eval);
+  agn_comp_evaluation_combine(&newlocus->eval, &locus->eval);
+
   return newlocus;
 }
 
@@ -714,7 +727,7 @@ GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus)
 
 AgnGeneLocus* agn_gene_locus_new(const char *seqid)
 {
-  AgnGeneLocus *locus = (AgnGeneLocus *)gt_malloc(sizeof(AgnGeneLocus));
+  AgnGeneLocus *locus = gt_malloc(sizeof(AgnGeneLocus));
 
   locus->region.seqid = gt_cstr_dup(seqid);
   locus->region.range.start = 0;
@@ -930,6 +943,7 @@ void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
       if(agn_gt_feature_node_is_mrna_feature(child))
         mrnacount++;
     }
+    gt_feature_node_iterator_delete(iter);
     gt_array_add(mrnacounts, mrnacount);
   }
 
