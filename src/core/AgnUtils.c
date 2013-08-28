@@ -184,18 +184,12 @@ FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream)
 GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
                                      AgnLogger *logger)
 {
-  GtFeatureIndex *features = gt_feature_index_memory_new();
-  GtNodeVisitor *icnv = agn_infer_cds_visitor_new(logger);
-  GtNodeVisitor *ienv = agn_infer_exons_visitor_new(logger);
-
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
 
-  GtNodeStream *icnv_stream = gt_visitor_stream_new(gff3, icnv);
-  GtNodeStream *ienv_stream = gt_visitor_stream_new(icnv_stream, ienv);
-  GtNodeStream *aistream = gt_add_introns_stream_new(ienv_stream);
-  GtNodeStream *cgstream = agn_canon_gene_stream_new(aistream);
+  GtFeatureIndex *features = gt_feature_index_memory_new();
+  GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3, logger);
   GtNodeStream *featstream = gt_feature_in_stream_new(cgstream, features);
 
   GtError *error = gt_error_new();
@@ -213,9 +207,6 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
     features = NULL;
   }
   gt_node_stream_delete(gff3);
-  gt_node_stream_delete(icnv_stream);
-  gt_node_stream_delete(ienv_stream);
-  gt_node_stream_delete(aistream);
   gt_node_stream_delete(cgstream);
   gt_node_stream_delete(featstream);
   return features;

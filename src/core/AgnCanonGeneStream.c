@@ -1,75 +1,91 @@
 #include "AgnCanonGeneStream.h"
+#include "AgnFilterStream.h"
 #include "AgnGtExtensions.h"
+#include "AgnInferCDSVisitor.h"
+#include "AgnInferExonsVisitor.h"
 
+//------------------------------------------------------------------------------
+// Data structure definition
+//------------------------------------------------------------------------------
 struct AgnCanonGeneStream
 {
   const GtNodeStream parent_instance;
   GtNodeStream *in_stream;
-  GtQueue *cache;
+  GtQueue *streams;
 };
 
+
+//------------------------------------------------------------------------------
+// Prototypes for private functions
+//------------------------------------------------------------------------------
+
 #define canon_gene_stream_cast(GS)\
-        gt_node_stream_cast(agn_canon_gene_stream_class(), GS)
+        gt_node_stream_cast(canon_gene_stream_class(), GS)
 
+/**
+ * Function that implements the GtNodeStream interface.
+ *
+ * @returns    a node stream class object
+ */
+const GtNodeStreamClass* canon_gene_stream_class(void);
+
+/**
+ * Pulls nodes from the input stream and feeds them to the output stream if they
+ * are valid canonical protein-coding genes.
+ *
+ * @param[in]  ns       the node stream
+ * @param[out] gn       pointer to a genome node
+ * @param[out] error    error object
+ * @returns             0 in case of no error (*gn is set to next node or NULL
+ *                      if stream is exhausted), -1 in case of error (error
+ *                      object is set)
+ */
 static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
-                                  GtError *error)
+                                  GtError *error);
+
+/**
+ * Destructor for the class.
+ *
+ * @param[in] ns    the node stream to be destroyed
+ */
+static void canon_gene_stream_free(GtNodeStream *ns);
+
+
+//------------------------------------------------------------------------------
+// Method implementations
+//------------------------------------------------------------------------------
+
+GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
+                                        AgnLogger *logger)
 {
+  GtNodeStream *ns;
   AgnCanonGeneStream *stream;
-  GtFeatureNode *fn;
-  int had_err;
-  gt_error_check(error);
+  gt_assert(in_stream);
+
+  ns = gt_node_stream_create(canon_gene_stream_class(), false);
   stream = canon_gene_stream_cast(ns);
+  stream->streams = gt_queue_new();
 
-  if(gt_queue_size(stream->cache) > 0)
-  {
-    *gn = gt_queue_get(stream->cache);
-    return 0;
-  }
-  
-  while(1)
-  {
-    had_err = gt_node_stream_next(stream->in_stream, gn, error);
-    if(had_err)
-      return had_err;
-    if(!*gn)
-      return 0;
-    
-    fn = gt_feature_node_try_cast(*gn);
-    if(!fn)
-      return 0;
-    
-    GtFeatureNode *current;
-    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
-    for(current  = gt_feature_node_iterator_next(iter);
-        current != NULL;
-        current  = gt_feature_node_iterator_next(iter))
-    {
-      if(agn_gt_feature_node_is_gene_feature(current))
-      {
-        gt_genome_node_ref((GtGenomeNode *)current);
-        gt_queue_add(stream->cache, current);
-      }
-    }
-    gt_feature_node_iterator_delete(iter);
-    gt_genome_node_delete((GtGenomeNode *)fn);
-    if(gt_queue_size(stream->cache) > 0)
-    {
-      *gn = gt_queue_get(stream->cache);
-      return 0;
-    }
-  }
+  GtNodeVisitor *icnv = agn_infer_cds_visitor_new(logger);
+  GtNodeVisitor *ienv = agn_infer_exons_visitor_new(logger);
+  GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(typestokeep, "gene", "gene");
 
-  return 0;
+  gt_queue_add(stream->streams, gt_node_stream_ref(in_stream));
+  GtNodeStream *icnv_stream = gt_visitor_stream_new(in_stream, icnv);
+  gt_queue_add(stream->streams, icnv_stream);
+  GtNodeStream *ienv_stream = gt_visitor_stream_new(icnv_stream, ienv);
+  gt_queue_add(stream->streams, ienv_stream);
+  GtNodeStream *aistream = gt_add_introns_stream_new(ienv_stream);
+  gt_queue_add(stream->streams, aistream);
+  GtNodeStream *filterstream = agn_filter_stream_new(aistream,typestokeep,NULL);
+  gt_queue_add(stream->streams, filterstream);
+  stream->in_stream = filterstream;
+
+  return ns;
 }
 
-static void canon_gene_stream_free(GtNodeStream *ns)
-{
-  AgnCanonGeneStream *stream = canon_gene_stream_cast(ns);
-  gt_node_stream_delete(stream->in_stream);
-  gt_queue_delete(stream->cache);
-}
-
-const GtNodeStreamClass *agn_canon_gene_stream_class(void)
+const GtNodeStreamClass *canon_gene_stream_class(void)
 {
   static const GtNodeStreamClass *nsc = NULL;
   if(!nsc)
@@ -81,16 +97,20 @@ const GtNodeStreamClass *agn_canon_gene_stream_class(void)
   return nsc;
 }
 
-GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream)
+static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
+                                  GtError *error)
 {
-  GtNodeStream *ns;
-  AgnCanonGeneStream *stream;
-  gt_assert(in_stream);
-  ns = gt_node_stream_create(agn_canon_gene_stream_class(), false);
-  stream = canon_gene_stream_cast(ns);
-  stream->in_stream = gt_node_stream_ref(in_stream);
-  stream->cache = gt_queue_new();
-  return ns;
+  AgnCanonGeneStream *stream = canon_gene_stream_cast(ns);
+  return gt_node_stream_next(stream->in_stream, gn, error);
 }
 
-
+static void canon_gene_stream_free(GtNodeStream *ns)
+{
+  AgnCanonGeneStream *stream = canon_gene_stream_cast(ns);
+  while(gt_queue_size(stream->streams) > 0)
+  {
+    GtNodeStream *s = gt_queue_get(stream->streams);
+    gt_node_stream_delete(s);
+  }
+  gt_queue_delete(stream->streams);
+}
