@@ -312,7 +312,10 @@ GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus);
 AgnGeneLocus* agn_gene_locus_new(const char *seqid);
 
 /**
- * FIXME returns num reported pairs
+ * Report the number of clique pairs to be reported for this locus.
+ *
+ * @param[in] locus    the locus
+ * @returns            the number of clique pairs
  */
 unsigned long agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus);
 

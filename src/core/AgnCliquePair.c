@@ -46,25 +46,34 @@ void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
                                           void *data);
 
 /**
- * FIXME
+ * Given a set of of start and end coordinates for reference and prediction
+ * structures (exons, CDS segments, or UTR segments), determine the number of
+ * congruent and incongruent structures.
+ *
+ * @param[in] dat    the data
  */
 void clique_pair_calc_struct_stats(StructuralData *dat);
 
 /**
- * FIXME
+ * Initialize the data structure used to store start and end coordinates for
+ * reference and prediction structures (exons, CDS segments, or UTR segments)
+ * and associated statistics.
+ *
+ * @param[out] dat      the data structure
+ * @param[in]  stats    stats to be stored in the structure
  */
 void clique_pair_init_struct_dat(StructuralData *dat,AgnCompStatsBinary *stats);
 
 /**
- * FIXME
+ * Free the memory previously occupied by the data structure.
+ *
+ * @param[out] dat      the data structure
  */
 void clique_pair_term_struct_dat(StructuralData *dat);
 
-/**
- * FIXME
- */
-#define char_is_exonic(C) (C == 'C' || C == 'F' || C == 'T')
-#define char_is_utric(C) (C == 'F' || C == 'T')
+// Macros for convenience when checking how a given nucleotide is annotated
+#define char_is_exonic(C) (C == 'F' || C == 'T' || C == 'C')
+#define char_is_utric(C)  (C == 'F' || C == 'T')
 
 
 //----------------------------------------------------------------------------//

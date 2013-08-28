@@ -63,7 +63,12 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
                                           GtHashmap *map);
 
 /**
- * FIXME
+ * Retrieve the ID attribute of the transcript associated with this clique. Will
+ * cause an assertion error if there is more than one trancript associated with
+ * the clique.
+ *
+ * @param[in] clique    transcript clique
+ * @returns             ID attribute of the transcript
  */
 const char *agn_transcript_clique_id(AgnTranscriptClique *clique);
 

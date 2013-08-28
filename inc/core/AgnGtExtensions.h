@@ -33,7 +33,12 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream);
 unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript);
 
 /**
- * FIXME
+ * Gather the children of a given feature that have a certain type.
+ *
+ * @param[in] fn              a feature
+ * @param[in] typetestfunc    function used to select children of interest
+ * @returns                   an array containing the children that match the
+ *                            selection criteria specified by typetestfunc
  */
 GtArray *agn_gt_feature_node_children_of_type(GtFeatureNode *fn,
                                          bool (*typetestfunc)(GtFeatureNode *));

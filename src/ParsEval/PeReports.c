@@ -24,7 +24,11 @@ void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
                                     size_t maxlength);
 
 /**
- * FIXME
+ * Callback function for printing IDs for all transcripts belonging to a
+ * transcript clique.
+ *
+ * @param[in] transcript    a transcript belonging to the clique of interest
+ * @param[in] outstream     the output file to which its ID will be written
  */
 void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream);
 
