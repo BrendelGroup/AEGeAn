@@ -108,7 +108,7 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     *gn = gt_queue_get(stream->cache);
     return 0;
   }
-  
+
   while(1)
   {
     had_err = gt_node_stream_next(stream->in_stream, gn, error);
@@ -116,11 +116,11 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
       return had_err;
     if(!*gn)
       return 0;
-    
+
     fn = gt_feature_node_try_cast(*gn);
     if(!fn)
       return 0;
-    
+
     GtFeatureNode *current;
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
     for(current  = gt_feature_node_iterator_next(iter);

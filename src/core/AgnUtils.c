@@ -112,6 +112,109 @@ double agn_calc_splice_complexity(GtArray *transcripts)
   return sc;
 }
 
+GtFeatureNode *agn_eden()
+{
+  GtGenomeNode *gene, *mrna1, *mrna2, *mrna3, *feature;
+  GtFeatureNode *genefn, *mrna1fn, *mrna2fn, *mrna3fn, *featurefn;
+  GtGenomeNode *f1, *f2, *f3, *f4;
+  GtFeatureNode *fn1, *fn2, *fn3, *fn4;
+  GtStr *seqid = gt_str_new_cstr("ctg123");
+
+  gene = gt_feature_node_new(seqid, "gene", 1000, 9000, GT_STRAND_FORWARD);
+  genefn = (GtFeatureNode *)gene;
+  gt_feature_node_add_attribute(genefn, "ID", "EDEN");
+
+  mrna1 = gt_feature_node_new(seqid, "mRNA", 1050, 9000, GT_STRAND_FORWARD);
+  mrna1fn = (GtFeatureNode *)mrna1;
+  gt_feature_node_add_attribute(mrna1fn, "ID", "EDEN.1");
+  gt_feature_node_add_child(genefn, mrna1fn);
+  mrna2 = gt_feature_node_new(seqid, "mRNA", 1050, 9000, GT_STRAND_FORWARD);
+  mrna2fn = (GtFeatureNode *)mrna2;
+  gt_feature_node_add_attribute(mrna2fn, "ID", "EDEN.2");
+  gt_feature_node_add_child(genefn, mrna2fn);
+  mrna3 = gt_feature_node_new(seqid, "mRNA", 1300, 9000, GT_STRAND_FORWARD);
+  mrna3fn = (GtFeatureNode *)mrna3;
+  gt_feature_node_add_attribute(mrna3fn, "ID", "EDEN.3");
+  gt_feature_node_add_child(genefn, mrna3fn);
+
+  feature = gt_feature_node_new(seqid, "exon", 1050, 1500, GT_STRAND_FORWARD);
+  featurefn = (GtFeatureNode *)feature;
+  gt_feature_node_add_child(mrna1fn, featurefn);
+  gt_feature_node_add_child(mrna2fn, featurefn);
+  feature = gt_feature_node_new(seqid, "exon", 1300, 1500, GT_STRAND_FORWARD);
+  featurefn = (GtFeatureNode *)feature;
+  gt_feature_node_add_child(mrna3fn, featurefn);
+  feature = gt_feature_node_new(seqid, "exon", 3000, 3902, GT_STRAND_FORWARD);
+  featurefn = (GtFeatureNode *)feature;
+  gt_feature_node_add_child(mrna1fn, featurefn);
+  gt_feature_node_add_child(mrna3fn, featurefn);
+  feature = gt_feature_node_new(seqid, "exon", 5000, 5500, GT_STRAND_FORWARD);
+  featurefn = (GtFeatureNode *)feature;
+  gt_feature_node_add_child(mrna1fn, featurefn);
+  gt_feature_node_add_child(mrna2fn, featurefn);
+  gt_feature_node_add_child(mrna3fn, featurefn);
+  feature = gt_feature_node_new(seqid, "exon", 7000, 9000, GT_STRAND_FORWARD);
+  featurefn = (GtFeatureNode *)feature;
+  gt_feature_node_add_child(mrna1fn, featurefn);
+  gt_feature_node_add_child(mrna2fn, featurefn);
+  gt_feature_node_add_child(mrna3fn, featurefn);
+
+  f1 = gt_feature_node_new(seqid, "CDS", 1201, 1500, GT_STRAND_FORWARD);
+  fn1 = (GtFeatureNode *)f1;
+  gt_feature_node_make_multi_representative(fn1);
+  gt_feature_node_set_multi_representative(fn1, fn1);
+  gt_feature_node_add_child(mrna1fn, fn1);
+  f2 = gt_feature_node_new(seqid, "CDS", 3000, 3902, GT_STRAND_FORWARD);
+  fn2 = (GtFeatureNode *)f2;
+  gt_feature_node_make_multi_representative(fn2);
+  gt_feature_node_set_multi_representative(fn2, fn1);
+  gt_feature_node_add_child(mrna1fn, fn2);
+  f3 = gt_feature_node_new(seqid, "CDS", 5000, 5500, GT_STRAND_FORWARD);
+  fn3 = (GtFeatureNode *)f3;
+  gt_feature_node_make_multi_representative(fn3);
+  gt_feature_node_set_multi_representative(fn3, fn1);
+  gt_feature_node_add_child(mrna1fn, fn3);
+  f4 = gt_feature_node_new(seqid, "CDS", 7000, 7600, GT_STRAND_FORWARD);
+  fn4 = (GtFeatureNode *)f4;
+  gt_feature_node_make_multi_representative(fn4);
+  gt_feature_node_set_multi_representative(fn4, fn1);
+  gt_feature_node_add_child(mrna1fn, fn4);
+
+  f1 = gt_feature_node_new(seqid, "CDS", 1201, 1500, GT_STRAND_FORWARD);
+  fn1 = (GtFeatureNode *)f1;
+  gt_feature_node_make_multi_representative(fn1);
+  gt_feature_node_set_multi_representative(fn1, fn1);
+  gt_feature_node_add_child(mrna2fn, fn1);
+  f2 = gt_feature_node_new(seqid, "CDS", 5000, 5500, GT_STRAND_FORWARD);
+  fn2 = (GtFeatureNode *)f2;
+  gt_feature_node_make_multi_representative(fn2);
+  gt_feature_node_set_multi_representative(fn2, fn1);
+  gt_feature_node_add_child(mrna2fn, fn2);
+  f3 = gt_feature_node_new(seqid, "CDS", 7000, 7600, GT_STRAND_FORWARD);
+  fn3 = (GtFeatureNode *)f3;
+  gt_feature_node_make_multi_representative(fn3);
+  gt_feature_node_set_multi_representative(fn3, fn1);
+  gt_feature_node_add_child(mrna2fn, fn3);
+
+  f1 = gt_feature_node_new(seqid, "CDS", 3301, 3902, GT_STRAND_FORWARD);
+  fn1 = (GtFeatureNode *)f1;
+  gt_feature_node_make_multi_representative(fn1);
+  gt_feature_node_set_multi_representative(fn1, fn1);
+  gt_feature_node_add_child(mrna3fn, fn1);
+  f2 = gt_feature_node_new(seqid, "CDS", 5000, 5500, GT_STRAND_FORWARD);
+  fn2 = (GtFeatureNode *)f2;
+  gt_feature_node_make_multi_representative(fn2);
+  gt_feature_node_set_multi_representative(fn2, fn1);
+  gt_feature_node_add_child(mrna3fn, fn2);
+  f3 = gt_feature_node_new(seqid, "CDS", 7000, 7600, GT_STRAND_FORWARD);
+  fn3 = (GtFeatureNode *)f3;
+  gt_feature_node_make_multi_representative(fn3);
+  gt_feature_node_set_multi_representative(fn3, fn1);
+  gt_feature_node_add_child(mrna3fn, fn3);
+
+  return genefn;
+}
+
 GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
 {
   GtArray *cliques = gt_array_new( sizeof(GtArray *) );

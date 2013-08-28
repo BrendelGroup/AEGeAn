@@ -1,5 +1,8 @@
+#include <string.h>
+#include "AgnGeneLocus.h"
 #include "AgnGtExtensions.h"
 #include "AgnTranscriptClique.h"
+#include "AgnUnitTest.h"
 #include "AgnUtils.h"
 
 //----------------------------------------------------------------------------//
@@ -323,4 +326,64 @@ void agn_transcript_clique_to_gff3(AgnTranscriptClique *clique, FILE *outstream,
   agn_transcript_clique_traverse(clique,(AgnCliqueVisitFunc)clique_to_gff3, nv);
   gt_node_visitor_delete(nv);
   gt_file_delete_without_handle(outfile);
+}
+
+bool agn_transcript_clique_unit_test(AgnUnitTest *test)
+{
+  GtFeatureNode *eden = agn_eden();
+  GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)eden);
+  AgnGeneLocus *locus = agn_gene_locus_new(gt_str_get(seqid));
+  agn_gene_locus_add_gene(locus, eden);
+
+  GtArray *trans = agn_gene_locus_get_transcripts(locus);
+  GtArray *cliques = agn_enumerate_feature_cliques(trans);
+  bool parsearraypass = gt_array_size(cliques) == 3;
+  agn_unit_test_result(test, "parse from array", parsearraypass);
+
+  bool numtranspass = true;
+  bool cdslenpass =  true;
+  bool iterpass = true;
+  unsigned long i;
+  for(i = 0; i < gt_array_size(cliques); i++)
+  {
+    AgnTranscriptClique **tc = gt_array_get(cliques, i);
+    if(agn_transcript_clique_size(*tc) != 1)
+    {
+      numtranspass = false;
+    }
+    const char *mrnaid = agn_transcript_clique_id(*tc);
+    unsigned long cdslength = agn_transcript_clique_cds_length(*tc);
+    if(strcmp(mrnaid, "EDEN.1") == 0)
+    {
+      if(cdslength != 2305) cdslenpass = false;
+    }
+    else if(strcmp(mrnaid, "EDEN.2") == 0)
+    {
+      if(cdslength != 1402) cdslenpass = false;
+    }
+    else if(strcmp(mrnaid, "EDEN.3") == 0)
+    {
+      if(cdslength != 1704) cdslenpass = false;
+    }
+    else
+    {
+      iterpass = false;
+    }
+  }
+  agn_unit_test_result(test, "transcripts per clique",      numtranspass);
+  agn_unit_test_result(test, "clique CDS length",           cdslenpass);
+  agn_unit_test_result(test, "iterate through transcripts", iterpass);
+
+  agn_gene_locus_delete(locus);
+  while(gt_array_size(cliques) > 0)
+  {
+    AgnTranscriptClique **tc = gt_array_pop(cliques);
+    agn_transcript_clique_delete(*tc);
+  }
+  gt_array_delete(cliques);
+  gt_array_delete(trans);
+  // Memory leak, but deleting causes segfault
+  // gt_genome_node_delete((GtGenomeNode *)eden);
+
+  return parsearraypass && numtranspass && cdslenpass && iterpass;
 }

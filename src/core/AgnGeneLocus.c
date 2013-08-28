@@ -212,7 +212,7 @@ unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
 }
 
 GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
-{  
+{
   if(locus->reported_pairs != NULL)
     return locus->reported_pairs;
 
@@ -326,12 +326,12 @@ void agn_gene_locus_delete(AgnGeneLocus *locus)
   AgnTranscriptClique *clique;
   while(gt_array_size(locus->reported_pairs) > 0)
   {
-    AgnCliquePair *pair = *(AgnCliquePair**)gt_array_pop(locus->reported_pairs);
-    clique = agn_clique_pair_get_refr_clique(pair);
+    AgnCliquePair **pair = gt_array_pop(locus->reported_pairs);
+    clique = agn_clique_pair_get_refr_clique(*pair);
     agn_transcript_clique_delete(clique);
-    clique = agn_clique_pair_get_pred_clique(pair);
+    clique = agn_clique_pair_get_pred_clique(*pair);
     agn_transcript_clique_delete(clique);
-    agn_clique_pair_delete(pair);
+    agn_clique_pair_delete(*pair);
   }
   gt_array_delete(locus->reported_pairs);
 
@@ -351,7 +351,6 @@ void agn_gene_locus_delete(AgnGeneLocus *locus)
 
   gt_free(locus->region.seqid);
   gt_free(locus);
-  locus = NULL;
 }
 
 GtArray *agn_gene_locus_enumerate_clique_pairs(AgnGeneLocus *locus,

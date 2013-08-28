@@ -71,7 +71,7 @@ void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v);
  * If start codon is provided explicitly, ensure it agrees with CDS, whether the
  * CDS is provided explicitly or implicitly inferred. If start codon is not
  * provided explicitly, infer it from CDS if possible.
- * 
+ *
  * @param[in]  nv   the node visitor
  */
 void visit_mrna_check_start(AgnInferCDSVisitor *v);
@@ -80,7 +80,7 @@ void visit_mrna_check_start(AgnInferCDSVisitor *v);
  * If stop codon is provided explicitly, ensure it agrees with CDS, whether the
  * CDS is provided explicitly or implicitly inferred. If stop codon is not
  * provided explicitly, infer it from CDS if possible.
- * 
+ *
  * @param[in]  nv   the node visitor
  */
 void visit_mrna_check_stop(AgnInferCDSVisitor *v);
@@ -88,7 +88,7 @@ void visit_mrna_check_stop(AgnInferCDSVisitor *v);
 /**
  * Infer CDS for any mRNAs that have none specified but have exons and
  * start/stop codons explicitly specified.
- * 
+ *
  * @param[in]  nv   the node visitor
  */
 void visit_mrna_infer_cds(AgnInferCDSVisitor *v);
@@ -96,7 +96,7 @@ void visit_mrna_infer_cds(AgnInferCDSVisitor *v);
 /**
  * Infer UTRs for any mRNAs that have none specified but do have exons and
  * start/stop codons and/or CDS explicitly specified.
- * 
+ *
  * @param[in]  nv   the node visitor
  */
 void visit_mrna_infer_utrs(AgnInferCDSVisitor *v);
@@ -177,7 +177,7 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
     gt_array_delete(v->stops);
   }
   gt_feature_node_iterator_delete(iter);
-  
+
   return 0;
 }
 

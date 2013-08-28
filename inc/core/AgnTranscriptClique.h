@@ -2,6 +2,7 @@
 #define AEGEAN_TRANSCRIPT_CLIQUE
 
 #include "genometools.h"
+#include "AgnUnitTest.h"
 
 /**
  * The purpose of the AgnTranscriptClique class is to store data pertaining to
@@ -144,5 +145,13 @@ void agn_transcript_clique_to_gff3(AgnTranscriptClique *clique, FILE *outstream,
  */
 void agn_transcript_clique_traverse(AgnTranscriptClique *clique,
                                     AgnCliqueVisitFunc func, void *funcdata);
+
+/**
+ * Run unit tests for this class.
+ *
+ * @param[out] test    object for storing test results
+ * @returns            true for success, false for failure
+ */
+bool agn_transcript_clique_unit_test(AgnUnitTest *test);
 
 #endif

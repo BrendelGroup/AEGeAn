@@ -144,7 +144,7 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
     }
   }
   gt_feature_node_iterator_delete(iter);
-  
+
   return 0;
 }
 
@@ -208,7 +208,7 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
                            "'%s' (line %u) without CDS feature(s)", mrnaid, ln);
       continue;
     }
-    
+
     unsigned long i,j;
     GtHashmap *adjacent_utrs = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
     GtArray *exons_to_add = gt_array_new( sizeof(GtRange) );
@@ -221,7 +221,7 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
       {
         GtGenomeNode **utrsegment = gt_array_get(utrs, j);
         GtRange urange = gt_genome_node_get_range(*utrsegment);
-    
+
         // If the UTR segment is adjacent to the CDS, merge the ranges
         if(urange.end+1 == crange.start || crange.end+1 == urange.start)
         {
@@ -250,7 +250,7 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
       {
         continue;
       }
-    
+
       GtGenomeNode **firstcds = gt_array_get(cds, 0);
       GtGenomeNode *exon = gt_feature_node_new
       (
@@ -266,7 +266,7 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
       gt_interval_tree_insert(v->exonsbyrange, node);
     }
     gt_array_delete(exons_to_add);
-    
+
     if(gt_array_size(v->exons) == 0)
     {
       agn_logger_log_error(v->logger, "unable to infer exons for mRNA '%s'"

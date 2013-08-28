@@ -51,6 +51,13 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2);
 double agn_calc_splice_complexity(GtArray *transcripts);
 
 /**
+ * Create the canonical gene structure in memory.
+ *
+ * @returns    a pointer to the top-level gene feature
+ */
+GtFeatureNode *agn_eden();
+
+/**
  * If reference transcripts belonging to the same locus overlap, they must be
  * separated before comparison with prediction transcript models (and vice
  * versa). This is an instance of the maximal clique enumeration problem

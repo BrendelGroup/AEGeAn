@@ -95,7 +95,7 @@ int canon_gff3_parse_options(int argc, char * const *argv,
       return 1;
     }
   }
-  
+
   // Create a char ** of the GFF3 filenames
   int x;
   if(options->numfiles > 0)
