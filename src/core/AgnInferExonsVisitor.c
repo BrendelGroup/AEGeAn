@@ -41,7 +41,8 @@ const GtNodeVisitorClass* agn_infer_exons_visitor_class();
 static void infer_exons_visitor_free(GtNodeVisitor *nv);
 
 /**
- * FIXME
+ * Procedure for processing feature nodes (the only node of interest for this
+ * node visitor).
  *
  * @param[in]  nv       a node visitor
  * @param[in]  fn       node representing a top-level GFF3 feature entry
@@ -52,15 +53,24 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
                               GtError *error);
 
 /**
- * FIXME
+ * If an exon with the same coordinates already exists and belongs to another
+ * mRNA, associate it with this mRNA as well instead of creating a duplicate
+ * feature.
+ *
+ * @param[in] v        visitor object
+ * @param[in] mrna     mRNA for which an exon is to be added
+ * @param[in] range    range of the exon to (potentially) be created
+ * @returns            true if the exon already exists and has been associated
+ *                     with the mRNA, false if the exon feature needs to be
+ *                     created
  */
-bool visit_gene_collapse_feature(AgnInferExonsVisitor *v,
-                                 GtFeatureNode *mrna,
-                                 bool (*typetestfunc)(GtFeatureNode *),
+bool visit_gene_collapse_feature(AgnInferExonsVisitor *v, GtFeatureNode *mrna,
                                  GtRange *range);
 
 /**
- * FIXME
+ * Infer exons from CDS and UTR segments if possible.
+ *
+ * @param[in] v    visitor object
  */
 void visit_gene_infer_exons(AgnInferExonsVisitor *v);
 
@@ -138,9 +148,7 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
   return 0;
 }
 
-bool visit_gene_collapse_feature(AgnInferExonsVisitor *v,
-                                 GtFeatureNode *mrna,
-                                 bool (*typetestfunc)(GtFeatureNode *),
+bool visit_gene_collapse_feature(AgnInferExonsVisitor *v, GtFeatureNode *mrna,
                                  GtRange *range)
 {
   GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
@@ -238,8 +246,7 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
     for(i = 0; i < gt_array_size(exons_to_add); i++)
     {
       GtRange *erange = gt_array_get(exons_to_add, i);
-      if(visit_gene_collapse_feature(v, fn, agn_gt_feature_node_is_exon_feature,
-                                     erange))
+      if(visit_gene_collapse_feature(v, fn, erange))
       {
         continue;
       }
