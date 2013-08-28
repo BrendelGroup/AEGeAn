@@ -3,7 +3,6 @@
 
 #include "genometools.h"
 #include "AgnComparEval.h"
-#include "AgnGeneValidator.h"
 
 /**
  * This struct contains ParsEval's command-line options.

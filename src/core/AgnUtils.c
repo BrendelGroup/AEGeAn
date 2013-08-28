@@ -2,7 +2,6 @@
 #include <time.h>
 #include "AgnCanonGeneStream.h"
 #include "AgnFilterStream.h"
-#include "AgnGeneValidator.h"
 #include "AgnGtExtensions.h"
 #include "AgnGeneLocus.h"
 #include "AgnInferCDSVisitor.h"
