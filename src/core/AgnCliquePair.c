@@ -22,6 +22,15 @@ typedef struct
   GtRange *locusrange;
 } ModelVectorData;
 
+typedef struct
+{
+  GtArray *refrstarts;
+  GtArray *refrends;
+  GtArray *predstarts;
+  GtArray *predends;
+  AgnCompStatsBinary *stats;
+} StructuralData;
+
 
 //----------------------------------------------------------------------------//
 // Prototypes for private method(s)
@@ -36,53 +45,31 @@ typedef struct
 void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
                                           void *data);
 
+/**
+ * FIXME
+ */
+void clique_pair_calc_struct_stats(StructuralData *dat);
+
+/**
+ * FIXME
+ */
+void clique_pair_init_struct_dat(StructuralData *dat,AgnCompStatsBinary *stats);
+
+/**
+ * FIXME
+ */
+void clique_pair_term_struct_dat(StructuralData *dat);
+
+/**
+ * FIXME
+ */
+#define char_is_exonic(C) (C == 'C' || C == 'F' || C == 'T')
+#define char_is_utric(C) (C == 'F' || C == 'T')
+
 
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
-void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
-                                          void *data)
-{
-  ModelVectorData *mvd = data;
-  GtFeatureNode *fn;
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
-  for(fn = gt_feature_node_iterator_next(iter);
-      fn != NULL;
-      fn = gt_feature_node_iterator_next(iter))
-  {
-    char c;
-    if(agn_gt_feature_node_is_cds_feature(fn))
-      c = 'C';
-    else if(agn_gt_feature_node_is_utr_feature(fn))
-    {
-      gt_assert(gt_feature_node_has_type(fn, "five_prime_UTR") ||
-                gt_feature_node_has_type(fn, "three_prime_UTR"));
-      if(gt_feature_node_has_type(fn, "five_prime_UTR"))
-        c = 'F';
-      else
-        c = 'T';
-    }
-    else if(agn_gt_feature_node_is_intron_feature(fn))
-      c = 'I';
-    else
-      c = 'G';
-
-    if(c != 'G')
-    {
-      unsigned long fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
-      unsigned long fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
-      unsigned long i;
-
-      for(i = fn_start - mvd->locusrange->start;
-          i < fn_end - mvd->locusrange->start + 1;
-          i++)
-      {
-        mvd->modelvector[i] = c;
-      }
-    }
-  }
-  gt_feature_node_iterator_delete(iter);
-}
 
 void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 {
@@ -109,28 +96,17 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 
 void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
 {
-  unsigned long i, j;
   unsigned long locus_length = agn_clique_pair_length(pair);
 
-  // Counts for CDS structure
-  GtArray *refr_cds_starts = gt_array_new( sizeof(unsigned long) );
-  GtArray *pred_cds_starts = gt_array_new( sizeof(unsigned long) );
-  GtArray *refr_cds_ends   = gt_array_new( sizeof(unsigned long) );
-  GtArray *pred_cds_ends   = gt_array_new( sizeof(unsigned long) );
-
-  // Counts for exon structure
-  GtArray *refr_exon_starts = gt_array_new( sizeof(unsigned long) );
-  GtArray *pred_exon_starts = gt_array_new( sizeof(unsigned long) );
-  GtArray *refr_exon_ends   = gt_array_new( sizeof(unsigned long) );
-  GtArray *pred_exon_ends   = gt_array_new( sizeof(unsigned long) );
-
-  // Counts for UTR structure
-  GtArray *refr_utr_starts = gt_array_new( sizeof(unsigned long) );
-  GtArray *pred_utr_starts = gt_array_new( sizeof(unsigned long) );
-  GtArray *refr_utr_ends   = gt_array_new( sizeof(unsigned long) );
-  GtArray *pred_utr_ends   = gt_array_new( sizeof(unsigned long) );
+  StructuralData cdsstruct;
+  clique_pair_init_struct_dat(&cdsstruct, &pair->stats.cds_struc_stats);
+  StructuralData exonstruct;
+  clique_pair_init_struct_dat(&exonstruct, &pair->stats.exon_struc_stats);
+  StructuralData utrstruct;
+  clique_pair_init_struct_dat(&utrstruct, &pair->stats.utr_struc_stats);
 
   // Collect counts
+  unsigned long i;
   for(i = 0; i < locus_length; i++)
   {
     // Coding nucleotide counts
@@ -144,8 +120,8 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
       pair->stats.cds_nuc_stats.tn++;
 
     // UTR nucleotide counts
-    bool refr_utr = (pair->refr_vector[i] == 'F' || pair->refr_vector[i] == 'T');
-    bool pred_utr = (pair->pred_vector[i] == 'F' || pair->pred_vector[i] == 'T');
+    bool refr_utr = char_is_utric(pair->refr_vector[i]);
+    bool pred_utr = char_is_utric(pair->pred_vector[i]);
     if(refr_utr && pred_utr)        pair->stats.utr_nuc_stats.tp++;
     else if(refr_utr && !pred_utr)  pair->stats.utr_nuc_stats.fn++;
     else if(!refr_utr && pred_utr)  pair->stats.utr_nuc_stats.fp++;
@@ -159,234 +135,67 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
     if(pair->refr_vector[i] == 'C')
     {
       if(i == 0 || pair->refr_vector[i-1] != 'C')
-        gt_array_add(refr_cds_starts, i);
+        gt_array_add(cdsstruct.refrstarts, i);
 
       if(i == locus_length - 1 || pair->refr_vector[i+1] != 'C')
-        gt_array_add(refr_cds_ends, i);
+        gt_array_add(cdsstruct.refrends, i);
     }
     if(pair->pred_vector[i] == 'C')
     {
       if(i == 0 || pair->pred_vector[i-1] != 'C')
-        gt_array_add(pred_cds_starts, i);
+        gt_array_add(cdsstruct.predstarts, i);
 
       if(i == locus_length - 1 || pair->pred_vector[i+1] != 'C')
-        gt_array_add(pred_cds_ends, i);
+        gt_array_add(cdsstruct.predends, i);
     }
 
     // Exon structure counts
-    if(pair->refr_vector[i] == 'C' || pair->refr_vector[i] == 'F' ||
-       pair->refr_vector[i] == 'T')
+    if(char_is_exonic(pair->refr_vector[i]))
     {
-      if( i == 0 || ( pair->refr_vector[i-1] != 'C' &&
-                      pair->refr_vector[i-1] != 'F' &&
-                      pair->refr_vector[i-1] != 'T'    ))
-      {
-        gt_array_add(refr_exon_starts, i);
-      }
-      else if( i == locus_length - 1 || ( pair->refr_vector[i+1] != 'C' &&
-                                          pair->refr_vector[i+1] != 'F' &&
-                                          pair->refr_vector[i+1] != 'T'    ))
-      {
-        gt_array_add(refr_exon_ends, i);
-      }
-    }
-    if(pair->pred_vector[i] == 'C' || pair->pred_vector[i] == 'F' ||
-       pair->pred_vector[i] == 'T')
-    {
-      if( i == 0 || ( pair->pred_vector[i-1] != 'C' &&
-                      pair->pred_vector[i-1] != 'F' &&
-                      pair->pred_vector[i-1] != 'T'    ))
-      {
-        gt_array_add(pred_exon_starts, i);
-      }
+      if(i == 0 || !char_is_exonic(pair->refr_vector[i-1]))
+        gt_array_add(exonstruct.refrstarts, i);
 
-      if( i == locus_length - 1 || ( pair->pred_vector[i+1] != 'C' &&
-                                     pair->pred_vector[i+1] != 'F' &&
-                                     pair->pred_vector[i+1] != 'T'    ))
-      {
-        gt_array_add(pred_exon_ends, i);
-      }
+      if(i == locus_length - 1 || !char_is_exonic(pair->refr_vector[i+1]))
+        gt_array_add(exonstruct.refrends, i);
+    }
+    if(char_is_exonic(pair->pred_vector[i]))
+    {
+      if(i == 0 || !char_is_exonic(pair->pred_vector[i-1]))
+        gt_array_add(exonstruct.predstarts, i);
+
+      if(i == locus_length - 1 || !char_is_exonic(pair->pred_vector[i+1]))
+        gt_array_add(exonstruct.predends, i);
     }
 
     // UTR structure counts
-    if(pair->refr_vector[i] == 'F' || pair->refr_vector[i] == 'T')
+    if(char_is_utric(pair->refr_vector[i]))
     {
-      if( i == 0 || (pair->refr_vector[i-1] != 'F' && pair->refr_vector[i-1] != 'T' ) )
-      {
-        gt_array_add(refr_utr_starts, i);
-      }
+      if(i == 0 || !char_is_utric(pair->refr_vector[i-1]))
+        gt_array_add(utrstruct.refrstarts, i);
 
-      if(i == locus_length - 1 || ( pair->refr_vector[i+1] != 'F' &&
-                                    pair->refr_vector[i+1] != 'T' ))
-      {
-        gt_array_add(refr_utr_ends, i);
-      }
+      if(i == locus_length - 1 || !char_is_utric(pair->refr_vector[i+1]))
+        gt_array_add(utrstruct.refrends, i);
     }
-    if(pair->pred_vector[i] == 'F' || pair->pred_vector[i] == 'T')
+    if(char_is_utric(pair->pred_vector[i]))
     {
-      if( i == 0 || ( pair->pred_vector[i-1] != 'F' &&
-                      pair->pred_vector[i-1] != 'T' ))
-      {
-        gt_array_add(pred_utr_starts, i);
-      }
+      if(i == 0 || !char_is_utric(pair->pred_vector[i-1]))
+        gt_array_add(utrstruct.predstarts, i);
 
-      if(i == locus_length - 1 || ( pair->pred_vector[i+1] != 'F' &&
-                                    pair->pred_vector[i+1] != 'T' ))
-      {
-        gt_array_add(pred_utr_ends, i);
-      }
+      if(i == locus_length - 1 || !char_is_utric(pair->pred_vector[i+1]))
+        gt_array_add(utrstruct.predends, i);
     }
   }
 
   // Calculate nucleotide-level statistics from counts
   agn_comp_stats_scaled_resolve(&pair->stats.cds_nuc_stats);
   agn_comp_stats_scaled_resolve(&pair->stats.utr_nuc_stats);
-  pair->stats.overall_identity = pair->stats.overall_matches / (double)locus_length;
+  pair->stats.overall_identity = pair->stats.overall_matches /
+                                 (double)locus_length;
 
-  // Calculate statistics for CDS structure from counts
-  unsigned long num_refr_cdss = gt_array_size(refr_cds_starts);
-  unsigned long num_pred_cdss = gt_array_size(pred_cds_starts);
-  gt_assert(num_refr_cdss == gt_array_size(refr_cds_ends));
-  gt_assert(num_pred_cdss == gt_array_size(pred_cds_ends));
-  for(i = 0; i < num_refr_cdss; i++)
-  {
-    bool found_match = 0;
-    unsigned long *refrstart = gt_array_get(refr_cds_starts, i);
-    unsigned long *refrend   = gt_array_get(refr_cds_ends,   i);
-    for(j = 0; j < num_pred_cdss; j++)
-    {
-      unsigned long *predstart = gt_array_get(pred_cds_starts, j);
-      unsigned long *predend   = gt_array_get(pred_cds_ends,   j);
-      if(*refrstart == *predstart && *refrend == *predend)
-      {
-        pair->stats.cds_struc_stats.correct++;
-        found_match = 1;
-        break;
-      }
-    }
-    if(!found_match)
-      pair->stats.cds_struc_stats.missing++;
-  }
-  for(i = 0; i < num_pred_cdss; i++)
-  {
-    bool found_match = 0;
-    unsigned long *predstart = gt_array_get(pred_cds_starts, i);
-    unsigned long *predend   = gt_array_get(pred_cds_ends,   i);
-    for(j = 0; j < num_refr_cdss; j++)
-    {
-      unsigned long *refrstart = gt_array_get(refr_cds_starts, j);
-      unsigned long *refrend   = gt_array_get(refr_cds_ends,   j);
-      if(*refrstart == *predstart && *refrend == *predend)
-      {
-        found_match = 1;
-        break;
-      }
-    }
-    if(!found_match)
-      pair->stats.cds_struc_stats.wrong++;
-  }
-  agn_comp_stats_binary_resolve(&pair->stats.cds_struc_stats);
-
-  // Calculate statistics for exon structure from counts
-  unsigned long num_refr_exons = gt_array_size(refr_exon_starts);
-  unsigned long num_pred_exons = gt_array_size(pred_exon_starts);
-  gt_assert(num_refr_exons == gt_array_size(refr_exon_ends));
-  gt_assert(num_pred_exons == gt_array_size(pred_exon_ends));
-  for(i = 0; i < num_refr_exons; i++)
-  {
-    bool found_match = 0;
-    unsigned long *refrstart = gt_array_get(refr_exon_starts, i);
-    unsigned long *refrend   = gt_array_get(refr_exon_ends,   i);
-    for(j = 0; j < num_pred_exons; j++)
-    {
-      unsigned long *predstart = gt_array_get(pred_exon_starts, j);
-      unsigned long *predend   = gt_array_get(pred_exon_ends,   j);
-      if(*refrstart == *predstart && *refrend == *predend)
-      {
-        pair->stats.exon_struc_stats.correct++;
-        found_match = 1;
-        break;
-      }
-    }
-    if(!found_match)
-      pair->stats.exon_struc_stats.missing++;
-  }
-  for(i = 0; i < num_pred_exons; i++)
-  {
-    bool found_match = 0;
-    unsigned long *predstart = gt_array_get(pred_exon_starts, i);
-    unsigned long *predend   = gt_array_get(pred_exon_ends,   i);
-    for(j = 0; j < num_refr_exons; j++)
-    {
-      unsigned long *refrstart = gt_array_get(refr_exon_starts, j);
-      unsigned long *refrend   = gt_array_get(refr_exon_ends,   j);
-      if(*refrstart == *predstart && *refrend == *predend)
-      {
-        found_match = 1;
-        break;
-      }
-    }
-    if(!found_match)
-      pair->stats.exon_struc_stats.wrong++;
-  }
-  agn_comp_stats_binary_resolve(&pair->stats.exon_struc_stats);
-
-  // Calculate statistics for UTR structure from counts
-  unsigned long num_refr_utrs = gt_array_size(refr_utr_starts);
-  unsigned long num_pred_utrs = gt_array_size(pred_utr_starts);
-  gt_assert(num_refr_utrs == gt_array_size(refr_utr_ends));
-  gt_assert(num_pred_utrs == gt_array_size(pred_utr_ends));
-  for(i = 0; i < num_refr_utrs; i++)
-  {
-    bool found_match = 0;
-    unsigned long *refrstart = gt_array_get(refr_utr_starts, i);
-    unsigned long *refrend   = gt_array_get(refr_utr_ends,   i);
-    for(j = 0; j < num_pred_utrs; j++)
-    {
-      unsigned long *predstart = gt_array_get(pred_utr_starts, j);
-      unsigned long *predend   = gt_array_get(pred_utr_ends,   j);
-      if(*refrstart == *predstart && *refrend == *predend)
-      {
-        pair->stats.utr_struc_stats.correct++;
-        found_match = 1;
-        break;
-      }
-    }
-    if(!found_match)
-      pair->stats.utr_struc_stats.missing++;
-  }
-  for(i = 0; i < num_pred_utrs; i++)
-  {
-    bool found_match = 0;
-    unsigned long *predstart = gt_array_get(pred_utr_starts, i);
-    unsigned long *predend   = gt_array_get(pred_utr_ends,   i);
-    for(j = 0; j < num_refr_utrs; j++)
-    {
-      unsigned long *refrstart = gt_array_get(refr_utr_starts, j);
-      unsigned long *refrend   = gt_array_get(refr_utr_ends,   j);
-      if(*refrstart == *predstart && *refrend == *predend)
-      {
-        found_match = 1;
-        break;
-      }
-    }
-    if(!found_match)
-      pair->stats.utr_struc_stats.wrong++;
-  }
-  agn_comp_stats_binary_resolve(&pair->stats.utr_struc_stats);
-
-  gt_array_delete(refr_cds_starts);
-  gt_array_delete(refr_cds_ends);
-  gt_array_delete(pred_cds_starts);
-  gt_array_delete(pred_cds_ends);
-  gt_array_delete(refr_exon_starts);
-  gt_array_delete(refr_exon_ends);
-  gt_array_delete(pred_exon_starts);
-  gt_array_delete(pred_exon_ends);
-  gt_array_delete(refr_utr_starts);
-  gt_array_delete(refr_utr_ends);
-  gt_array_delete(pred_utr_starts);
-  gt_array_delete(pred_utr_ends);
+  // Calculate statistics for structure from counts
+  clique_pair_calc_struct_stats(&cdsstruct);
+  clique_pair_calc_struct_stats(&exonstruct);
+  clique_pair_calc_struct_stats(&utrstruct);
 }
 
 AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair)
@@ -550,6 +359,15 @@ bool agn_clique_pair_has_utrs(AgnCliquePair *pair)
   return(refr_utrs + pred_utrs > 0);
 }
 
+void clique_pair_init_struct_dat(StructuralData *dat, AgnCompStatsBinary *stats)
+{
+  dat->refrstarts = gt_array_new( sizeof(unsigned long) );
+  dat->refrends   = gt_array_new( sizeof(unsigned long) );
+  dat->predstarts = gt_array_new( sizeof(unsigned long) );
+  dat->predends   = gt_array_new( sizeof(unsigned long) );
+  dat->stats      = stats;
+}
+
 bool agn_clique_pair_is_simple(AgnCliquePair *pair)
 {
   return( agn_transcript_clique_size(pair->refr_clique) == 1 &&
@@ -604,4 +422,104 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
   desc->pred_cds_length += agn_transcript_clique_cds_length(pred);
   desc->refr_exon_count += agn_transcript_clique_num_exons(refr);
   desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
+}
+
+void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
+                                          void *data)
+{
+  ModelVectorData *mvd = data;
+  GtFeatureNode *fn;
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
+  for(fn = gt_feature_node_iterator_next(iter);
+      fn != NULL;
+      fn = gt_feature_node_iterator_next(iter))
+  {
+    char c;
+    if(agn_gt_feature_node_is_cds_feature(fn))
+      c = 'C';
+    else if(agn_gt_feature_node_is_utr_feature(fn))
+    {
+      gt_assert(gt_feature_node_has_type(fn, "five_prime_UTR") ||
+                gt_feature_node_has_type(fn, "three_prime_UTR"));
+      if(gt_feature_node_has_type(fn, "five_prime_UTR"))
+        c = 'F';
+      else
+        c = 'T';
+    }
+    else if(agn_gt_feature_node_is_intron_feature(fn))
+      c = 'I';
+    else
+      c = 'G';
+
+    if(c != 'G')
+    {
+      unsigned long fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
+      unsigned long fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
+      unsigned long i;
+
+      for(i = fn_start - mvd->locusrange->start;
+          i < fn_end - mvd->locusrange->start + 1;
+          i++)
+      {
+        mvd->modelvector[i] = c;
+      }
+    }
+  }
+  gt_feature_node_iterator_delete(iter);
+}
+
+void clique_pair_calc_struct_stats(StructuralData *dat)
+{
+  unsigned long num_refr = gt_array_size(dat->refrstarts);
+  unsigned long num_pred = gt_array_size(dat->predstarts);
+  gt_assert(num_refr == gt_array_size(dat->refrends));
+  gt_assert(num_pred == gt_array_size(dat->predends));
+  unsigned long i, j;
+  for(i = 0; i < num_refr; i++)
+  {
+    bool found_match = 0;
+    unsigned long *refrstart = gt_array_get(dat->refrstarts, i);
+    unsigned long *refrend   = gt_array_get(dat->refrends,   i);
+    for(j = 0; j < num_pred; j++)
+    {
+      unsigned long *predstart = gt_array_get(dat->predstarts, j);
+      unsigned long *predend   = gt_array_get(dat->predends,   j);
+      if(*refrstart == *predstart && *refrend == *predend)
+      {
+        dat->stats->correct++;
+        found_match = 1;
+        break;
+      }
+    }
+    if(!found_match)
+      dat->stats->missing++;
+  }
+  for(i = 0; i < num_pred; i++)
+  {
+    bool found_match = 0;
+    unsigned long *predstart = gt_array_get(dat->predstarts, i);
+    unsigned long *predend   = gt_array_get(dat->predends,   i);
+    for(j = 0; j < num_refr; j++)
+    {
+      unsigned long *refrstart = gt_array_get(dat->refrstarts, j);
+      unsigned long *refrend   = gt_array_get(dat->refrends,   j);
+      if(*refrstart == *predstart && *refrend == *predend)
+      {
+        found_match = 1;
+        break;
+      }
+    }
+    if(!found_match)
+      dat->stats->wrong++;
+  }
+  agn_comp_stats_binary_resolve(dat->stats);
+  clique_pair_term_struct_dat(dat);
+}
+
+void clique_pair_term_struct_dat(StructuralData *dat)
+{
+  gt_array_delete(dat->refrstarts);
+  gt_array_delete(dat->refrends);
+  gt_array_delete(dat->predstarts);
+  gt_array_delete(dat->predends);
 }
