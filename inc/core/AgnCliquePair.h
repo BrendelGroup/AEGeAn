@@ -5,9 +5,6 @@
 #include "AgnComparEval.h"
 #include "AgnTranscriptClique.h"
 
-#define MAX_EXONS 512
-#define MAX_UTRS  64
-
 /**
  * The purpose of the AgnCliquePair class is to associate all of the data needed
  * to compare transcripts from two alternative sources of annotation for the
