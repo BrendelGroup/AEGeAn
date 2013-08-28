@@ -23,11 +23,18 @@ struct AgnCanonGeneStream
         gt_node_stream_cast(canon_gene_stream_class(), GS)
 
 /**
- * Function that implements the GtNodeStream interface.
+ * Function that implements the GtNodeStream interface for this class.
  *
  * @returns    a node stream class object
  */
 const GtNodeStreamClass* canon_gene_stream_class(void);
+
+/**
+ * Destructor for the class.
+ *
+ * @param[in] ns    the node stream to be destroyed
+ */
+static void canon_gene_stream_free(GtNodeStream *ns);
 
 /**
  * Pulls nodes from the input stream and feeds them to the output stream if they
@@ -42,13 +49,6 @@ const GtNodeStreamClass* canon_gene_stream_class(void);
  */
 static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                                   GtError *error);
-
-/**
- * Destructor for the class.
- *
- * @param[in] ns    the node stream to be destroyed
- */
-static void canon_gene_stream_free(GtNodeStream *ns);
 
 
 //------------------------------------------------------------------------------

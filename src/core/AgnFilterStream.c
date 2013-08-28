@@ -1,6 +1,10 @@
 #include "AgnFilterStream.h"
 #include "AgnGtExtensions.h"
 
+//------------------------------------------------------------------------------
+// Data structure definition
+//------------------------------------------------------------------------------
+
 struct AgnFilterStream
 {
   const GtNodeStream parent_instance;
@@ -10,11 +14,88 @@ struct AgnFilterStream
   GtHashmap *typestofilter;
 };
 
+
+//------------------------------------------------------------------------------
+// Prototypes for private functions
+//------------------------------------------------------------------------------
+
 #define filter_stream_cast(GS)\
-        gt_node_stream_cast(agn_filter_stream_class(), GS)
+        gt_node_stream_cast(filter_stream_class(), GS)
+
+/**
+ * Function that implements the GtNodeStream interface for this class.
+ *
+ * @returns    a node stream class object
+ */
+const GtNodeStreamClass* filter_stream_class(void);
+
+/**
+ * Destructor for the class.
+ *
+ * @param[in] ns    the node stream to be destroyed
+ */
+static void filter_stream_free(GtNodeStream *ns);
+
+/**
+ * Pulls nodes from the input stream and feeds them to the output stream if they
+ * pass the provided filtering criteria.
+ *
+ * @param[in]  ns       the node stream
+ * @param[out] gn       pointer to a genome node
+ * @param[out] error    error object
+ * @returns             0 in case of no error (*gn is set to next node or NULL
+ *                      if stream is exhausted), -1 in case of error (error
+ *                      object is set)
+ */
+static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
+                              GtError *error);
+
+
+//------------------------------------------------------------------------------
+// Method implementations
+//------------------------------------------------------------------------------
+
+GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream,
+                                    GtHashmap *typestokeep,
+                                    GtHashmap *typestofilter)
+{
+  GtNodeStream *ns;
+  AgnFilterStream *stream;
+  gt_assert(in_stream);
+  gt_assert((typestokeep == NULL || typestofilter == NULL) &&
+            (typestokeep != NULL || typestofilter != NULL));
+  ns = gt_node_stream_create(filter_stream_class(), false);
+  stream = filter_stream_cast(ns);
+  stream->in_stream = gt_node_stream_ref(in_stream);
+  stream->cache = gt_queue_new();
+  stream->typestokeep = typestokeep;
+  stream->typestofilter = typestofilter;
+  return ns;
+}
+
+const GtNodeStreamClass *filter_stream_class(void)
+{
+  static const GtNodeStreamClass *nsc = NULL;
+  if(!nsc)
+  {
+    nsc = gt_node_stream_class_new(sizeof (AgnFilterStream),
+                                   filter_stream_free,
+                                   filter_stream_next);
+  }
+  return nsc;
+}
+
+static void filter_stream_free(GtNodeStream *ns)
+{
+  AgnFilterStream *stream = filter_stream_cast(ns);
+  gt_node_stream_delete(stream->in_stream);
+  gt_queue_delete(stream->cache);
+  gt_hashmap_delete(stream->typestokeep);
+  gt_hashmap_delete(stream->typestofilter);
+}
 
 static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
-                                  GtError *error)
+                              GtError *error)
 {
   AgnFilterStream *stream;
   GtFeatureNode *fn;
@@ -78,44 +159,3 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 
   return 0;
 }
-
-static void filter_stream_free(GtNodeStream *ns)
-{
-  AgnFilterStream *stream = filter_stream_cast(ns);
-  gt_node_stream_delete(stream->in_stream);
-  gt_queue_delete(stream->cache);
-  gt_hashmap_delete(stream->typestokeep);
-  gt_hashmap_delete(stream->typestofilter);
-}
-
-const GtNodeStreamClass *agn_filter_stream_class(void)
-{
-  static const GtNodeStreamClass *nsc = NULL;
-  if(!nsc)
-  {
-    nsc = gt_node_stream_class_new(sizeof (AgnFilterStream),
-                                   filter_stream_free,
-                                   filter_stream_next);
-  }
-  return nsc;
-}
-
-GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream,
-                                    GtHashmap *typestokeep,
-                                    GtHashmap *typestofilter)
-{
-  GtNodeStream *ns;
-  AgnFilterStream *stream;
-  gt_assert(in_stream);
-  gt_assert((typestokeep == NULL || typestofilter == NULL) &&
-            (typestokeep != NULL || typestofilter != NULL));
-  ns = gt_node_stream_create(agn_filter_stream_class(), false);
-  stream = filter_stream_cast(ns);
-  stream->in_stream = gt_node_stream_ref(in_stream);
-  stream->cache = gt_queue_new();
-  stream->typestokeep = typestokeep;
-  stream->typestofilter = typestofilter;
-  return ns;
-}
-
-
