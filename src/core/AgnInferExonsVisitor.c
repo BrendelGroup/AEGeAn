@@ -16,9 +16,8 @@ struct AgnInferExonsVisitor
 {
   const GtNodeVisitor parent_instance;
   GtFeatureNode *gene;
-  GtIntervalTree *featsbyrange;
+  GtIntervalTree *exonsbyrange;
   GtArray *exons;
-  GtArray *introns;
   AgnLogger *logger;
 };
 
@@ -115,11 +114,9 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
     if(agn_gt_feature_node_is_gene_feature(current))
     {
       unsigned long i;
-      v->featsbyrange = gt_interval_tree_new(NULL);
+      v->exonsbyrange = gt_interval_tree_new(NULL);
       v->exons   = agn_gt_feature_node_children_of_type(current,
                                            agn_gt_feature_node_is_exon_feature);
-      v->introns = agn_gt_feature_node_children_of_type(current,
-                                         agn_gt_feature_node_is_intron_feature);
       v->gene = fn;
       for(i = 0; i < gt_array_size(v->exons); i++)
       {
@@ -127,22 +124,13 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
         GtRange range = gt_genome_node_get_range(*exon);
         GtIntervalTreeNode *itn = gt_interval_tree_node_new(*exon, range.start,
                                                             range.end);
-        gt_interval_tree_insert(v->featsbyrange, itn);
-      }
-      for(i = 0; i < gt_array_size(v->introns); i++)
-      {
-        GtGenomeNode **intron = gt_array_get(v->introns, i);
-        GtRange range = gt_genome_node_get_range(*intron);
-        GtIntervalTreeNode *itn = gt_interval_tree_node_new(*intron,range.start,
-                                                            range.end);
-        gt_interval_tree_insert(v->featsbyrange, itn);
+        gt_interval_tree_insert(v->exonsbyrange, itn);
       }
 
       visit_gene_infer_exons(v);
 
       gt_array_delete(v->exons);
-      gt_array_delete(v->introns);
-      gt_interval_tree_delete(v->featsbyrange);
+      gt_interval_tree_delete(v->exonsbyrange);
     }
   }
   gt_feature_node_iterator_delete(iter);
@@ -156,14 +144,14 @@ bool visit_gene_collapse_feature(AgnInferExonsVisitor *v,
                                  GtRange *range)
 {
   GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
-  gt_interval_tree_find_all_overlapping(v->featsbyrange, range->start,
+  gt_interval_tree_find_all_overlapping(v->exonsbyrange, range->start,
                                         range->end, overlapping);
   bool collapsed = false;
   while(gt_array_size(overlapping) > 0)
   {
     GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(overlapping);
     GtRange fnrange = gt_genome_node_get_range((GtGenomeNode *)fn);
-    if(gt_range_compare(range, &fnrange) == 0 && typetestfunc(fn))
+    if(gt_range_compare(range, &fnrange) == 0)
     {
       gt_feature_node_add_child(mrna, fn);
       const char *parentattr = gt_feature_node_get_attribute(fn, "Parent");
@@ -198,8 +186,11 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
                                             agn_gt_feature_node_is_cds_feature);
     GtArray *utrs = agn_gt_feature_node_children_of_type(fn,
                                             agn_gt_feature_node_is_utr_feature);
-    bool exons_explicit = gt_array_size(v->exons) > 0;
-    bool cds_explicit   = gt_array_size(cds) > 0;
+    GtArray *exons = agn_gt_feature_node_children_of_type(fn,
+                                           agn_gt_feature_node_is_exon_feature);
+    bool exons_explicit = gt_array_size(exons) > 0;
+    gt_array_delete(exons);
+    bool cds_explicit = gt_array_size(cds) > 0;
     if(exons_explicit)
       continue;
 
@@ -265,7 +256,7 @@ void visit_gene_infer_exons(AgnInferExonsVisitor *v)
       gt_array_add(v->exons, exon);
       GtIntervalTreeNode *node = gt_interval_tree_node_new(exon, erange->start,
                                                            erange->end);
-      gt_interval_tree_insert(v->featsbyrange, node);
+      gt_interval_tree_insert(v->exonsbyrange, node);
     }
     gt_array_delete(exons_to_add);
     
