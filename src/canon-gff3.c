@@ -1,5 +1,6 @@
 #include <getopt.h>
 #include <string.h>
+#include "AgnCanonGeneStream.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
 
@@ -115,84 +116,50 @@ int main(int argc, char * const *argv)
   // Options
   gt_lib_init();
   CanonGFF3Options options = { stdout, NULL, false, NULL, 0 };
-  int result = canon_gff3_parse_options(argc, argv, &options);
-  if(result)
+  int code = canon_gff3_parse_options(argc, argv, &options);
+  if(code)
   {
-    if(result < 1)
+    if(code < 1)
       return 0;
     else
-      return result;
-  }
-
-  // Load GFF3 data into memory feature index
-  AgnLogger *logger = agn_logger_new();
-  GtFeatureIndex *features = agn_import_canonical(options.numfiles,
-                                                  options.gff3files, logger);
-  unsigned long i;
-  for(i = 0; i < options.numfiles; i++)
-  {
-    gt_free((char *)options.gff3files[i]);
-  }
-  gt_free(options.gff3files);
-  bool haderror = agn_logger_print_all(logger, stderr, "[CanonGFF3] load "
-                                       "annotation data into memory");
-  if(haderror) return EXIT_FAILURE;
-
-  // Write header for new GFF3 file: version pragma, sequence regions
-  GtError *error = gt_error_new();
-  fputs("##gff-version   3\n", options.outstream);
-  GtStrArray *seqids = gt_feature_index_get_seqids(features, error);
-  if(gt_error_is_set(error))
-  {
-    fprintf(stderr, "[CanonGFF3] error fetching sequence IDs: %s",
-            gt_error_get(error));
-    return 1;
-  }
-  for(i = 0; i < gt_str_array_size(seqids); i++)
-  {
-    const char *seqid = gt_str_array_get(seqids, i);
-    GtRange seqrange;
-    int code = gt_feature_index_get_orig_range_for_seqid(features, &seqrange,
-                                                         seqid, error);
-    if(gt_error_is_set(error))
-    {
-      fprintf(stderr, "[CanonGFF3] error fetching range for sequence '%s': %s",
-              seqid, gt_error_get(error));
       return code;
-    }
-    fprintf(options.outstream, "##sequence-region   %s %lu %lu\n", seqid,
-            seqrange.start, seqrange.end);
   }
 
-  // Write features to new GFF3 file
-  for(i = 0; i < gt_str_array_size(seqids); i++)
+  // Create input and output streams to load, process, and write the data
+  AgnLogger *logger = agn_logger_new();
+  GtFile *outfile = gt_file_new_from_fileptr(options.outstream);
+  GtNodeVisitor *ssv = gt_set_source_visitor_new(options.source);
+
+  GtNodeStream *gff3in;
+  gff3in = gt_gff3_in_stream_new_unsorted(options.numfiles, options.gff3files);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3in, logger);
+  GtNodeStream *ssstream = gt_visitor_stream_new(cgstream, ssv);
+  GtNodeStream *gff3out  = gt_gff3_out_stream_new(ssstream, outfile);
+  gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)gff3out);
+
+  GtError *error = gt_error_new();
+  int result = gt_node_stream_pull(gff3out, error);
+  if(result == -1)
   {
-    const char *seqid = gt_str_array_get(seqids, i);
-    GtArray *genes = gt_feature_index_get_features_for_seqid(features, seqid,
-                                                             error);
-    if(gt_error_is_set(error))
-    {
-      fprintf(stderr, "[CanonGFF3] error fetching features for sequence '%s': "
-              "%s", seqid, gt_error_get(error));
-      return 1;
-    }
-    gt_array_sort(genes, (GtCompare)agn_gt_genome_node_compare);
-
-    unsigned long j;
-    for(j = 0; j < gt_array_size(genes); j++)
-    {
-      GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(genes, j);
-      if(options.source != NULL)
-        agn_gt_feature_node_set_source_recursive(gene, options.source);
-      agn_gt_feature_node_to_gff3(gene, options.outstream, true, NULL, NULL);
-      fputs("###\n", options.outstream);
-    }
+    fprintf(stderr, "error processing node stream: %s", gt_error_get(error));
   }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(cgstream);
+  gt_node_stream_delete(ssstream);
+  gt_node_stream_delete(gff3out);
+  gt_file_delete_without_handle(outfile);
+  gt_error_delete(error);
+
+  bool haderror = agn_logger_print_all(logger, stderr, "[CanonGFF3] processing "
+                                       "annotation data");
+  if(haderror) return EXIT_FAILURE;
+  agn_logger_delete(logger);
 
   // Clean up
   fclose(options.outstream);
   gt_str_delete(options.source);
-  gt_error_delete(error);
   if(gt_lib_clean() != 0)
   {
     fputs("error: issue cleaning GenomeTools library\n", stderr);
