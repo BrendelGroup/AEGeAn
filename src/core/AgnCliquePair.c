@@ -505,7 +505,6 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
   bool hasutrspass = (!agn_clique_pair_has_utrs(pair1) &&
                       agn_clique_pair_has_utrs(pair2));
   agn_unit_test_result(test, "UTR test", hasutrspass);
-  // other tests
 
   agn_clique_pair_build_model_vectors(pair1);
   agn_clique_pair_build_model_vectors(pair2);
@@ -548,6 +547,21 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
 
   agn_clique_pair_delete(pair1);
   agn_clique_pair_delete(pair2);
+
+  GtFeatureNode **r3 = gt_array_get(refrfeats, 2);
+  GtFeatureNode **p3 = gt_array_get(predfeats, 3);
+  AgnTranscriptClique *tcr3 = agn_transcript_clique_new();
+  AgnTranscriptClique *tcp3 = agn_transcript_clique_new();
+  agn_transcript_clique_add(tcr3, *r3);
+  agn_transcript_clique_add(tcp3, *p3);
+  GtRange lr3 = {26493, 29602};
+  AgnCliquePair *pair3 = agn_clique_pair_new("chr8", tcr3, tcp3, &lr3);
+  agn_clique_pair_build_model_vectors(pair3);
+  agn_clique_pair_comparative_analysis(pair3);
+  bool companalypass = agn_clique_pair_classify(pair3) ==
+                       AGN_CLIQUE_PAIR_CDS_MATCH;
+  agn_unit_test_result(test, "analysis and classification", companalypass);
+  agn_clique_pair_delete(pair3);
 
   gt_array_delete(refrfeats);
   gt_array_delete(predfeats);
