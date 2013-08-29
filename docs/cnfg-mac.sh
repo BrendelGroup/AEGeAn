@@ -5,4 +5,4 @@
 # http://www.finkproject.org/download/
 # http://git-scm.com/
 # and then install the following packages
-apt-get install -y cairo-devel ncurses-devel
+apt-get install -y cairo-devel ncurses-devel pango1-xft2-ft219-dev
