@@ -11,4 +11,5 @@ if [ $? != 0 ]; then
   echo '/usr/local/lib' >> /etc/ld.so.conf.d/genometools-x86_64.conf
   ldconfig
 fi
-apt-get install -y build-essential git libcairo2-dev libncurses5-dev
+apt-get install -y build-essential git libcairo2-dev libncurses5-dev \
+                   libpango1.0-dev
