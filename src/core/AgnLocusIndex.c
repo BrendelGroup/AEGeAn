@@ -595,11 +595,23 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
       GtRange *seqrange = gt_malloc( sizeof(GtRange) );
       GtRange refrrange, predrange;
       GtError *error = gt_error_new();
-      gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
-                                                error);
-      gt_feature_index_get_orig_range_for_seqid(predfeats, &predrange, seqid,
-                                                error);
-      GtRange trange = gt_range_join(&refrrange, &predrange);
+      bool refrhasseq, predhasseq;
+      gt_feature_index_has_seqid(refrfeats, &refrhasseq, seqid, error);
+      gt_feature_index_has_seqid(predfeats, &predhasseq, seqid, error);
+      if(refrhasseq && predhasseq)
+      {
+        gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
+                                                  error);
+      }
+      if(predhasseq)
+      {
+        gt_feature_index_get_orig_range_for_seqid(predfeats, &predrange, seqid,
+                                                  error);
+      }
+      GtRange trange;
+      if(refrhasseq && predhasseq) gt_range_join(&refrrange, &predrange);
+      else if(refrhasseq) trange = refrrange;
+      else if(predhasseq) trange = predrange;
       seqrange->start = trange.start;
       seqrange->end   = trange.end;
       #pragma omp critical
@@ -610,6 +622,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
         agn_logger_log_status(logger, "loci for sequence '%s' identified by "
                               "processor %d", seqid, rank);
       }
+      gt_error_delete(error);
     }
   } // End parallelize
   omp_set_num_threads(orig_numprocs);
