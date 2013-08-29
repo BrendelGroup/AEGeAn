@@ -10,6 +10,12 @@ style =
   intron = {
     max_show_width     = 0,
   },
+  start_codon = {
+    max_show_width     = 0,
+  },
+  stop_codon = {
+    max_show_width     = 0,
+  },
 --------------------------------------
   mRNA = {
     stroke             = function(gn, track)
