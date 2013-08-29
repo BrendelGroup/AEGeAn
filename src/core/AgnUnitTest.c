@@ -48,7 +48,10 @@ AgnUnitTest *agn_unit_test_new(const char *label,
 
 void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
 {
-  fprintf(outstream, "    %s\n", test->label);
+  const char *successstr = "FAILURE";
+  if(test->passed)
+    successstr = "SUCCESS";
+  fprintf(outstream, "    %-36s | %s\n", test->label, successstr);
 
   unsigned long i;
   for(i = 0; i < gt_array_size(test->results); i++)
