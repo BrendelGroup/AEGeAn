@@ -341,7 +341,7 @@ bool agn_transcript_clique_unit_test(AgnUnitTest *test)
   agn_unit_test_result(test, "parse from array", parsearraypass);
 
   bool numtranspass = true;
-  bool cdslenpass =  true;
+  bool cdslenpass = true;
   bool iterpass = true;
   unsigned long i;
   for(i = 0; i < gt_array_size(cliques); i++)

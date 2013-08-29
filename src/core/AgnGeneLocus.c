@@ -1071,6 +1071,25 @@ unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
   return transcript_count;
 }
 
+bool agn_gene_locus_unit_test(AgnUnitTest *test)
+{
+  GtFeatureNode *eden = agn_eden();
+  GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)eden);
+  AgnGeneLocus *locus = agn_gene_locus_new(gt_str_get(seqid));
+  agn_gene_locus_add_gene(locus, eden);
+  bool genenumpass = (agn_gene_locus_num_genes(locus) == 1 &&
+                      agn_gene_locus_num_refr_genes(locus) == 0 &&
+                      agn_gene_locus_num_pred_genes(locus) == 0);
+  agn_unit_test_result(test, "gene number (EDEN)", genenumpass);
+  bool transnumpass = (agn_gene_locus_num_transcripts(locus) == 3 &&
+                       agn_gene_locus_num_refr_transcripts(locus) == 0 &&
+                       agn_gene_locus_num_pred_transcripts(locus) == 0);
+  agn_unit_test_result(test, "mRNA number (EDEN)", transnumpass);
+
+  gt_genome_node_delete((GtGenomeNode *)eden);
+  return genenumpass && transnumpass;
+}
+
 void agn_gene_locus_update_range(AgnGeneLocus *locus, GtFeatureNode *gene)
 {
   GtRange gene_range = gt_genome_node_get_range((GtGenomeNode *)gene);

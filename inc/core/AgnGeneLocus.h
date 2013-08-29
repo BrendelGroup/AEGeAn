@@ -84,7 +84,10 @@ void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
                                       AgnCompEvaluation *eval);
 
 /**
- * Do a shallow copy of this data structure.
+ * Do a semi-shallow copy of this data structure--for members whose data types
+ * support reference counting, the same pointer is used and the reference is
+ * incremented. For the other members a new object is created and populated with
+ * the same content.
  *
  * @param[in] locus    a locus object
  * @returns            a clone of the locus object, all of whose internal data
@@ -475,5 +478,13 @@ unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
         agn_gene_locus_transcript_num(LC, REFERENCESOURCE)
 #define agn_gene_locus_num_transcripts(LC)\
         agn_gene_locus_transcript_num(LC, DEFAULTSOURCE)
+
+/**
+ * Run unit tests for this class.
+ *
+ * @param[out] test    object for storing test results
+ * @returns            true for success, false for failure
+ */
+bool agn_gene_locus_unit_test(AgnUnitTest *test);
 
 #endif

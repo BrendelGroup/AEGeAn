@@ -182,10 +182,10 @@ bool agn_clique_pair_needs_comparison(AgnCliquePair *pair);
  *                           belongs
  * @returns                  pointer to a new pair object
  */
-AgnCliquePair* agn_clique_pair_new( const char *seqid,
-                                    AgnTranscriptClique *refr_clique,
-                                    AgnTranscriptClique *pred_clique,
-                                    GtRange *locus_range );
+AgnCliquePair* agn_clique_pair_new(const char *seqid,
+                                   AgnTranscriptClique *refr_clique,
+                                   AgnTranscriptClique *pred_clique,
+                                   GtRange *locus_range);
 
 /**
  * Add information about a clique pair to a set of aggregate characteristics.
@@ -195,5 +195,13 @@ AgnCliquePair* agn_clique_pair_new( const char *seqid,
  */
 void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
                                             AgnCompResultDesc *desc);
+
+/**
+ * Run unit tests for this class.
+ *
+ * @param[out] test    object for storing test results
+ * @returns            true for success, false for failure
+ */
+bool agn_clique_pair_unit_test(AgnUnitTest *test);
 
 #endif

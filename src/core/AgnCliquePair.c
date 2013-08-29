@@ -1,4 +1,5 @@
 #include <math.h>
+#include "AgnCanonGeneStream.h"
 #include "AgnCliquePair.h"
 #include "AgnGtExtensions.h"
 #include "AgnUtils.h"
@@ -431,6 +432,87 @@ void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
   desc->pred_cds_length += agn_transcript_clique_cds_length(pred);
   desc->refr_exon_count += agn_transcript_clique_num_exons(refr);
   desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
+}
+
+bool agn_clique_pair_unit_test(AgnUnitTest *test)
+{
+  GtError *error = gt_error_new();
+  AgnLogger *logger = agn_logger_new();
+  int pullresult;
+
+  const char *refrfile = "data/gff3/grape-refr.gff3";
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &refrfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3in, logger);
+  GtArray *refrfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(cgstream,refrfeats,error);
+  pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    agn_logger_log_error(logger, "error processing refr node stream: %s",
+                         gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(cgstream);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(refrfeats, (GtCompare)agn_gt_genome_node_compare);
+
+  const char *predfile = "data/gff3/grape-pred.gff3";
+  gff3in = gt_gff3_in_stream_new_unsorted(1, &predfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  cgstream = agn_canon_gene_stream_new(gff3in, logger);
+  GtArray *predfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  arraystream = gt_array_out_stream_new(cgstream, predfeats, error);
+  pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    agn_logger_log_error(logger, "error processing refr node stream: %s",
+                         gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(cgstream);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(predfeats, (GtCompare)agn_gt_genome_node_compare);
+
+  bool genenumpass = (gt_array_size(refrfeats) == 12 &&
+                      gt_array_size(predfeats) == 13);
+  agn_unit_test_result(test, "parse grape example", genenumpass);
+
+  GtFeatureNode **r2 = gt_array_get(refrfeats, 0);
+  GtFeatureNode **p1 = gt_array_get(predfeats, 0);
+  GtFeatureNode **p2 = gt_array_get(predfeats, 1);
+  AgnTranscriptClique *tcr1 = agn_transcript_clique_new();
+  AgnTranscriptClique *tcr2 = agn_transcript_clique_new();
+  AgnTranscriptClique *tcp1 = agn_transcript_clique_new();
+  AgnTranscriptClique *tcp2 = agn_transcript_clique_new();
+  agn_transcript_clique_add(tcr2, *r2);
+  agn_transcript_clique_add(tcp1, *p1);
+  agn_transcript_clique_add(tcp2, *p2);
+  GtRange lr1 = {72, 5081};
+  GtRange lr2 = {10503, 11678};
+  AgnCliquePair *pair1 = agn_clique_pair_new("chr8", tcr1, tcp1, &lr1);
+  AgnCliquePair *pair2 = agn_clique_pair_new("chr8", tcr2, tcp2, &lr2);
+  bool issimplepass = (!agn_clique_pair_is_simple(pair1) &&
+                       agn_clique_pair_is_simple(pair2));
+  agn_unit_test_result(test, "simple clique pair", issimplepass);
+  bool needscomppass = (!agn_clique_pair_needs_comparison(pair1) &&
+                        agn_clique_pair_needs_comparison(pair2));
+  agn_unit_test_result(test, "comparison test", needscomppass);
+  bool hasutrspass = (!agn_clique_pair_has_utrs(pair1) &&
+                      agn_clique_pair_has_utrs(pair2));
+  agn_unit_test_result(test, "UTR test", hasutrspass);
+  // other tests
+  agn_clique_pair_delete(pair1);
+  agn_clique_pair_delete(pair2);
+
+  gt_array_delete(refrfeats);
+  gt_array_delete(predfeats);
+
+  gt_error_delete(error);
+  agn_logger_delete(logger);
+  return true;
 }
 
 void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
