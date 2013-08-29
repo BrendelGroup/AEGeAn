@@ -11,4 +11,4 @@ if [ $? != 0 ]; then
   echo '/usr/local/lib' >> /etc/ld.so.conf.d/genometools-x86_64.conf
   /sbin/ldconfig
 fi
-yum install -y git cairo-devel ncurses-devel
+yum install -y git cairo-devel ncurses-devel pango-devel
