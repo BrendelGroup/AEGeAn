@@ -40,7 +40,8 @@ Full installation instructions are provided in docs/INSTALL. The example below
 (for the impatient) shows default installation on an Ubuntu system.
 
     # Install pre-requisites with your package manager
-    sudo apt-get install -y build-essential git libcairo2-dev libncurses5-dev
+    sudo apt-get install -y build-essential git libcairo2-dev libncurses5-dev \
+                            libpango1.0-dev
     # Make sure /usr/local/bin is in your $PATH, and that /usr/local/lib is in
     # your LD path
 
