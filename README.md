@@ -40,4 +40,4 @@ Comprehensive documentation for the AEGeAn Toolkit is coming soon!
 In the mean time, each program provides a descriptive usage statement, and the C API is documented in the header files located in the `inc/core` directory.
 
 ###Publications
-**Daniel S. Standage** and Volker P. Brendel (2012) ParsEval: parallel comparison and analysis of gene structure annotations. BMC Bioinformatics, **13**:187, [doi:10.1186/1471-2105-13-187](http://dx/doi.org/10.1186/1471-2105-13-187).
+**Daniel S. Standage** and Volker P. Brendel (2012) ParsEval: parallel comparison and analysis of gene structure annotations. BMC Bioinformatics, **13**:187, [doi:10.1186/1471-2105-13-187](http://dx.doi.org/10.1186/1471-2105-13-187).
