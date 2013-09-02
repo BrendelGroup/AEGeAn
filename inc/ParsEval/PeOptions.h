@@ -24,8 +24,8 @@ typedef struct
   const char *predlabel;
   const char *outfmt;
   bool overwrite;
-  bool html;
   const char *data_path;
+  bool makefilter;
   bool usefilter;
   const char *filterfile;
   AgnCompareFilters filters;

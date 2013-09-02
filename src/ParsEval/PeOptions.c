@@ -4,6 +4,8 @@
 #include "AgnUtils.h"
 #include "PeOptions.h"
 
+void pe_option_print(PeOptions *options, FILE *outstream);
+
 int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 {
   int opt = 0;
@@ -15,7 +17,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     { "complimit",  required_argument, NULL, 'c' },
     { "debug",      no_argument,       NULL, 'd' },
     { "outformat",  required_argument, NULL, 'f' },
-    { "printgff3",  required_argument, NULL, 'g' },
+    { "printgff3",  no_argument,       NULL, 'g' },
     { "help",       no_argument,       NULL, 'h' },
     { "makefilter", no_argument,       NULL, 'k' },
     { "vectors",    no_argument,       NULL, 'm' },
@@ -24,7 +26,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     { "png",        no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
     { "summary",    no_argument,       NULL, 's' },
-    { "maxtrans",   no_argument,       NULL, 't' },
+    { "maxtrans",   required_argument, NULL, 't' },
     { "verbose",    no_argument,       NULL, 'v' },
     { "overwrite",  no_argument,       NULL, 'w' },
     { "refrlabel",  required_argument, NULL, 'x' },
@@ -33,9 +35,9 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
   };
 
   bool makefilter = false;
-  for( opt = getopt_long(argc, argv + 0, optstr, parseval_options, &optindex);
+  for( opt = getopt_long(argc, argv, optstr, parseval_options, &optindex);
        opt != -1;
-       opt = getopt_long(argc, argv + 0, optstr, parseval_options, &optindex) )
+       opt = getopt_long(argc, argv, optstr, parseval_options, &optindex) )
   {
     switch(opt)
     {
@@ -67,8 +69,6 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
             exit(1);
         }
         options->outfmt = optarg;
-        if(strcmp(options->outfmt, "html") == 0)
-          options->html = true;
         break;
 
       case 'g':
@@ -167,6 +167,9 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     }
   }
 
+  // For debugging
+  // pe_option_print(options, stderr);
+
   if(makefilter)
   {
     char cmd[512];
@@ -192,7 +195,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
   if(strcmp(options->outfilename, "STDOUT") != 0)
   {
-    if(options->html)
+    if(strcmp(options->outfmt, "html") == 0)
     {
       char dircmd[256];
       sprintf(dircmd, "test -d %s", options->outfilename);
@@ -230,7 +233,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     }
   }
 
-  if(options->html)
+  if(strcmp(options->outfmt, "html") == 0)
   {
     if(strcmp(options->outfilename, "STDOUT") == 0)
     {
@@ -371,7 +374,6 @@ void pe_set_option_defaults(PeOptions *options)
   options->locus_graphics = false;
   options->outfmt = "text";
   options->overwrite = false;
-  options->html = false;
   options->data_path = AGN_DATA_PATH;
   options->usefilter = false;
   options->filterfile = "";
@@ -380,4 +382,26 @@ void pe_set_option_defaults(PeOptions *options)
   options->trans_per_locus = 32;
   options->refrlabel = "";
   options->predlabel = "";
+}
+
+void pe_option_print(PeOptions *options, FILE *outstream)
+{
+  fprintf(outstream, "debug=%d\n", options->debug);
+  fprintf(outstream, "outfile=%p\n", options->outfile);
+  fprintf(outstream, "outfilename=%s\n", options->outfilename);
+  fprintf(outstream, "gff3=%d\n", options->gff3);
+  fprintf(outstream, "verbose=%d\n", options->verbose);
+  fprintf(outstream, "complimit=%d\n", options->complimit);
+  fprintf(outstream, "summary_only=%d\n", options->summary_only);
+  fprintf(outstream, "vectors=%d\n", options->vectors);
+  fprintf(outstream, "locus_graphics=%d\n", options->locus_graphics);
+  fprintf(outstream, "outfmt=%s\n", options->outfmt);
+  fprintf(outstream, "overwrite=%d\n", options->overwrite);
+  fprintf(outstream, "data_path=%s\n", options->data_path);
+  fprintf(outstream, "makefilter=%d\n", options->makefilter);
+  fprintf(outstream, "usefilter=%d\n", options->usefilter);
+  fprintf(outstream, "numprocs=%d\n", options->numprocs);
+  fprintf(outstream, "trans_per_locus=%d\n", options->trans_per_locus);
+  fprintf(outstream, "refrlabel=%s\n", options->refrlabel);
+  fprintf(outstream, "predlabel=%s\n", options->predlabel);
 }

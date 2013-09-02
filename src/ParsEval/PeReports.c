@@ -65,7 +65,7 @@ void pe_aggregate_results(AgnCompEvaluation *overall_eval,
       agn_comp_evaluation_combine(overall_eval, eval);
       AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
       // FIXME Should this block be placed elsewhere?
-      if(options->html && !options->summary_only)
+      if(strcmp(options->outfmt, "html") == 0 && !options->summary_only)
       {
         pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
                                   locsum->length, locsum->refrtrans,
@@ -1071,7 +1071,7 @@ GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
     {
       const char *seqid = gt_str_array_get(seqids, i);
       char filename[512];
-      if(options->html)
+      if(strcmp(options->outfmt, "html") == 0)
       {
         char dircmd[512];
         sprintf(dircmd, "mkdir %s/%s", options->outfilename, seqid);
@@ -1126,7 +1126,7 @@ void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
     for(i = 0; i < gt_str_array_size(seqids); i++)
     {
       FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-      if(options->html)
+      if(strcmp(options->outfmt, "html") == 0)
         pe_print_seqfile_footer(seqfile);
       fclose(seqfile);
     }
@@ -1136,7 +1136,7 @@ void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
     fflush(stdout);
   else
     fclose(options->outfile);
-  if(!options->html && !options->summary_only)
+  if(!strcmp(options->outfmt, "html") == 0 && !options->summary_only)
   {
     int result;
     unsigned long i;
@@ -1318,7 +1318,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
   agn_comp_stats_binary_resolve(&summary_data->stats.exon_struc_stats);
   agn_comp_stats_binary_resolve(&summary_data->stats.utr_struc_stats);
 
-  if(options->html)
+  if(strcmp(options->outfmt, "html") == 0)
   {
     pe_print_summary_html( start_time, argc, argv, seqids, summary_data, seq_summary_data,
                            outstream, options );
