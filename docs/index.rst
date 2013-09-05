@@ -1,16 +1,16 @@
 .. AEGeAn documentation master file, created by
    sphinx-quickstart on Thu Sep  5 09:18:30 2013.
 
-.. image:: aegean-logo-v1.0-128.png
-   :align: right
-   :alt: AEGeAn logo
-
 AEGeAn Toolkit: integrated genome analysis
 ==========================================
 
 :Author:  Daniel S. Standage
 :Contact: daniel.standage@gmail.com
 :License: ISC
+
+.. image:: aegean-logo-v1.0-128.png
+   :align: right
+   :alt: AEGeAn logo
 
 
 **Contents:**
