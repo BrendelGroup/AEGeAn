@@ -4,13 +4,13 @@
 AEGeAn Toolkit: integrated genome analysis
 ==========================================
 
-:Author:  Daniel S. Standage
-:Contact: daniel.standage@gmail.com
-:License: ISC
-
 .. image:: aegean-logo-v1.0-128.png
    :align: right
    :alt: AEGeAn logo
+
+:Author:  Daniel S. Standage
+:Contact: daniel.standage@gmail.com
+:License: ISC
 
 
 **Contents:**
