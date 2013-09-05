@@ -1,1 +1,0 @@
-cnfg-redhat.sh

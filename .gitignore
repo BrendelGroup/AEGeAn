@@ -3,3 +3,4 @@ obj
 inc/core/AgnVersion.h
 libaegean.a
 TAIR*.gff
+docs/_*
