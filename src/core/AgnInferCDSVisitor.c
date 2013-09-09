@@ -373,16 +373,18 @@ void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
   GtFeatureNode *start_codon, *stop_codon;
 
   bool exonsexplicit    = gt_array_size(v->exons) > 0;
+  bool cdsexplicit      = gt_array_size(v->cds) > 0;
   bool startcodon_check = gt_array_size(v->starts) == 1 &&
                           (start_codon = gt_array_get(v->starts, 0)) != NULL;
   bool stopcodon_check  = gt_array_size(v->stops)  == 1 &&
                           (stop_codon  = gt_array_get(v->stops,  0)) != NULL;
+  bool caninferutrs     = exonsexplicit && startcodon_check && stopcodon_check;
 
   if(gt_array_size(v->utrs) > 0)
   {
     return;
   }
-  else if(!exonsexplicit || !startcodon_check || !stopcodon_check)
+  else if(!cdsexplicit && !caninferutrs)
   {
     agn_logger_log_error(v->logger, "cannot infer missing UTRs for mRNA '%s'"
                          "(line %u) without exons and start/stop codons or CDS",
