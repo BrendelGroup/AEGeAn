@@ -8,8 +8,7 @@ For the impatient
 .. code-block:: bash
 
     # Install pre-requisites with your package manager
-    sudo apt-get install -y build-essential git libcairo2-dev libncurses5-dev \
-                            libpango1.0-dev
+    sudo apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
     # Make sure /usr/local/bin is in your $PATH, and that /usr/local/lib is in
     # your LD path
 
@@ -161,10 +160,9 @@ for the most common operating systems. You'll want to
       grep '/usr/local/lib' /etc/ld.so.conf /etc/ld.so.conf.d/* > /dev/null
       if [ $? != 0 ]; then
         echo '/usr/local/lib' >> /etc/ld.so.conf.d/genometools-x86_64.conf
-        ldconfig
       fi
-      apt-get install -y build-essential git libcairo2-dev libncurses5-dev \
-                         libpango1.0-dev
+      ldconfig
+      apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
 
 * Red Hat-based systems including CentOS, Fedora, etc (tested on CentOS 5.3)
 
@@ -178,9 +176,9 @@ for the most common operating systems. You'll want to
       grep '/usr/local/lib' /etc/ld.so.conf /etc/ld.so.conf.d/* > /dev/null
       if [ $? != 0 ]; then
         echo '/usr/local/lib' >> /etc/ld.so.conf.d/genometools-x86_64.conf
-        /sbin/ldconfig
       fi
-      yum install -y git cairo-devel ncurses-devel pango-devel
+      /sbin/ldconfig
+      yum install -y git cairo-devel pango-devel
 
 * Mac OS X (tested on Mac OS 10.6)
 
