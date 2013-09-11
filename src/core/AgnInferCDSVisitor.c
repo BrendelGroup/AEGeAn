@@ -20,6 +20,7 @@ struct AgnInferCDSVisitor
   GtArray *exons;
   GtArray *starts;
   GtArray *stops;
+  GtUword cdscounter;
   AgnLogger *logger;
 };
 
@@ -133,6 +134,7 @@ GtNodeVisitor* agn_infer_cds_visitor_new(AgnLogger *logger)
   nv = gt_node_visitor_create(agn_infer_cds_visitor_class());
   AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
   v->logger = logger;
+  v->cdscounter = 0;
   return nv;
 }
 
@@ -196,6 +198,13 @@ void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
   }
 
   GtFeatureNode **firstsegment = gt_array_get(v->cds, 0);
+  const char *id = gt_feature_node_get_attribute(*firstsegment, "ID");
+  if(id == NULL)
+  {
+    char newid[1024];
+    sprintf(newid, "CDS%lu", v->cdscounter++);
+    gt_feature_node_add_attribute(*firstsegment, "ID", newid);
+  }
   gt_feature_node_make_multi_representative(*firstsegment);
   unsigned long i;
   for(i = 0; i < gt_array_size(v->cds); i++)
@@ -253,7 +262,6 @@ void visit_mrna_check_start(AgnInferCDSVisitor *v)
                                                      strand);
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
-    gt_feature_node_add_attribute(cf, "Parent", mrnaid);
     gt_array_add(v->starts, cf);
   }
 }
@@ -303,7 +311,6 @@ void visit_mrna_check_stop(AgnInferCDSVisitor *v)
                                                      strand);
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
-    gt_feature_node_add_attribute(cf, "Parent", mrnaid);
     gt_array_add(v->stops, cf);
   }
 }
@@ -360,7 +367,6 @@ void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
         cdsrange.end, exon_strand
       );
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)cdsfeat);
-      gt_feature_node_add_attribute((GtFeatureNode *)cdsfeat, "Parent", mrnaid);
       gt_array_add(v->cds, cdsfeat);
     }
   }
@@ -429,7 +435,6 @@ void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
                                               lefttype, utrrange.start,
                                               utrrange.end, strand);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)utr);
-      gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", mrnaid);
       gt_array_add(v->utrs, utr);
     }
 
@@ -449,7 +454,6 @@ void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
                                               righttype, utrrange.start,
                                               utrrange.end, strand);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)utr);
-      gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", mrnaid);
       gt_array_add(v->utrs, utr);
     }
   }
