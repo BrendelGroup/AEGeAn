@@ -61,12 +61,13 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
   }
   gt_feature_node_iterator_delete(iter);
 
-  if(length % 3 != 0)
-  {
-    const char *tid = gt_feature_node_get_attribute(transcript, "ID");
-    fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, "
-            "not a multiple of 3\n", tid, length);
-  }
+  // FIXME how should this be reported?
+  // if(length % 3 != 0)
+  // {
+  //   const char *tid = gt_feature_node_get_attribute(transcript, "ID");
+  //   fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, "
+  //           "not a multiple of 3\n", tid, length);
+  // }
 
   return length;
 }
