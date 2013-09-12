@@ -54,10 +54,10 @@ typedef struct
 /**
  * Associate the given gene annotation with this gene locus. Rather than calling
  * this function directly, users are recommended to use one of the following
- * macros: agn_gene_locus_add_pred_gene(locus, gene)' and
- * `agn_gene_locus_add_refr_gene(locus, gene)', to be used when keeping track of
+ * macros: `agn_gene_locus_add_pred_gene(locus, gene)` and
+ * `agn_gene_locus_add_refr_gene(locus, gene)`, to be used when keeping track of
  * an annotation's source is important (i.e. for pairwise comparison); and
- * `agn_gene_locus_add_gene(locus, gene)' otherwise.
+ * `agn_gene_locus_add_gene(locus, gene)` otherwise.
  *
  * @param[out] locus     locus to which the gene annotation will be added
  * @param[in]  gene      annotation to associate with this locus
@@ -110,10 +110,10 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2);
 /**
  * The combined length of all coding sequences associated with this locus.
  * Rather than calling this function directly, users are encouraged to use one
- * of the following macros: `agn_gene_locus_refr_cds_length(locus)' for the
+ * of the following macros: `agn_gene_locus_refr_cds_length(locus)` for the
  * combined length of all reference CDSs,
- * `agn_gene_locus_pred_cds_length(locus)' for the combined length of all
- * prediction CDSs, and `agn_gene_locus_get_cds_length(locus)' for the combined
+ * `agn_gene_locus_pred_cds_length(locus)` for the combined length of all
+ * prediction CDSs, and `agn_gene_locus_get_cds_length(locus)` for the combined
  * length of all CDSs.
  *
  * @param[in] locus    the locus
@@ -144,7 +144,7 @@ unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
  *                      called, the comparative analysis is performed and the
  *                      clique pairs are stored and returned; subsequence method
  *                      calls simply return the previously stored results;
- *                      the macro `agn_gene_locus_pairs_to_report(locus)' is
+ *                      the macro `agn_gene_locus_pairs_to_report(locus)` is
  *                      provided for this use case
  */
 GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus);
@@ -161,9 +161,9 @@ void agn_gene_locus_delete(AgnGeneLocus *locus);
 /**
  * Get the number of exons for the locus. Rather than calling this function
  * directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_num_pred_exons(locus)' for the number of prediction exons,
- * `agn_gene_locus_num_refr_exons(locus)' for the number of reference exons, or
- * `agn_gene_locus_num_exons(locus)' if the source of annotation is undesignated
+ * `agn_gene_locus_num_pred_exons(locus)` for the number of prediction exons,
+ * `agn_gene_locus_num_refr_exons(locus)` for the number of reference exons, or
+ * `agn_gene_locus_num_exons(locus)` if the source of annotation is undesignated
  * or irrelevant.
  *
  * @param[in] locus   the locus
@@ -194,9 +194,9 @@ bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters);
 /**
  * Get the genes associated with this locus. Rather than calling this function
  * directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_genes(locus)' to retrieve prediction genes,
- * `agn_gene_locus_refr_genes(locus)' to retrieve reference genes, or
- * `agn_gene_locus_get_genes(locus)' if the source of annotation is undesignated
+ * `agn_gene_locus_pred_genes(locus)` to retrieve prediction genes,
+ * `agn_gene_locus_refr_genes(locus)` to retrieve reference genes, or
+ * `agn_gene_locus_get_genes(locus)` if the source of annotation is undesignated
  * or irrelevant.
  *
  * @param[in] locus    a gene locus
@@ -216,9 +216,9 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
 /**
  * Get IDs of the genes associated with this locus. Rather than calling this
  * function directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_gene_ids(locus)' to retrieve prediction genes IDs,
- * `agn_gene_locus_refr_gene_ids(locus)' to retrieve reference genes IDs, or
- * `agn_gene_locus_get_gene_ids(locus)' if the source of annotation is
+ * `agn_gene_locus_pred_gene_ids(locus)` to retrieve prediction genes IDs,
+ * `agn_gene_locus_refr_gene_ids(locus)` to retrieve reference genes IDs, or
+ * `agn_gene_locus_get_gene_ids(locus)` if the source of annotation is
  * undesignated or irrelevant.
  *
  * @param[in] locus    a gene locus
@@ -238,9 +238,9 @@ GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
 /**
  * Get the number of genes for the locus. Rather than calling this function
  * directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_num_pred_genes(locus)' for the number of prediction genes,
- * `agn_gene_locus_num_refr_genes(locus)' for the number of reference genes, or
- * `agn_gene_locus_num_genes(locus)' if the source of annotation is undesignated
+ * `agn_gene_locus_num_pred_genes(locus)` for the number of prediction genes,
+ * `agn_gene_locus_num_refr_genes(locus)` for the number of reference genes, or
+ * `agn_gene_locus_num_genes(locus)` if the source of annotation is undesignated
  * or irrelevant.
  *
  * @param[in] locus   the locus
@@ -369,11 +369,11 @@ void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
 /**
  * Calculate the splice complexity of this gene locus. Rather than calling this
  * method directly, users are recommended to use one of the following macros:
- * `agn_gene_locus_prep_splice_complexity(locus)' to calculate the splice
+ * `agn_gene_locus_prep_splice_complexity(locus)` to calculate the splice
  * complexity of just the prediction transcripts,
- * `agn_gene_locus_refr_splice_complexity(locus)' to calculate the splice
+ * `agn_gene_locus_refr_splice_complexity(locus)` to calculate the splice
  * complexity of just the reference transcripts, and
- * `agn_gene_locus_calc_splice_complexity(locus)' to calculate the splice
+ * `agn_gene_locus_calc_splice_complexity(locus)` to calculate the splice
  * complexity taking into account all transcripts.
  *
  * @param[in] locus    the locus
@@ -414,9 +414,9 @@ void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
 /**
  * Get the transcripts associated with this locus. Rather than calling this
  * function directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_transcripts(locus)' to retrieve prediction transcripts,
- * `agn_gene_locus_refr_transcripts(locus)' to retrieve reference transcripts,
- * or `agn_gene_locus_get_genes(locus)' if the source of annotation is
+ * `agn_gene_locus_pred_transcripts(locus)` to retrieve prediction transcripts,
+ * `agn_gene_locus_refr_transcripts(locus)` to retrieve reference transcripts,
+ * or `agn_gene_locus_get_genes(locus)` if the source of annotation is
  * undesignated or irrelevant.
  *
  * @param[in] locus    the locus
@@ -437,9 +437,9 @@ GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
 /**
  * Get the transcript IDs associated with this locus. Rather than calling this
  * function directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_transcripts(locus)' to retrieve prediction IDs,
- * `agn_gene_locus_refr_transcripts(locus)' to retrieve reference IDs,
- * or `agn_gene_locus_get_genes(locus)' if the source of annotation is
+ * `agn_gene_locus_pred_transcripts(locus)` to retrieve prediction IDs,
+ * `agn_gene_locus_refr_transcripts(locus)` to retrieve reference IDs,
+ * or `agn_gene_locus_get_genes(locus)` if the source of annotation is
  * undesignated or irrelevant.
  *
  * @param[in] locus    the locus
@@ -460,10 +460,10 @@ GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus,
 /**
  * Get the number of transcripts for the locus. Rather than calling this
  * function directly, users are encouraged to use one of the following macros:
- * `agn_transcript_locus_num_pred_transcripts(locus)' for the number of
- * prediction transcripts, `agn_transcript_locus_num_refr_transcripts(locus)'
+ * `agn_transcript_locus_num_pred_transcripts(locus)` for the number of
+ * prediction transcripts, `agn_transcript_locus_num_refr_transcripts(locus)`
  * for the number of reference transcripts, or
- * `agn_transcript_locus_num_transcripts(locus)' if the source of annotation is
+ * `agn_transcript_locus_num_transcripts(locus)` if the source of annotation is
  * undesignated or irrelevant.
  *
  * @param[in] locus   the locus

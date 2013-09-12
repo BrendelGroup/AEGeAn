@@ -3,6 +3,11 @@ use strict;
 use warnings;
 
 print "AEGeAn C API\n============\n\n";
+print "The most comprehensive documentation for AEGeAn's C API resides in the
+project's header files. This page simply lists a brief description for each
+class/module, as well as the methods associated with each. Please refer to the
+header files (links provided) for more information on individual methods and
+their arguments.\n\n";
 
 my $dir = $ARGV[0];
 opendir(my $dh, $dir) or die("open dir fail");
@@ -25,13 +30,14 @@ sub process_file
     <$fh>;
   };
 
-  my @docblocks = $contents =~ m/(\/\*\*.+?;)/sg;
+  my @docblocks = $contents =~ m/(\/\*\*.+?\);)/sg;
   return if(@docblocks == 0);
   
   my $descstr = shift(@docblocks);
   my ($type, $name, $desc) = parse_description($descstr);
   my $title = "$type $name";
-  printf("%s\n%s\n%s\n\n", $title, "-" x length($title), $desc);
+  my $url = "https://github.com/standage/AEGeAn/blob/master/$dir/$name.h";
+  printf("%s\n%s\nSee %s.\n\n%s\n\n", $title, "-" x length($title), $url, $desc);
 
   foreach my $block(@docblocks)
   {
@@ -59,5 +65,16 @@ sub parse_description
 
 sub parse_function_doc
 {
+  my $desc = shift(@_);
+  return if($desc !~ m/\@param/ and $desc !~ m/\@returns/);
+
+  $desc =~ s/\/\*\*\W+//s;
+  my($synopsis) = $desc =~ m/^(.+?)(\@param|\*\/)/s;
+  $synopsis =~ s/\*//g;
+  $synopsis =~ s/\s+/ /sg;
+  $synopsis =~ s/\s+$//;
+  my($prototype) = $desc =~ m/\*\/\s*(\w[^;]+);/;
+  $prototype =~ s/\s+/ /sg;
   
+  print("* ``$prototype``\n\n");
 }
