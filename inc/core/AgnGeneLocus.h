@@ -5,6 +5,8 @@
 #include "AgnCliquePair.h"
 
 /**
+ * @class AgnGeneLocus
+ *
  * The purpose of the AgnGeneLocus class is to store all of the data
  * associated with a distinct locus, in many cases to facilitate the comparison
  * of two sets of gene structure annotations for that locus.

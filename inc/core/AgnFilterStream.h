@@ -5,6 +5,8 @@
 #include "core/hashmap_api.h"
 
 /**
+ * @class AgnFilterStream
+ *
  * A node stream used to filter out unwanted nodes. The user can either specify
  * the types of nodes to keep (all others will be deleted and not passed), or
  * the types of nodes not to keep (these will be deleted, all others will be

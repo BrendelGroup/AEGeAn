@@ -201,7 +201,7 @@ void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
   const char *id = gt_feature_node_get_attribute(*firstsegment, "ID");
   if(id == NULL)
   {
-    char newid[1024];
+    char newid[64];
     sprintf(newid, "CDS%lu", v->cdscounter++);
     gt_feature_node_add_attribute(*firstsegment, "ID", newid);
   }
@@ -361,11 +361,9 @@ void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
                                  &right_codon_range, &cdsrange);
     if(exon_includes_cds)
     {
-      GtGenomeNode *cdsfeat = gt_feature_node_new
-      (
-        gt_genome_node_get_seqid(exon_gn), "CDS", cdsrange.start,
-        cdsrange.end, exon_strand
-      );
+      GtGenomeNode *cdsfeat;
+      cdsfeat = gt_feature_node_new(gt_genome_node_get_seqid(exon_gn), "CDS",
+                                    cdsrange.start, cdsrange.end, exon_strand);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)cdsfeat);
       gt_array_add(v->cds, cdsfeat);
     }

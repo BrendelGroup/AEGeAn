@@ -6,6 +6,8 @@
 #include "AgnTranscriptClique.h"
 
 /**
+ * @class AgnCliquePair
+ *
  * The purpose of the AgnCliquePair class is to associate all of the data needed
  * to compare transcripts from two alternative sources of annotation for the
  * same sequence.

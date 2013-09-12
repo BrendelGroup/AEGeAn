@@ -4,6 +4,11 @@
 #include "genometools.h"
 #include "AgnLogger.h"
 
+/**
+ * @class AgnInferCDSVisitor
+ *
+ * FIXME
+ */
 typedef struct AgnInferCDSVisitor AgnInferCDSVisitor;
 
 /**

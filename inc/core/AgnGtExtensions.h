@@ -2,6 +2,8 @@
 #define AEGEAN_GT_EXTENSIONS_MODULE
 
 /**
+ * @module AgnGtExtensions
+ *
  * A collection of extensions to core GenomeTools classes.
  */
 

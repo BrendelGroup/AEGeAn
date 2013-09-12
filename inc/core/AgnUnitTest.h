@@ -4,6 +4,8 @@
 #include "genometools.h"
 
 /**
+ * @class AgnUnitTest
+ *
  * Class used for unit testing of classes and modules.
  */
 typedef struct AgnUnitTest AgnUnitTest;

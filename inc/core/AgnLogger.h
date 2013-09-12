@@ -4,6 +4,8 @@
 #include "genometools.h"
 
 /**
+ * @class AgnLogger
+ *
  * The AgnLogger class is desiged to store error, warning, and status messages.
  */
 typedef struct AgnLogger AgnLogger;

@@ -6,7 +6,13 @@
 #include "AgnGeneLocus.h"
 #include "AgnLogger.h"
 
+/**
+ * @class AgnLocusIndex
+ *
+ * FIXME
+ */
 typedef struct AgnLocusIndex AgnLocusIndex;
+
 typedef void (*AgnLocusIndexVisitFunc)(AgnGeneLocus *, void *);
 
 /**

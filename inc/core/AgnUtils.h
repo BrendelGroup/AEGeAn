@@ -2,6 +2,8 @@
 #define AEGEAN_UTILS_MODULE
 
 /**
+ * @module AgnUtils
+ *
  * A collection of assorted utility functions for ParsEval.
  */
 

@@ -5,6 +5,12 @@
 #include "AgnLogger.h"
 
 /**
+ * @module AgnComparEval
+ *
+ * FIXME
+ */
+
+/**
  * This struct is used to aggregate counts and statistics regarding the
  * nucleotide-level comparison and analysis of gene structure.
  */

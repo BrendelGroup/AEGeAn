@@ -5,6 +5,8 @@
 #include "AgnUnitTest.h"
 
 /**
+ * @class AgnTranscriptClique
+ *
  * The purpose of the AgnTranscriptClique class is to store data pertaining to
  * an individual maximal transcript clique. This clique may only contain a
  * single transcript, or it may contain many. The only stipulation is that the

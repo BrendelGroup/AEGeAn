@@ -5,6 +5,8 @@
 #include "AgnLogger.h"
 
 /**
+ * @class AgnCanonGeneStream
+ * 
  * A node stream that returns only canonical protein-coding genes that pass
  * stringent validation.
  */
