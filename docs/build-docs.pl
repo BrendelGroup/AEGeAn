@@ -1,26 +1,31 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use Getopt::Long;
+
+# Daniel S. Standage
+# 13 Sept 2013
+# daniel.standage@gmail.com
+#
+# Usage: perl build-docs.pl inc/core inc/ParsEval > docs/api.rst
 
 print "AEGeAn C API\n============\n\n";
-print "The most comprehensive documentation for AEGeAn's C API resides in the
-project's header files. This page simply lists a brief description for each
-class/module, as well as the methods associated with each. Please refer to the
-header files (links provided) for more information on individual methods and
-their arguments.\n\n";
 
-my $dir = $ARGV[0];
-opendir(my $dh, $dir) or die("open dir fail");
-while(my $entry = readdir($dh))
+# Main procedure
+my $dir;
+foreach my $dirname(@ARGV)
 {
-  if($entry =~ m/\.h$/)
+  $dir = $dirname;
+  opendir(my $dh, $dir) or die("open dir fail");
+  while(my $entry = readdir($dh))
   {
-    process_file("$dir/$entry");
+    make_docs_from_file("$dir/$entry") if($entry =~ m/\.h$/);
   }
+  closedir($dh);
 }
-closedir($dh);
 
-sub process_file
+# Generate class or module documentation from a header file
+sub make_docs_from_file
 {
   my $file = shift(@_);
   my $contents = do
@@ -30,51 +35,87 @@ sub process_file
     <$fh>;
   };
 
-  my @docblocks = $contents =~ m/(\/\*\*.+?\);)/sg;
+  my @docblocks = $contents =~ m/(\/\*\*.+?\*\/.+?;)/sg;
   return if(@docblocks == 0);
-  
-  my $descstr = shift(@docblocks);
-  my ($type, $name, $desc) = parse_description($descstr);
-  my $title = "$type $name";
-  my $url = "https://github.com/standage/AEGeAn/blob/master/$dir/$name.h";
-  printf("%s\n%s\nSee %s.\n\n%s\n\n", $title, "-" x length($title), $url, $desc);
 
-  foreach my $block(@docblocks)
+  process_doc_blocks(@docblocks);
+}
+
+# Process a set of doc blocks from a class/module header file
+sub process_doc_blocks
+{
+  my $summary = shift(@_);
+  do {} while($summary =~ s/\s+\*\s+/ /g);
+
+  if($summary =~ m/\@class/)
   {
-    parse_function_doc($block);
+    my($class, $description) = $summary =~ m/\/\*\* \@class (\S+) (.+)/;
+    my $title = "Class $class";
+    my $url = "https://github.com/standage/AEGeAn/blob/master/$dir/$class.h";
+    printf("%s\n%s\n\n", $title, "-" x length($title));
+    printf(".. c:type:: %s\n\n  %s See the `class header <%s>`_.\n\n", $class,
+           $description, $url);
+
+    foreach my $block(@_)
+    {
+      process_doc_block($block);
+    }
+  }
+
+  elsif($summary =~ m/\@module/)
+  {
+    my($module, $description) = $summary =~ m/\/\*\* \@module (\S+) (.+)/;
+    my $title = "Module $module";
+    my $url = "https://github.com/standage/AEGeAn/blob/master/$dir/$module.h";
+    printf("%s\n%s\n\n", $title, "-" x length($title));
+    printf("%s See the `module header <%s>`_.\n\n", $description, $url);
+
+    foreach my $block(@_)
+    {
+      process_doc_block($block);
+    }
+  }
+
+  else
+  {
+    die("class/module fail");
   }
 }
 
-sub parse_description
+# Process the doc block corresponding to an individual function or type def
+sub process_doc_block
 {
-  my $desc = shift(@_);
-  do {} while($desc =~ s/\s+\*\s+/ /g);
-  if($desc =~ m/\@class/)
-  {
-    my($class_name, $description) = $desc =~ m/\/\*\* \@class (\S+) (.+)/;
-    return ("Class", $class_name, $description);
-  }
-  elsif($desc =~ m/\@module/)
-  {
-    my($module_name, $description) = $desc =~ m/\/\*\* \@module (\S+) (.+)/;
-    return ("Module", $module_name, $description);
-  }
+  my $block = shift(@_);
 
-  die("desc fail $desc");
-}
-
-sub parse_function_doc
-{
-  my $desc = shift(@_);
-  return if($desc !~ m/\@param/ and $desc !~ m/\@returns/);
-
-  $desc =~ s/\/\*\*\W+//s;
-  my($synopsis) = $desc =~ m/^(.+?)(\@param|\*\/)/s;
+  $block =~ s/\/\*\*\W+//s;
+  my($type) = $block =~ m/(function|type)/;
+  die("block type fail") unless($type);
+  $block =~ s/(function|type) +//;
+  my($synopsis) = $block =~ m/^(.+?)(\@param|\@member|\*\/)/s;
   $synopsis =~ s/\*//g;
   $synopsis =~ s/\s+/ /sg;
   $synopsis =~ s/\s+$//;
-  my($prototype) = $desc =~ m/\*\/\s*(\w[^;]+);/;
-  $prototype =~ s/\s+/ /sg;
-  
-  print("* ``$prototype``\n\n");
+
+  if($type eq "function")
+  {
+    my($prototype) = $block =~ m/\*\/\s*(\w[^;]+);/;
+    $prototype =~ s/\s+/ /sg;
+    print(".. c:function:: $prototype\n\n  $synopsis\n\n");
+  }
+  elsif($type eq "type")
+  {
+    my($typename) = $block =~ m/struct (\S+)/;
+    print(".. c:type:: $typename\n\n  $synopsis\n\n");
+    my @members = $block =~ m/\@member (.+)/g;
+    foreach my $member(@members)
+    {
+      my($mtype, $mname, $mdesc) = $member =~ m/\[(.+)\] (\S+) (.+)/;
+      print("  * **$mtype $mname**: $mdesc\n");
+    }
+    print("\n\n");
+  }
+  else
+  {
+    die("block type fail");
+  }
 }
