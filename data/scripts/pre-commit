@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+perl data/scripts/build-docs.pl inc/core > docs/api.rst
+git add docs/api.rst
+

@@ -117,7 +117,7 @@ libaegean.a:	$(AGN_OBJS)
 		ar ru libaegean.a $(AGN_OBJS)
 
 inc/core/AgnVersion.h:	
-			@- bash -c "if [ -d .git ]; then perl data/share/version.pl > inc/core/AgnVersion.h; else perl data/share/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
+			@- bash -c "if [ -d .git ]; then perl data/scripts/version.pl > inc/core/AgnVersion.h; else perl data/scripts/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
 test:		$(BINS) $(UT_EXE)
 		@- bin/unittests
