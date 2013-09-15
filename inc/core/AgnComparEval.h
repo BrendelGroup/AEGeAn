@@ -1,5 +1,5 @@
-#ifndef AEGEAN_COMPARATIVE_EVALUATION_MODULE
-#define AEGEAN_COMPARATIVE_EVALUATION_MODULE
+#ifndef AEGEAN_COMPARATIVE_EVALUATION
+#define AEGEAN_COMPARATIVE_EVALUATION
 
 #include <stdio.h>
 #include "AgnLogger.h"
@@ -7,14 +7,15 @@
 /**
  * @module AgnComparEval
  *
- * FIXME
+ * A collection of data structures and functions for comparative evaluation of
+ * annotations.
  */
 
 /**
- * This struct is used to aggregate counts and statistics regarding the
+ * @type This struct is used to aggregate counts and statistics regarding the
  * nucleotide-level comparison and analysis of gene structure.
  */
-typedef struct
+struct AgnCompStatsScaled
 {
   unsigned long tp;
   unsigned long fn;
@@ -32,14 +33,15 @@ typedef struct
   char          sps[7];
   char          f1s[7];
   char          eds[16];
-} AgnCompStatsScaled;
+};
+typedef struct AgnCompStatsScaled AgnCompStatsScaled;
 
 /**
- * This struct is used to aggregate counts and statistics regarding the
+ * @type This struct is used to aggregate counts and statistics regarding the
  * structural-level comparison (i.e., at the level of whole CDS segments, whole
  * exons, and whole UTRs) and analysis of gene structure.
  */
-typedef struct
+struct AgnCompStatsBinary
 {
   unsigned long correct;
   unsigned long missing;
@@ -52,12 +54,14 @@ typedef struct
   char          sps[7];
   char          f1s[7];
   char          eds[16];
-} AgnCompStatsBinary;
+};
+typedef struct AgnCompStatsBinary AgnCompStatsBinary;
 
 /**
- * This struct contains various counts to be reported in the summary report.
+ * @type This struct contains various counts to be reported in the summary
+ * report.
  */
-typedef struct
+struct AgnCompSummary
 {
   unsigned int unique_refr;
   unsigned int unique_pred;
@@ -73,13 +77,14 @@ typedef struct
   unsigned int num_exon_match;
   unsigned int num_utr_match;
   unsigned int non_match;
-} AgnCompSummary;
+};
+typedef struct AgnCompSummary AgnCompSummary;
 
 /**
- * This struct aggregates all the counts and stats that go into a comparison,
- * including structural-level and nucleotide-level counts and stats.
+ * @type This struct aggregates all the counts and stats that go into a
+ * comparison, including structural-level and nucleotide-level counts and stats.
  */
-typedef struct
+struct AgnComparison
 {
   AgnCompStatsScaled cds_nuc_stats;
   AgnCompStatsScaled utr_nuc_stats;
@@ -90,24 +95,19 @@ typedef struct
   unsigned long overall_length;
   double overall_identity;
   double tolerance;
-} AgnComparison;
+};
+typedef struct AgnComparison AgnComparison;
 
 /**
- * Each transcript clique pair that is compared is classified as one of the
- * following.
- *   - perfect match
- *   - perfect match with mislabeled UTRs
- *   - CDS match
- *   - exon structure match
- *   - UTR structure match
- *   - non-match
- *
- * When reporting the results of a comparative analysis, it may be useful to (as
- * is done by ParsEval) show some basic information about clique pairs that fall
- * under each classification category. The counts in this struct are necessary
- * to calculate those summary characteristics.
+ * @type Each transcript clique pair that is compared is classified as one of
+ * the following: perfect match; perfect match with mislabeled UTRs; CDS match;
+ * exon structure match; UTR structure match; non-match. When reporting the
+ * results of a comparative analysis, it may be useful to (as is done by
+ * ParsEval) show some basic information about clique pairs that fall under each
+ * classification category. The counts in this struct are necessary to calculate
+ * those summary characteristics.
  */
-typedef struct
+struct AgnCompResultDesc
 {
   unsigned long total_length;
   unsigned long transcript_count;
@@ -115,13 +115,14 @@ typedef struct
   unsigned long pred_cds_length;
   unsigned long refr_exon_count;
   unsigned long pred_exon_count;
-} AgnCompResultDesc;
+};
+typedef struct AgnCompResultDesc AgnCompResultDesc;
 
 /**
- * This struct is used to aggregate characteristics for all of the
+ * @type This struct is used to aggregate characteristics for all of the
  * classification categories.
  */
-typedef struct
+struct AgnCompResultSummary
 {
   AgnCompResultDesc perfect_matches;
   AgnCompResultDesc perfect_mislabeled;
@@ -129,24 +130,26 @@ typedef struct
   AgnCompResultDesc exon_matches;
   AgnCompResultDesc utr_matches;
   AgnCompResultDesc non_matches;
-} AgnCompResultSummary;
+};
+typedef struct AgnCompResultSummary AgnCompResultSummary;
 
 /**
- * This struct provides a convenient way to manage the counts, stats, and
+ * @type This struct provides a convenient way to manage the counts, stats, and
  * results corresponding to one or more comparisons.
  */
-typedef struct
+struct AgnCompEvaluation
 {
   AgnCompSummary counts;
   AgnComparison stats;
   AgnCompResultSummary results;
-} AgnCompEvaluation;
+};
+typedef struct AgnCompEvaluation AgnCompEvaluation;
 
 /**
- * This struct contains a list of filters to be used in determining which loci
- * should be included/excluded in a comparative analysis.
+ * @type This struct contains a list of filters to be used in determining which
+ * loci should be included/excluded in a comparative analysis.
  */
-typedef struct
+struct AgnCompareFilters
 {
   unsigned long LocusLengthUpperLimit;
   unsigned long LocusLengthLowerLimit;
@@ -170,134 +173,93 @@ typedef struct
   unsigned long MaxReferenceCDSLength;
   unsigned long MinPredictionCDSLength;
   unsigned long MaxPredictionCDSLength;
-} AgnCompareFilters;
+};
+typedef struct AgnCompareFilters AgnCompareFilters;
 
 /**
- * Take values from one data set and add them to the other.
- *
- * @param[out] data           stats, counts, and descriptions relevant to
- *                            comparative analysis
- * @param[in]  data_to_add    a data set which will be added to the first
+ * @function Take values from one data set and add them to the other.
  */
 void agn_comp_evaluation_combine(AgnCompEvaluation *data,
                                  AgnCompEvaluation *data_to_add);
 
 /**
- * Initialize to default values.
- *
- * @param[in] data    the data
+ * @function Initialize to default values.
  */
 void agn_comp_evaluation_init(AgnCompEvaluation *data);
 
 
 /**
- * Take values from one description and add them to the other.
- *
- * @param[out] desc           a set of descriptive values relevant to
- *                            comparative analysis
- * @param[in]  desc_to_add    a set of descriptive values which will be added to
- *                            the first
+ * @function Take values from one description and add them to the other.
  */
 void agn_comp_result_summary_combine(AgnCompResultSummary *desc,
                                      AgnCompResultSummary *desc_to_add);
 
 /**
- * Initialize to default values.
- *
- * @param[in] results    the descriptive values
+ * @function Initialize to default values.
  */
 void agn_comp_result_summary_init(AgnCompResultSummary *desc);
 
 /**
- * Take the counts from one description and add them to a larger aggregate set
- * of counts.
- *
- * @param[out] desc           a set of aggregate descriptive counts
- * @param[in]  desc_to_add    a smaller set of counts which will be added to the
- *                            first set
+ * @function Take the counts from one description and add them to a larger
+ * aggregate set of counts.
  */
 void agn_comp_result_desc_combine(AgnCompResultDesc *desc,
                                   AgnCompResultDesc *desc_to_add);
 
 /**
- * Initialize characteristics to default values.
- *
- * @param[in] characteristics    the counts/stats
+ * @function Initialize characteristics to default values.
  */
 void agn_comp_result_desc_init(AgnCompResultDesc *desc);
 
 /**
- * Take one set of values and add them to the other.
- *
- * @param[out] s1    a set of values relevant to comparative analysis
- * @param[in]  s2    a smaller set of values which will be added to the first
+ * @function Take one set of values and add them to the other.
  */
 void agn_comp_summary_combine(AgnCompSummary *s1, AgnCompSummary *s2);
 
 /**
- * Initialize default values.
- *
- * @param[in] summary    the summary data
+ * @function Initialize to default values.
  */
 void agn_comp_summary_init(AgnCompSummary *summary);
 
 /**
- * Take stats from one comparison and add them to the other.
- *
- * @param[out] c1    a set of stats relevant to comparative analysis
- * @param[in]  c2    a smaller set of stats which will be added to the first set
+ * @function Take stats from one comparison and add them to the other.
  */
 void agn_comparison_combine(AgnComparison *c1, AgnComparison *c2);
 
 /**
- * Initialize comparison stats to default values.
- *
- * @param[in] stats    the comparison stats
+ * @function Initialize comparison stats to default values.
  */
 void agn_comparison_init(AgnComparison *comparison);
 
 /**
- * Initialize filters to default values.
- *
- * @param[in] filters    the filters
+ * @function Initialize filters to default values.
  */
 void agn_compare_filters_init(AgnCompareFilters *filters);
 
 /**
- * Parse the filter configuration file to set the filters appropriately.
- *
- * @param[out] filters     set of filters to be set
- * @param[in]  instream    pointer to the filter config file
- * @param[out] logger      in which error/warning messages will be stored
+ * @function Parse the filter configuration file (from ``instream``) to set the
+ * filters appropriately.
  */
 void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream,
                                AgnLogger *logger);
 
 /**
- * Initialize comparison counts/stats to default values.
- *
- * @param[in] stats    pointer to the counts and stats
+ * @function Initialize comparison counts/stats to default values.
  */
 void agn_comp_stats_binary_init(AgnCompStatsBinary *stats);
 
 /**
- * Calculate stats from the given counts.
- *
- * @param[in] stats    pointer to the counts and stats
+ * @function Calculate stats from the given counts.
  */
 void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
 
 /**
- * Initialize comparison counts/stats to default values.
- *
- * @param[in] stats    pointer to the counts and stats
+ * @function Initialize comparison counts/stats to default values.
  */
 void agn_comp_stats_scaled_init(AgnCompStatsScaled *stats);
 
 /**
- * Calculate stats from the given counts.
- *
- * @param[in] stats    pointer to the counts and stats
+ * @function Calculate stats from the given counts.
  */
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats);
 

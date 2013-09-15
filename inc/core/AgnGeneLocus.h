@@ -12,18 +12,27 @@
  * of two sets of gene structure annotations for that locus.
  */
 typedef struct AgnGeneLocus AgnGeneLocus;
-typedef enum
+
+/**
+ * @type When tracking the source of an annotation for comparison purposes, use
+ * this enumerated type to refer to reference (``REFERENCESOURCE``) vs
+ * prediction (``PREDICTIONSOURCE``) annotations. ``DEFAULTSOURCE`` is for when
+ * the source is not a concern.
+ */
+enum AgnComparisonSource
 {
   REFERENCESOURCE,
   PREDICTIONSOURCE,
   DEFAULTSOURCE
-} AgnComparisonSource;
+};
+typedef enum AgnComparisonSource AgnComparisonSource;
 
 /**
-* This data structure provides a convenient container for metadata needed to
-* produce a PNG graphic for pairwise comparison loci.
+* @type This data structure provides a convenient container for metadata needed
+* to produce a PNG graphic for pairwise comparison
+* loci.
 */
-typedef struct
+struct AgnGeneLocusPngMetadata
 {
   char filename[512];
   char stylefile[512];
@@ -33,13 +42,14 @@ typedef struct
   const char *predlabel;
   unsigned long graphic_width;
   int (*track_order_func)(const char *s1, const char *s2, void *data);
-} AgnGeneLocusPngMetadata;
+};
+typedef struct AgnGeneLocusPngMetadata AgnGeneLocusPngMetadata;
 
 /**
-* This data structure provides a summary of the data and comparisons associated
-* with a given locus.
+* @type This data structure provides a summary of the data and comparisons
+* associated with a given locus.
 */
-typedef struct
+struct AgnGeneLocusSummary
 {
   unsigned long start;
   unsigned long end;
@@ -49,22 +59,16 @@ typedef struct
   unsigned long reported;
   unsigned long total;
   AgnCompSummary counts;
-} AgnGeneLocusSummary;
+};
+typedef struct AgnGeneLocusSummary AgnGeneLocusSummary;
 
 /**
- * Associate the given gene annotation with this gene locus. Rather than calling
- * this function directly, users are recommended to use one of the following
- * macros: `agn_gene_locus_add_pred_gene(locus, gene)` and
- * `agn_gene_locus_add_refr_gene(locus, gene)`, to be used when keeping track of
- * an annotation's source is important (i.e. for pairwise comparison); and
- * `agn_gene_locus_add_gene(locus, gene)` otherwise.
- *
- * @param[out] locus     locus to which the gene annotation will be added
- * @param[in]  gene      annotation to associate with this locus
- * @param[in]  source    indication as to whether this gene is a reference gene
- *                       (REFERENCESOURCE) or prediction gene (PREDICTIONSOURCE)
- *                       if this locus is intended for pairwise comparison; use
- *                       DEFAULTSOURCE otherwise
+ * @function Associate the given gene annotation with this gene locus. Rather
+ * than calling this function directly, users are recommended to use one of the
+ * following macros: ``agn_gene_locus_add_pred_gene(locus, gene)`` and
+ * ``agn_gene_locus_add_refr_gene(locus, gene)``, to be used when keeping track
+ * of an annotation's source is important (i.e. for pairwise comparison); and
+ * ``agn_gene_locus_add_gene(locus, gene)`` otherwise.
  */
 void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
                         AgnComparisonSource source);
@@ -76,51 +80,34 @@ void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
         agn_gene_locus_add(LC, GN, DEFAULTSOURCE)
 
 /**
- * Add the locus' comparison statistics to a set of aggregate statistics.
- *
- * @param[in]  locus    the locus annotation
- * @param[out] eval     summary counts, stats, and results to which the locus
- *                      data will be aggregated
+ * @function Add the locus' comparison statistics to a set of aggregate
+ * statistics.
  */
 void agn_gene_locus_aggregate_results(AgnGeneLocus *locus,
                                       AgnCompEvaluation *eval);
 
 /**
- * Do a semi-shallow copy of this data structure--for members whose data types
- * support reference counting, the same pointer is used and the reference is
- * incremented. For the other members a new object is created and populated with
- * the same content.
- *
- * @param[in] locus    a locus object
- * @returns            a clone of the locus object, all of whose internal data
- *                     point to the same objects
+ * @function Do a semi-shallow copy of this data structure--for members whose
+ * data types support reference counting, the same pointer is used and the
+ * reference is incremented. For the other members a new object is created and
+ * populated with the same content.
  */
 AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus);
 
 /**
- * Analog of strcmp for comparing AgnGeneLocus objects, used for sorting GtArray
- * objects containing AgnGeneLocus objects.
- *
- * @param[in] p1    pointer to a pointer to one locus object
- * @param[in] p2    pointer to a pointer to another locus object
- * @returns         -1, 0, or 1 depending on their relative position
+ * @function Analog of ``strcmp`` for comparing AgnGeneLocus objects, used for
+ * sorting GtArray objects containing AgnGeneLocus objects.
  */
 int agn_gene_locus_array_compare(const void *p1, const void *p2);
 
 /**
- * The combined length of all coding sequences associated with this locus.
- * Rather than calling this function directly, users are encouraged to use one
- * of the following macros: `agn_gene_locus_refr_cds_length(locus)` for the
- * combined length of all reference CDSs,
- * `agn_gene_locus_pred_cds_length(locus)` for the combined length of all
- * prediction CDSs, and `agn_gene_locus_get_cds_length(locus)` for the combined
- * length of all CDSs.
- *
- * @param[in] locus    the locus
- * @param[in] src      REFERENCESOURCE will consider only reference CDSs,
- *                     PREDICTIONSOURCE will consider only prediction CDSs,
- *                     DEFAULTSOURCE will consider all CDSs
- * @returns            the combined CDS length
+ * @function The combined length of all coding sequences associated with this
+ * locus. Rather than calling this function directly, users are encouraged to
+ * use one of the following macros: ``agn_gene_locus_refr_cds_length(locus)``
+ * for the combined length of all reference CDSs,
+ * ``agn_gene_locus_pred_cds_length(locus)`` for the combined length of all
+ * prediction CDSs, and ``agn_gene_locus_get_cds_length(locus)`` for the
+ * combined length of all CDSs.
  */
 unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
                                         AgnComparisonSource src);
@@ -132,45 +119,29 @@ unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
         agn_gene_locus_cds_length(LC, DEFAULTSOURCE)
 
 /**
- * Compare every reference transcript clique with every prediction transcript
- * clique. For gene loci with multiple transcript cliques, each comparison is
- * not necessarily reported. Instead, we report the set of clique pairs that
- * provides the optimal pairing of reference and prediction transcripts. If
- * there are more reference transcript cliques than prediction cliques (or vice
- * versa), these unmatched cliques are reported separately.
- *
- * @param[in]  locus    the locus
- * @returns             the pairs to be reported; the first time this method is
- *                      called, the comparative analysis is performed and the
- *                      clique pairs are stored and returned; subsequence method
- *                      calls simply return the previously stored results;
- *                      the macro `agn_gene_locus_pairs_to_report(locus)` is
- *                      provided for this use case
+ * @function Compare every reference transcript clique with every prediction
+ * transcript clique. For gene loci with multiple transcript cliques, each
+ * comparison is not necessarily reported. Instead, we report the set of clique
+ * pairs that provides the optimal pairing of reference and prediction
+ * transcripts. If there are more reference transcript cliques than prediction
+ * cliques (or vice versa), these unmatched cliques are reported separately.
  */
 GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus);
 #define agn_gene_locus_pairs_to_report(LOC)\
         agn_gene_locus_comparative_analysis(LOC)
 
 /**
- * Free the memory previously occupied by this locus object.
- *
- * @param[out] locus    locus to be deleted
+ * @function Class destructor.
  */
 void agn_gene_locus_delete(AgnGeneLocus *locus);
 
 /**
- * Get the number of exons for the locus. Rather than calling this function
- * directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_num_pred_exons(locus)` for the number of prediction exons,
- * `agn_gene_locus_num_refr_exons(locus)` for the number of reference exons, or
- * `agn_gene_locus_num_exons(locus)` if the source of annotation is undesignated
- * or irrelevant.
- *
- * @param[in] locus   the locus
- * @param[in] src     REFERENCESOURCE will consider only reference exons,
- *                    PREDICTIONSOURCE will consider only prediction exons,
- *                    DEFAULTSOURCE will consider all exons
- * @returns           the number of exons associated with the locus
+ * @function Get the number of exons for the locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * ``agn_gene_locus_num_pred_exons(locus)`` for the number of prediction exons,
+ * ``agn_gene_locus_num_refr_exons(locus)`` for the number of reference exons,
+ * or ``agn_gene_locus_num_exons(locus)`` if the source of annotation is
+ * undesignated or irrelevant.
  */
 unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus,
                                       AgnComparisonSource src);
@@ -182,28 +153,19 @@ unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus,
         agn_gene_locus_exon_num(LC, DEFAULTSOURCE)
 
 /**
- * Given a set of filtering criteria, determine whether a locus meets those
- * criteria.
- *
- * @param[in] locus    the locus in question
- * @returns            true if the locus should be filtered (if it does not meet
- *                     the criteria), false otherwise
+ * @function Given a set of filtering criteria, determine whether a locus meets
+ * those criteria. Returns true if the locus should be filtered (if it does not
+ * meet the criteria), false otherwise.
  */
 bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters);
 
 /**
- * Get the genes associated with this locus. Rather than calling this function
- * directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_genes(locus)` to retrieve prediction genes,
- * `agn_gene_locus_refr_genes(locus)` to retrieve reference genes, or
- * `agn_gene_locus_get_genes(locus)` if the source of annotation is undesignated
- * or irrelevant.
- *
- * @param[in] locus    a gene locus
- * @param[in] src      REFERENCESOURCE will return only reference genes,
- *                     PREDICTIONSOURCE will return only prediction genes,
- *                     DEFAULTSOURCE will return all genes
- * @returns            array containing the genes
+ * @function Get the genes associated with this locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * ``agn_gene_locus_pred_genes(locus)`` to retrieve prediction genes,
+ * ``agn_gene_locus_refr_genes(locus)`` to retrieve reference genes, or
+ * ``agn_gene_locus_get_genes(locus)`` if the source of annotation is
+ * undesignated or irrelevant.
  */
 GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_pred_genes(LC)\
@@ -214,18 +176,12 @@ GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src);
         agn_gene_locus_genes(LC, DEFAULTSOURCE)
 
 /**
- * Get IDs of the genes associated with this locus. Rather than calling this
- * function directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_gene_ids(locus)` to retrieve prediction genes IDs,
- * `agn_gene_locus_refr_gene_ids(locus)` to retrieve reference genes IDs, or
- * `agn_gene_locus_get_gene_ids(locus)` if the source of annotation is
- * undesignated or irrelevant.
- *
- * @param[in] locus    a gene locus
- * @param[in] src      REFERENCESOURCE will return only reference gene IDs,
- *                     PREDICTIONSOURCE will return only prediction gene IDs,
- *                     DEFAULTSOURCE will return all gene IDs
- * @returns            array containing the gene IDs
+ * @function Get IDs of the genes associated with this locus. Rather than
+ * calling this function directly, users are encouraged to use one of the
+ * following macros: ``agn_gene_locus_pred_gene_ids(locus)`` to retrieve
+ * prediction genes IDs, ``agn_gene_locus_refr_gene_ids(locus)`` to retrieve
+ * reference genes IDs, or ``agn_gene_locus_get_gene_ids(locus)`` if the source
+ * of annotation is undesignated or irrelevant.
  */
 GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_pred_gene_ids(LC)\
@@ -236,18 +192,12 @@ GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
         agn_gene_locus_gene_ids(LC, DEFAULTSOURCE)
 
 /**
- * Get the number of genes for the locus. Rather than calling this function
- * directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_num_pred_genes(locus)` for the number of prediction genes,
- * `agn_gene_locus_num_refr_genes(locus)` for the number of reference genes, or
- * `agn_gene_locus_num_genes(locus)` if the source of annotation is undesignated
- * or irrelevant.
- *
- * @param[in] locus   the locus
- * @param[in] src     REFERENCESOURCE will consider only reference genes,
- *                    PREDICTIONSOURCE will consider only prediction genes,
- *                    DEFAULTSOURCE will consider all genes
- * @returns           the number of genes associated with the locus
+ * @function Get the number of genes for the locus. Rather than calling this
+ * function directly, users are encouraged to use one of the following macros:
+ * ``agn_gene_locus_num_pred_genes(locus)`` for the number of prediction genes,
+ * ``agn_gene_locus_num_refr_genes(locus)`` for the number of reference genes,
+ * or ``agn_gene_locus_num_genes(locus)`` if the source of annotation is
+ * undesignated or irrelevant.
  */
 unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
                                       AgnComparisonSource src);
@@ -259,129 +209,83 @@ unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
         agn_gene_locus_gene_num(LC, DEFAULTSOURCE)
 
 /**
- * Get this locus' end coordinate.
- *
- * @param[in] locus    the locus
- * @returns            the end coordinate of the locus
+ * @function Get this locus' end coordinate.
  */
 unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus);
 
 /**
- * Get this locus' length.
- *
- * @param[in] locus    the locus
- * @returns            the length of the locus
+ * @function Get this locus' length.
  */
 unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus);
 
 /**
- * Get this locus' sequence ID.
- *
- * @param[in] locus    the locus
- * @returns            the sequence ID of the locus
+ * @function Get this locus' sequence ID.
  */
 const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus);
 
 /**
- * Get this locus' start coordinate.
- *
- * @param[in] locus    the locus
- * @returns            the start coordinate of the locus
+ * @function Get this locus' start coordinate.
  */
 unsigned long agn_gene_locus_get_start(AgnGeneLocus *locus);
 
 /**
- * Get a list of all the prediction transcript cliques that have no
+ * @function Get a list of all the prediction transcript cliques that have no
  * corresponding reference transcript clique.
- *
- * @param[in] locus    the locus
- * @returns            a list of all unique prediction cliques
  */
 GtArray *agn_gene_locus_get_unique_pred_cliques(AgnGeneLocus *locus);
 
 /**
- * Get a list of all the reference transcript cliques that have no
+ * @function Get a list of all the reference transcript cliques that have no
  * corresponding prediction transcript clique.
- *
- * @param[in] locus    the locus
- * @returns            a list of all unique reference cliques
  */
 GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus);
 
 /**
- * Allocate some memory for a locus object.
- *
- * @param[in] seqid       ID of the locus' sequence
- * @returns               pointer to a new locus object
+ * @function Class constructor.
  */
 AgnGeneLocus* agn_gene_locus_new(const char *seqid);
 
 /**
- * Report the number of clique pairs to be reported for this locus.
- *
- * @param[in] locus    the locus
- * @returns            the number of clique pairs
+ * @function Report the number of clique pairs to be reported for this locus.
  */
 unsigned long agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus);
 
 #ifndef WITHOUT_CAIRO
 /**
- * Track selector function for generating PNG graphics of pairwise comparison
- * loci.
- *
- * @param[in]  block    the object to be printed in the graphic
- * @param[out] track    string to which the appropriate track name will be
- *                      written
- * @param[in]  data     any auxilliary data needed
+ * @function Track selector function for generating PNG graphics of pairwise
+ * comparison loci. The track name to will be written to ``track``.
  */
 void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,void *data);
 #endif
 
 #ifndef WITHOUT_CAIRO
 /**
- * Print a PNG graphic for this locus.
- *
- * @param[in] locus       the locus
- * @param[in] metadata    additional data needed for graphics printing
+ * @function Print a PNG graphic for this locus.
  */
 void agn_gene_locus_print_png(AgnGeneLocus *locus,
                               AgnGeneLocusPngMetadata *metadata);
 #endif
 
 /**
- * Return the coordinates of this locus.
- *
- * @param[in] locus    the locus
- * @returns            its coordinates
+ * @function Return the coordinates of this locus.
  */
 GtRange agn_gene_locus_range(AgnGeneLocus *locus);
 
 /**
- * Set the range of this locus, no questions asked.
- *
- * @param[out] locus    locus object
- * @param[in]  start    new start coordinate
- * @param[in]  end      new end coordinate
+ * @function Set the range of this locus, no questions asked.
  */
 void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
                               unsigned long end);
 
 /**
- * Calculate the splice complexity of this gene locus. Rather than calling this
- * method directly, users are recommended to use one of the following macros:
- * `agn_gene_locus_prep_splice_complexity(locus)` to calculate the splice
- * complexity of just the prediction transcripts,
- * `agn_gene_locus_refr_splice_complexity(locus)` to calculate the splice
+ * @function Calculate the splice complexity of this gene locus. Rather than
+ * calling this method directly, users are recommended to use one of the
+ * following macros: ``agn_gene_locus_prep_splice_complexity(locus)`` to
+ * calculate the splice complexity of just the prediction transcripts,
+ * ``agn_gene_locus_refr_splice_complexity(locus)`` to calculate the splice
  * complexity of just the reference transcripts, and
- * `agn_gene_locus_calc_splice_complexity(locus)` to calculate the splice
+ * ``agn_gene_locus_calc_splice_complexity(locus)`` to calculate the splice
  * complexity taking into account all transcripts.
- *
- * @param[in] locus    the locus
- * @param[in] src      indication as to whether to calculate splice complexity
- *                     for just reference transcripts (REFERENCESOURCE),
- *                     just prediction transcripts (PREDICTIONSOURCE),
- *                     or all transcripts (DEFAULTSOURCE)
- * @returns            the splice complexity
  */
 double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,
                                         AgnComparisonSource src);
@@ -393,37 +297,25 @@ double agn_gene_locus_splice_complexity(AgnGeneLocus *locus,
         agn_gene_locus_splice_complexity(LC, DEFAULTSOURCE)
 
 /**
- * Initialize a locus summary data structure.
- *
- * @param[out] summary    the data structure to be initialized
+ * @function Class constructor.
  */
 void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary);
 
 
 /**
- * Print the locus in GFF3 format
- *
- * @param[in] locus        the locus
- * @param[in] outstream    the file to which the locus will be printed
- * @param[in] source       source string to use as second column of GFF3 output;
- *                         if NULL is provided, "AEGeAn" will be used
+ * @function Print the locus in GFF3 format. If ``source`` is NULL, the string
+ * "AEGeAn" will be used.
  */
 void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
                             const char *source);
 
 /**
- * Get the transcripts associated with this locus. Rather than calling this
- * function directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_transcripts(locus)` to retrieve prediction transcripts,
- * `agn_gene_locus_refr_transcripts(locus)` to retrieve reference transcripts,
- * or `agn_gene_locus_get_genes(locus)` if the source of annotation is
- * undesignated or irrelevant.
- *
- * @param[in] locus    the locus
- * @param[in] src      REFERENCESOURCE will return only reference transcripts,
- *                     PREDICTIONSOURCE will return only prediction transcripts,
- *                     DEFAULTSOURCE will return all transcripts
- * @returns            the prediction transcripts
+ * @function Get the transcripts associated with this locus. Rather than calling
+ * this function directly, users are encouraged to use one of the following
+ * macros: ``agn_gene_locus_pred_transcripts(locus)`` to retrieve prediction
+ * transcripts, ``agn_gene_locus_refr_transcripts(locus)`` to retrieve reference
+ * transcripts, or ``agn_gene_locus_get_genes(locus)`` if the source of
+ * annotation is undesignated or irrelevant.
  */
 GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
                                     AgnComparisonSource src);
@@ -435,18 +327,12 @@ GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
         agn_gene_locus_transcripts(LC, DEFAULTSOURCE)
 
 /**
- * Get the transcript IDs associated with this locus. Rather than calling this
- * function directly, users are encouraged to use one of the following macros:
- * `agn_gene_locus_pred_transcripts(locus)` to retrieve prediction IDs,
- * `agn_gene_locus_refr_transcripts(locus)` to retrieve reference IDs,
- * or `agn_gene_locus_get_genes(locus)` if the source of annotation is
- * undesignated or irrelevant.
- *
- * @param[in] locus    the locus
- * @param[in] src      REFERENCESOURCE will return only reference IDs,
- *                     PREDICTIONSOURCE will return only prediction IDs,
- *                     DEFAULTSOURCE will return all transcript IDs
- * @returns            the prediction transcripts
+ * @function Get the transcript IDs associated with this locus. Rather than
+ * calling this function directly, users are encouraged to use one of the
+ * following macros: ``agn_gene_locus_pred_transcripts(locus)`` to retrieve
+ * prediction IDs, ``agn_gene_locus_refr_transcripts(locus)`` to retrieve
+ * reference IDs, or ``agn_gene_locus_get_genes(locus)`` if the source of
+ * annotation is undesignated or irrelevant.
  */
 GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus,
                                        AgnComparisonSource src);
@@ -458,22 +344,16 @@ GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus,
         agn_gene_locus_transcript_ids(LC, DEFAULTSOURCE)
 
 /**
- * Get the number of transcripts for the locus. Rather than calling this
- * function directly, users are encouraged to use one of the following macros:
- * `agn_transcript_locus_num_pred_transcripts(locus)` for the number of
- * prediction transcripts, `agn_transcript_locus_num_refr_transcripts(locus)`
- * for the number of reference transcripts, or
- * `agn_transcript_locus_num_transcripts(locus)` if the source of annotation is
- * undesignated or irrelevant.
- *
- * @param[in] locus   the locus
- * @param[in] src     REFERENCESOURCE will consider only reference transcripts,
- *                    PREDICTIONSOURCE will consider only prediction
- *                    transcripts, DEFAULTSOURCE will consider all transcripts
- * @returns           the number of transcripts associated with the locus
+ * @function Get the number of transcripts for the locus. Rather than calling
+ * this function directly, users are encouraged to use one of the following
+ * macros: ``agn_transcript_locus_num_pred_transcripts(locus)`` for the number
+ * of prediction transcripts,
+ * ``agn_transcript_locus_num_refr_transcripts(locus)`` for the number of
+ * reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)``
+ * if the source of annotation is undesignated or irrelevant.
  */
 unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
-                                                  AgnComparisonSource src);
+                                            AgnComparisonSource src);
 #define agn_gene_locus_num_pred_transcripts(LC)\
         agn_gene_locus_transcript_num(LC, PREDICTIONSOURCE)
 #define agn_gene_locus_num_refr_transcripts(LC)\
@@ -482,10 +362,7 @@ unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
         agn_gene_locus_transcript_num(LC, DEFAULTSOURCE)
 
 /**
- * Run unit tests for this class.
- *
- * @param[out] test    object for storing test results
- * @returns            true for success, false for failure
+ * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_gene_locus_unit_test(AgnUnitTest *test);
 

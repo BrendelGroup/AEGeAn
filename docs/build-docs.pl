@@ -9,7 +9,10 @@ use Getopt::Long;
 #
 # Usage: perl build-docs.pl inc/core inc/ParsEval > docs/api.rst
 
-print "AEGeAn C API\n============\n\n";
+print "AEGeAn C API\n============\n\nThe AEGeAn Toolkit relies heavily on data
+types implemented by the GenomeTools library. For data types beginning with
+``Gt``, see the GenomeTools API documentation at
+http://genometools.org/libgenometools.html.\n\n";
 
 # Main procedure
 my $dir;
@@ -88,9 +91,9 @@ sub process_doc_block
   my $block = shift(@_);
 
   $block =~ s/\/\*\*\W+//s;
-  my($type) = $block =~ m/(function|type)/;
+  my($type) = $block =~ m/(function|functype|type)/;
   die("block type fail") unless($type);
-  $block =~ s/(function|type) +//;
+  $block =~ s/(function|functype|type) *//;
   my($synopsis) = $block =~ m/^(.+?)(\@param|\@member|\*\/)/s;
   $synopsis =~ s/\*//g;
   $synopsis =~ s/\s+/ /sg;
@@ -104,7 +107,7 @@ sub process_doc_block
   }
   elsif($type eq "type")
   {
-    my($typename) = $block =~ m/struct (\S+)/;
+    my($typetype, $typename) = $block =~ m/(struct|enum) (Agn\S+)/;
     print(".. c:type:: $typename\n\n  $synopsis\n\n");
     my @members = $block =~ m/\@member (.+)/g;
     foreach my $member(@members)
@@ -113,6 +116,12 @@ sub process_doc_block
       print("  * **$mtype $mname**: $mdesc\n");
     }
     print("\n\n");
+  }
+  elsif($type eq "functype")
+  {
+    my($signature) = $block =~ m/\*\/\s*(\w[^;]+);/;
+    $signature =~ s/\s+/ /sg;
+    print(".. c:type:: $signature\n\n  $synopsis\n\n");
   }
   else
   {
