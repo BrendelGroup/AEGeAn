@@ -24,8 +24,8 @@ typedef struct
 
 /**
  * @function The Bron-Kerbosch algorithm is an algorithm for enumerating all
- * maximal cliques in an undirected graph. See
- * http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+ * maximal cliques in an undirected graph. See the `algorithm's Wikipedia entry
+ * <http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm>`_
  * for a description of ``R``, ``P``, and ``X``. All maximal cliques will be
  * stored in ``cliques``. If ``skipsimplecliques`` is true, cliques containing a
  * single item will not be stored.

@@ -735,7 +735,7 @@ A collection of assorted core utility functions. See the `module header <https:/
 
 .. c:function:: void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques, bool skipsimplecliques )
 
-  The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal cliques in an undirected graph. See http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm for a description of ``R``, ``P``, and ``X``. All maximal cliques will be stored in ``cliques``. If ``skipsimplecliques`` is true, cliques containing a single item will not be stored.
+  The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal cliques in an undirected graph. See the `algorithm's Wikipedia entry <http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm>`_ for a description of ``R``, ``P``, and ``X``. All maximal cliques will be stored in ``cliques``. If ``skipsimplecliques`` is true, cliques containing a single item will not be stored.
 
 .. c:function:: double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
 
