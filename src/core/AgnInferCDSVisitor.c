@@ -20,6 +20,7 @@ struct AgnInferCDSVisitor
   GtArray *exons;
   GtArray *starts;
   GtArray *stops;
+  GtUword cdscounter;
   AgnLogger *logger;
 };
 
@@ -133,6 +134,7 @@ GtNodeVisitor* agn_infer_cds_visitor_new(AgnLogger *logger)
   nv = gt_node_visitor_create(agn_infer_cds_visitor_class());
   AgnInferCDSVisitor *v = agn_infer_cds_visitor_cast(nv);
   v->logger = logger;
+  v->cdscounter = 0;
   return nv;
 }
 
@@ -196,6 +198,13 @@ void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
   }
 
   GtFeatureNode **firstsegment = gt_array_get(v->cds, 0);
+  const char *id = gt_feature_node_get_attribute(*firstsegment, "ID");
+  if(id == NULL)
+  {
+    char newid[64];
+    sprintf(newid, "CDS%lu", v->cdscounter++);
+    gt_feature_node_add_attribute(*firstsegment, "ID", newid);
+  }
   gt_feature_node_make_multi_representative(*firstsegment);
   unsigned long i;
   for(i = 0; i < gt_array_size(v->cds); i++)
@@ -253,7 +262,6 @@ void visit_mrna_check_start(AgnInferCDSVisitor *v)
                                                      strand);
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
-    gt_feature_node_add_attribute(cf, "Parent", mrnaid);
     gt_array_add(v->starts, cf);
   }
 }
@@ -303,7 +311,6 @@ void visit_mrna_check_stop(AgnInferCDSVisitor *v)
                                                      strand);
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
-    gt_feature_node_add_attribute(cf, "Parent", mrnaid);
     gt_array_add(v->stops, cf);
   }
 }
@@ -354,13 +361,10 @@ void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
                                  &right_codon_range, &cdsrange);
     if(exon_includes_cds)
     {
-      GtGenomeNode *cdsfeat = gt_feature_node_new
-      (
-        gt_genome_node_get_seqid(exon_gn), "CDS", cdsrange.start,
-        cdsrange.end, exon_strand
-      );
+      GtGenomeNode *cdsfeat;
+      cdsfeat = gt_feature_node_new(gt_genome_node_get_seqid(exon_gn), "CDS",
+                                    cdsrange.start, cdsrange.end, exon_strand);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)cdsfeat);
-      gt_feature_node_add_attribute((GtFeatureNode *)cdsfeat, "Parent", mrnaid);
       gt_array_add(v->cds, cdsfeat);
     }
   }
@@ -373,16 +377,18 @@ void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
   GtFeatureNode *start_codon, *stop_codon;
 
   bool exonsexplicit    = gt_array_size(v->exons) > 0;
+  bool cdsexplicit      = gt_array_size(v->cds) > 0;
   bool startcodon_check = gt_array_size(v->starts) == 1 &&
                           (start_codon = gt_array_get(v->starts, 0)) != NULL;
   bool stopcodon_check  = gt_array_size(v->stops)  == 1 &&
                           (stop_codon  = gt_array_get(v->stops,  0)) != NULL;
+  bool caninferutrs     = exonsexplicit && startcodon_check && stopcodon_check;
 
   if(gt_array_size(v->utrs) > 0)
   {
     return;
   }
-  else if(!exonsexplicit || !startcodon_check || !stopcodon_check)
+  else if(!cdsexplicit && !caninferutrs)
   {
     agn_logger_log_error(v->logger, "cannot infer missing UTRs for mRNA '%s'"
                          "(line %u) without exons and start/stop codons or CDS",
@@ -427,7 +433,6 @@ void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
                                               lefttype, utrrange.start,
                                               utrrange.end, strand);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)utr);
-      gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", mrnaid);
       gt_array_add(v->utrs, utr);
     }
 
@@ -447,7 +452,6 @@ void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
                                               righttype, utrrange.start,
                                               utrrange.end, strand);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)utr);
-      gt_feature_node_add_attribute((GtFeatureNode *)utr, "Parent", mrnaid);
       gt_array_add(v->utrs, utr);
     }
   }

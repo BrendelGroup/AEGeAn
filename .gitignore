@@ -2,4 +2,5 @@ bin
 obj
 inc/core/AgnVersion.h
 libaegean.a
-TAIR*.gff
+scratch
+docs/_*

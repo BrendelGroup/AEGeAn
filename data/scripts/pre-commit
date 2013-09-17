@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+branch=`git branch | grep '*' | sed 's|* ||'`
+if [ $branch == "gh-pages" ]; then
+  exit 0
+fi
+
+perl data/scripts/build-docs.pl inc/core > docs/api.rst
+if [ $? != 0 ]; then
+  echo "[AEGeAn::pre-commit] error building docs"
+  exit 1
+fi
+
+git add docs/api.rst
+

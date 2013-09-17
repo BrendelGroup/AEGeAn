@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <string.h>
 #include <time.h>
 #include "AgnCanonGeneStream.h"
@@ -277,7 +278,8 @@ FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream)
   FILE *fp = fopen(filename, mode);
   if(fp == NULL)
   {
-    fprintf(errstream, "error: could not open '%s'\n", filename);
+    fprintf(errstream, "error: could not open '%s' (%s)\n", filename,
+            strerror(errno));
     exit(1);
   }
   return fp;

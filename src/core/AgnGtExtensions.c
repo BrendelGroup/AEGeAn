@@ -61,12 +61,13 @@ unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
   }
   gt_feature_node_iterator_delete(iter);
 
-  if(length % 3 != 0)
-  {
-    const char *tid = gt_feature_node_get_attribute(transcript, "ID");
-    fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, "
-            "not a multiple of 3\n", tid, length);
-  }
+  // FIXME how should this be reported?
+  // if(length % 3 != 0)
+  // {
+  //   const char *tid = gt_feature_node_get_attribute(transcript, "ID");
+  //   fprintf(stderr, "warning: CDS for mRNA '%s' has length of %lu, "
+  //           "not a multiple of 3\n", tid, length);
+  // }
 
   return length;
 }
@@ -230,27 +231,6 @@ void agn_gt_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
   }
   gt_feature_node_iterator_delete(iter);
   gt_feature_node_remove_leaf(root, fn);
-}
-
-void agn_gt_feature_node_resolve_pseudo_node(GtFeatureNode *root, GtArray *nodes)
-{
-  if(gt_feature_node_is_pseudo(root))
-  {
-    GtFeatureNode *fn;
-    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(root);
-    for(fn = gt_feature_node_iterator_next(iter);
-        fn != NULL;
-        fn = gt_feature_node_iterator_next(iter))
-    {
-      gt_assert(gt_feature_node_is_pseudo(fn) == false);
-      gt_array_add(nodes, fn);
-    }
-    gt_feature_node_iterator_delete(iter);
-  }
-  else
-  {
-    gt_array_add(nodes, root);
-  }
 }
 
 void agn_gt_feature_node_set_source_recursive( GtFeatureNode *feature,

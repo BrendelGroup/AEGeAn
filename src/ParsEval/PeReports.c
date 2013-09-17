@@ -13,6 +13,11 @@
 //------------------------------------------------------------------------------
 
 /**
+ * FIXME
+ */
+void pe_check_filehandle_risk(unsigned long numseqids);
+
+/**
  * Take given feature node ID, trim the end and add an elipsis if necessary, and
  * write to the provided buffer.
  *
@@ -82,6 +87,23 @@ void pe_aggregate_results(AgnCompEvaluation *overall_eval,
   gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
                           "level results (%ld.%06ld seconds)\n", stderr);
   gt_timer_delete(timer);
+}
+
+void pe_check_filehandle_risk(unsigned long numseqids)
+{
+  char *cmd = "ulimit -a | perl -ne 'if(m/\\(-n\\) (\\d+)/){ print $1 }'";
+  char buffer[1024];
+  FILE *stream = popen(cmd, "r");
+  fgets(buffer, 1024, stream);
+  fclose(stream);
+  int openfilesallowed = atoi(buffer);
+  if(openfilesallowed < numseqids + 1)
+  {
+    fprintf(stderr, "warning: max number of open files is %d, but there are "
+            "%lu sequences to be compared; if ParsEval crashes, this is "
+            "probably why; use 'ulimit -S -n $newlimit' to adjust this "
+            "setting\n", openfilesallowed, numseqids);
+  }
 }
 
 void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
@@ -1029,6 +1051,7 @@ unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp,
 
   // Collect IDs of all sequences annotated by input files
   GtStrArray *seqids = agn_locus_index_seqids(locusindex);
+  pe_check_filehandle_risk(gt_str_array_size(seqids));
   GtArray *loci = gt_array_new( sizeof(GtArray *) );
   int i;
   for(i = 0; i < gt_str_array_size(seqids); i++)

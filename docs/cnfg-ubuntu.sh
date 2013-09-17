@@ -1,1 +1,0 @@
-cnfg-debian.sh

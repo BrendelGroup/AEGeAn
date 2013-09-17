@@ -6,23 +6,29 @@
 #include "AgnGeneLocus.h"
 #include "AgnLogger.h"
 
+/**
+ * @class AgnLocusIndex
+ *
+ * FIXME
+ */
 typedef struct AgnLocusIndex AgnLocusIndex;
+
+/**
+ * @functype Signature functions must match to be applied to each locus in the
+ * index. The function will be called once for each locus, which will be passed
+ * as the first argument to the function. a second argument is available for an
+ * optional pointer to supplementary data (if needed). See
+ * :c:func:`agn_locus_index_comparative_analysis`.
+ */
 typedef void (*AgnLocusIndexVisitFunc)(AgnGeneLocus *, void *);
 
 /**
- * Perform a comparative analysis of each locus associate with the given
- * sequence ID in this index.
- *
- * @param[in] idx              the locus index
- * @param[in] seqid            the seqid for which loci will be analyzed
- * @param[in] numprocs         number of processors to use in the anlaysis
- * @param[in] preanalyfunc     optional callback function to execute directly
- *                             prior to comparative analysis
- * @param[in] postanalyfunc    optional callback function to execute directly
- *                             following comparative analysis
- * @param[in] analyfuncdata    optional pointer to any additional data needed
- *                             for pre- and post- analysis callback functions
- * @param[in] logger           object for logging warning and error messages
+ * @function Perform a comparative analysis of each locus associated with
+ * ``seqid`` in this index, utilizing ``numprocs`` cores. If ``preanalyfunc``
+ * is not NULL, it will be applied to each locus immediately before comparative
+ * analysis. If ``postanalyfunc`` is not NULL, it will be applied to each locus
+ * immediately following comparative analysis. ``analyfuncdata`` will be passed
+ * as supplementary data to both functions.
  */
 void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
                                           int numprocs,
@@ -32,124 +38,66 @@ void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
                                           AgnLogger *logger);
 
 /**
- * Free memory allocated to the given locus index.
- *
- * @param[in] idx    the locus index object
+ * @function Class destructor.
  */
 void agn_locus_index_delete(AgnLocusIndex *idx);
 
 /**
- * Find all overlapping features in the given range stored in this locus index.
- *
- * @param[in]  idx      locus index object
- * @param[in]  seqid    ID of the sequence of interest
- * @param[in]  range    range of interest
- * @param[out] loci     array in which all loci overlapping the specified range
- *                      will be stored
+ * @functype Find all overlapping features in the given range stored in this
+ * locus index and store them in ``loci``.
  */
 void agn_locus_index_find(AgnLocusIndex *idx, const char *seqid, GtRange *range,
                           GtArray *loci);
 
 /**
- * Retrieve all loci corresponding to the specified sequence ID.
- *
- * @param[in] idx      locus index object
- * @param[in] seqid    ID of the sequence of interest
- * @returns            array containing all loci corresponding to given seqid
+ * @function Retrieve all loci corresponding to the specified sequence ID.
  */
 GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
 
 /**
- * Compute interval loci (more detailed description forthcoming).
- *
- * @param[in] idx             locus index object
- * @param[in] seqid           ID of the sequence of interest
- * @param[in] delta           number of nucleotides to extend gene loci up- and
- *                            down-stream assuming this does not cause overlap
- *                            with a gene belonging to another locus
- * @param[in] skipterminal    whether or not to exclude terminal iloci, such as
- *                            with incomplete (scaffold) genomic sequences
- * @returns                   a list of interval loci corresponding to this
- *                            sequence
+ * @functype Compute interval loci with the given ``delta``. If running on
+ * incomplete (contig/scaffold) genomic sequences, consider setting
+ * ``skipterminal`` to true to ignore the ends of the sequence.
  */
 GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
                                        unsigned long delta,
                                        bool skipterminal);
 
 /**
- * Allocate memory for a new locus index object.
- *
- * @param[in] freeondelete    indicate whether the locus index object should
- *                            deallocate locus memory on delete
- * @returns                   a pointer to the new object
+ * @function Class constructor
  */
 AgnLocusIndex *agn_locus_index_new(bool freeondelete);
 
 /**
- * Given a pair of annotation feature sets in memory, identify loci while
- * keeping the two sources of annotation separate (to enable comparison).
- *
- * @param[out] idx          locus index object to be populated
- * @param[in]  refrfeats    reference annotations
- * @param[in]  predfeats    prediction annotations
- * @param[in]  numprocs     number of processors to use while identifying loci
- * @param[in]  filters      filtering criteria
- * @param[out] logger       object to which warning/error messages will be
- *                          written if necessary
- * @returns                 the number of loci identified
+ * @function Given a pair of annotation feature sets in memory, identify loci
+ * while keeping the two sources of annotation separate (to enable comparison).
  */
 unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                   GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
                   int numprocs, AgnCompareFilters *filters, AgnLogger *logger);
 
 /**
- * Given a pair of annotation feature sets in memory, identify loci while
- * keeping the two sources of annotation separate (to enable comparison).
- *
- * @param[out] idx          locus index object to be populated
- * @param[in]  refrfile     path to GFF3 file containing reference annotations
- * @param[in]  predfile     path to GFF3 file containing prediction annotations
- * @param[in]  numprocs     number of processors to use while identifying loci
- * @param[in]  filters      filtering criteria
- * @param[out] logger       object to which warning/error messages will be
- *                          written if necessary
- * @returns                 the number of loci identified
+ * @function Given a pair of annotation feature sets in memory, identify loci
+ * while keeping the two sources of annotation separate (to enable comparison).
  */
 unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
                   const char *refrfile, const char *predfile, int numprocs,
                   AgnCompareFilters *filters, AgnLogger *logger);
 
 /**
- * Identify loci given an index of annotation features.
- *
- * @param[out] idx          locus index object to be populated
- * @param[in]  features     index containing gene features
- * @param[in]  numprocs     number of processors to use while identifying loci
- * @param[out] logger       object to which warning/error messages will be
- *                          written if necessary
- * @returns                 the number of loci identified
+ * @function Identify loci given an index of annotation features.
  */
 unsigned long agn_locus_index_parse_memory(AgnLocusIndex *idx,
                   GtFeatureIndex *features, int numprocs, AgnLogger *logger);
 
 /**
- * Identify loci given an index of annotation features.
- *
- * @param[out] idx          locus index object to be populated
- * @param[in]  filenames    list of filenames corresponding to GFF3 files
- * @param[in]  numprocs     number of processors to use while identifying loci
- * @param[out] logger       object to which warning/error messages will be
- *                          written if necessary
- * @returns                 the number of loci identified
+ * @function Identify loci from the given set of annotation files.
  */
 unsigned long agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles,
                   const char **filenames, int numprocs, AgnLogger *logger);
 
 /**
- * Get a list of the seqids stored in this locus index.
- *
- * @param[in] idx    the locus index
- * @returns          pointer to a string array containing the seqids
+ * @function Get a list of the seqids stored in this locus index.
  */
 GtStrArray *agn_locus_index_seqids(AgnLocusIndex *idx);
 

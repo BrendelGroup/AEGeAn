@@ -4,41 +4,35 @@
 #include "genometools.h"
 
 /**
+ * @class AgnUnitTest
  * Class used for unit testing of classes and modules.
  */
 typedef struct AgnUnitTest AgnUnitTest;
 
 /**
- * Destructor.
- *
- * @param[in] test    object to be destroyed
+ * @function Destructor.
  */
 void agn_unit_test_delete(AgnUnitTest *test);
 
+/**
+ * @function Class constructor, where ``label`` is a label for the test and
+ * ``testfunc`` is a pointer to the function that will execute the test.
+ */
 AgnUnitTest *agn_unit_test_new(const char *label,
                                bool (*testfunc)(AgnUnitTest *));
 
 /**
- * Prints results of the unit test to the given output stream.
- *
- * @param[in]  test         the unit test
- * @param[out] outstream    the output file to which results should be written
+ * @function Prints results of the unit test to ``outstream``.
  */
 void agn_unit_test_print(AgnUnitTest *test, FILE *outstream);
 
 /**
- * Add a result to this unit test.
- *
- * @param[in] test       the unit test
- * @param[in] label      label for the result
- * @param[in] success    true for a passing result, false for failure
+ * @function Add a result to this unit test.
  */
 void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success);
 
 /**
- * Run the unit test.
- *
- * @param[in] test    the unit test
+ * @function Run the unit test.
  */
 void agn_unit_test_run(AgnUnitTest *test);
 
