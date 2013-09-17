@@ -136,9 +136,6 @@ int main(int argc, char * const *argv)
   // Create input and output streams to load, process, and write the data
   AgnLogger *logger = agn_logger_new();
   GtFile *outfile = gt_file_new_from_fileptr(options.outstream);
-  GtNodeVisitor *ssv;
-  if(options.source != NULL)
-    gt_set_source_visitor_new(options.source);
 
   GtNodeStream *gff3in;
   gff3in = gt_gff3_in_stream_new_unsorted(options.numfiles, options.gff3files);
@@ -148,6 +145,7 @@ int main(int argc, char * const *argv)
   GtNodeStream *nextstream = cgstream, *ssstream;
   if(options.source != NULL)
   {
+    GtNodeVisitor *ssv = gt_set_source_visitor_new(options.source);
     ssstream = gt_visitor_stream_new(cgstream, ssv);
     nextstream = ssstream;
   }
