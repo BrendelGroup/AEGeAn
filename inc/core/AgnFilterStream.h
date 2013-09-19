@@ -8,18 +8,16 @@
  * @class AgnFilterStream
  *
  * Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream
- * used to filter out unwanted nodes. The user can either specify the types of
- * nodes to keep (all others will be deleted and not passed), or the types of
- * nodes not to keep (these will be deleted, all others will be passed).
+ * used to select features of a certain type from a node stream.
  */
 typedef struct AgnFilterStream AgnFilterStream;
 
 /**
- * @function Class constructor. Provide ``typestokeep`` or ``typestofilter``,
- * not both.
+ * @function Class constructor. The keys of the ``typestokeep`` hashmap should
+ * be the type(s) to be kept from the node stream. Any non-NULL value can be
+ * associated with those keys.
  */
 GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream,
-                                    GtHashmap *typestokeep,
-                                    GtHashmap *typestofilter);
+                                    GtHashmap *typestokeep);
 
 #endif

@@ -11,7 +11,6 @@ struct AgnFilterStream
   GtNodeStream *in_stream;
   GtQueue *cache;
   GtHashmap *typestokeep;
-  GtHashmap *typestofilter;
 };
 
 
@@ -56,20 +55,16 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 //------------------------------------------------------------------------------
 
 GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream,
-                                    GtHashmap *typestokeep,
-                                    GtHashmap *typestofilter)
+                                    GtHashmap *typestokeep)
 {
   GtNodeStream *ns;
   AgnFilterStream *stream;
-  gt_assert(in_stream);
-  gt_assert((typestokeep == NULL || typestofilter == NULL) &&
-            (typestokeep != NULL || typestofilter != NULL));
+  gt_assert(in_stream && typestokeep);
   ns = gt_node_stream_create(filter_stream_class(), false);
   stream = filter_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
   stream->cache = gt_queue_new();
-  stream->typestokeep = typestokeep;
-  stream->typestofilter = typestofilter;
+  stream->typestokeep = gt_hashmap_ref(typestokeep);
   return ns;
 }
 
@@ -91,7 +86,6 @@ static void filter_stream_free(GtNodeStream *ns)
   gt_node_stream_delete(stream->in_stream);
   gt_queue_delete(stream->cache);
   gt_hashmap_delete(stream->typestokeep);
-  gt_hashmap_delete(stream->typestofilter);
 }
 
 static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
@@ -127,20 +121,10 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
         current != NULL;
         current  = gt_feature_node_iterator_next(iter))
     {
-      bool keepfeature;
       const char *type = gt_feature_node_get_type(current);
-      if(stream->typestokeep == NULL)
-      {
+      bool keepfeature = false;
+      if(gt_hashmap_get(stream->typestokeep, type) != NULL)
         keepfeature = true;
-        if(gt_hashmap_get(stream->typestofilter, type) != NULL)
-          keepfeature = false;
-      }
-      else
-      {
-        keepfeature = false;
-        if(gt_hashmap_get(stream->typestokeep, type) != NULL)
-          keepfeature = true;
-      }
 
       if(keepfeature)
       {

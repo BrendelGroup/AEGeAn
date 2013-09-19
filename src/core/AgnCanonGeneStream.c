@@ -78,7 +78,7 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
   gt_queue_add(stream->streams, ienv_stream);
   GtNodeStream *aistream = gt_add_introns_stream_new(ienv_stream);
   gt_queue_add(stream->streams, aistream);
-  GtNodeStream *filterstream = agn_filter_stream_new(aistream,typestokeep,NULL);
+  GtNodeStream *filterstream = agn_filter_stream_new(aistream, typestokeep);
   gt_queue_add(stream->streams, filterstream);
   stream->in_stream = filterstream;
 

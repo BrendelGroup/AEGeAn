@@ -226,11 +226,11 @@ Class AgnFilterStream
 
 .. c:type:: AgnFilterStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to filter out unwanted nodes. The user can either specify the types of nodes to keep (all others will be deleted and not passed), or the types of nodes not to keep (these will be deleted, all others will be passed). See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
 
-.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep, GtHashmap *typestofilter)
+.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
 
-  Class constructor. Provide ``typestokeep`` or ``typestofilter``, not both.
+  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
 
 Class AgnGeneLocus
 ------------------

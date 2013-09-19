@@ -327,7 +327,7 @@ GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
 
   GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   gt_hashmap_add(typestokeep, type, type);
-  GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep, NULL);
+  GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep);
 
   GtNodeStream *featstream = gt_feature_in_stream_new(filterstream, features);
 
