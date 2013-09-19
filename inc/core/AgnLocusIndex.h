@@ -60,8 +60,7 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
  * ``skipterminal`` to true to ignore the ends of the sequence.
  */
 GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
-                                       unsigned long delta,
-                                       bool skipterminal);
+                                       GtUword delta, bool skipterminal);
 
 /**
  * @function Class constructor
@@ -72,29 +71,36 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete);
  * @function Given a pair of annotation feature sets in memory, identify loci
  * while keeping the two sources of annotation separate (to enable comparison).
  */
-unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
-                  GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
-                  int numprocs, AgnCompareFilters *filters, AgnLogger *logger);
+GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
+                                              GtFeatureIndex *refrfeats,
+                                              GtFeatureIndex *predfeats,
+                                              int numprocs,
+                                              AgnCompareFilters *filters,
+                                              AgnLogger *logger);
 
 /**
  * @function Given a pair of annotation feature sets in memory, identify loci
  * while keeping the two sources of annotation separate (to enable comparison).
  */
-unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
-                  const char *refrfile, const char *predfile, int numprocs,
-                  AgnCompareFilters *filters, AgnLogger *logger);
+GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
+                                            const char *refrfile,
+                                            const char *predfile, int numprocs,
+                                            AgnCompareFilters *filters,
+                                            AgnLogger *logger);
 
 /**
  * @function Identify loci given an index of annotation features.
  */
-unsigned long agn_locus_index_parse_memory(AgnLocusIndex *idx,
-                  GtFeatureIndex *features, int numprocs, AgnLogger *logger);
+GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx,
+                                     GtFeatureIndex *features, int numprocs,
+                                     AgnLogger *logger);
 
 /**
  * @function Identify loci from the given set of annotation files.
  */
-unsigned long agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles,
-                  const char **filenames, int numprocs, AgnLogger *logger);
+GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles,
+                                   const char **filenames, int numprocs,
+                                   AgnLogger *logger);
 
 /**
  * @function Get a list of the seqids stored in this locus index.

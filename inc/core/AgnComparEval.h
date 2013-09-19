@@ -17,22 +17,22 @@
  */
 struct AgnCompStatsScaled
 {
-  unsigned long tp;
-  unsigned long fn;
-  unsigned long fp;
-  unsigned long tn;
-  double        mc;
-  double        cc;
-  double        sn;
-  double        sp;
-  double        f1;
-  double        ed;
-  char          mcs[7];
-  char          ccs[7];
-  char          sns[7];
-  char          sps[7];
-  char          f1s[7];
-  char          eds[16];
+  GtUword tp;
+  GtUword fn;
+  GtUword fp;
+  GtUword tn;
+  double  mc;
+  double  cc;
+  double  sn;
+  double  sp;
+  double  f1;
+  double  ed;
+  char    mcs[7];
+  char    ccs[7];
+  char    sns[7];
+  char    sps[7];
+  char    f1s[7];
+  char    eds[16];
 };
 typedef struct AgnCompStatsScaled AgnCompStatsScaled;
 
@@ -43,17 +43,17 @@ typedef struct AgnCompStatsScaled AgnCompStatsScaled;
  */
 struct AgnCompStatsBinary
 {
-  unsigned long correct;
-  unsigned long missing;
-  unsigned long wrong;
-  double        sn;
-  double        sp;
-  double        f1;
-  double        ed;
-  char          sns[7];
-  char          sps[7];
-  char          f1s[7];
-  char          eds[16];
+  GtUword correct;
+  GtUword missing;
+  GtUword wrong;
+  double  sn;
+  double  sp;
+  double  f1;
+  double  ed;
+  char    sns[7];
+  char    sps[7];
+  char    f1s[7];
+  char    eds[16];
 };
 typedef struct AgnCompStatsBinary AgnCompStatsBinary;
 
@@ -65,11 +65,11 @@ struct AgnCompSummary
 {
   unsigned int unique_refr;
   unsigned int unique_pred;
-  unsigned long refr_genes;
-  unsigned long pred_genes;
-  unsigned long refr_transcripts;
-  unsigned long pred_transcripts;
-  unsigned long num_loci;
+  GtUword      refr_genes;
+  GtUword      pred_genes;
+  GtUword      refr_transcripts;
+  GtUword      pred_transcripts;
+  GtUword      num_loci;
   unsigned int num_comparisons;
   unsigned int num_perfect;
   unsigned int num_mislabeled;
@@ -91,8 +91,8 @@ struct AgnComparison
   AgnCompStatsBinary cds_struc_stats;
   AgnCompStatsBinary exon_struc_stats;
   AgnCompStatsBinary utr_struc_stats;
-  unsigned long overall_matches;
-  unsigned long overall_length;
+  GtUword overall_matches;
+  GtUword overall_length;
   double overall_identity;
   double tolerance;
 };
@@ -109,12 +109,12 @@ typedef struct AgnComparison AgnComparison;
  */
 struct AgnCompResultDesc
 {
-  unsigned long total_length;
-  unsigned long transcript_count;
-  unsigned long refr_cds_length;
-  unsigned long pred_cds_length;
-  unsigned long refr_exon_count;
-  unsigned long pred_exon_count;
+  GtUword total_length;
+  GtUword transcript_count;
+  GtUword refr_cds_length;
+  GtUword pred_cds_length;
+  GtUword refr_exon_count;
+  GtUword pred_exon_count;
 };
 typedef struct AgnCompResultDesc AgnCompResultDesc;
 
@@ -151,28 +151,28 @@ typedef struct AgnCompEvaluation AgnCompEvaluation;
  */
 struct AgnCompareFilters
 {
-  unsigned long LocusLengthUpperLimit;
-  unsigned long LocusLengthLowerLimit;
-  unsigned long MinReferenceGeneModels;
-  unsigned long MaxReferenceGeneModels;
-  unsigned long MinPredictionGeneModels;
-  unsigned long MaxPredictionGeneModels;
-  unsigned long MinReferenceTranscriptModels;
-  unsigned long MaxReferenceTranscriptModels;
-  unsigned long MinPredictionTranscriptModels;
-  unsigned long MaxPredictionTranscriptModels;
-  unsigned long MinTranscriptsPerReferenceGeneModel;
-  unsigned long MaxTranscriptsPerReferenceGeneModel;
-  unsigned long MinTranscriptsPerPredictionGeneModel;
-  unsigned long MaxTranscriptsPerPredictionGeneModel;
-  unsigned long MinReferenceExons;
-  unsigned long MaxReferenceExons;
-  unsigned long MinPredictionExons;
-  unsigned long MaxPredictionExons;
-  unsigned long MinReferenceCDSLength;
-  unsigned long MaxReferenceCDSLength;
-  unsigned long MinPredictionCDSLength;
-  unsigned long MaxPredictionCDSLength;
+  GtUword LocusLengthUpperLimit;
+  GtUword LocusLengthLowerLimit;
+  GtUword MinReferenceGeneModels;
+  GtUword MaxReferenceGeneModels;
+  GtUword MinPredictionGeneModels;
+  GtUword MaxPredictionGeneModels;
+  GtUword MinReferenceTranscriptModels;
+  GtUword MaxReferenceTranscriptModels;
+  GtUword MinPredictionTranscriptModels;
+  GtUword MaxPredictionTranscriptModels;
+  GtUword MinTranscriptsPerReferenceGeneModel;
+  GtUword MaxTranscriptsPerReferenceGeneModel;
+  GtUword MinTranscriptsPerPredictionGeneModel;
+  GtUword MaxTranscriptsPerPredictionGeneModel;
+  GtUword MinReferenceExons;
+  GtUword MaxReferenceExons;
+  GtUword MinPredictionExons;
+  GtUword MaxPredictionExons;
+  GtUword MinReferenceCDSLength;
+  GtUword MaxReferenceCDSLength;
+  GtUword MinPredictionCDSLength;
+  GtUword MaxPredictionCDSLength;
 };
 typedef struct AgnCompareFilters AgnCompareFilters;
 

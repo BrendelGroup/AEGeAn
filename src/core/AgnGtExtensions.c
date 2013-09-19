@@ -4,7 +4,7 @@
 
 GtArray* agn_gt_array_copy(GtArray *source, size_t size)
 {
-  unsigned long i;
+  GtUword i;
   GtArray *new = gt_array_new(size);
   for(i = 0; i < gt_array_size(source); i++)
   {
@@ -19,7 +19,7 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
   fputs("##gff-version   3\n", outstream);
   GtError *error = gt_error_new();
   GtStrArray *seqids = gt_feature_index_get_seqids(index, error);
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
@@ -34,7 +34,7 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
     const char *seqid = gt_str_array_get(seqids, i);
     GtArray *features = gt_feature_index_get_features_for_seqid(index, seqid,
                                                                 error);
-    unsigned long j;
+    GtUword j;
     for(j = 0; j < gt_array_size(features); j++)
     {
       GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(features, j);
@@ -47,9 +47,9 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
   gt_str_array_delete(seqids);
 }
 
-unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
+GtUword agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
 {
-  unsigned long length = 0;
+  GtUword length = 0;
   GtFeatureNode *current;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
   for(current = gt_feature_node_iterator_next(iter);
@@ -179,9 +179,9 @@ bool agn_gt_feature_node_is_utr_feature(GtFeatureNode *feature)
          gt_feature_node_has_type(feature, "three_prime_untranslated_region");
 }
 
-unsigned long agn_gt_feature_node_num_transcripts(GtFeatureNode *gene)
+GtUword agn_gt_feature_node_num_transcripts(GtFeatureNode *gene)
 {
-  unsigned long count = 0;
+  GtUword count = 0;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
   GtFeatureNode *feature;
 
@@ -279,8 +279,8 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream,
     GtGenomeNode *gn = (GtGenomeNode *)current;
     GtStr *seqid = gt_genome_node_get_seqid(gn);
     const char *source = gt_feature_node_get_source(current);
-    unsigned long start = gt_genome_node_get_start(gn);
-    unsigned long end = gt_genome_node_get_end(gn);
+    GtUword start = gt_genome_node_get_start(gn);
+    GtUword end = gt_genome_node_get_end(gn);
     char score_string[16];
     if(gt_feature_node_score_is_defined(current))
     {
@@ -300,8 +300,8 @@ void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream,
             agn_gt_strand_to_char(strand), agn_gt_phase_to_char(phase));
 
     GtStrArray *attributes = gt_feature_node_get_attribute_list(current);
-    unsigned long num_attrs = gt_str_array_size(attributes);
-    unsigned long i;
+    GtUword num_attrs = gt_str_array_size(attributes);
+    GtUword i;
     for(i = 0; i < num_attrs; i++)
     {
       const char *attr_name = gt_str_array_get(attributes, i);
@@ -357,7 +357,7 @@ GtStrArray* agn_gt_str_array_intersection(GtStrArray *a1, GtStrArray *a2)
 {
   GtStrArray *intersection = gt_str_array_new();
   GtHashmap *added = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_str_array_size(a1); i++)
   {
     char *str = (char *)gt_str_array_get(a1, i);
@@ -379,7 +379,7 @@ GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
 {
   GtArray *strings = gt_array_new( sizeof(char *) );
   GtHashmap *added = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_str_array_size(a1); i++)
   {
     char *str = (char *)gt_str_array_get(a1, i);

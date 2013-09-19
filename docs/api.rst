@@ -90,7 +90,7 @@ Class AgnCliquePair
 
   Does this clique pair contain a single reference transcript and a single prediction transcript?
 
-.. c:function:: unsigned long agn_clique_pair_length(AgnCliquePair *pair)
+.. c:function:: GtUword agn_clique_pair_length(AgnCliquePair *pair)
 
   Get the length of the locus to which this clique pair belongs.
 
@@ -226,11 +226,11 @@ Class AgnFilterStream
 
 .. c:type:: AgnFilterStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to filter out unwanted nodes. The user can either specify the types of nodes to keep (all others will be deleted and not passed), or the types of nodes not to keep (these will be deleted, all others will be passed). See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
 
-.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep, GtHashmap *typestofilter)
+.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
 
-  Class constructor. Provide ``typestokeep`` or ``typestofilter``, not both.
+  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
 
 Class AgnGeneLocus
 ------------------
@@ -273,7 +273,7 @@ Class AgnGeneLocus
 
   Analog of ``strcmp`` for comparing AgnGeneLocus objects, used for sorting GtArray objects containing AgnGeneLocus objects.
 
-.. c:function:: unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus, AgnComparisonSource src)
+.. c:function:: GtUword agn_gene_locus_cds_length(AgnGeneLocus *locus, AgnComparisonSource src)
 
   The combined length of all coding sequences associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_refr_cds_length(locus)`` for the combined length of all reference CDSs, ``agn_gene_locus_pred_cds_length(locus)`` for the combined length of all prediction CDSs, and ``agn_gene_locus_get_cds_length(locus)`` for the combined length of all CDSs.
 
@@ -285,7 +285,7 @@ Class AgnGeneLocus
 
   Class destructor.
 
-.. c:function:: unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus, AgnComparisonSource src)
+.. c:function:: GtUword agn_gene_locus_exon_num(AgnGeneLocus *locus, AgnComparisonSource src)
 
   Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_gene_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_gene_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
 
@@ -301,15 +301,15 @@ Class AgnGeneLocus
 
   Get IDs of the genes associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_pred_gene_ids(locus)`` to retrieve prediction genes IDs, ``agn_gene_locus_refr_gene_ids(locus)`` to retrieve reference genes IDs, or ``agn_gene_locus_get_gene_ids(locus)`` if the source of annotation is undesignated or irrelevant.
 
-.. c:function:: unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus, AgnComparisonSource src)
+.. c:function:: GtUword agn_gene_locus_gene_num(AgnGeneLocus *locus, AgnComparisonSource src)
 
   Get the number of genes for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_num_pred_genes(locus)`` for the number of prediction genes, ``agn_gene_locus_num_refr_genes(locus)`` for the number of reference genes, or ``agn_gene_locus_num_genes(locus)`` if the source of annotation is undesignated or irrelevant.
 
-.. c:function:: unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus)
+.. c:function:: GtUword agn_gene_locus_get_end(AgnGeneLocus *locus)
 
   Get this locus' end coordinate.
 
-.. c:function:: unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus)
+.. c:function:: GtUword agn_gene_locus_get_length(AgnGeneLocus *locus)
 
   Get this locus' length.
 
@@ -317,7 +317,7 @@ Class AgnGeneLocus
 
   Get this locus' sequence ID.
 
-.. c:function:: unsigned long agn_gene_locus_get_start(AgnGeneLocus *locus)
+.. c:function:: GtUword agn_gene_locus_get_start(AgnGeneLocus *locus)
 
   Get this locus' start coordinate.
 
@@ -333,7 +333,7 @@ Class AgnGeneLocus
 
   Class constructor.
 
-.. c:function:: unsigned long agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus)
+.. c:function:: GtUword agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus)
 
   Report the number of clique pairs to be reported for this locus.
 
@@ -349,7 +349,7 @@ Class AgnGeneLocus
 
   Return the coordinates of this locus.
 
-.. c:function:: void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start, unsigned long end)
+.. c:function:: void agn_gene_locus_set_range(AgnGeneLocus *locus, GtUword start, GtUword end)
 
   Set the range of this locus, no questions asked.
 
@@ -373,7 +373,7 @@ Class AgnGeneLocus
 
   Get the transcript IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_pred_transcripts(locus)`` to retrieve prediction IDs, ``agn_gene_locus_refr_transcripts(locus)`` to retrieve reference IDs, or ``agn_gene_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
 
-.. c:function:: unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus, AgnComparisonSource src)
+.. c:function:: GtUword agn_gene_locus_transcript_num(AgnGeneLocus *locus, AgnComparisonSource src)
 
   Get the number of transcripts for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_transcript_locus_num_pred_transcripts(locus)`` for the number of prediction transcripts, ``agn_transcript_locus_num_refr_transcripts(locus)`` for the number of reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)`` if the source of annotation is undesignated or irrelevant.
 
@@ -390,7 +390,7 @@ A collection of extensions to core GenomeTools classes. See the `module header <
 
   Write the given feature index to GFF3 format.
 
-.. c:function:: unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
+.. c:function:: GtUword agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
 
   Calculate the length of the given transcript's coding sequence in amino acids.
 
@@ -434,7 +434,7 @@ A collection of extensions to core GenomeTools classes. See the `module header <
 
   Determine whether the given feature is part of a UTR.
 
-.. c:function:: unsigned long agn_gt_feature_node_num_transcripts(GtFeatureNode *gene)
+.. c:function:: GtUword agn_gt_feature_node_num_transcripts(GtFeatureNode *gene)
 
   Determine the number of transcripts for the given gene feature.
 
@@ -527,7 +527,7 @@ Class AgnLocusIndex
 
   Retrieve all loci corresponding to the specified sequence ID.
 
-.. c:type:: GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid, unsigned long delta, bool skipterminal)
+.. c:type:: GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid, GtUword delta, bool skipterminal)
 
   Compute interval loci with the given ``delta``. If running on incomplete (contig/scaffold) genomic sequences, consider setting ``skipterminal`` to true to ignore the ends of the sequence.
 
@@ -535,19 +535,19 @@ Class AgnLocusIndex
 
   Class constructor
 
-.. c:function:: unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx, GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx, GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
 
   Given a pair of annotation feature sets in memory, identify loci while keeping the two sources of annotation separate (to enable comparison).
 
-.. c:function:: unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx, const char *refrfile, const char *predfile, int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx, const char *refrfile, const char *predfile, int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
 
   Given a pair of annotation feature sets in memory, identify loci while keeping the two sources of annotation separate (to enable comparison).
 
-.. c:function:: unsigned long agn_locus_index_parse_memory(AgnLocusIndex *idx, GtFeatureIndex *features, int numprocs, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx, GtFeatureIndex *features, int numprocs, AgnLogger *logger)
 
   Identify loci given an index of annotation features.
 
-.. c:function:: unsigned long agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles, const char **filenames, int numprocs, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles, const char **filenames, int numprocs, AgnLogger *logger)
 
   Identify loci from the given set of annotation files.
 
@@ -641,7 +641,7 @@ Class AgnTranscriptClique
 
   Add a transcript to this clique.
 
-.. c:function:: unsigned long agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
+.. c:function:: GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
 
   Get the CDS length (in amino acids) for this transcript clique.
 
@@ -665,11 +665,11 @@ Class AgnTranscriptClique
 
   Class constructor.
 
-.. c:function:: unsigned long agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
+.. c:function:: GtUword agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
 
   Get the number of exons in this clique.
 
-.. c:function:: unsigned long agn_transcript_clique_num_utrs(AgnTranscriptClique *clique)
+.. c:function:: GtUword agn_transcript_clique_num_utrs(AgnTranscriptClique *clique)
 
   Get the number of UTR segments in this clique.
 
@@ -681,7 +681,7 @@ Class AgnTranscriptClique
 
   Add all of the IDs associated with this clique to the given hash map.
 
-.. c:function:: unsigned long agn_transcript_clique_size(AgnTranscriptClique *clique)
+.. c:function:: GtUword agn_transcript_clique_size(AgnTranscriptClique *clique)
 
   Get the number of transcripts in this clique.
 
@@ -781,7 +781,7 @@ A collection of assorted core utility functions. See the `module header <https:/
 
   Given two feature indices, determine all of the sequences that are annotated by either of them and return those sequences' IDs as a string array.
 
-.. c:function:: int agn_sprintf_comma(unsigned long n, char *buffer)
+.. c:function:: int agn_sprintf_comma(GtUword n, char *buffer)
 
   Format the given non-negative number with commas as the thousands separator. The resulting string will be written to ``buffer``.
 

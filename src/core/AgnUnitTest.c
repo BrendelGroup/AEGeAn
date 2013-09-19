@@ -53,7 +53,7 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
     successstr = "SUCCESS";
   fprintf(outstream, "    %-36s | %s\n", test->label, successstr);
 
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_array_size(test->results); i++)
   {
     UnitTestResult *result = gt_array_get(test->results, i);

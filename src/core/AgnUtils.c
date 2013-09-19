@@ -18,7 +18,7 @@ void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
   {
     if(skipsimplecliques == false || gt_array_size(R) != 1)
     {
-      unsigned long i;
+      GtUword i;
       AgnTranscriptClique *clique = agn_transcript_clique_new();
       for(i = 0; i < gt_array_size(R); i++)
       {
@@ -92,8 +92,8 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
 
 double agn_calc_splice_complexity(GtArray *transcripts)
 {
-  unsigned long n = gt_array_size(transcripts);
-  unsigned long i,j;
+  GtUword n = gt_array_size(transcripts);
+  GtUword i,j;
   double sc = 0.0;
 
   for(i = 0; i < n; i++)
@@ -229,7 +229,7 @@ GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
   else
   {
     // First add each transcript as a clique, even if it is not a maximal clique
-    unsigned long i;
+    GtUword i;
     for(i = 0; i < gt_array_size(feature_set); i++)
     {
       GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(feature_set, i);
@@ -258,7 +258,7 @@ GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
 GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set)
 {
   GtArray *neighbors = gt_array_new( sizeof(GtGenomeNode *) );
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_array_size(feature_set); i++)
   {
     GtGenomeNode *other = *(GtGenomeNode **)gt_array_get(feature_set, i);
@@ -327,7 +327,7 @@ GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
 
   GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   gt_hashmap_add(typestokeep, type, type);
-  GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep, NULL);
+  GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep);
 
   GtNodeStream *featstream = gt_feature_in_stream_new(filterstream, features);
 
@@ -419,7 +419,7 @@ GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
   GtStrArray *seqids = agn_gt_str_array_intersection(refrseqids, predseqids);
 
   // Print reference sequences with no prediction annotations
-  unsigned long i, j;
+  GtUword i, j;
   for(i = 0; i < gt_str_array_size(refrseqids); i++)
   {
     const char *refrseq = gt_str_array_get(refrseqids, i);
@@ -499,7 +499,7 @@ GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
   return seqids;
 }
 
-int agn_sprintf_comma(unsigned long n, char *buffer)
+int agn_sprintf_comma(GtUword n, char *buffer)
 {
   if(n < 1000)
   {
@@ -548,7 +548,7 @@ GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
 
   if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
   {
-    unsigned long temp = trange.start;
+    GtUword temp = trange.start;
     trange.start = trange.end;
     trange.end = temp;
   }
@@ -589,7 +589,7 @@ void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
   else
   {
     fputs("join(", outstream);
-    unsigned long i;
+    GtUword i;
     for(i = 0; i < gt_array_size(exons); i++)
     {
       GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, i);

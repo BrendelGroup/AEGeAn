@@ -28,7 +28,7 @@ struct AgnCanonGeneStream
  *
  * @returns    a node stream class object
  */
-const GtNodeStreamClass* canon_gene_stream_class(void);
+static const GtNodeStreamClass* canon_gene_stream_class(void);
 
 /**
  * Destructor for the class.
@@ -78,15 +78,14 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
   gt_queue_add(stream->streams, icnv_stream);
   GtNodeStream *ienv_stream = gt_visitor_stream_new(icnv_stream, ienv);
   gt_queue_add(stream->streams, ienv_stream);
-  GtNodeStream *filterstream = agn_filter_stream_new(ienv_stream, typestokeep,
-                                                     NULL);
+  GtNodeStream *filterstream = agn_filter_stream_new(ienv_stream, typestokeep);
   gt_queue_add(stream->streams, filterstream);
   stream->in_stream = filterstream;
 
   return ns;
 }
 
-const GtNodeStreamClass *canon_gene_stream_class(void)
+static const GtNodeStreamClass *canon_gene_stream_class(void)
 {
   static const GtNodeStreamClass *nsc = NULL;
   if(!nsc)

@@ -7,7 +7,6 @@
 
 typedef struct
 {
-  bool skipintrons;
   FILE *outstream;
   GtStr *source;
   bool read_stdin;
@@ -25,7 +24,6 @@ void print_usage(FILE *outstream)
   fputs("Usage: canon-gff3 [options] gff3file1 [gff3file2 ...]\n"
 "  Options:\n"
 "     -h|--help               print this help message and exit\n"
-"     -k|--skipintrons        do not print intron features in the output\n"
 "     -o|--outfile: STRING    name of file to which GFF3 data will be\n"
 "                             written; default is terminal (stdout)\n"
 "     -s|--source: STRING     reset the source of each feature to the given\n"
@@ -43,7 +41,6 @@ int canon_gff3_parse_options(int argc, char * const *argv,
   const struct option init_options[] =
   {
     { "help",        no_argument,       NULL, 'h' },
-    { "skipintrons", no_argument,       NULL, 'k' },
     { "outfile",     required_argument, NULL, 'o' },
     { "source",      required_argument, NULL, 's' },
     { "stdin",       no_argument,       NULL, 't' },
@@ -59,10 +56,6 @@ int canon_gff3_parse_options(int argc, char * const *argv,
       case 'h':
         print_usage(stdout);
         return -1;
-        break;
-
-      case 'k':
-        options->skipintrons = true;
         break;
 
       case 'o':
@@ -123,7 +116,7 @@ int main(int argc, char * const *argv)
 {
   // Options
   gt_lib_init();
-  CanonGFF3Options options = { false, stdout, NULL, false, NULL, 0 };
+  CanonGFF3Options options = { stdout, NULL, false, NULL, 0 };
   int code = canon_gff3_parse_options(argc, argv, &options);
   if(code)
   {
@@ -149,14 +142,6 @@ int main(int argc, char * const *argv)
     ssstream = gt_visitor_stream_new(cgstream, ssv);
     nextstream = ssstream;
   }
-  GtNodeStream *sistream;
-  if(options.skipintrons)
-  {
-    GtHashmap *typestofilter = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
-    gt_hashmap_add(typestofilter, "intron", "intron");
-    sistream = agn_filter_stream_new(nextstream, NULL, typestofilter);
-    nextstream = sistream;
-  }
   GtNodeStream *gff3out  = gt_gff3_out_stream_new(nextstream, outfile);
   gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)gff3out);
 
@@ -170,8 +155,6 @@ int main(int argc, char * const *argv)
   gt_node_stream_delete(cgstream);
   if(options.source != NULL)
     gt_node_stream_delete(ssstream);
-  if(options.skipintrons)
-    gt_node_stream_delete(sistream);
   gt_node_stream_delete(gff3out);
   gt_file_delete_without_handle(outfile);
   gt_error_delete(error);

@@ -40,7 +40,7 @@ struct AgnGeneLocusPngMetadata
   const char *predfile;
   const char *refrlabel;
   const char *predlabel;
-  unsigned long graphic_width;
+  GtUword graphic_width;
   int (*track_order_func)(const char *s1, const char *s2, void *data);
 };
 typedef struct AgnGeneLocusPngMetadata AgnGeneLocusPngMetadata;
@@ -51,13 +51,13 @@ typedef struct AgnGeneLocusPngMetadata AgnGeneLocusPngMetadata;
 */
 struct AgnGeneLocusSummary
 {
-  unsigned long start;
-  unsigned long end;
-  unsigned long length;
-  unsigned long refrtrans;
-  unsigned long predtrans;
-  unsigned long reported;
-  unsigned long total;
+  GtUword start;
+  GtUword end;
+  GtUword length;
+  GtUword refrtrans;
+  GtUword predtrans;
+  GtUword reported;
+  GtUword total;
   AgnCompSummary counts;
 };
 typedef struct AgnGeneLocusSummary AgnGeneLocusSummary;
@@ -109,8 +109,7 @@ int agn_gene_locus_array_compare(const void *p1, const void *p2);
  * prediction CDSs, and ``agn_gene_locus_get_cds_length(locus)`` for the
  * combined length of all CDSs.
  */
-unsigned long agn_gene_locus_cds_length(AgnGeneLocus *locus,
-                                        AgnComparisonSource src);
+GtUword agn_gene_locus_cds_length(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_pred_cds_length(LC)\
         agn_gene_locus_cds_length(LC, PREDICTIONSOURCE)
 #define agn_gene_locus_refr_cds_length(LC)\
@@ -143,8 +142,7 @@ void agn_gene_locus_delete(AgnGeneLocus *locus);
  * or ``agn_gene_locus_num_exons(locus)`` if the source of annotation is
  * undesignated or irrelevant.
  */
-unsigned long agn_gene_locus_exon_num(AgnGeneLocus *locus,
-                                      AgnComparisonSource src);
+GtUword agn_gene_locus_exon_num(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_num_pred_exons(LC)\
         agn_gene_locus_exon_num(LC, PREDICTIONSOURCE)
 #define agn_gene_locus_num_refr_exons(LC)\
@@ -199,8 +197,7 @@ GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src);
  * or ``agn_gene_locus_num_genes(locus)`` if the source of annotation is
  * undesignated or irrelevant.
  */
-unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
-                                      AgnComparisonSource src);
+GtUword agn_gene_locus_gene_num(AgnGeneLocus *locus, AgnComparisonSource src);
 #define agn_gene_locus_num_pred_genes(LC)\
         agn_gene_locus_gene_num(LC, PREDICTIONSOURCE)
 #define agn_gene_locus_num_refr_genes(LC)\
@@ -211,12 +208,12 @@ unsigned long agn_gene_locus_gene_num(AgnGeneLocus *locus,
 /**
  * @function Get this locus' end coordinate.
  */
-unsigned long agn_gene_locus_get_end(AgnGeneLocus *locus);
+GtUword agn_gene_locus_get_end(AgnGeneLocus *locus);
 
 /**
  * @function Get this locus' length.
  */
-unsigned long agn_gene_locus_get_length(AgnGeneLocus *locus);
+GtUword agn_gene_locus_get_length(AgnGeneLocus *locus);
 
 /**
  * @function Get this locus' sequence ID.
@@ -226,7 +223,7 @@ const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus);
 /**
  * @function Get this locus' start coordinate.
  */
-unsigned long agn_gene_locus_get_start(AgnGeneLocus *locus);
+GtUword agn_gene_locus_get_start(AgnGeneLocus *locus);
 
 /**
  * @function Get a list of all the prediction transcript cliques that have no
@@ -248,7 +245,7 @@ AgnGeneLocus* agn_gene_locus_new(const char *seqid);
 /**
  * @function Report the number of clique pairs to be reported for this locus.
  */
-unsigned long agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus);
+GtUword agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus);
 
 #ifndef WITHOUT_CAIRO
 /**
@@ -274,8 +271,7 @@ GtRange agn_gene_locus_range(AgnGeneLocus *locus);
 /**
  * @function Set the range of this locus, no questions asked.
  */
-void agn_gene_locus_set_range(AgnGeneLocus *locus, unsigned long start,
-                              unsigned long end);
+void agn_gene_locus_set_range(AgnGeneLocus *locus, GtUword start, GtUword end);
 
 /**
  * @function Calculate the splice complexity of this gene locus. Rather than
@@ -352,8 +348,8 @@ GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus,
  * reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)``
  * if the source of annotation is undesignated or irrelevant.
  */
-unsigned long agn_gene_locus_transcript_num(AgnGeneLocus *locus,
-                                            AgnComparisonSource src);
+GtUword agn_gene_locus_transcript_num(AgnGeneLocus *locus,
+                                      AgnComparisonSource src);
 #define agn_gene_locus_num_pred_transcripts(LC)\
         agn_gene_locus_transcript_num(LC, PREDICTIONSOURCE)
 #define agn_gene_locus_num_refr_transcripts(LC)\
