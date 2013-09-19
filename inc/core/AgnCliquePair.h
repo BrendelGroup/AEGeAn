@@ -124,7 +124,7 @@ bool agn_clique_pair_is_simple(AgnCliquePair *pair);
 /**
  * @function Get the length of the locus to which this clique pair belongs.
  */
-unsigned long agn_clique_pair_length(AgnCliquePair *pair);
+GtUword agn_clique_pair_length(AgnCliquePair *pair);
 
 /**
  * @function Determine whether this clique pair needs comparison (i.e., whether

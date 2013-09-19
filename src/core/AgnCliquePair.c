@@ -44,8 +44,8 @@ typedef struct
  * @param[in]  transcript     a transcript in the clique
  * @param[out] modelvector    ModelVectorData for the vector being built
  */
-void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
-                                          void *data);
+static void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
+                                                 void *data);
 
 /**
  * Given a set of of start and end coordinates for reference and prediction
@@ -54,7 +54,7 @@ void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
  *
  * @param[in] dat    the data
  */
-void clique_pair_calc_struct_stats(StructuralData *dat);
+static void clique_pair_calc_struct_stats(StructuralData *dat);
 
 /**
  * Initialize the data structure used to store start and end coordinates for
@@ -64,14 +64,15 @@ void clique_pair_calc_struct_stats(StructuralData *dat);
  * @param[out] dat      the data structure
  * @param[in]  stats    stats to be stored in the structure
  */
-void clique_pair_init_struct_dat(StructuralData *dat,AgnCompStatsBinary *stats);
+static void clique_pair_init_struct_dat(StructuralData *dat,
+                                        AgnCompStatsBinary *stats);
 
 /**
  * Free the memory previously occupied by the data structure.
  *
  * @param[out] dat      the data structure
  */
-void clique_pair_term_struct_dat(StructuralData *dat);
+static void clique_pair_term_struct_dat(StructuralData *dat);
 
 // Macros for convenience when checking how a given nucleotide is annotated
 #define char_is_exonic(C) (C == 'F' || C == 'T' || C == 'C')
@@ -107,7 +108,7 @@ void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
 
 void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
 {
-  unsigned long locus_length = agn_clique_pair_length(pair);
+  GtUword locus_length = agn_clique_pair_length(pair);
 
   StructuralData cdsstruct;
   clique_pair_init_struct_dat(&cdsstruct, &pair->stats.cds_struc_stats);
@@ -117,7 +118,7 @@ void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
   clique_pair_init_struct_dat(&utrstruct, &pair->stats.utr_struc_stats);
 
   // Collect counts
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < locus_length; i++)
   {
     // Coding nucleotide counts
@@ -365,18 +366,9 @@ AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
 
 bool agn_clique_pair_has_utrs(AgnCliquePair *pair)
 {
-  unsigned long refr_utrs = agn_transcript_clique_num_utrs(pair->refr_clique);
-  unsigned long pred_utrs = agn_transcript_clique_num_utrs(pair->pred_clique);
+  GtUword refr_utrs = agn_transcript_clique_num_utrs(pair->refr_clique);
+  GtUword pred_utrs = agn_transcript_clique_num_utrs(pair->pred_clique);
   return(refr_utrs + pred_utrs > 0);
-}
-
-void clique_pair_init_struct_dat(StructuralData *dat, AgnCompStatsBinary *stats)
-{
-  dat->refrstarts = gt_array_new( sizeof(unsigned long) );
-  dat->refrends   = gt_array_new( sizeof(unsigned long) );
-  dat->predstarts = gt_array_new( sizeof(unsigned long) );
-  dat->predends   = gt_array_new( sizeof(unsigned long) );
-  dat->stats      = stats;
 }
 
 bool agn_clique_pair_is_simple(AgnCliquePair *pair)
@@ -391,7 +383,7 @@ bool agn_clique_pair_needs_comparison(AgnCliquePair *pair)
            agn_transcript_clique_size(pair->pred_clique) > 0 );
 }
 
-unsigned long agn_clique_pair_length(AgnCliquePair *pair)
+GtUword agn_clique_pair_length(AgnCliquePair *pair)
 {
   return gt_range_length(&pair->region.range);
 }
@@ -571,8 +563,8 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
   return true;
 }
 
-void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
-                                          void *data)
+static void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
+                                                 void *data)
 {
   ModelVectorData *mvd = data;
   GtFeatureNode *fn;
@@ -600,9 +592,9 @@ void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
 
     if(c != 'G')
     {
-      unsigned long fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
-      unsigned long fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
-      unsigned long i;
+      GtUword fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
+      GtUword fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
+      GtUword i;
 
       for(i = fn_start - mvd->locusrange->start;
           i < fn_end - mvd->locusrange->start + 1;
@@ -615,22 +607,22 @@ void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
   gt_feature_node_iterator_delete(iter);
 }
 
-void clique_pair_calc_struct_stats(StructuralData *dat)
+static void clique_pair_calc_struct_stats(StructuralData *dat)
 {
-  unsigned long num_refr = gt_array_size(dat->refrstarts);
-  unsigned long num_pred = gt_array_size(dat->predstarts);
+  GtUword num_refr = gt_array_size(dat->refrstarts);
+  GtUword num_pred = gt_array_size(dat->predstarts);
   gt_assert(num_refr == gt_array_size(dat->refrends));
   gt_assert(num_pred == gt_array_size(dat->predends));
-  unsigned long i, j;
+  GtUword i, j;
   for(i = 0; i < num_refr; i++)
   {
     bool found_match = 0;
-    unsigned long *refrstart = gt_array_get(dat->refrstarts, i);
-    unsigned long *refrend   = gt_array_get(dat->refrends,   i);
+    GtUword *refrstart = gt_array_get(dat->refrstarts, i);
+    GtUword *refrend   = gt_array_get(dat->refrends,   i);
     for(j = 0; j < num_pred; j++)
     {
-      unsigned long *predstart = gt_array_get(dat->predstarts, j);
-      unsigned long *predend   = gt_array_get(dat->predends,   j);
+      GtUword *predstart = gt_array_get(dat->predstarts, j);
+      GtUword *predend   = gt_array_get(dat->predends,   j);
       if(*refrstart == *predstart && *refrend == *predend)
       {
         dat->stats->correct++;
@@ -644,12 +636,12 @@ void clique_pair_calc_struct_stats(StructuralData *dat)
   for(i = 0; i < num_pred; i++)
   {
     bool found_match = 0;
-    unsigned long *predstart = gt_array_get(dat->predstarts, i);
-    unsigned long *predend   = gt_array_get(dat->predends,   i);
+    GtUword *predstart = gt_array_get(dat->predstarts, i);
+    GtUword *predend   = gt_array_get(dat->predends,   i);
     for(j = 0; j < num_refr; j++)
     {
-      unsigned long *refrstart = gt_array_get(dat->refrstarts, j);
-      unsigned long *refrend   = gt_array_get(dat->refrends,   j);
+      GtUword *refrstart = gt_array_get(dat->refrstarts, j);
+      GtUword *refrend   = gt_array_get(dat->refrends,   j);
       if(*refrstart == *predstart && *refrend == *predend)
       {
         found_match = 1;
@@ -663,7 +655,17 @@ void clique_pair_calc_struct_stats(StructuralData *dat)
   clique_pair_term_struct_dat(dat);
 }
 
-void clique_pair_term_struct_dat(StructuralData *dat)
+static void clique_pair_init_struct_dat(StructuralData *dat,
+                                        AgnCompStatsBinary *stats)
+{
+  dat->refrstarts = gt_array_new( sizeof(GtUword) );
+  dat->refrends   = gt_array_new( sizeof(GtUword) );
+  dat->predstarts = gt_array_new( sizeof(GtUword) );
+  dat->predends   = gt_array_new( sizeof(GtUword) );
+  dat->stats      = stats;
+}
+
+static void clique_pair_term_struct_dat(StructuralData *dat)
 {
   gt_array_delete(dat->refrstarts);
   gt_array_delete(dat->refrends);

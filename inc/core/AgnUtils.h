@@ -122,7 +122,7 @@ GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
  * @function Format the given non-negative number with commas as the thousands
  * separator. The resulting string will be written to ``buffer``.
  */
-int agn_sprintf_comma(unsigned long n, char *buffer);
+int agn_sprintf_comma(GtUword n, char *buffer);
 
 /**
  * @function Dereference the given pointers and compare the resulting strings

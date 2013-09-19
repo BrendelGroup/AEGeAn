@@ -183,112 +183,112 @@ void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream,
 
       if(strcmp(key, "LocusLengthUpperLimit") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->LocusLengthUpperLimit = val;
       }
       else if(strcmp(key, "LocusLengthLowerLimit") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->LocusLengthLowerLimit = val;
       }
       else if(strcmp(key, "MinReferenceGeneModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinReferenceGeneModels = val;
       }
       else if(strcmp(key, "MaxReferenceGeneModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxReferenceGeneModels = val;
       }
       else if(strcmp(key, "MinPredictionGeneModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinPredictionGeneModels = val;
       }
       else if(strcmp(key, "MaxPredictionGeneModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxPredictionGeneModels = val;
       }
       else if(strcmp(key, "MinReferenceTranscriptModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinReferenceTranscriptModels = val;
       }
       else if(strcmp(key, "MaxReferenceTranscriptModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxReferenceTranscriptModels = val;
       }
       else if(strcmp(key, "MinPredictionTranscriptModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinPredictionTranscriptModels = val;
       }
       else if(strcmp(key, "MaxPredictionTranscriptModels") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxPredictionTranscriptModels = val;
       }
       else if(strcmp(key, "MinTranscriptsPerReferenceGeneModel") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinTranscriptsPerReferenceGeneModel = val;
       }
       else if(strcmp(key, "MaxTranscriptsPerReferenceGeneModel") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxTranscriptsPerReferenceGeneModel = val;
       }
       else if(strcmp(key, "MinTranscriptsPerPredictionGeneModel") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinTranscriptsPerPredictionGeneModel = val;
       }
       else if(strcmp(key, "MaxTranscriptsPerPredictionGeneModel") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxTranscriptsPerPredictionGeneModel = val;
       }
       else if(strcmp(key, "MinReferenceExons") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinReferenceExons = val;
       }
       else if(strcmp(key, "MaxReferenceExons") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxReferenceExons = val;
       }
       else if(strcmp(key, "MinPredictionExons") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinPredictionExons = val;
       }
       else if(strcmp(key, "MaxPredictionExons") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxPredictionExons = val;
       }
       else if(strcmp(key, "MinReferenceCDSLength") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinReferenceCDSLength = val;
       }
       else if(strcmp(key, "MaxReferenceCDSLength") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxReferenceCDSLength = val;
       }
       else if(strcmp(key, "MinPredictionCDSLength") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MinPredictionCDSLength = val;
       }
       else if(strcmp(key, "MaxPredictionCDSLength") == 0)
       {
-        unsigned long val = atol(value);
+        GtUword val = atol(value);
         filters->MaxPredictionCDSLength = val;
       }
       else

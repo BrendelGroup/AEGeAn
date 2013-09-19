@@ -27,7 +27,7 @@ struct AgnLocusIndex
  * @param[out] lp     array to which loci are added
  * @returns           0 for success, 1 otherwise
  */
-int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp);
+static int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp);
 
 /**
  * Given two sets of annotations for the same sequence (a reference set and a
@@ -42,12 +42,12 @@ int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp);
  * @param[in] logger     object to which warning/error messages are written
  * @returns              an interval tree containing the sequence's gene loci
  */
-GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
-                                               const char *seqid,
-                                               GtFeatureIndex *refr,
-                                               GtFeatureIndex *pred,
-                                               AgnCompareFilters *filters,
-                                               AgnLogger *logger);
+static GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
+                                                     const char *seqid,
+                                                     GtFeatureIndex *refr,
+                                                     GtFeatureIndex *pred,
+                                                     AgnCompareFilters *filters,
+                                                     AgnLogger *logger);
 
 /**
  * Given a locus and a collection of gene features, search for genes that
@@ -66,10 +66,12 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
  *                              written
  * @returns                     the number of genes assigned to the locus
  */
-int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
-                  GtFeatureIndex *features, GtHashmap *visited_genes,
-                  AgnGeneLocus *locus, AgnComparisonSource source,
-                  AgnLogger *logger);
+static int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
+                                                 GtFeatureIndex *features,
+                                                 GtHashmap *visited_genes,
+                                                 AgnGeneLocus *locus,
+                                                 AgnComparisonSource source,
+                                                 AgnLogger *logger);
 
 /**
  * Given a locus and a collection of genomic features, search for genes that
@@ -85,9 +87,11 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
  *                              written
  * @returns                     the number of genes assigned to the locus
  */
-int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
-                                 GtHashmap *visited_genes, AgnGeneLocus *locus,
-                                 AgnLogger *logger);
+static int agn_locus_index_test_overlap(AgnLocusIndex *idx,
+                                        GtFeatureIndex *features,
+                                        GtHashmap *visited_genes,
+                                        AgnGeneLocus *locus,
+                                        AgnLogger *logger);
 
 
 //------------------------------------------------------------------------------
@@ -105,7 +109,7 @@ void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
   omp_set_num_threads(numprocs);
 
   GtArray *seqloci = agn_locus_index_get(idx, seqid);
-  unsigned long nloci = gt_array_size(seqloci);
+  GtUword nloci = gt_array_size(seqloci);
 
   //int i, rank;
   int i;
@@ -168,15 +172,14 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
 }
 
 GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
-                                       unsigned long delta,
-                                       bool skipterminal)
+                                       GtUword delta, bool skipterminal)
 {
   GtArray *loci = agn_locus_index_get(idx, seqid);
   if(loci == NULL)
     return NULL;
   gt_array_sort(loci, (GtCompare)agn_gene_locus_array_compare);
 
-  unsigned long nloci = gt_array_size(loci);
+  GtUword nloci = gt_array_size(loci);
   GtArray *iloci = gt_array_new( sizeof(AgnGeneLocus *) );
   GtRange *seqrange = gt_hashmap_get(idx->seqranges, seqid);
 
@@ -204,7 +207,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     AgnGeneLocus *l2 = *(AgnGeneLocus **)gt_array_get(loci, 1);
     GtRange r2 = agn_gene_locus_range(l2);
 
-    unsigned long newstart, newend;
+    GtUword newstart, newend;
     newstart = (r1.start > seqrange->start + delta) ? r1.start - delta
                                                     : seqrange->start;
     newend   = (r1.end + delta < r2.start) ? r1.end + delta : r2.start - 1;
@@ -223,7 +226,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   }
 
   // Handle internal (not initial or terminal) iloci
-  unsigned long i;
+  GtUword i;
   for(i = 1; i < nloci - 1; i++)
   {
     AgnGeneLocus *llocus = *(AgnGeneLocus **)gt_array_get(loci, i-1);
@@ -233,7 +236,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     GtRange range = agn_gene_locus_range(locus);
     GtRange rrange = agn_gene_locus_range(rlocus);
 
-    unsigned long newstart, newend;
+    GtUword newstart, newend;
     newstart = (range.start - delta > lrange.end) ? range.start - delta :
                                                     lrange.end + 1;
     newend   = (range.end + delta < rrange.start) ? range.end + delta :
@@ -255,14 +258,14 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   // Handle terminal ilocus
   l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci-1);
   r1 = agn_gene_locus_range(l1);
-  unsigned long prevend = seqrange->start - 1;
+  GtUword prevend = seqrange->start - 1;
   if(nloci > 1)
   {
     AgnGeneLocus *l2 = *(AgnGeneLocus **)gt_array_get(loci, nloci-2);
     GtRange r2 = agn_gene_locus_range(l2);
     prevend = r2.end;
   }
-  unsigned long newstart, newend;
+  GtUword newstart, newend;
   newstart = (r1.start > prevend + delta) ? r1.start - delta : prevend + 1;
   newend   = (r1.end + delta <= seqrange->end) ? r1.end + delta : seqrange->end;
   AgnGeneLocus *ilocus = agn_gene_locus_clone(l1);
@@ -280,7 +283,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   return iloci;
 }
 
-int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
+static int agn_locus_index_it_traverse(GtIntervalTreeNode *itn, void *lp)
 {
   GtArray *loci = (GtArray *)lp;
   AgnGeneLocus *locus = gt_interval_tree_node_get_data(itn);
@@ -302,11 +305,12 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete)
   return idx;
 }
 
-unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
-                  const char **filenames, int numprocs, AgnLogger *logger)
+GtUword agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
+                                   const char **filenames, int numprocs,
+                                   AgnLogger *logger)
 {
   gt_assert(idx != NULL);
-  unsigned long nloci;
+  GtUword nloci;
   GtFeatureIndex *features = agn_import_simple(numfiles, filenames, "gene",
                                                logger);
   if(agn_logger_has_error(logger))
@@ -320,10 +324,12 @@ unsigned long agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
   return nloci;
 }
 
-int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
-                  GtFeatureIndex *features, GtHashmap *visited_genes,
-                  AgnGeneLocus *locus, AgnComparisonSource source,
-                  AgnLogger *logger)
+static int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
+                                                 GtFeatureIndex *features,
+                                                 GtHashmap *visited_genes,
+                                                 AgnGeneLocus *locus,
+                                                 AgnComparisonSource source,
+                                                 AgnLogger *logger)
 {
   GtError *error = gt_error_new();
   bool has_seqid;
@@ -338,7 +344,7 @@ int agn_locus_index_pairwise_test_overlap(AgnLocusIndex *idx,
 
   GtRange locusrange;
   GtArray *genes_to_add = gt_array_new( sizeof(GtFeatureNode *) );
-  unsigned long new_gene_count = 0;
+  GtUword new_gene_count = 0;
 
   locusrange.start = agn_gene_locus_get_start(locus);
   locusrange.end = agn_gene_locus_get_end(locus);
@@ -373,7 +379,7 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
                                       GtFeatureIndex *features,
                                       AgnLogger *logger)
 {
-  unsigned long i;
+  GtUword i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
   GtIntervalTree *loci = gt_interval_tree_new(idx->locusfreefunc);
@@ -421,14 +427,14 @@ GtIntervalTree *agn_locus_index_parse(AgnLocusIndex *idx, const char *seqid,
   return loci;
 }
 
-GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
-                                               const char *seqid,
-                                               GtFeatureIndex *refr,
-                                               GtFeatureIndex *pred,
-                                               AgnCompareFilters *filters,
-                                               AgnLogger *logger)
+static GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
+                                                     const char *seqid,
+                                                     GtFeatureIndex *refr,
+                                                     GtFeatureIndex *pred,
+                                                     AgnCompareFilters *filters,
+                                                     AgnLogger *logger)
 {
-  unsigned long i;
+  GtUword i;
   GtError *error = gt_error_new();
   GtHashmap *visited_genes = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
   GtIntervalTree *loci = gt_interval_tree_new(idx->locusfreefunc);
@@ -561,9 +567,12 @@ GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
   return loci;
 }
 
-unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
-                  GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
-                  int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
+GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
+                                              GtFeatureIndex *refrfeats,
+                                              GtFeatureIndex *predfeats,
+                                              int numprocs,
+                                              AgnCompareFilters *filters,
+                                              AgnLogger *logger)
 {
   int i, rank;
   gt_assert(idx != NULL);
@@ -579,7 +588,7 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
 
   int orig_numprocs = omp_get_num_threads();
   omp_set_num_threads(numprocs);
-  unsigned long totalloci = 0;
+  GtUword totalloci = 0;
   #pragma omp parallel private(i, rank)
   {
     rank = omp_get_thread_num();
@@ -630,12 +639,14 @@ unsigned long agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
   return totalloci;
 }
 
-unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
-                  const char *refrfile, const char *predfile, int numprocs,
-                  AgnCompareFilters *filters, AgnLogger *logger)
+GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
+                                            const char *refrfile,
+                                            const char *predfile, int numprocs,
+                                            AgnCompareFilters *filters,
+                                            AgnLogger *logger)
 {
   gt_assert(idx != NULL);
-  unsigned long nloci;
+  GtUword nloci;
   GtFeatureIndex *refrfeats = agn_import_canonical(1, &refrfile, logger);
   GtFeatureIndex *predfeats = agn_import_canonical(1, &predfile, logger);
   if(agn_logger_has_error(logger))
@@ -651,8 +662,9 @@ unsigned long agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
   return nloci;
 }
 
-unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
-                  GtFeatureIndex *features, int numprocs, AgnLogger *logger)
+GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx,
+                                     GtFeatureIndex *features, int numprocs,
+                                     AgnLogger *logger)
 {
   int i, rank;
   gt_assert(idx != NULL && features != NULL);
@@ -671,7 +683,7 @@ unsigned long agn_locus_index_parse_memory(AgnLocusIndex * idx,
 
   int orig_numprocs = omp_get_num_threads();
   omp_set_num_threads(numprocs);
-  unsigned long totalloci = 0;
+  GtUword totalloci = 0;
   #pragma omp parallel private(i, rank)
   {
     rank = omp_get_thread_num();

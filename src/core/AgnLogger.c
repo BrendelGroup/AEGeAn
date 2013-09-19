@@ -32,7 +32,7 @@ void agn_logger_delete(AgnLogger *logger)
 GtArray *agn_logger_get_messages(AgnLogger *logger)
 {
   GtArray *messages = gt_array_new( sizeof(char *) );
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_array_size(logger->errors); i++)
   {
     GtError *suberror = *(GtError **)gt_array_get(logger->errors, i);
@@ -108,9 +108,9 @@ AgnLogger *agn_logger_new()
 bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
                           const char *format, ...)
 {
-  unsigned long nerrors   = gt_array_size(logger->errors);
-  unsigned long nmessages = gt_array_size(logger->messages);
-  unsigned long nwarnings = gt_array_size(logger->warnings);
+  GtUword nerrors   = gt_array_size(logger->errors);
+  GtUword nmessages = gt_array_size(logger->messages);
+  GtUword nwarnings = gt_array_size(logger->warnings);
   if(nerrors + nmessages + nwarnings == 0)
     return false;
 
@@ -123,7 +123,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
     fputs("\n", outstream);
   }
 
-  unsigned long i;
+  GtUword i;
   if(nmessages > 0)
   {
     fputs("    status:\n", outstream);
@@ -160,7 +160,7 @@ bool agn_logger_print_all(AgnLogger *logger, FILE *outstream,
 bool agn_logger_print_error(AgnLogger *logger, FILE *outstream,
                             const char *format, ...)
 {
-  unsigned long nerrors = gt_array_size(logger->errors);
+  GtUword nerrors = gt_array_size(logger->errors);
   if(nerrors == 0)
     return false;
 
@@ -173,7 +173,7 @@ bool agn_logger_print_error(AgnLogger *logger, FILE *outstream,
     fputs("\n", outstream);
   }
 
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < nerrors; i++)
   {
     GtError *message = *(GtError **)gt_array_get(logger->errors, i);
@@ -186,7 +186,7 @@ bool agn_logger_print_error(AgnLogger *logger, FILE *outstream,
 bool agn_logger_print_status(AgnLogger *logger, FILE *outstream,
                              const char *format, ...)
 {
-  unsigned long nmessages = gt_array_size(logger->messages);
+  GtUword nmessages = gt_array_size(logger->messages);
   if(nmessages == 0)
     return false;
 
@@ -199,7 +199,7 @@ bool agn_logger_print_status(AgnLogger *logger, FILE *outstream,
     fputs("\n", outstream);
   }
 
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < nmessages; i++)
   {
     GtError *message = *(GtError **)gt_array_get(logger->messages, i);
@@ -212,7 +212,7 @@ bool agn_logger_print_status(AgnLogger *logger, FILE *outstream,
 bool agn_logger_print_warning(AgnLogger *logger, FILE *outstream,
                               const char *format, ...)
 {
-  unsigned long nwarnings = gt_array_size(logger->warnings);
+  GtUword nwarnings = gt_array_size(logger->warnings);
   if(nwarnings == 0)
     return false;
 
@@ -225,7 +225,7 @@ bool agn_logger_print_warning(AgnLogger *logger, FILE *outstream,
     fputs("\n", outstream);
   }
 
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < nwarnings; i++)
   {
     GtError *message = *(GtError **)gt_array_get(logger->warnings, i);

@@ -23,7 +23,7 @@ void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream);
  * @function Calculate the length of the given transcript's coding sequence in
  * amino acids.
  */
-unsigned long agn_gt_feature_node_cds_length(GtFeatureNode *transcript);
+GtUword agn_gt_feature_node_cds_length(GtFeatureNode *transcript);
 
 /**
  * @function Gather the children of a given feature that have a certain type.
@@ -84,7 +84,7 @@ bool agn_gt_feature_node_is_utr_feature(GtFeatureNode *fn);
 /**
  * @function Determine the number of transcripts for the given gene feature.
  */
-unsigned long agn_gt_feature_node_num_transcripts(GtFeatureNode *gene);
+GtUword agn_gt_feature_node_num_transcripts(GtFeatureNode *gene);
 
 /**
  * @function Determine whether the given features overlap.

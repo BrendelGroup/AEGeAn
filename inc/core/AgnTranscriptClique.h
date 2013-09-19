@@ -33,7 +33,7 @@ void agn_transcript_clique_add(AgnTranscriptClique *clique,
 /**
  * @function Get the CDS length (in amino acids) for this transcript clique.
  */
-unsigned long agn_transcript_clique_cds_length(AgnTranscriptClique *clique);
+GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique);
 
 /**
  * @function Make a shallow copy of this transcript clique.
@@ -67,12 +67,12 @@ AgnTranscriptClique* agn_transcript_clique_new();
 /**
  * @function Get the number of exons in this clique.
  */
-unsigned long agn_transcript_clique_num_exons(AgnTranscriptClique *clique);
+GtUword agn_transcript_clique_num_exons(AgnTranscriptClique *clique);
 
 /**
  * @function Get the number of UTR segments in this clique.
  */
-unsigned long agn_transcript_clique_num_utrs(AgnTranscriptClique *clique);
+GtUword agn_transcript_clique_num_utrs(AgnTranscriptClique *clique);
 
 /**
  * @function Print the IDs of this clique's transcripts to the given output
@@ -91,7 +91,7 @@ void agn_transcript_clique_put_ids_in_hash(AgnTranscriptClique *clique,
 /**
  * @function Get the number of transcripts in this clique.
  */
-unsigned long agn_transcript_clique_size(AgnTranscriptClique *clique);
+GtUword agn_transcript_clique_size(AgnTranscriptClique *clique);
 
 /**
  * @function Get an array containing all the transcripts in this clique. User is

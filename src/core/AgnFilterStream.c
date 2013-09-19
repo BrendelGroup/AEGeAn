@@ -27,7 +27,7 @@ struct AgnFilterStream
  *
  * @returns    a node stream class object
  */
-const GtNodeStreamClass* filter_stream_class(void);
+static const GtNodeStreamClass* filter_stream_class(void);
 
 /**
  * Destructor for the class.
@@ -73,7 +73,7 @@ GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream,
   return ns;
 }
 
-const GtNodeStreamClass *filter_stream_class(void)
+static const GtNodeStreamClass *filter_stream_class(void)
 {
   static const GtNodeStreamClass *nsc = NULL;
   if(!nsc)

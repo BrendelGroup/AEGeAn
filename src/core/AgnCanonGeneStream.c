@@ -27,7 +27,7 @@ struct AgnCanonGeneStream
  *
  * @returns    a node stream class object
  */
-const GtNodeStreamClass* canon_gene_stream_class(void);
+static const GtNodeStreamClass* canon_gene_stream_class(void);
 
 /**
  * Destructor for the class.
@@ -85,7 +85,7 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
   return ns;
 }
 
-const GtNodeStreamClass *canon_gene_stream_class(void)
+static const GtNodeStreamClass *canon_gene_stream_class(void)
 {
   static const GtNodeStreamClass *nsc = NULL;
   if(!nsc)
