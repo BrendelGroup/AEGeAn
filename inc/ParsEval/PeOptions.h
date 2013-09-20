@@ -5,7 +5,7 @@
  * @module PeOptions
  * Module for defining ParsEval's command line options, parsing them from the
  * command line, and storing/accessing them during runtime.
- */
+ */ //;
 
 #include "genometools.h"
 #include "AgnComparEval.h"

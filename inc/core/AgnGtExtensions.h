@@ -7,7 +7,7 @@
  * @module AgnGtExtensions
  *
  * A collection of extensions to core GenomeTools classes.
- */
+ */ //;
 
 /**
  * @function This function makes a copy of an array.

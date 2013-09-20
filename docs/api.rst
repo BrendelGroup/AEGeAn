@@ -115,6 +115,12 @@ Module AgnComparEval
 
 A collection of data structures and functions for comparative evaluation of annotations. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnComparEval.h>`_.
 
+.. c:type:: AgnCompStatsScaled
+
+  This struct is used to aggregate counts and statistics regarding the nucleotide-level comparison and analysis of gene structure.
+
+
+
 .. c:type:: AgnCompStatsBinary
 
   This struct is used to aggregate counts and statistics regarding the structural-level comparison (i.e., at the level of whole CDS segments, whole exons, and whole UTRs) and analysis of gene structure.
@@ -385,6 +391,10 @@ Module AgnGtExtensions
 ----------------------
 
 A collection of extensions to core GenomeTools classes. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGtExtensions.h>`_.
+
+.. c:function:: GtArray* agn_gt_array_copy(GtArray *source, size_t size)
+
+  This function makes a copy of an array.
 
 .. c:function:: void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
 
@@ -732,6 +742,12 @@ Module AgnUtils
 ---------------
 
 A collection of assorted core utility functions. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
+
+.. c:type:: AgnSequenceRegion
+
+  Simple data structure for referencing genomic locations.
+
+
 
 .. c:function:: void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques, bool skipsimplecliques )
 

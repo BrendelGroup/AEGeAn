@@ -4,7 +4,7 @@
 /**
  * @module AgnUtils
  * A collection of assorted core utility functions.
- */
+ */ //;
 
 #include "genometools.h"
 #include "AgnLogger.h"

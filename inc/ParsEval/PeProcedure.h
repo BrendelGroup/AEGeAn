@@ -4,7 +4,7 @@
 /**
  * @module PeProcedure
  * This module implements the main steps of the ParsEval program.
- */
+ */ //;
 
 #include <string.h>
 #include "genometools.h"

@@ -4,7 +4,7 @@
 /**
  * @module PeReports
  * Module for generating ParsEval's reports in text, CSV, or HTML format.
- */
+ */ //;
 
 #include "genometools.h"
 #include "AgnGeneLocus.h"

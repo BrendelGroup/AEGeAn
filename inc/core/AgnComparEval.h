@@ -10,7 +10,7 @@
  *
  * A collection of data structures and functions for comparative evaluation of
  * annotations.
- */
+ */ //;
 
 /**
  * @type This struct is used to aggregate counts and statistics regarding the
