@@ -12,6 +12,7 @@ struct AgnCanonGeneStream
   const GtNodeStream parent_instance;
   GtNodeStream *in_stream;
   GtQueue *streams;
+  AgnLogger *logger;
 };
 
 
@@ -65,6 +66,7 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
   ns = gt_node_stream_create(canon_gene_stream_class(), false);
   stream = canon_gene_stream_cast(ns);
   stream->streams = gt_queue_new();
+  stream->logger = logger;
 
   GtNodeVisitor *icnv = agn_infer_cds_visitor_new(logger);
   GtNodeVisitor *ienv = agn_infer_exons_visitor_new(logger);
@@ -76,9 +78,7 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
   gt_queue_add(stream->streams, icnv_stream);
   GtNodeStream *ienv_stream = gt_visitor_stream_new(icnv_stream, ienv);
   gt_queue_add(stream->streams, ienv_stream);
-  GtNodeStream *aistream = gt_add_introns_stream_new(ienv_stream);
-  gt_queue_add(stream->streams, aistream);
-  GtNodeStream *filterstream = agn_filter_stream_new(aistream, typestokeep);
+  GtNodeStream *filterstream = agn_filter_stream_new(ienv_stream, typestokeep);
   gt_queue_add(stream->streams, filterstream);
   stream->in_stream = filterstream;
 
@@ -100,8 +100,71 @@ static const GtNodeStreamClass *canon_gene_stream_class(void)
 static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                                   GtError *error)
 {
-  AgnCanonGeneStream *stream = canon_gene_stream_cast(ns);
-  return gt_node_stream_next(stream->in_stream, gn, error);
+  AgnCanonGeneStream *stream;
+  GtFeatureNode *fn;
+  int had_err;
+  gt_error_check(error);
+  stream = canon_gene_stream_cast(ns);
+
+  while(1)
+  {
+    had_err = gt_node_stream_next(stream->in_stream, gn, error);
+    if(had_err)
+      return had_err;
+    if(!*gn)
+      return 0;
+
+    fn = gt_feature_node_try_cast(*gn);
+    if(!fn)
+      return 0;
+
+    GtUword num_valid_mrnas = 0;
+    GtFeatureNode *current;
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+    for(current  = gt_feature_node_iterator_next(iter);
+        current != NULL;
+        current  = gt_feature_node_iterator_next(iter))
+    {
+      if(agn_gt_feature_node_is_mrna_feature(current))
+      {
+        GtArray *cds     = agn_gt_feature_node_children_of_type(current,
+                                            agn_gt_feature_node_is_cds_feature);
+        GtArray *exons   = agn_gt_feature_node_children_of_type(current,
+                                           agn_gt_feature_node_is_exon_feature);
+        GtArray *introns = agn_gt_feature_node_children_of_type(current,
+                                         agn_gt_feature_node_is_intron_feature);
+
+        bool keepmrna = true;
+        if(gt_array_size(cds) < 1)
+        {
+          const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+          agn_logger_log_warning(stream->logger, "ignoring mRNA '%s': no CDS",
+                                 mrnaid);
+          keepmrna = false;
+        }
+        if(gt_array_size(exons) != gt_array_size(introns) + 1)
+        {
+          const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+          agn_logger_log_error(stream->logger, "error: mRNA '%s' has %lu exons "
+                               "but %lu introns", mrnaid, gt_array_size(exons),
+                               gt_array_size(introns));
+          keepmrna = false;
+        }
+
+        if(keepmrna)
+          num_valid_mrnas++;
+        else
+          gt_genome_node_delete((GtGenomeNode *)current);
+      }
+    }
+    gt_feature_node_iterator_delete(iter);
+    if(num_valid_mrnas > 0)
+      return 0;
+    else
+      gt_genome_node_delete((GtGenomeNode *)fn);
+  }
+
+  return 0;
 }
 
 static void canon_gene_stream_free(GtNodeStream *ns)
