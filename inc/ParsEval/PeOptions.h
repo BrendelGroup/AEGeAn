@@ -1,13 +1,19 @@
 #ifndef PE_OPTIONS
 #define PE_OPTIONS
 
+/**
+ * @module PeOptions
+ * Module for defining ParsEval's command line options, parsing them from the
+ * command line, and storing/accessing them during runtime.
+ */
+
 #include "genometools.h"
 #include "AgnComparEval.h"
 
 /**
- * This struct contains ParsEval's command-line options.
+ * @type This struct defines ParsEval's command-line options.
  */
-typedef struct
+struct PeOptions
 {
   bool debug;
   FILE *outfile;
@@ -31,10 +37,11 @@ typedef struct
   AgnCompareFilters filters;
   int numprocs;
   int trans_per_locus;
-} PeOptions;
+};
+typedef struct PeOptions PeOptions;
 
 /**
- * Parse command-line options from the provided arguments.
+ * @function Parse command-line options from the provided arguments.
  *
  * @param[in] argc    the number of arguments
  * @param[in] argv    the list of command-line arguments
@@ -42,12 +49,12 @@ typedef struct
 int pe_parse_options(int argc, char * const argv[], PeOptions *options);
 
 /**
- * Print usage statement
+ * @function Print usage statement.
  */
 void pe_print_usage();
 
 /**
- * Initialize command-line options to default values.
+ * @function Initialize command-line options to default values.
  */
 void pe_set_option_defaults(PeOptions *options);
 

@@ -10,17 +10,14 @@
 #include "AgnLogger.h"
 
 /**
- * @type AgnSequenceRegion
- * Simple data structure for referencing genomic locations.
- *
- * @member [char *] seqid identifier for the sequence
- * @member [GtRange] range start and stop coordinates for the region
+ * @type Simple data structure for referencing genomic locations.
  */
-typedef struct
+struct AgnSequenceRegion
 {
   char *seqid;
   GtRange range;
-} AgnSequenceRegion;
+};
+typedef struct AgnSequenceRegion AgnSequenceRegion;
 
 /**
  * @function The Bron-Kerbosch algorithm is an algorithm for enumerating all

@@ -2,6 +2,7 @@
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
 #include "AgnUtils.h"
+#include "PeProcedure.h"
 #include "PeReports.h"
 
 // Main method
@@ -15,7 +16,7 @@ int main(int argc, char * const argv[])
   GtStrArray *    seqids;
   char *          start_time_str;
   GtTimer *       timer;
-  unsigned long   totalloci;
+  GtUword         totalloci;
 
   // Initialize ParsEval
   gt_lib_init();

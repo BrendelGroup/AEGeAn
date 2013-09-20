@@ -2,6 +2,7 @@
 #define AEGEAN_COMPARATIVE_EVALUATION
 
 #include <stdio.h>
+#include "genometools.h"
 #include "AgnLogger.h"
 
 /**

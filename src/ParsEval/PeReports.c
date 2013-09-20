@@ -13,100 +13,24 @@
 //------------------------------------------------------------------------------
 
 /**
- * FIXME
+ * @function Take given feature node ID, trim the end and add an elipsis if
+ * necessary, and write to the provided buffer.
  */
-void pe_check_filehandle_risk(unsigned long numseqids);
+static void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
+                                           size_t maxlength);
 
 /**
- * Take given feature node ID, trim the end and add an elipsis if necessary, and
- * write to the provided buffer.
- *
- * @param[in]  feature      the feature ID
- * @param[out] buffer       the string to which the trimmed ID will be written
- * @param[in]  maxlength    the number of characters at which to trim the ID
+ * @function Callback function for printing IDs for all transcripts belonging to
+ * a transcript clique.
  */
-void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
-                                    size_t maxlength);
-
-/**
- * Callback function for printing IDs for all transcripts belonging to a
- * transcript clique.
- *
- * @param[in] transcript    a transcript belonging to the clique of interest
- * @param[in] outstream     the output file to which its ID will be written
- */
-void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream);
+static void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream);
 
 
 //------------------------------------------------------------------------------
 // Method/function implementations
 //------------------------------------------------------------------------------
 
-void pe_aggregate_results(AgnCompEvaluation *overall_eval,
-                          GtArray **seqlevel_evalsp, GtArray *loci,
-                          GtArray *seqfiles, GtHashmap *comp_evals,
-                          GtHashmap *locus_summaries, PeOptions *options)
-{
-  GtTimer *timer = gt_timer_new();
-  gt_timer_start(timer);
-  fputs("[ParsEval] Begin aggregating locus-level results\n", stderr);
-
-  agn_comp_evaluation_init(overall_eval);
-  GtArray *seqlevel_evals = gt_array_new( sizeof(AgnCompEvaluation) );
-  unsigned long i;
-  for(i = 0; i < gt_array_size(seqfiles); i++)
-  {
-    FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-    AgnCompEvaluation seqeval;
-    agn_comp_evaluation_init(&seqeval);
-
-    int j;
-    GtArray *seqloci = *(GtArray **)gt_array_get(loci, i);
-    for(j = 0; j < gt_array_size(seqloci); j++)
-    {
-      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, j);
-      AgnCompEvaluation *eval = gt_hashmap_get(comp_evals, locus);
-      agn_comp_evaluation_combine(&seqeval, eval);
-      agn_comp_evaluation_combine(overall_eval, eval);
-      AgnGeneLocusSummary *locsum = gt_hashmap_get(locus_summaries, locus);
-      // FIXME Should this block be placed elsewhere?
-      if(strcmp(options->outfmt, "html") == 0 && !options->summary_only)
-      {
-        pe_print_locus_to_seqfile(seqfile, locsum->start, locsum->end,
-                                  locsum->length, locsum->refrtrans,
-                                  locsum->predtrans, &locsum->counts);
-      }
-    }
-    gt_array_add(seqlevel_evals, seqeval);
-    gt_array_delete(seqloci);
-  }
-
-  *seqlevel_evalsp = seqlevel_evals;
-
-  gt_timer_stop(timer);
-  gt_timer_show_formatted(timer, "[ParsEval] Finished aggregating locus-"
-                          "level results (%ld.%06ld seconds)\n", stderr);
-  gt_timer_delete(timer);
-}
-
-void pe_check_filehandle_risk(unsigned long numseqids)
-{
-  char *cmd = "ulimit -a | perl -ne 'if(m/\\(-n\\) (\\d+)/){ print $1 }'";
-  char buffer[1024];
-  FILE *stream = popen(cmd, "r");
-  fgets(buffer, 1024, stream);
-  fclose(stream);
-  int openfilesallowed = atoi(buffer);
-  if(openfilesallowed < numseqids + 1)
-  {
-    fprintf(stderr, "warning: max number of open files is %d, but there are "
-            "%lu sequences to be compared; if ParsEval crashes, this is "
-            "probably why; use 'ulimit -S -n $newlimit' to adjust this "
-            "setting\n", openfilesallowed, numseqids);
-  }
-}
-
-void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
+static void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
                                     size_t maxlength)
 {
   if(strlen(fid) <= maxlength)
@@ -123,23 +47,25 @@ void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
   }
 }
 
-void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
+void pe_gene_locus_get_filename(AgnGeneLocus *locus, char *buffer,
+                                const char *dirpath)
 {
   const char *seqid = agn_gene_locus_get_seqid(locus);
   sprintf( buffer, "%s/%s/%lu-%lu.html", dirpath, seqid,
            agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus) );
 }
 
-unsigned long pe_gene_locus_get_graphic_width(AgnGeneLocus *locus)
+GtUword pe_gene_locus_get_graphic_width(AgnGeneLocus *locus)
 {
   double scaling_factor = 0.05;
-  unsigned long graphic_width = agn_gene_locus_get_length(locus) * scaling_factor;
+  GtUword graphic_width = agn_gene_locus_get_length(locus) * scaling_factor;
   if(graphic_width < PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH)
     graphic_width = PE_GENE_LOCUS_GRAPHIC_MIN_WIDTH;
   return graphic_width;
 }
 
-void pe_gene_locus_get_png_filename(AgnGeneLocus *locus, char *buffer, const char *dirpath)
+void pe_gene_locus_get_png_filename(AgnGeneLocus *locus, char *buffer,
+                                    const char *dirpath)
 {
   const char *seqid = agn_gene_locus_get_seqid(locus);
   sprintf( buffer, "%s/%s/%s_%lu-%lu.png", dirpath, seqid, seqid,
@@ -184,7 +110,8 @@ void pe_print_csv_header(FILE *outstream)
         "UTR nucleotide F1,UTR nucleotide AED\n", outstream);
 }
 
-void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions *options)
+void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream,
+                                 PeOptions *options)
 {
   if(strcmp(options->outfmt, "csv") == 0)
   {
@@ -210,7 +137,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
     fprintf(outstream, "|    None!\n");
   else
   {
-    unsigned long i;
+    GtUword i;
     for(i = 0; i < gt_array_size(refr_genes); i++)
     {
       const char *gene = *(const char **)gt_array_get(refr_genes, i);
@@ -226,7 +153,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
     fprintf(outstream, "|    None!\n");
   else
   {
-    unsigned long i;
+    GtUword i;
     for(i = 0; i < gt_array_size(pred_genes); i++)
     {
       const char *gene = *(const char **)gt_array_get(pred_genes, i);
@@ -244,7 +171,7 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   fprintf(outstream, "|\n");
   fprintf(outstream, "|----------\n");
 
-  unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
+  GtUword npairs = agn_gene_locus_num_clique_pairs(locus);
   if(npairs == 0)
   {
     fprintf(outstream, "     |\n");
@@ -261,9 +188,9 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
   }
   else
   {
-    unsigned long k;
+    GtUword k;
     GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
-    unsigned long pairs_to_report = gt_array_size(reported_pairs);
+    GtUword pairs_to_report = gt_array_size(reported_pairs);
     gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
     for(k = 0; k < pairs_to_report; k++)
     {
@@ -490,19 +417,19 @@ void pe_gene_locus_print_results(AgnGeneLocus *locus, FILE *outstream, PeOptions
 
 void pe_gene_locus_print_results_csv(AgnGeneLocus *locus, FILE *outstream, PeOptions *options)
 {
-  unsigned long i;
+  GtUword i;
   GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
-  unsigned long pairs_to_report = gt_array_size(reported_pairs);
+  GtUword pairs_to_report = gt_array_size(reported_pairs);
 
   for(i = 0; i < pairs_to_report; i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(reported_pairs, i);
-    unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
+    GtUword npairs = agn_gene_locus_num_clique_pairs(locus);
 
     if( !(options->complimit != 0 && npairs > options->complimit) &&
         agn_clique_pair_needs_comparison(pair) )
     {
-      unsigned long j;
+      GtUword j;
       GtArray *refr_ids = agn_gene_locus_refr_transcript_ids(locus);
       GtArray *pred_ids = agn_gene_locus_pred_transcript_ids(locus);
 
@@ -604,7 +531,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
            agn_gene_locus_get_seqid(locus), agn_gene_locus_get_start(locus),
            agn_gene_locus_get_end(locus) );
 
-  unsigned long npairs = agn_gene_locus_num_clique_pairs(locus);
+  GtUword npairs = agn_gene_locus_num_clique_pairs(locus);
   if(options->complimit == 0 || npairs <= options->complimit)
   {
     fputs( "    <script type=\"text/javascript\""
@@ -618,7 +545,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
            "    'false': \"(show details)\",\n"
            "  }\n",
            outstream);
-    unsigned long i;
+    GtUword i;
     GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
     for(i = 0; i < gt_array_size(reported_pairs); i++)
     {
@@ -654,7 +581,7 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
          outstream );
   GtArray *refr_genes = agn_gene_locus_refr_gene_ids(locus);
   GtArray *pred_genes = agn_gene_locus_pred_gene_ids(locus);
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_array_size(refr_genes) || i < gt_array_size(pred_genes); i++)
   {
     fputs("        <tr>", outstream);
@@ -770,9 +697,9 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
   {
     fputs("      <h2 class=\"bottomspace\">Comparisons</h2>\n", outstream);
 
-    unsigned long k;
+    GtUword k;
     GtArray *reported_pairs = agn_gene_locus_pairs_to_report(locus);
-    unsigned long pairs_to_report = gt_array_size(reported_pairs);
+    GtUword pairs_to_report = gt_array_size(reported_pairs);
     gt_assert(pairs_to_report > 0 && reported_pairs != NULL);
     for(k = 0; k < pairs_to_report; k++)
     {
@@ -1035,165 +962,6 @@ void pe_gene_locus_print_results_html(AgnGeneLocus *locus, PeOptions *options)
   fclose(outstream);
 }
 
-unsigned long pe_load_and_parse_loci(AgnLocusIndex **locusindexp,
-                                     GtArray **locip, GtStrArray **seqidsp,
-                                     PeOptions *options, AgnLogger *logger)
-{
-  GtTimer *timer = gt_timer_new();
-  gt_timer_start(timer);
-  fputs("[ParsEval] Begin loading data and parsing loci\n", stderr);
-
-  // Load loci into memory
-  AgnLocusIndex *locusindex = agn_locus_index_new(false);
-  unsigned long total = agn_locus_index_parse_pairwise_disk(locusindex,
-                            options->refrfile, options->predfile,
-                            options->numprocs, &options->filters, logger);
-
-  // Collect IDs of all sequences annotated by input files
-  GtStrArray *seqids = agn_locus_index_seqids(locusindex);
-  pe_check_filehandle_risk(gt_str_array_size(seqids));
-  GtArray *loci = gt_array_new( sizeof(GtArray *) );
-  int i;
-  for(i = 0; i < gt_str_array_size(seqids); i++)
-  {
-    const char *seqid = gt_str_array_get(seqids, i);
-    pe_seqid_check(seqid, logger);
-
-    GtArray *seq_loci = agn_locus_index_get(locusindex, seqid);
-    gt_array_sort(seq_loci,(GtCompare)agn_gene_locus_array_compare);
-    gt_array_add(loci, seq_loci);
-  }
-
-  *locusindexp = locusindex;
-  *locip = loci;
-  *seqidsp = seqids;
-
-  gt_timer_stop(timer);
-  gt_timer_show_formatted(timer, "[ParsEval] Finished loading data and "
-                          "parsing loci (%ld.%06ld seconds)\n", stderr);
-  gt_timer_delete(timer);
-  return total;
-}
-
-GtArray *pe_prep_output(GtStrArray *seqids, PeOptions *options)
-{
-  GtArray *seqfiles = gt_array_new( sizeof(FILE *) );
-
-  if(strcmp(options->outfmt, "csv") == 0)
-    pe_print_csv_header(options->outfile);
-
-  unsigned long i;
-  for(i = 0; i < gt_str_array_size(seqids); i++)
-  {
-    FILE *seqfile = NULL;
-    if(options->summary_only)
-    {
-      gt_array_add(seqfiles, seqfile);
-    }
-    else
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      char filename[512];
-      if(strcmp(options->outfmt, "html") == 0)
-      {
-        char dircmd[512];
-        sprintf(dircmd, "mkdir %s/%s", options->outfilename, seqid);
-        if(system(dircmd) != 0)
-        {
-          fprintf(stderr, "error: could not open directory '%s/%s'\n",
-                  options->outfilename, seqid);
-          exit(1);
-        }
-        if(options->debug)
-          fprintf(stderr, "debug: opening directory '%s'\n", dircmd);
-
-        sprintf(dircmd, "ln -s ../LICENSE %s/%s/LICENSE", options->outfilename,
-                seqid);
-        if(system(dircmd) != 0)
-        {
-          fputs("warning: could not create symbolic link to LICENSE\n", stderr);
-        }
-
-        // Create summary page for this sequence
-        sprintf(filename, "%s/%s/index.html", options->outfilename, seqid);
-        if(options->debug)
-          fprintf(stderr, "debug: opening outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w", stderr);
-        pe_print_seqfile_header(seqfile, seqid);
-        gt_array_add(seqfiles, seqfile);
-      }
-      else
-      {
-        sprintf(filename, "%s.%s", options->outfilename, seqid);
-        if(options->debug)
-          fprintf(stderr, "debug: opening temp outfile '%s'\n", filename);
-        seqfile = agn_fopen(filename, "w", stderr);
-        gt_array_add(seqfiles, seqfile);
-      }
-    }
-  }
-
-  return seqfiles;
-}
-
-void pe_print_combine_output(GtStrArray *seqids, GtArray *seqfiles,
-                             PeOptions *options)
-{
-  GtTimer *timer = gt_timer_new();
-  gt_timer_start(timer);
-  fputs("[ParsEval] Begin printing summary, combining output\n", stderr);
-
-  if(!options->summary_only)
-  {
-    unsigned long i;
-    for(i = 0; i < gt_str_array_size(seqids); i++)
-    {
-      FILE *seqfile = *(FILE **)gt_array_get(seqfiles, i);
-      if(strcmp(options->outfmt, "html") == 0)
-        pe_print_seqfile_footer(seqfile);
-      fclose(seqfile);
-    }
-  }
-
-  if(options->outfile == stdout)
-    fflush(stdout);
-  else
-    fclose(options->outfile);
-  if(!strcmp(options->outfmt, "html") == 0 && !options->summary_only)
-  {
-    int result;
-    unsigned long i;
-    for(i = 0; i < gt_str_array_size(seqids); i++)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      char command[1024];
-      sprintf(command, "cat %s.%s >> %s && rm %s.%s", options->outfilename,
-              seqid, options->outfilename, options->outfilename, seqid );
-      if(options->outfile == stdout)
-      {
-        sprintf(command, "cat %s.%s && rm %s.%s", options->outfilename, seqid,
-                options->outfilename, seqid );
-      }
-      if(options->debug)
-        fprintf(stderr, "debug: merging output files: %s\n", command);
-      result = system(command);
-      if(result)
-      {
-        fprintf(stderr, "[ParsEval] error: issue merging GFF3 files: %s\n",
-                command);
-        exit(1);
-      }
-    }
-  }
-  gt_timer_stop(timer);
-  gt_timer_show_formatted(timer, "[ParsEval] Finished printing summary, "
-                          "combining output (%ld.%06ld seconds)\n", stderr);
-  if(options->outfile == stdout)
-    fclose(stdout);
-
-  gt_timer_delete(timer);
-}
-
 void pe_print_html_footer(FILE *outstream)
 {
   char shortversion[11];
@@ -1210,10 +978,9 @@ void pe_print_html_footer(FILE *outstream)
           "      </p>\n", AEGEAN_LINK, shortversion, AEGEAN_COPY_DATE);
 }
 
-void pe_print_locus_to_seqfile(FILE *seqfile, unsigned long start,
-                               unsigned long end, unsigned long length,
-                               unsigned long refr_transcripts,
-                               unsigned long pred_transcripts,
+void pe_print_locus_to_seqfile(FILE *seqfile, GtUword start, GtUword end,
+                               GtUword length, GtUword refr_transcripts,
+                               GtUword pred_transcripts,
                                AgnCompSummary *comparisons)
 {
   char sstart[64], send[64], slength[64];
@@ -1375,7 +1142,7 @@ void pe_print_summary(const char *start_time, int argc, char * const argv[],
 
 
   fprintf(outstream, "  Sequences compared\n");
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
@@ -1732,7 +1499,7 @@ void pe_print_summary_html(const char *start_time, int argc,
          "          </tr>\n"
          "        </thead>\n"
          "        <tbody>\n", outstream);
-  unsigned long i;
+  GtUword i;
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
@@ -2147,7 +1914,7 @@ void pe_print_summary_html(const char *start_time, int argc,
          outstream );
 }
 
-void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream)
+static void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream)
 {
   FILE *out = outstream;
   const char *tid = gt_feature_node_get_attribute(transcript, "ID");
