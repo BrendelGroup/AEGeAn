@@ -125,11 +125,11 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
       continue;
     
     GtUword i;
-    v->gene = fn;
+    v->gene = current;
 
     v->exonsbyrange = gt_interval_tree_new(NULL);
     v->exons = agn_gt_feature_node_children_of_type(current,
-                                         agn_gt_feature_node_is_exon_feature);
+                                           agn_gt_feature_node_is_exon_feature);
     for(i = 0; i < gt_array_size(v->exons); i++)
     {
       GtGenomeNode **exon = gt_array_get(v->exons, i);
@@ -143,7 +143,7 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
 
     v->intronsbyrange = gt_interval_tree_new(NULL);
     v->introns = agn_gt_feature_node_children_of_type(current,
-                                       agn_gt_feature_node_is_intron_feature);
+                                         agn_gt_feature_node_is_intron_feature);
     if(gt_array_size(v->introns) == 0 && gt_array_size(v->exons) > 1)
       visit_gene_infer_introns(v);
 

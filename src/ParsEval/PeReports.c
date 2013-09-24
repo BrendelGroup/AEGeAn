@@ -31,7 +31,7 @@ static void pe_print_transcript_id(GtFeatureNode *transcript, void *outstream);
 //------------------------------------------------------------------------------
 
 static void pe_feature_node_get_trimmed_id(const char *fid, char * buffer,
-                                    size_t maxlength)
+                                           size_t maxlength)
 {
   if(strlen(fid) <= maxlength)
   {

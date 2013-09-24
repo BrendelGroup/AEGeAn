@@ -207,6 +207,9 @@ static void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
 
 static void visit_mrna_check_start(AgnInferCDSVisitor *v)
 {
+  if(gt_array_size(v->cds) == 0)
+    return;
+
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtStrand strand = gt_feature_node_get_strand(v->mrna);
@@ -256,6 +259,9 @@ static void visit_mrna_check_start(AgnInferCDSVisitor *v)
 
 static void visit_mrna_check_stop(AgnInferCDSVisitor *v)
 {
+  if(gt_array_size(v->cds) == 0)
+    return;
+
   const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
   unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtStrand strand = gt_feature_node_get_strand(v->mrna);
