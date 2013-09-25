@@ -128,6 +128,12 @@ int agn_sprintf_comma(GtUword n, char *buffer);
 int agn_string_compare(const void *p1, const void *p2);
 
 /**
+ * @function Create an array containing gene features to be used for unit
+ * testing.
+ */
+GtArray *agn_test_data_genes_codons();
+
+/**
  * @function Determine the start and end coordinates of the given transcript's
  * CDS.
  */

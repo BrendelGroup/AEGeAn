@@ -520,6 +520,90 @@ int agn_string_compare(const void *p1, const void *p2)
   return strcmp(s1, s2);
 }
 
+GtArray *agn_test_data_genes_codons()
+{
+  GtArray *genes = gt_array_new( sizeof(GtGenomeNode *) );
+  GtStr *seqid = gt_str_new_cstr("chr8");
+
+  GtGenomeNode *gene1  = gt_feature_node_new(seqid, "gene", 22057, 23119,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *mrna1  = gt_feature_node_new(seqid, "mRNA", 22057, 23119,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *exon1  = gt_feature_node_new(seqid, "exon", 22057, 22382,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *exon2  = gt_feature_node_new(seqid, "exon", 22497, 22550,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *exon3  = gt_feature_node_new(seqid, "exon", 22651, 23119,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *start1 = gt_feature_node_new(seqid, "start_codon", 22167, 22169,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *stop1  = gt_feature_node_new(seqid, "stop_codon", 23020, 23022,
+                                             GT_STRAND_FORWARD);
+  gt_feature_node_add_child((GtFeatureNode *)gene1, (GtFeatureNode *)mrna1);
+  gt_feature_node_add_child((GtFeatureNode *)mrna1, (GtFeatureNode *)exon1);
+  gt_feature_node_add_child((GtFeatureNode *)mrna1, (GtFeatureNode *)exon2);
+  gt_feature_node_add_child((GtFeatureNode *)mrna1, (GtFeatureNode *)exon3);
+  gt_feature_node_add_child((GtFeatureNode *)mrna1, (GtFeatureNode *)start1);
+  gt_feature_node_add_child((GtFeatureNode *)mrna1, (GtFeatureNode *)stop1);
+  gt_array_add(genes, gene1);
+
+  GtGenomeNode *gene2  = gt_feature_node_new(seqid, "gene", 48012, 48984,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *mrna2  = gt_feature_node_new(seqid, "mRNA", 48012, 48984,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon4  = gt_feature_node_new(seqid, "exon", 48012, 48537,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon5  = gt_feature_node_new(seqid, "exon", 48637, 48766,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon6  = gt_feature_node_new(seqid, "exon", 48870, 48984,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *start2 = gt_feature_node_new(seqid, "start_codon", 48982, 48984,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *stop2  = gt_feature_node_new(seqid, "stop_codon", 48411, 48413,
+                                             GT_STRAND_FORWARD);
+  gt_feature_node_add_child((GtFeatureNode *)gene2, (GtFeatureNode *)mrna2);
+  gt_feature_node_add_child((GtFeatureNode *)mrna2, (GtFeatureNode *)exon4);
+  gt_feature_node_add_child((GtFeatureNode *)mrna2, (GtFeatureNode *)exon5);
+  gt_feature_node_add_child((GtFeatureNode *)mrna2, (GtFeatureNode *)exon6);
+  gt_feature_node_add_child((GtFeatureNode *)mrna2, (GtFeatureNode *)start2);
+  gt_feature_node_add_child((GtFeatureNode *)mrna2, (GtFeatureNode *)stop2);
+  gt_array_add(genes, gene2);
+
+  GtGenomeNode *gene3  = gt_feature_node_new(seqid, "gene", 88551, 92176,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *mrna3  = gt_feature_node_new(seqid, "mRNA", 88551, 92176,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon7  = gt_feature_node_new(seqid, "exon", 88551, 89029,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon8  = gt_feature_node_new(seqid, "exon", 89265, 89549,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon9  = gt_feature_node_new(seqid, "exon", 90074, 90413,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon10 = gt_feature_node_new(seqid, "exon", 90728, 90833,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon11 = gt_feature_node_new(seqid, "exon", 91150, 91362,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *exon12 = gt_feature_node_new(seqid, "exon", 91810, 92176,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *start3 = gt_feature_node_new(seqid, "start_codon", 91961, 91963,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *stop3  = gt_feature_node_new(seqid, "stop_codon", 88892, 88894,
+                                             GT_STRAND_FORWARD);
+  gt_feature_node_add_child((GtFeatureNode *)gene3, (GtFeatureNode *)mrna3);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)exon7);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)exon8);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)exon9);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)exon10);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)exon11);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)exon12);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)start3);
+  gt_feature_node_add_child((GtFeatureNode *)mrna3, (GtFeatureNode *)stop3);
+  gt_array_add(genes, gene3);
+
+  gt_str_delete(seqid);
+  return genes;
+}
+
 GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
 {
   gt_assert(transcript);

@@ -105,13 +105,8 @@ static const GtNodeVisitorClass* agn_infer_cds_visitor_class()
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (AgnInferCDSVisitor),
-                                    NULL,
-                                    NULL,
-                                    visit_feature_node,
-                                    NULL,
-                                    NULL,
-                                    NULL);
+    nvc = gt_node_visitor_class_new(sizeof (AgnInferCDSVisitor), NULL, NULL,
+                                    visit_feature_node, NULL, NULL, NULL);
   }
   return nvc;
 }
@@ -124,6 +119,191 @@ GtNodeVisitor* agn_infer_cds_visitor_new(AgnLogger *logger)
   v->logger = logger;
   v->cdscounter = 0;
   return nv;
+}
+
+bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
+{
+  GtArray *genes = agn_test_data_genes_codons();
+  GtError *error = gt_error_new();
+  AgnLogger *logger = agn_logger_new();
+  GtNodeStream *genestream = gt_array_in_stream_new(genes, NULL, error);
+  GtNodeVisitor *icv = agn_infer_cds_visitor_new(logger);
+  GtNodeStream *icvstream = gt_visitor_stream_new(genestream, icv);
+  int result;
+  GtGenomeNode *gn;
+  GtFeatureNode *fn;
+
+  result = gt_node_stream_next(icvstream, &gn, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "node stream error: %s\n", gt_error_get(error));
+    return false;
+  }
+  fn = (GtFeatureNode *)gn;
+  GtArray *cds = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_cds_feature);
+  GtArray *utrs = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_utr_feature);
+  bool cds1correct;
+  if(gt_array_size(cds) != 3)
+  {
+    cds1correct = false;
+  }
+  else
+  {
+    GtGenomeNode **cds1 = gt_array_get(cds, 0);
+    GtGenomeNode **cds2 = gt_array_get(cds, 1);
+    GtGenomeNode **cds3 = gt_array_get(cds, 2);
+    GtRange range1 = gt_genome_node_get_range(*cds1);
+    GtRange range2 = gt_genome_node_get_range(*cds2);
+    GtRange range3 = gt_genome_node_get_range(*cds3);
+    cds1correct = (range1.start == 22167 && range1.end == 22382 &&
+                   range2.start == 22497 && range2.end == 22550 &&
+                   range3.start == 22651 && range3.end == 23022);
+  }
+  agn_unit_test_result(test, "CDS correct for mRNA 1", cds1correct);
+
+  bool utrs1correct;
+  if(gt_array_size(utrs) != 2)
+  {
+    utrs1correct = false;
+  }
+  else
+  {
+    GtGenomeNode **utr1 = gt_array_get(utrs, 0);
+    GtGenomeNode **utr2 = gt_array_get(utrs, 1);
+    GtFeatureNode *fn1 = *(GtFeatureNode **)utr1;
+    GtFeatureNode *fn2 = *(GtFeatureNode **)utr2;
+    GtRange range1 = gt_genome_node_get_range(*utr1);
+    GtRange range2 = gt_genome_node_get_range(*utr2);
+    utrs1correct = (range1.start == 22057 && range1.end == 22166 &&
+                    gt_feature_node_has_type(fn1, "five_prime_UTR") &&
+                    range2.start == 23023 && range2.end == 23119 &&
+                    gt_feature_node_has_type(fn2, "three_prime_UTR"));
+  }
+  agn_unit_test_result(test, "UTRs correct for mRNA 1", utrs1correct);
+  gt_array_delete(cds);
+  gt_array_delete(utrs);
+  gt_genome_node_delete(gn);
+
+  result = gt_node_stream_next(icvstream, &gn, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "node stream error: %s\n", gt_error_get(error));
+    return false;
+  }
+  fn = (GtFeatureNode *)gn;
+  cds = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_cds_feature);
+  utrs = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_utr_feature);
+  bool cds2correct;
+  if(gt_array_size(cds) != 3)
+  {
+    cds2correct = false;
+  }
+  else
+  {
+    GtGenomeNode **cds1 = gt_array_get(cds, 0);
+    GtGenomeNode **cds2 = gt_array_get(cds, 1);
+    GtGenomeNode **cds3 = gt_array_get(cds, 2);
+    GtRange range1 = gt_genome_node_get_range(*cds1);
+    GtRange range2 = gt_genome_node_get_range(*cds2);
+    GtRange range3 = gt_genome_node_get_range(*cds3);
+    cds2correct = (range1.start == 48411 && range1.end == 48537 &&
+                   range2.start == 48637 && range2.end == 48766 &&
+                   range3.start == 48870 && range3.end == 48984);
+  }
+  agn_unit_test_result(test, "CDS correct for mRNA 2", cds2correct);
+
+  bool utrs2correct;
+  if(gt_array_size(utrs) != 1)
+  {
+    utrs2correct = false;
+  }
+  else
+  {
+    GtGenomeNode **utr = gt_array_get(utrs, 0);
+    GtFeatureNode *fn = *(GtFeatureNode **)utr;
+    GtRange range = gt_genome_node_get_range(*utr);
+    utrs2correct = (range.start == 48012 && range.end == 48410 &&
+                    gt_feature_node_has_type(fn, "three_prime_UTR"));
+  }
+  agn_unit_test_result(test, "UTRs correct for mRNA 2", utrs2correct);
+  gt_array_delete(cds);
+  gt_array_delete(utrs);
+  gt_genome_node_delete(gn);
+
+  result = gt_node_stream_next(icvstream, &gn, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "node stream error: %s\n", gt_error_get(error));
+    return false;
+  }
+  fn = (GtFeatureNode *)gn;
+  cds = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_cds_feature);
+  utrs = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_utr_feature);
+  bool cds3correct;
+  if(gt_array_size(cds) != 6)
+  {
+    cds3correct = false;
+  }
+  else
+  {
+    GtGenomeNode **cds1 = gt_array_get(cds, 0);
+    GtGenomeNode **cds2 = gt_array_get(cds, 1);
+    GtGenomeNode **cds3 = gt_array_get(cds, 2);
+    GtGenomeNode **cds4 = gt_array_get(cds, 3);
+    GtGenomeNode **cds5 = gt_array_get(cds, 4);
+    GtGenomeNode **cds6 = gt_array_get(cds, 5);
+    GtRange range1 = gt_genome_node_get_range(*cds1);
+    GtRange range2 = gt_genome_node_get_range(*cds2);
+    GtRange range3 = gt_genome_node_get_range(*cds3);
+    GtRange range4 = gt_genome_node_get_range(*cds4);
+    GtRange range5 = gt_genome_node_get_range(*cds5);
+    GtRange range6 = gt_genome_node_get_range(*cds6);
+    cds3correct = (range1.start == 88892 && range1.end == 89029 &&
+                   range2.start == 89265 && range2.end == 89549 &&
+                   range3.start == 90074 && range3.end == 90413 &&
+                   range4.start == 90728 && range4.end == 90833 &&
+                   range5.start == 91150 && range5.end == 91362 &&
+                   range6.start == 91810 && range6.end == 91963);
+  }
+  agn_unit_test_result(test, "CDS correct for mRNA 3", cds3correct);
+  
+  bool utrs3correct;
+  if(gt_array_size(utrs) != 2)
+  {
+    utrs3correct = false;
+  }
+  else
+  {
+    GtGenomeNode **utr1 = gt_array_get(utrs, 0);
+    GtGenomeNode **utr2 = gt_array_get(utrs, 1);
+    GtFeatureNode *fn1 = *(GtFeatureNode **)utr1;
+    GtFeatureNode *fn2 = *(GtFeatureNode **)utr2;
+    GtRange range1 = gt_genome_node_get_range(*utr1);
+    GtRange range2 = gt_genome_node_get_range(*utr2);
+    utrs3correct = (range1.start == 88551 && range1.end == 88891 &&
+                    gt_feature_node_has_type(fn1, "three_prime_UTR") &&
+                    range2.start == 91964 && range2.end == 92176 &&
+                    gt_feature_node_has_type(fn2, "five_prime_UTR"));
+  }
+  agn_unit_test_result(test, "UTRs correct for mRNA 3", utrs3correct);
+  gt_array_delete(cds);
+  gt_array_delete(utrs);
+  gt_genome_node_delete(gn);
+
+  agn_logger_delete(logger);
+  gt_node_visitor_delete(icv);
+  //gt_node_stream_delete(icvstream);
+  gt_array_delete(genes);
+  gt_node_stream_delete(genestream);
+  gt_error_delete(error);
+  return cds1correct && utrs1correct && cds2correct && utrs2correct &&
+         cds3correct && utrs3correct;
 }
 
 static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,

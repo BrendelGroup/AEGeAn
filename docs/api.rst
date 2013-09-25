@@ -499,6 +499,10 @@ Class AgnInferCDSVisitor
 
   Class constructor.
 
+.. c:function:: bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class.
+
 Class AgnInferExonsVisitor
 --------------------------
 
@@ -804,6 +808,10 @@ A collection of assorted core utility functions. See the `module header <https:/
 .. c:function:: int agn_string_compare(const void *p1, const void *p2)
 
   Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
+
+.. c:function:: GtArray *agn_test_data_genes_codons()
+
+  Create an array containing gene features to be used for unit testing.
 
 .. c:function:: GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
 
