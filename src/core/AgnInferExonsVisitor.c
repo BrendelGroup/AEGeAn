@@ -162,6 +162,11 @@ static bool unit_test_grape(AgnUnitTest *test)
   gt_array_delete(exons);
   gt_genome_node_delete(gn);
   
+  agn_logger_delete(logger);
+  gt_node_stream_delete(ievstream);
+  gt_array_delete(genes);
+  gt_node_stream_delete(genestream);
+  gt_error_delete(error);
   return exons1correct && exons2correct && exons3correct;
 }
 
@@ -264,6 +269,11 @@ static bool unit_test_grape_sansexons(AgnUnitTest *test)
   gt_array_delete(exons);
   gt_genome_node_delete(gn);
   
+  agn_logger_delete(logger);
+  gt_node_stream_delete(ievstream);
+  gt_array_delete(genes);
+  gt_node_stream_delete(genestream);
+  gt_error_delete(error);
   return exons1correct && exons2correct && exons3correct;
 }
 
