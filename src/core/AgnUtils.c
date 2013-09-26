@@ -141,6 +141,7 @@ GtFeatureNode *agn_eden()
   featurefn = (GtFeatureNode *)feature;
   gt_feature_node_add_child(mrna1fn, featurefn);
   gt_feature_node_add_child(mrna2fn, featurefn);
+  gt_genome_node_ref(feature);
   feature = gt_feature_node_new(seqid, "exon", 1300, 1500, GT_STRAND_FORWARD);
   featurefn = (GtFeatureNode *)feature;
   gt_feature_node_add_child(mrna3fn, featurefn);
@@ -148,16 +149,21 @@ GtFeatureNode *agn_eden()
   featurefn = (GtFeatureNode *)feature;
   gt_feature_node_add_child(mrna1fn, featurefn);
   gt_feature_node_add_child(mrna3fn, featurefn);
+  gt_genome_node_ref(feature);
   feature = gt_feature_node_new(seqid, "exon", 5000, 5500, GT_STRAND_FORWARD);
   featurefn = (GtFeatureNode *)feature;
   gt_feature_node_add_child(mrna1fn, featurefn);
   gt_feature_node_add_child(mrna2fn, featurefn);
   gt_feature_node_add_child(mrna3fn, featurefn);
+  gt_genome_node_ref(feature);
+  gt_genome_node_ref(feature);
   feature = gt_feature_node_new(seqid, "exon", 7000, 9000, GT_STRAND_FORWARD);
   featurefn = (GtFeatureNode *)feature;
   gt_feature_node_add_child(mrna1fn, featurefn);
   gt_feature_node_add_child(mrna2fn, featurefn);
   gt_feature_node_add_child(mrna3fn, featurefn);
+  gt_genome_node_ref(feature);
+  gt_genome_node_ref(feature);
 
   f1 = gt_feature_node_new(seqid, "CDS", 1201, 1500, GT_STRAND_FORWARD);
   fn1 = (GtFeatureNode *)f1;

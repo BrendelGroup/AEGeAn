@@ -172,6 +172,7 @@ static bool visit_gene_collapse_feature(AgnInferExonsVisitor *v,
     if(gt_range_compare(range, &fnrange) == 0)
     {
       gt_feature_node_add_child(mrna, fn);
+      gt_genome_node_ref((GtGenomeNode *)fn);
       const char *parentattr = gt_feature_node_get_attribute(fn, "Parent");
       const char *tid = gt_feature_node_get_attribute(mrna, "ID");
       char parentstr[1024];
@@ -351,7 +352,5 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
     }
     gt_array_delete(exons);
   }
-  // FIXME: poor reference handling somewhere; if I delete this iterator, I get
-  //        a segfault later on; if I don't delete it, I leak memory
-  // gt_feature_node_iterator_delete(iter);
+  gt_feature_node_iterator_delete(iter);
 }
