@@ -297,8 +297,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
   gt_genome_node_delete(gn);
 
   agn_logger_delete(logger);
-  gt_node_visitor_delete(icv);
-  //gt_node_stream_delete(icvstream);
+  gt_node_stream_delete(icvstream);
   gt_array_delete(genes);
   gt_node_stream_delete(genestream);
   gt_error_delete(error);

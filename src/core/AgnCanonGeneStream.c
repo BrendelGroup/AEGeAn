@@ -82,6 +82,7 @@ GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream,
   gt_queue_add(stream->streams, filterstream);
   stream->in_stream = filterstream;
 
+  gt_hashmap_delete(typestokeep);
   return ns;
 }
 
@@ -121,6 +122,7 @@ static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     GtUword num_valid_mrnas = 0;
     GtFeatureNode *current;
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+    GtQueue *invalid_mrnas = gt_queue_new();
     for(current  = gt_feature_node_iterator_next(iter);
         current != NULL;
         current  = gt_feature_node_iterator_next(iter))
@@ -154,10 +156,24 @@ static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
         if(keepmrna)
           num_valid_mrnas++;
         else
-          gt_genome_node_delete((GtGenomeNode *)current);
+          gt_queue_add(invalid_mrnas, current);
+
+        gt_array_delete(cds);
+        gt_array_delete(exons);
+        gt_array_delete(introns);
       }
     }
     gt_feature_node_iterator_delete(iter);
+    if(num_valid_mrnas > 0)
+    {
+      while(gt_queue_size(invalid_mrnas) > 0)
+      {
+        GtGenomeNode *mrna = gt_queue_get(invalid_mrnas);
+        gt_genome_node_delete(mrna);
+      }
+    }
+    gt_queue_delete(invalid_mrnas);
+
     if(num_valid_mrnas > 0)
       return 0;
     else

@@ -64,8 +64,7 @@ static void agn_gene_locus_update_range(AgnGeneLocus *locus,
 void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene,
                         AgnComparisonSource source)
 {
-  gt_genome_node_ref((GtGenomeNode *)gene);
-  gt_dlist_add(locus->genes, gene);
+  gt_dlist_add(locus->genes, gt_genome_node_ref((GtGenomeNode *)gene));
   agn_gene_locus_update_range(locus, gene);
   if(source == REFERENCESOURCE)
     gt_hashmap_add(locus->refr_genes, gene, gene);
@@ -313,9 +312,9 @@ GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
 void agn_gene_locus_delete(AgnGeneLocus *locus)
 {
   GtDlistelem *current;
-  for(current = gt_dlist_first(locus->genes);
+  for(current  = gt_dlist_first(locus->genes);
       current != NULL;
-      current = gt_dlistelem_next(current))
+      current  = gt_dlistelem_next(current))
   {
     GtGenomeNode *gn = gt_dlistelem_get_data(current);
     gt_genome_node_delete(gn);
@@ -1086,6 +1085,7 @@ bool agn_gene_locus_unit_test(AgnUnitTest *test)
   agn_unit_test_result(test, "mRNA number (EDEN)", transnumpass);
 
   gt_genome_node_delete((GtGenomeNode *)eden);
+  agn_gene_locus_delete(locus);
   return genenumpass && transnumpass;
 }
 

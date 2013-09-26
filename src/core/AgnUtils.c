@@ -212,6 +212,7 @@ GtFeatureNode *agn_eden()
   gt_feature_node_set_multi_representative(fn3, fn1);
   gt_feature_node_add_child(mrna3fn, fn3);
 
+  gt_str_delete(seqid);
   return genefn;
 }
 

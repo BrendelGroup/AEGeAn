@@ -539,6 +539,10 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
 
   agn_clique_pair_delete(pair1);
   agn_clique_pair_delete(pair2);
+  agn_transcript_clique_delete(tcr1);
+  agn_transcript_clique_delete(tcr2);
+  agn_transcript_clique_delete(tcp1);
+  agn_transcript_clique_delete(tcp2);
 
   GtFeatureNode **r3 = gt_array_get(refrfeats, 2);
   GtFeatureNode **p3 = gt_array_get(predfeats, 3);
@@ -554,8 +558,20 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
                        AGN_CLIQUE_PAIR_CDS_MATCH;
   agn_unit_test_result(test, "analysis and classification", companalypass);
   agn_clique_pair_delete(pair3);
+  agn_transcript_clique_delete(tcr3);
+  agn_transcript_clique_delete(tcp3);
 
+  while(gt_array_size(refrfeats) > 0)
+  {
+    GtGenomeNode **gn = gt_array_pop(refrfeats);
+    gt_genome_node_delete(*gn);
+  }
   gt_array_delete(refrfeats);
+  while(gt_array_size(predfeats) > 0)
+  {
+    GtGenomeNode **gn = gt_array_pop(predfeats);
+    gt_genome_node_delete(*gn);
+  }
   gt_array_delete(predfeats);
 
   gt_error_delete(error);

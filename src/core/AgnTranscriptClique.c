@@ -308,7 +308,7 @@ bool agn_transcript_clique_unit_test(AgnUnitTest *test)
   gt_array_delete(cliques);
   gt_array_delete(trans);
   // FIXME Memory leak, but deleting causes segfault
-  // gt_genome_node_delete((GtGenomeNode *)eden);
+  gt_genome_node_delete((GtGenomeNode *)eden);
 
   return parsearraypass && numtranspass && cdslenpass && iterpass;
 }
