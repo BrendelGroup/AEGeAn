@@ -36,63 +36,57 @@ struct AgnInferCDSVisitor
  */
 
 /**
- * Cast a node visitor object as a AgnInferCDSVisitor
- *
- * @returns    a node visitor object cast as a AgnInferCDSVisitor
+ * @function Cast a node visitor object as a AgnInferCDSVisitor
  */
 static const GtNodeVisitorClass* agn_infer_cds_visitor_class();
 
 /**
- * Identify any mRNA subfeatures associated with this top-level feature and
- * apply the CDS inference procedure.
- *
- * @param[in]  nv       a node visitor
- * @param[in]  fn       node representing a top-level GFF3 feature entry
- * @param[out] error    stores error messages
- * @returns             0 for success
+ * @function Run unit tests using the basic grape example data.
+ */
+static bool unit_test_grape(AgnUnitTest *test);
+
+/**
+ * @function Run unit tests using the grape example data with exons and start /
+ * stop codons (no CDS explicitly defined).
+ */
+static bool unit_test_grape_codons(AgnUnitTest *test);
+
+/**
+ * @function Identify any mRNA subfeatures associated with this top-level
+ * feature and apply the CDS inference procedure.
  */
 static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
                               GtError *error);
 
 /**
- * If the mRNA's CDS is discontinuous, ensure each CDS feature is labeled as a
- * multifeature.
- *
- * @param[in]  nv   the node visitor
+ * @function If the mRNA's CDS is discontinuous, ensure each CDS feature is
+ * labeled as a multifeature.
  */
 static void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v);
 
 /**
- * If start codon is provided explicitly, ensure it agrees with CDS, whether the
- * CDS is provided explicitly or implicitly inferred. If start codon is not
- * provided explicitly, infer it from CDS if possible.
- *
- * @param[in]  nv   the node visitor
+ * @function If start codon is provided explicitly, ensure it agrees with CDS,
+ * whether the CDS is provided explicitly or implicitly inferred. If start codon
+ * is not provided explicitly, infer it from CDS if possible.
  */
 static void visit_mrna_check_start(AgnInferCDSVisitor *v);
 
 /**
- * If stop codon is provided explicitly, ensure it agrees with CDS, whether the
- * CDS is provided explicitly or implicitly inferred. If stop codon is not
- * provided explicitly, infer it from CDS if possible.
- *
- * @param[in]  nv   the node visitor
+ * @function If stop codon is provided explicitly, ensure it agrees with CDS,
+ * whether the CDS is provided explicitly or implicitly inferred. If stop codon
+ * is not provided explicitly, infer it from CDS if possible.
  */
 static void visit_mrna_check_stop(AgnInferCDSVisitor *v);
 
 /**
- * Infer CDS for any mRNAs that have none specified but have exons and
+ * @function Infer CDS for any mRNAs that have none specified but have exons and
  * start/stop codons explicitly specified.
- *
- * @param[in]  nv   the node visitor
  */
 static void visit_mrna_infer_cds(AgnInferCDSVisitor *v);
 
 /**
- * Infer UTRs for any mRNAs that have none specified but do have exons and
- * start/stop codons and/or CDS explicitly specified.
- *
- * @param[in]  nv   the node visitor
+ * @function Infer UTRs for any mRNAs that have none specified but do have exons
+ * and start/stop codons and/or CDS explicitly specified.
  */
 static void visit_mrna_infer_utrs(AgnInferCDSVisitor *v);
 
@@ -124,7 +118,137 @@ GtNodeVisitor* agn_infer_cds_visitor_new(AgnLogger *logger)
 
 bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
 {
-  GtArray *genes = agn_test_data_genes_codons();
+  bool grape = unit_test_grape(test);
+  bool grape_codons = unit_test_grape_codons(test);
+  return grape && grape_codons;
+}
+
+static bool unit_test_grape(AgnUnitTest *test)
+{
+  GtArray *genes = agn_test_data_grape();
+  GtError *error = gt_error_new();
+  AgnLogger *logger = agn_logger_new();
+  GtNodeStream *genestream = gt_array_in_stream_new(genes, NULL, error);
+  GtNodeVisitor *icv = agn_infer_cds_visitor_new(logger);
+  GtNodeStream *icvstream = gt_visitor_stream_new(genestream, icv);
+  int result;
+  GtGenomeNode *gn;
+  GtFeatureNode *fn;
+
+  result = gt_node_stream_next(icvstream, &gn, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "node stream error: %s\n", gt_error_get(error));
+    return false;
+  }
+  fn = (GtFeatureNode *)gn;
+  GtArray *cds = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_cds_feature);
+  GtArray *utrs = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_utr_feature);
+  GtArray *starts = agn_gt_feature_node_children_of_type(fn,
+                                    agn_gt_feature_node_is_start_codon_feature);
+  GtArray *stops = agn_gt_feature_node_children_of_type(fn,
+                                     agn_gt_feature_node_is_stop_codon_feature);
+  bool cds1correct = gt_array_size(cds) == 3 && gt_array_size(utrs) == 2;
+  agn_unit_test_result(test, "grape: CDS 1 check", cds1correct);
+  bool codons1correct = gt_array_size(starts) == 1 && gt_array_size(stops) == 1;
+  if(codons1correct)
+  {
+    GtGenomeNode **start = gt_array_get(starts, 0);
+    GtGenomeNode **stop  = gt_array_get(stops,  0);
+    GtRange startrange = gt_genome_node_get_range(*start);
+    GtRange stoprange  = gt_genome_node_get_range(*stop);
+    codons1correct = (startrange.start == 22167 && startrange.end == 22169 &&
+                      stoprange.start  == 23020 && stoprange.end  == 23022);
+  }
+  agn_unit_test_result(test, "grape: codons 1 check", codons1correct);
+  gt_array_delete(cds);
+  gt_array_delete(utrs);
+  gt_array_delete(starts);
+  gt_array_delete(stops);
+  gt_genome_node_delete(gn);
+  
+  result = gt_node_stream_next(icvstream, &gn, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "node stream error: %s\n", gt_error_get(error));
+    return false;
+  }
+  fn = (GtFeatureNode *)gn;
+  cds = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_cds_feature);
+  utrs = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_utr_feature);
+  starts = agn_gt_feature_node_children_of_type(fn,
+                                    agn_gt_feature_node_is_start_codon_feature);
+  stops = agn_gt_feature_node_children_of_type(fn,
+                                     agn_gt_feature_node_is_stop_codon_feature);
+  bool cds2correct = gt_array_size(cds) == 3 && gt_array_size(utrs) == 1;
+  agn_unit_test_result(test, "grape: CDS 2 check", cds2correct);
+  bool codons2correct = gt_array_size(starts) == 1 && gt_array_size(stops) == 1;
+  if(codons2correct)
+  {
+    GtGenomeNode **start = gt_array_get(starts, 0);
+    GtGenomeNode **stop  = gt_array_get(stops,  0);
+    GtRange startrange = gt_genome_node_get_range(*start);
+    GtRange stoprange  = gt_genome_node_get_range(*stop);
+    codons2correct = (startrange.start == 48982 && startrange.end == 48984 &&
+                      stoprange.start  == 48411 && stoprange.end  == 48413);
+  }
+  agn_unit_test_result(test, "grape: codons 2 check", codons2correct);
+  gt_array_delete(cds);
+  gt_array_delete(utrs);
+  gt_array_delete(starts);
+  gt_array_delete(stops);
+  gt_genome_node_delete(gn);
+  
+  result = gt_node_stream_next(icvstream, &gn, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "node stream error: %s\n", gt_error_get(error));
+    return false;
+  }
+  fn = (GtFeatureNode *)gn;
+  cds = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_cds_feature);
+  utrs = agn_gt_feature_node_children_of_type(fn,
+                                            agn_gt_feature_node_is_utr_feature);
+  starts = agn_gt_feature_node_children_of_type(fn,
+                                    agn_gt_feature_node_is_start_codon_feature);
+  stops = agn_gt_feature_node_children_of_type(fn,
+                                     agn_gt_feature_node_is_stop_codon_feature);
+  bool cds3correct = gt_array_size(cds) == 6 && gt_array_size(utrs) == 2;
+  agn_unit_test_result(test, "grape: CDS 3 check", cds3correct);
+  bool codons3correct = gt_array_size(starts) == 1 && gt_array_size(stops) == 1;
+  if(codons3correct)
+  {
+    GtGenomeNode **start = gt_array_get(starts, 0);
+    GtGenomeNode **stop  = gt_array_get(stops,  0);
+    GtRange startrange = gt_genome_node_get_range(*start);
+    GtRange stoprange  = gt_genome_node_get_range(*stop);
+    codons3correct = (startrange.start == 91961 && startrange.end == 91963 &&
+                      stoprange.start  == 88892 && stoprange.end  == 88894);
+  }
+  agn_unit_test_result(test, "grape: codons 3 check", codons3correct);
+  gt_array_delete(cds);
+  gt_array_delete(utrs);
+  gt_array_delete(starts);
+  gt_array_delete(stops);
+  gt_genome_node_delete(gn);
+
+  agn_logger_delete(logger);
+  gt_node_stream_delete(icvstream);
+  gt_array_delete(genes);
+  gt_node_stream_delete(genestream);
+  gt_error_delete(error);
+  return cds1correct && codons1correct && cds2correct && codons2correct &&
+         cds3correct && codons3correct;
+}
+
+static bool unit_test_grape_codons(AgnUnitTest *test)
+{
+  GtArray *genes = agn_test_data_grape_codons();
   GtError *error = gt_error_new();
   AgnLogger *logger = agn_logger_new();
   GtNodeStream *genestream = gt_array_in_stream_new(genes, NULL, error);
@@ -162,7 +286,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
                    range2.start == 22497 && range2.end == 22550 &&
                    range3.start == 22651 && range3.end == 23022);
   }
-  agn_unit_test_result(test, "CDS correct for mRNA 1", cds1correct);
+  agn_unit_test_result(test, "grape::codons: CDS 1 check", cds1correct);
 
   bool utrs1correct;
   if(gt_array_size(utrs) != 2)
@@ -182,7 +306,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
                     range2.start == 23023 && range2.end == 23119 &&
                     gt_feature_node_has_type(fn2, "three_prime_UTR"));
   }
-  agn_unit_test_result(test, "UTRs correct for mRNA 1", utrs1correct);
+  agn_unit_test_result(test, "grape::codons: UTRs 1 check", utrs1correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_genome_node_delete(gn);
@@ -215,7 +339,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
                    range2.start == 48637 && range2.end == 48766 &&
                    range3.start == 48870 && range3.end == 48984);
   }
-  agn_unit_test_result(test, "CDS correct for mRNA 2", cds2correct);
+  agn_unit_test_result(test, "grape::codons: CDS 2 check", cds2correct);
 
   bool utrs2correct;
   if(gt_array_size(utrs) != 1)
@@ -230,7 +354,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
     utrs2correct = (range.start == 48012 && range.end == 48410 &&
                     gt_feature_node_has_type(fn, "three_prime_UTR"));
   }
-  agn_unit_test_result(test, "UTRs correct for mRNA 2", utrs2correct);
+  agn_unit_test_result(test, "grape::codons: UTRs 2 check", utrs2correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_genome_node_delete(gn);
@@ -272,7 +396,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
                    range5.start == 91150 && range5.end == 91362 &&
                    range6.start == 91810 && range6.end == 91963);
   }
-  agn_unit_test_result(test, "CDS correct for mRNA 3", cds3correct);
+  agn_unit_test_result(test, "grape::codons: CDS 3 check", cds3correct);
   
   bool utrs3correct;
   if(gt_array_size(utrs) != 2)
@@ -292,7 +416,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
                     range2.start == 91964 && range2.end == 92176 &&
                     gt_feature_node_has_type(fn2, "five_prime_UTR"));
   }
-  agn_unit_test_result(test, "UTRs correct for mRNA 3", utrs3correct);
+  agn_unit_test_result(test, "grape::codons: UTRs 3 check", utrs3correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_genome_node_delete(gn);

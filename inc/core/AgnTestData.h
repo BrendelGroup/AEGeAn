@@ -7,13 +7,18 @@
  * and modules.
  */ //;
  
- #include "genometools.h"
+#include "genometools.h"
 
 /**
- * @function Create an array containing 3 gene features to be used for unit
- * testing.
+ * @function Example from grape..
  */
-GtArray *agn_test_data_genes_codons();
+GtArray *agn_test_data_grape();
+
+/**
+ * @function Example from grape: gene structure annotated with exon and start /
+ * stop codon features--CDS is implicitly defined by these features.
+ */
+GtArray *agn_test_data_grape_codons();
 
 /**
  * @function Create the canonical gene structure (from the GFF3 specification)

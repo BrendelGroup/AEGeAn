@@ -645,9 +645,13 @@ Module AgnTestData
 
 A collection of functions facilitating unit testing of various AEGeAn classes and modules. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTestData.h>`_.
 
-.. c:function:: GtArray *agn_test_data_genes_codons()
+.. c:function:: GtArray *agn_test_data_grape()
 
-  Create an array containing 3 gene features to be used for unit testing.
+  Example from grape..
+
+.. c:function:: GtArray *agn_test_data_grape_codons()
+
+  Example from grape: gene structure annotated with exon and start / stop codon features--CDS is implicitly defined by these features.
 
 .. c:function:: GtFeatureNode *agn_test_data_eden()
 
