@@ -129,9 +129,12 @@ static bool unit_test_grape(AgnUnitTest *test)
   fn = (GtFeatureNode *)gn;
   GtArray *exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
-  bool exons1correct = gt_array_size(exons) == 3;
+  GtArray *introns = agn_gt_feature_node_children_of_type(fn,
+                                         agn_gt_feature_node_is_intron_feature);
+  bool exons1correct = gt_array_size(exons) == 3 && gt_array_size(introns) == 2;
   agn_unit_test_result(test, "grape: exon check 1", exons1correct);
   gt_array_delete(exons);
+  gt_array_delete(introns);
   gt_genome_node_delete(gn);
 
   result = gt_node_stream_next(ievstream, &gn, error);
@@ -143,9 +146,12 @@ static bool unit_test_grape(AgnUnitTest *test)
   fn = (GtFeatureNode *)gn;
   exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
-  bool exons2correct = gt_array_size(exons) == 3;
+  introns = agn_gt_feature_node_children_of_type(fn,
+                                         agn_gt_feature_node_is_intron_feature);
+  bool exons2correct = gt_array_size(exons) == 3 && gt_array_size(introns) == 2;
   agn_unit_test_result(test, "grape: exon check 2", exons2correct);
   gt_array_delete(exons);
+  gt_array_delete(introns);
   gt_genome_node_delete(gn);
 
   result = gt_node_stream_next(ievstream, &gn, error);
@@ -157,9 +163,12 @@ static bool unit_test_grape(AgnUnitTest *test)
   fn = (GtFeatureNode *)gn;
   exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
-  bool exons3correct = gt_array_size(exons) == 6;
+  introns = agn_gt_feature_node_children_of_type(fn,
+                                         agn_gt_feature_node_is_intron_feature);
+  bool exons3correct = gt_array_size(exons) == 6 && gt_array_size(introns) == 5;
   agn_unit_test_result(test, "grape: exon check 3", exons3correct);
   gt_array_delete(exons);
+  gt_array_delete(introns);
   gt_genome_node_delete(gn);
   
   agn_logger_delete(logger);
@@ -191,21 +200,30 @@ static bool unit_test_grape_sansexons(AgnUnitTest *test)
   fn = (GtFeatureNode *)gn;
   GtArray *exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
-  bool exons1correct = gt_array_size(exons) == 3;
+  GtArray *introns = agn_gt_feature_node_children_of_type(fn,
+                                         agn_gt_feature_node_is_intron_feature);
+  bool exons1correct = gt_array_size(exons) == 3 && gt_array_size(introns) == 2;
   if(exons1correct)
   {
-    GtGenomeNode **exon1 = gt_array_get(exons, 0);
-    GtGenomeNode **exon2 = gt_array_get(exons, 1);
-    GtGenomeNode **exon3 = gt_array_get(exons, 2);
-    GtRange range1 = gt_genome_node_get_range(*exon1);
-    GtRange range2 = gt_genome_node_get_range(*exon2);
-    GtRange range3 = gt_genome_node_get_range(*exon3);
-    exons1correct = (range1.start == 22057 && range1.end == 22382 &&
-                     range2.start == 22497 && range2.end == 22550 &&
-                     range3.start == 22651 && range3.end == 23119);
+    GtGenomeNode **exon1   = gt_array_get(exons,   0);
+    GtGenomeNode **exon2   = gt_array_get(exons,   1);
+    GtGenomeNode **exon3   = gt_array_get(exons,   2);
+    GtGenomeNode **intron1 = gt_array_get(introns, 0);
+    GtGenomeNode **intron2 = gt_array_get(introns, 1);
+    GtRange erange1 = gt_genome_node_get_range(*exon1);
+    GtRange erange2 = gt_genome_node_get_range(*exon2);
+    GtRange erange3 = gt_genome_node_get_range(*exon3);
+    GtRange irange1 = gt_genome_node_get_range(*intron1);
+    GtRange irange2 = gt_genome_node_get_range(*intron2);
+    exons1correct = (erange1.start == 22057 && erange1.end == 22382 &&
+                     erange2.start == 22497 && erange2.end == 22550 &&
+                     erange3.start == 22651 && erange3.end == 23119 &&
+                     irange1.start == 22383 && irange1.end == 22496 &&
+                     irange2.start == 22551 && irange2.end == 22650);
   }
   agn_unit_test_result(test, "grape::sansexons: exon check 1", exons1correct);
   gt_array_delete(exons);
+  gt_array_delete(introns);
   gt_genome_node_delete(gn);
 
   result = gt_node_stream_next(ievstream, &gn, error);
@@ -217,21 +235,30 @@ static bool unit_test_grape_sansexons(AgnUnitTest *test)
   fn = (GtFeatureNode *)gn;
   exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
-  bool exons2correct = gt_array_size(exons) == 3;
+  introns = agn_gt_feature_node_children_of_type(fn,
+                                         agn_gt_feature_node_is_intron_feature);
+  bool exons2correct = gt_array_size(exons) == 3 && gt_array_size(introns) == 2;
   if(exons2correct)
   {
-    GtGenomeNode **exon1 = gt_array_get(exons, 0);
-    GtGenomeNode **exon2 = gt_array_get(exons, 1);
-    GtGenomeNode **exon3 = gt_array_get(exons, 2);
-    GtRange range1 = gt_genome_node_get_range(*exon1);
-    GtRange range2 = gt_genome_node_get_range(*exon2);
-    GtRange range3 = gt_genome_node_get_range(*exon3);
-    exons2correct = (range1.start == 48012 && range1.end == 48537 &&
-                     range2.start == 48637 && range2.end == 48766 &&
-                     range3.start == 48870 && range3.end == 48984);
+    GtGenomeNode **exon1   = gt_array_get(exons,   0);
+    GtGenomeNode **exon2   = gt_array_get(exons,   1);
+    GtGenomeNode **exon3   = gt_array_get(exons,   2);
+    GtGenomeNode **intron1 = gt_array_get(introns, 0);
+    GtGenomeNode **intron2 = gt_array_get(introns, 1);
+    GtRange erange1 = gt_genome_node_get_range(*exon1);
+    GtRange erange2 = gt_genome_node_get_range(*exon2);
+    GtRange erange3 = gt_genome_node_get_range(*exon3);
+    GtRange irange1 = gt_genome_node_get_range(*intron1);
+    GtRange irange2 = gt_genome_node_get_range(*intron2);
+    exons2correct = (erange1.start == 48012 && erange1.end == 48537 &&
+                     erange2.start == 48637 && erange2.end == 48766 &&
+                     erange3.start == 48870 && erange3.end == 48984 &&
+                     irange1.start == 48538 && irange1.end == 48636 &&
+                     irange2.start == 48767 && irange2.end == 48869);
   }
   agn_unit_test_result(test, "grape::sansexons: exon check 2", exons2correct);
   gt_array_delete(exons);
+  gt_array_delete(introns);
   gt_genome_node_delete(gn);
 
   result = gt_node_stream_next(ievstream, &gn, error);
@@ -243,30 +270,48 @@ static bool unit_test_grape_sansexons(AgnUnitTest *test)
   fn = (GtFeatureNode *)gn;
   exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
-  bool exons3correct = gt_array_size(exons) == 6;
+  introns = agn_gt_feature_node_children_of_type(fn,
+                                         agn_gt_feature_node_is_intron_feature);
+  bool exons3correct = gt_array_size(exons) == 6 && gt_array_size(introns) == 5;
   if(exons3correct)
   {
-    GtGenomeNode **exon1 = gt_array_get(exons, 0);
-    GtGenomeNode **exon2 = gt_array_get(exons, 1);
-    GtGenomeNode **exon3 = gt_array_get(exons, 2);
-    GtGenomeNode **exon4 = gt_array_get(exons, 3);
-    GtGenomeNode **exon5 = gt_array_get(exons, 4);
-    GtGenomeNode **exon6 = gt_array_get(exons, 5);
-    GtRange range1 = gt_genome_node_get_range(*exon1);
-    GtRange range2 = gt_genome_node_get_range(*exon2);
-    GtRange range3 = gt_genome_node_get_range(*exon3);
-    GtRange range4 = gt_genome_node_get_range(*exon4);
-    GtRange range5 = gt_genome_node_get_range(*exon5);
-    GtRange range6 = gt_genome_node_get_range(*exon6);
-    exons3correct = (range1.start == 88551 && range1.end == 89029 &&
-                     range2.start == 89265 && range2.end == 89549 &&
-                     range3.start == 90074 && range3.end == 90413 &&
-                     range4.start == 90728 && range4.end == 90833 &&
-                     range5.start == 91150 && range5.end == 91362 &&
-                     range6.start == 91810 && range6.end == 92176);
+    GtGenomeNode **exon1   = gt_array_get(exons,   0);
+    GtGenomeNode **exon2   = gt_array_get(exons,   1);
+    GtGenomeNode **exon3   = gt_array_get(exons,   2);
+    GtGenomeNode **exon4   = gt_array_get(exons,   3);
+    GtGenomeNode **exon5   = gt_array_get(exons,   4);
+    GtGenomeNode **exon6   = gt_array_get(exons,   5);
+    GtGenomeNode **intron1 = gt_array_get(introns, 0);
+    GtGenomeNode **intron2 = gt_array_get(introns, 1);
+    GtGenomeNode **intron3 = gt_array_get(introns, 2);
+    GtGenomeNode **intron4 = gt_array_get(introns, 3);
+    GtGenomeNode **intron5 = gt_array_get(introns, 4);
+    GtRange erange1 = gt_genome_node_get_range(*exon1);
+    GtRange erange2 = gt_genome_node_get_range(*exon2);
+    GtRange erange3 = gt_genome_node_get_range(*exon3);
+    GtRange erange4 = gt_genome_node_get_range(*exon4);
+    GtRange erange5 = gt_genome_node_get_range(*exon5);
+    GtRange erange6 = gt_genome_node_get_range(*exon6);
+    GtRange irange1 = gt_genome_node_get_range(*intron1);
+    GtRange irange2 = gt_genome_node_get_range(*intron2);
+    GtRange irange3 = gt_genome_node_get_range(*intron3);
+    GtRange irange4 = gt_genome_node_get_range(*intron4);
+    GtRange irange5 = gt_genome_node_get_range(*intron5);
+    exons3correct = (erange1.start == 88551 && erange1.end == 89029 &&
+                     erange2.start == 89265 && erange2.end == 89549 &&
+                     erange3.start == 90074 && erange3.end == 90413 &&
+                     erange4.start == 90728 && erange4.end == 90833 &&
+                     erange5.start == 91150 && erange5.end == 91362 &&
+                     erange6.start == 91810 && erange6.end == 92176 &&
+                     irange1.start == 89030 && irange1.end == 89264 &&
+                     irange2.start == 89550 && irange2.end == 90073 &&
+                     irange3.start == 90414 && irange3.end == 90727 &&
+                     irange4.start == 90834 && irange4.end == 91149 &&
+                     irange5.start == 91363 && irange5.end == 91809);
   }
   agn_unit_test_result(test, "grape::sansexons: exon check 3", exons3correct);
   gt_array_delete(exons);
+  gt_array_delete(introns);
   gt_genome_node_delete(gn);
   
   agn_logger_delete(logger);
