@@ -514,6 +514,10 @@ Class AgnInferExonsVisitor
 
   Class constructor.
 
+.. c:function:: bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class.
+
 Class AgnLocusIndex
 -------------------
 
@@ -647,11 +651,15 @@ A collection of functions facilitating unit testing of various AEGeAn classes an
 
 .. c:function:: GtArray *agn_test_data_grape()
 
-  Example from grape..
+  Example from grape.
 
 .. c:function:: GtArray *agn_test_data_grape_codons()
 
   Example from grape: gene structure annotated with exon and start / stop codon features--CDS is implicitly defined by these features.
+
+.. c:function:: GtArray *agn_test_data_grape_sansexons()
+
+  Example from grape: gene structure annotated with CDS and UTR features--exons are implicitly defined by these features.
 
 .. c:function:: GtFeatureNode *agn_test_data_eden()
 

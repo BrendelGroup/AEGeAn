@@ -200,6 +200,99 @@ GtArray *agn_test_data_grape_codons()
   return genes;
 }
 
+GtArray *agn_test_data_grape_sansexons()
+{
+  GtArray *genes = gt_array_new( sizeof(GtGenomeNode *) );
+  GtStr *seqid = gt_str_new_cstr("chr8");
+
+  GtGenomeNode *gene1  = gt_feature_node_new(seqid, "gene", 22057, 23119,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *mrna1  = gt_feature_node_new(seqid, "mRNA", 22057, 23119,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *cds1a  = gt_feature_node_new(seqid, "CDS", 22167, 22382,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *cds1b  = gt_feature_node_new(seqid, "CDS", 22497, 22550,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *cds1c  = gt_feature_node_new(seqid, "CDS", 22651, 23022,
+                                             GT_STRAND_FORWARD);
+  GtGenomeNode *futr1  = gt_feature_node_new(seqid, "five_prime_UTR", 22057,
+                                             22166, GT_STRAND_FORWARD);
+  GtGenomeNode *tutr1  = gt_feature_node_new(seqid, "three_prime_UTR", 23023,
+                                             23119, GT_STRAND_FORWARD);
+  gt_feature_node_make_multi_representative(fn_cast(cds1a));
+  gt_feature_node_set_multi_representative(fn_cast(cds1b), fn_cast(cds1a));
+  gt_feature_node_set_multi_representative(fn_cast(cds1c), fn_cast(cds1a));
+  gt_feature_node_add_child(fn_cast(gene1), fn_cast(mrna1));
+  gt_feature_node_add_child(fn_cast(mrna1), fn_cast(cds1a));
+  gt_feature_node_add_child(fn_cast(mrna1), fn_cast(cds1b));
+  gt_feature_node_add_child(fn_cast(mrna1), fn_cast(cds1c));
+  gt_feature_node_add_child(fn_cast(mrna1), fn_cast(futr1));
+  gt_feature_node_add_child(fn_cast(mrna1), fn_cast(tutr1));
+  gt_array_add(genes, gene1);
+
+  GtGenomeNode *gene2  = gt_feature_node_new(seqid, "gene", 48012, 48984,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *mrna2  = gt_feature_node_new(seqid, "mRNA", 48012, 48984,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds2a  = gt_feature_node_new(seqid, "CDS", 48411, 48537,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds2b  = gt_feature_node_new(seqid, "CDS", 48637, 48766,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds2c  = gt_feature_node_new(seqid, "CDS", 48870, 48984,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *tutr2  = gt_feature_node_new(seqid, "three_prime_UTR", 48012,
+                                             48410, GT_STRAND_REVERSE);
+  gt_feature_node_make_multi_representative(fn_cast(cds2a));
+  gt_feature_node_set_multi_representative(fn_cast(cds2b), fn_cast(cds2a));
+  gt_feature_node_set_multi_representative(fn_cast(cds2c), fn_cast(cds2a));
+  gt_feature_node_add_child(fn_cast(gene2), fn_cast(mrna2));
+  gt_feature_node_add_child(fn_cast(mrna2), fn_cast(cds2a));
+  gt_feature_node_add_child(fn_cast(mrna2), fn_cast(cds2b));
+  gt_feature_node_add_child(fn_cast(mrna2), fn_cast(cds2c));
+  gt_feature_node_add_child(fn_cast(mrna2), fn_cast(tutr2));
+  gt_array_add(genes, gene2);
+
+  GtGenomeNode *gene3  = gt_feature_node_new(seqid, "gene", 88551, 92176,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *mrna3  = gt_feature_node_new(seqid, "mRNA", 88551, 92176,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds3a  = gt_feature_node_new(seqid, "CDS", 88892, 89029,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds3b  = gt_feature_node_new(seqid, "CDS", 89265, 89549,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds3c  = gt_feature_node_new(seqid, "CDS", 90074, 90413,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds3d  = gt_feature_node_new(seqid, "CDS", 90728, 90833,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds3e  = gt_feature_node_new(seqid, "CDS", 91150, 91362,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *cds3f  = gt_feature_node_new(seqid, "CDS", 91810, 91963,
+                                             GT_STRAND_REVERSE);
+  GtGenomeNode *futr3  = gt_feature_node_new(seqid, "five_prime_UTR", 91964,
+                                             92176, GT_STRAND_REVERSE);
+  GtGenomeNode *tutr3  = gt_feature_node_new(seqid, "three_prime_UTR", 88551,
+                                             88891, GT_STRAND_REVERSE);
+  gt_feature_node_make_multi_representative(fn_cast(cds3a));
+  gt_feature_node_set_multi_representative(fn_cast(cds3b), fn_cast(cds3a));
+  gt_feature_node_set_multi_representative(fn_cast(cds3c), fn_cast(cds3a));
+  gt_feature_node_set_multi_representative(fn_cast(cds3d), fn_cast(cds3a));
+  gt_feature_node_set_multi_representative(fn_cast(cds3e), fn_cast(cds3a));
+  gt_feature_node_set_multi_representative(fn_cast(cds3f), fn_cast(cds3a));
+  gt_feature_node_add_child(fn_cast(gene3), fn_cast(mrna3));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(cds3a));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(cds3b));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(cds3c));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(cds3d));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(cds3e));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(cds3f));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(futr3));
+  gt_feature_node_add_child(fn_cast(mrna3), fn_cast(tutr3));
+  gt_array_add(genes, gene3);
+
+  gt_str_delete(seqid);
+  return genes;
+}
+
 GtFeatureNode *agn_test_data_eden()
 {
   GtGenomeNode *gene, *mrna1, *mrna2, *mrna3, *feature;

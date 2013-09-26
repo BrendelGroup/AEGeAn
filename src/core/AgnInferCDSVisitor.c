@@ -151,7 +151,7 @@ static bool unit_test_grape(AgnUnitTest *test)
   GtArray *stops = agn_gt_feature_node_children_of_type(fn,
                                      agn_gt_feature_node_is_stop_codon_feature);
   bool cds1correct = gt_array_size(cds) == 3 && gt_array_size(utrs) == 2;
-  agn_unit_test_result(test, "grape: CDS 1 check", cds1correct);
+  agn_unit_test_result(test, "grape: CDS check 1", cds1correct);
   bool codons1correct = gt_array_size(starts) == 1 && gt_array_size(stops) == 1;
   if(codons1correct)
   {
@@ -162,7 +162,7 @@ static bool unit_test_grape(AgnUnitTest *test)
     codons1correct = (startrange.start == 22167 && startrange.end == 22169 &&
                       stoprange.start  == 23020 && stoprange.end  == 23022);
   }
-  agn_unit_test_result(test, "grape: codons 1 check", codons1correct);
+  agn_unit_test_result(test, "grape: codons check 1", codons1correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_array_delete(starts);
@@ -185,7 +185,7 @@ static bool unit_test_grape(AgnUnitTest *test)
   stops = agn_gt_feature_node_children_of_type(fn,
                                      agn_gt_feature_node_is_stop_codon_feature);
   bool cds2correct = gt_array_size(cds) == 3 && gt_array_size(utrs) == 1;
-  agn_unit_test_result(test, "grape: CDS 2 check", cds2correct);
+  agn_unit_test_result(test, "grape: CDS check 2", cds2correct);
   bool codons2correct = gt_array_size(starts) == 1 && gt_array_size(stops) == 1;
   if(codons2correct)
   {
@@ -196,7 +196,7 @@ static bool unit_test_grape(AgnUnitTest *test)
     codons2correct = (startrange.start == 48982 && startrange.end == 48984 &&
                       stoprange.start  == 48411 && stoprange.end  == 48413);
   }
-  agn_unit_test_result(test, "grape: codons 2 check", codons2correct);
+  agn_unit_test_result(test, "grape: codons check 2", codons2correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_array_delete(starts);
@@ -219,7 +219,7 @@ static bool unit_test_grape(AgnUnitTest *test)
   stops = agn_gt_feature_node_children_of_type(fn,
                                      agn_gt_feature_node_is_stop_codon_feature);
   bool cds3correct = gt_array_size(cds) == 6 && gt_array_size(utrs) == 2;
-  agn_unit_test_result(test, "grape: CDS 3 check", cds3correct);
+  agn_unit_test_result(test, "grape: CDS check 3", cds3correct);
   bool codons3correct = gt_array_size(starts) == 1 && gt_array_size(stops) == 1;
   if(codons3correct)
   {
@@ -230,7 +230,7 @@ static bool unit_test_grape(AgnUnitTest *test)
     codons3correct = (startrange.start == 91961 && startrange.end == 91963 &&
                       stoprange.start  == 88892 && stoprange.end  == 88894);
   }
-  agn_unit_test_result(test, "grape: codons 3 check", codons3correct);
+  agn_unit_test_result(test, "grape: codons check 3", codons3correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_array_delete(starts);
@@ -286,7 +286,7 @@ static bool unit_test_grape_codons(AgnUnitTest *test)
                    range2.start == 22497 && range2.end == 22550 &&
                    range3.start == 22651 && range3.end == 23022);
   }
-  agn_unit_test_result(test, "grape::codons: CDS 1 check", cds1correct);
+  agn_unit_test_result(test, "grape::codons: CDS check 1", cds1correct);
 
   bool utrs1correct;
   if(gt_array_size(utrs) != 2)
@@ -306,7 +306,7 @@ static bool unit_test_grape_codons(AgnUnitTest *test)
                     range2.start == 23023 && range2.end == 23119 &&
                     gt_feature_node_has_type(fn2, "three_prime_UTR"));
   }
-  agn_unit_test_result(test, "grape::codons: UTRs 1 check", utrs1correct);
+  agn_unit_test_result(test, "grape::codons: UTRs check 1", utrs1correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_genome_node_delete(gn);
@@ -339,7 +339,7 @@ static bool unit_test_grape_codons(AgnUnitTest *test)
                    range2.start == 48637 && range2.end == 48766 &&
                    range3.start == 48870 && range3.end == 48984);
   }
-  agn_unit_test_result(test, "grape::codons: CDS 2 check", cds2correct);
+  agn_unit_test_result(test, "grape::codons: CDS check 2", cds2correct);
 
   bool utrs2correct;
   if(gt_array_size(utrs) != 1)
@@ -354,7 +354,7 @@ static bool unit_test_grape_codons(AgnUnitTest *test)
     utrs2correct = (range.start == 48012 && range.end == 48410 &&
                     gt_feature_node_has_type(fn, "three_prime_UTR"));
   }
-  agn_unit_test_result(test, "grape::codons: UTRs 2 check", utrs2correct);
+  agn_unit_test_result(test, "grape::codons: UTRs check 2", utrs2correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_genome_node_delete(gn);
@@ -396,7 +396,7 @@ static bool unit_test_grape_codons(AgnUnitTest *test)
                    range5.start == 91150 && range5.end == 91362 &&
                    range6.start == 91810 && range6.end == 91963);
   }
-  agn_unit_test_result(test, "grape::codons: CDS 3 check", cds3correct);
+  agn_unit_test_result(test, "grape::codons: CDS check 3", cds3correct);
   
   bool utrs3correct;
   if(gt_array_size(utrs) != 2)
@@ -416,7 +416,7 @@ static bool unit_test_grape_codons(AgnUnitTest *test)
                     range2.start == 91964 && range2.end == 92176 &&
                     gt_feature_node_has_type(fn2, "five_prime_UTR"));
   }
-  agn_unit_test_result(test, "grape::codons: UTRs 3 check", utrs3correct);
+  agn_unit_test_result(test, "grape::codons: UTRs check 3", utrs3correct);
   gt_array_delete(cds);
   gt_array_delete(utrs);
   gt_genome_node_delete(gn);
