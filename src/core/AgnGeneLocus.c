@@ -2,6 +2,7 @@
 #include <string.h>
 #include "AgnGeneLocus.h"
 #include "AgnGtExtensions.h"
+#include "AgnTestData.h"
 #include "AgnUtils.h"
 
 //----------------------------------------------------------------------------//
@@ -1071,7 +1072,7 @@ GtUword agn_gene_locus_transcript_num(AgnGeneLocus *locus,
 
 bool agn_gene_locus_unit_test(AgnUnitTest *test)
 {
-  GtFeatureNode *eden = agn_eden();
+  GtFeatureNode *eden = agn_test_data_eden();
   GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)eden);
   AgnGeneLocus *locus = agn_gene_locus_new(gt_str_get(seqid));
   agn_gene_locus_add_gene(locus, eden);

@@ -640,6 +640,19 @@ Class AgnLogger
 
   Reset this logger object.
 
+Module AgnTestData
+------------------
+
+A collection of functions facilitating unit testing of various AEGeAn classes and modules. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTestData.h>`_.
+
+.. c:function:: GtArray *agn_test_data_genes_codons()
+
+  Create an array containing 3 gene features to be used for unit testing.
+
+.. c:function:: GtFeatureNode *agn_test_data_eden()
+
+  Create the canonical gene structure (from the GFF3 specification) in memory.
+
 Class AgnTranscriptClique
 -------------------------
 
@@ -765,10 +778,6 @@ A collection of assorted core utility functions. See the `module header <https:/
 
   Determine the splice complexity of the given set of transcripts.
 
-.. c:function:: GtFeatureNode *agn_eden()
-
-  Create the canonical gene structure in memory.
-
 .. c:function:: GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
 
   If reference transcripts belonging to the same locus overlap, they must be separated before comparison with prediction transcript models (and vice versa). This is an instance of the maximal clique enumeration problem (NP-complete), for which the Bron-Kerbosch algorithm provides a solution.
@@ -808,10 +817,6 @@ A collection of assorted core utility functions. See the `module header <https:/
 .. c:function:: int agn_string_compare(const void *p1, const void *p2)
 
   Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
-
-.. c:function:: GtArray *agn_test_data_genes_codons()
-
-  Create an array containing gene features to be used for unit testing.
 
 .. c:function:: GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
 

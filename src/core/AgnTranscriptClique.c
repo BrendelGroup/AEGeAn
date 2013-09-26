@@ -1,6 +1,7 @@
 #include <string.h>
 #include "AgnGeneLocus.h"
 #include "AgnGtExtensions.h"
+#include "AgnTestData.h"
 #include "AgnTranscriptClique.h"
 #include "AgnUnitTest.h"
 #include "AgnUtils.h"
@@ -255,7 +256,7 @@ void agn_transcript_clique_to_gff3(AgnTranscriptClique *clique, FILE *outstream,
 
 bool agn_transcript_clique_unit_test(AgnUnitTest *test)
 {
-  GtFeatureNode *eden = agn_eden();
+  GtFeatureNode *eden = agn_test_data_eden();
   GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)eden);
   AgnGeneLocus *locus = agn_gene_locus_new(gt_str_get(seqid));
   agn_gene_locus_add_gene(locus, eden);

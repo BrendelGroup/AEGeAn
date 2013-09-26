@@ -3,6 +3,7 @@
 #include "AgnCanonGeneStream.h"
 #include "AgnCliquePair.h"
 #include "AgnGtExtensions.h"
+#include "AgnTestData.h"
 #include "AgnUtils.h"
 
 //----------------------------------------------------------------------------//

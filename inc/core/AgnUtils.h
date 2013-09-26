@@ -44,11 +44,6 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2);
 double agn_calc_splice_complexity(GtArray *transcripts);
 
 /**
- * @function Create the canonical gene structure in memory.
- */
-GtFeatureNode *agn_eden();
-
-/**
  * @function If reference transcripts belonging to the same locus overlap, they
  * must be separated before comparison with prediction transcript models (and
  * vice versa). This is an instance of the maximal clique enumeration problem
@@ -126,12 +121,6 @@ int agn_sprintf_comma(GtUword n, char *buffer);
  * (*a la* ``strcmp``).
  */
 int agn_string_compare(const void *p1, const void *p2);
-
-/**
- * @function Create an array containing gene features to be used for unit
- * testing.
- */
-GtArray *agn_test_data_genes_codons();
 
 /**
  * @function Determine the start and end coordinates of the given transcript's

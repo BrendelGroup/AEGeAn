@@ -3,6 +3,7 @@
 #include "core/unused_api.h"
 #include "AgnInferCDSVisitor.h"
 #include "AgnGtExtensions.h"
+#include "AgnTestData.h"
 #include "AgnUtils.h"
 
 #define agn_infer_cds_visitor_cast(GV)\
