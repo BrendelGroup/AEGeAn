@@ -12,6 +12,6 @@ do
   if [ $status == 0 ]; then
     result="PASS"
   fi
-  printf "        | %-30s| %s\n" $test $result
+  printf "        | %-30s | %s\n" $test $result
   rm $tempfile
 done
