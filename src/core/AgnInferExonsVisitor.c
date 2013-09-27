@@ -513,6 +513,12 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
     unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)fn);
     GtArray *exons = agn_gt_feature_node_children_of_type(fn,
                                            agn_gt_feature_node_is_exon_feature);
+    if(gt_array_size(exons) < 2)
+    {
+      gt_array_delete(exons);
+      continue;
+    }
+
     GtUword i;
     GtArray *introns_to_add = gt_array_new( sizeof(GtRange) );
     for(i = 1; i < gt_array_size(exons); i++)
@@ -524,8 +530,8 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
       
       if(first_range.end == second_range.start - 1)
       {
-        agn_logger_log_error(v->logger, "mRNA '%s' has directly adjacent exons",
-                             mrnaid);
+        agn_logger_log_error(v->logger, "mRNA '%s' (line %u) has directly "
+                             "adjacent exons", mrnaid, ln);
         return;
       }
       else
@@ -559,12 +565,6 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
       gt_interval_tree_insert(v->intronsbyrange, node);
     }
     gt_array_delete(introns_to_add);
-
-    if(gt_array_size(v->introns) == 0)
-    {
-      agn_logger_log_error(v->logger, "unable to infer introns for mRNA '%s'"
-                           "(line %u)", mrnaid, ln);
-    }
     gt_array_delete(exons);
   }
   gt_feature_node_iterator_delete(iter);

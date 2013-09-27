@@ -164,20 +164,10 @@ static int canon_gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
       }
     }
     gt_feature_node_iterator_delete(iter);
-    if(num_valid_mrnas > 0)
-    {
-      while(gt_queue_size(invalid_mrnas) > 0)
-      {
-        GtGenomeNode *mrna = gt_queue_get(invalid_mrnas);
-        gt_genome_node_delete(mrna);
-      }
-    }
     gt_queue_delete(invalid_mrnas);
 
     if(num_valid_mrnas > 0)
       return 0;
-    else
-      gt_genome_node_delete((GtGenomeNode *)fn);
   }
 
   return 0;

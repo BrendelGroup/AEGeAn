@@ -10,7 +10,7 @@ typedef struct
   FILE *outstream;
   GtStr *source;
   bool read_stdin;
-  const char **gff3files;
+  char **gff3files;
   int numfiles;
 } CanonGFF3Options;
 
@@ -131,7 +131,8 @@ int main(int argc, char * const *argv)
   GtFile *outfile = gt_file_new_from_fileptr(options.outstream);
 
   GtNodeStream *gff3in;
-  gff3in = gt_gff3_in_stream_new_unsorted(options.numfiles, options.gff3files);
+  gff3in = gt_gff3_in_stream_new_unsorted(options.numfiles,
+                                          (const char **)options.gff3files);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
   GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3in, logger);
@@ -168,6 +169,13 @@ int main(int argc, char * const *argv)
   fclose(options.outstream);
   if(options.source != NULL)
     gt_str_delete(options.source);
+  if(options.numfiles > 0)
+  {
+    int i;
+    for(i = 0; i < options.numfiles; i++)
+      gt_free(options.gff3files[i]);
+    gt_free(options.gff3files);
+  }
   if(gt_lib_clean() != 0)
   {
     fputs("error: issue cleaning GenomeTools library\n", stderr);

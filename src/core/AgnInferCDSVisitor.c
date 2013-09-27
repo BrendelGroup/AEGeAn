@@ -477,15 +477,8 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
 
 static void visit_mrna_check_cds_multi(AgnInferCDSVisitor *v)
 {
-  const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
-  unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   if(gt_array_size(v->cds) <= 1)
   {
-    if(gt_array_size(v->cds) == 0)
-    {
-      agn_logger_log_error(v->logger, "error inferring CDS from codons and "
-                           "exons for mRNA '%s' (line %u)", mrnaid, ln);
-    }
     return;
   }
 
@@ -615,8 +608,6 @@ static void visit_mrna_check_stop(AgnInferCDSVisitor *v)
 
 static void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
 {
-  const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
-  unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtFeatureNode **start_codon, **stop_codon;
 
   bool exonsexplicit    = gt_array_size(v->exons) > 0;
@@ -631,9 +622,6 @@ static void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
   }
   else if(!exonsexplicit || !startcodon_check || !stopcodon_check)
   {
-    agn_logger_log_error(v->logger, "cannot infer missing CDS for mRNA '%s'"
-                         "(line %u) without exons and start/stop codons",
-                         mrnaid, ln);
     return;
   }
 
@@ -670,8 +658,6 @@ static void visit_mrna_infer_cds(AgnInferCDSVisitor *v)
 
 static void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
 {
-  const char *mrnaid = gt_feature_node_get_attribute(v->mrna, "ID");
-  unsigned int ln = gt_genome_node_get_line_number((GtGenomeNode *)v->mrna);
   GtFeatureNode *start_codon, *stop_codon;
 
   bool exonsexplicit    = gt_array_size(v->exons) > 0;
@@ -688,9 +674,6 @@ static void visit_mrna_infer_utrs(AgnInferCDSVisitor *v)
   }
   else if(!cdsexplicit && !caninferutrs)
   {
-    agn_logger_log_error(v->logger, "cannot infer missing UTRs for mRNA '%s'"
-                         "(line %u) without exons and start/stop codons or CDS",
-                         mrnaid, ln);
     return;
   }
 
