@@ -24,14 +24,13 @@ typedef void (*AgnLocusIndexVisitFunc)(AgnGeneLocus *, void *);
 
 /**
  * @function Perform a comparative analysis of each locus associated with
- * ``seqid`` in this index, utilizing ``numprocs`` cores. If ``preanalyfunc``
- * is not NULL, it will be applied to each locus immediately before comparative
- * analysis. If ``postanalyfunc`` is not NULL, it will be applied to each locus
- * immediately following comparative analysis. ``analyfuncdata`` will be passed
- * as supplementary data to both functions.
+ * ``seqid`` in this index. If ``preanalyfunc`` is not NULL, it will be applied
+ * to each locus immediately before comparative analysis. If ``postanalyfunc``
+ * is not NULL, it will be applied to each locus immediately following
+ * comparative analysis. ``analyfuncdata`` will be passed as supplementary data
+ * to both functions.
  */
 void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
-                                          int numprocs,
                                           AgnLocusIndexVisitFunc preanalyfunc,
                                           AgnLocusIndexVisitFunc postanalyfunc,
                                           void *analyfuncdata,

@@ -1,5 +1,4 @@
 #include <getopt.h>
-#include <omp.h>
 #include <string.h>
 #include "AgnUtils.h"
 #include "PeOptions.h"

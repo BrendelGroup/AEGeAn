@@ -1,4 +1,3 @@
-#include <omp.h>
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
 #include "AgnUtils.h"
@@ -99,45 +98,33 @@ static int agn_locus_index_test_overlap(AgnLocusIndex *idx,
 //------------------------------------------------------------------------------
 
 void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid,
-                                          int numprocs,
                                           AgnLocusIndexVisitFunc preanalyfunc,
                                           AgnLocusIndexVisitFunc postanalyfunc,
                                           void *analyfuncdata,
                                           AgnLogger *logger)
 {
-  int orig_numprocs = omp_get_num_threads();
-  omp_set_num_threads(numprocs);
-
   GtArray *seqloci = agn_locus_index_get(idx, seqid);
   GtUword nloci = gt_array_size(seqloci);
 
-  //int i, rank;
   int i;
-  #pragma omp parallel
+  for(i = 0; i < nloci; i++)
   {
-    //rank = omp_get_thread_num();
-    #pragma omp for schedule(dynamic)
-    for(i = 0; i < nloci; i++)
-    {
-      GtTimer *timer = gt_timer_new();
-      gt_timer_start(timer);
-      AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, i);
-      preanalyfunc(locus, analyfuncdata);
-      agn_gene_locus_comparative_analysis(locus);
-      postanalyfunc(locus, analyfuncdata);
-      gt_timer_stop(timer);
-      //agn_logger_log_status(logger, "proc=%d; locus=%s[%lu, %lu]; length=%lu; "
-      //    "trans=%lu,%lu; pairs=%lu,%lu", rank, agn_gene_locus_get_seqid(locus),
-      //    agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus),
-      //    agn_gene_locus_get_length(locus),
-      //    agn_gene_locus_num_refr_transcripts(locus),
-      //    agn_gene_locus_num_pred_transcripts(locus), npairs,
-      //    gt_array_size(reportedpairs));
-      gt_timer_delete(timer);
-    }
+    GtTimer *timer = gt_timer_new();
+    gt_timer_start(timer);
+    AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(seqloci, i);
+    preanalyfunc(locus, analyfuncdata);
+    agn_gene_locus_comparative_analysis(locus);
+    postanalyfunc(locus, analyfuncdata);
+    gt_timer_stop(timer);
+    //agn_logger_log_status(logger, "proc=%d; locus=%s[%lu, %lu]; length=%lu; "
+    //    "trans=%lu,%lu; pairs=%lu,%lu", rank, agn_gene_locus_get_seqid(locus),
+    //    agn_gene_locus_get_start(locus), agn_gene_locus_get_end(locus),
+    //    agn_gene_locus_get_length(locus),
+    //    agn_gene_locus_num_refr_transcripts(locus),
+    //    agn_gene_locus_num_pred_transcripts(locus), npairs,
+    //    gt_array_size(reportedpairs));
+    gt_timer_delete(timer);
   }
-
-  omp_set_num_threads(orig_numprocs);
 }
 
 void agn_locus_index_delete(AgnLocusIndex *idx)
@@ -574,7 +561,7 @@ GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                                               AgnCompareFilters *filters,
                                               AgnLogger *logger)
 {
-  int i, rank;
+  int i;
   gt_assert(idx != NULL);
   gt_assert(refrfeats != NULL && predfeats != NULL);
   GtStrArray *seqids = agn_seq_union(refrfeats, predfeats, logger);
@@ -586,55 +573,45 @@ GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
   gt_str_array_delete(idx->seqids);
   idx->seqids = seqids;
 
-  int orig_numprocs = omp_get_num_threads();
-  omp_set_num_threads(numprocs);
   GtUword totalloci = 0;
-  #pragma omp parallel private(i, rank)
-  {
-    rank = omp_get_thread_num();
 
-    #pragma omp for schedule(static)
-    for(i = 0; i < gt_str_array_size(seqids); i++)
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtIntervalTree *loci = agn_locus_index_parse_pairwise(idx, seqid,
+                                                          refrfeats,
+                                                          predfeats, filters,
+                                                          logger);
+    GtRange *seqrange = gt_malloc( sizeof(GtRange) );
+    GtRange refrrange, predrange;
+    GtError *error = gt_error_new();
+    bool refrhasseq, predhasseq;
+    gt_feature_index_has_seqid(refrfeats, &refrhasseq, seqid, error);
+    gt_feature_index_has_seqid(predfeats, &predhasseq, seqid, error);
+    if(refrhasseq && predhasseq)
     {
-      const char *seqid = gt_str_array_get(seqids, i);
-      GtIntervalTree *loci = agn_locus_index_parse_pairwise(idx, seqid,
-                                                            refrfeats,
-                                                            predfeats, filters,
-                                                            logger);
-      GtRange *seqrange = gt_malloc( sizeof(GtRange) );
-      GtRange refrrange, predrange;
-      GtError *error = gt_error_new();
-      bool refrhasseq, predhasseq;
-      gt_feature_index_has_seqid(refrfeats, &refrhasseq, seqid, error);
-      gt_feature_index_has_seqid(predfeats, &predhasseq, seqid, error);
-      if(refrhasseq && predhasseq)
-      {
-        gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
-                                                  error);
-      }
-      if(predhasseq)
-      {
-        gt_feature_index_get_orig_range_for_seqid(predfeats, &predrange, seqid,
-                                                  error);
-      }
-      GtRange trange;
-      if(refrhasseq && predhasseq) gt_range_join(&refrrange, &predrange);
-      else if(refrhasseq) trange = refrrange;
-      else if(predhasseq) trange = predrange;
-      seqrange->start = trange.start;
-      seqrange->end   = trange.end;
-      #pragma omp critical
-      {
-        totalloci += gt_interval_tree_size(loci);
-        gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
-        gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
-        agn_logger_log_status(logger, "loci for sequence '%s' identified by "
-                              "processor %d", seqid, rank);
-      }
-      gt_error_delete(error);
+      gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
+                                                error);
     }
-  } // End parallelize
-  omp_set_num_threads(orig_numprocs);
+    if(predhasseq)
+    {
+      gt_feature_index_get_orig_range_for_seqid(predfeats, &predrange, seqid,
+                                                error);
+    }
+    GtRange trange;
+    if(refrhasseq && predhasseq) gt_range_join(&refrrange, &predrange);
+    else if(refrhasseq) trange = refrrange;
+    else if(predhasseq) trange = predrange;
+    seqrange->start = trange.start;
+    seqrange->end   = trange.end;
+
+    totalloci += gt_interval_tree_size(loci);
+    gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
+    gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
+    agn_logger_log_status(logger, "computed loci for sequence '%s'", seqid);
+
+    gt_error_delete(error);
+  }
 
   return totalloci;
 }
@@ -666,7 +643,7 @@ GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx,
                                      GtFeatureIndex *features, int numprocs,
                                      AgnLogger *logger)
 {
-  int i, rank;
+  int i;
   gt_assert(idx != NULL && features != NULL);
   GtError *error = gt_error_new();
   GtStrArray *seqids = gt_feature_index_get_seqids(features, error);
@@ -681,37 +658,27 @@ GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx,
   gt_str_array_delete(idx->seqids);
   idx->seqids = seqids;
 
-  int orig_numprocs = omp_get_num_threads();
-  omp_set_num_threads(numprocs);
   GtUword totalloci = 0;
-  #pragma omp parallel private(i, rank)
+
+  for(i = 0; i < gt_str_array_size(seqids); i++)
   {
-    rank = omp_get_thread_num();
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtIntervalTree *loci = agn_locus_index_parse(idx,seqid,features,logger);
 
-    #pragma omp for schedule(static)
-    for(i = 0; i < gt_str_array_size(seqids); i++)
-    {
-      const char *seqid = gt_str_array_get(seqids, i);
-      GtIntervalTree *loci = agn_locus_index_parse(idx,seqid,features,logger);
+    GtRange *seqrange = gt_malloc( sizeof(GtRange) );
+    GtRange trange;
+    GtError *err = gt_error_new();
+    gt_feature_index_get_orig_range_for_seqid(features, &trange, seqid, err);
+    seqrange->start = trange.start;
+    seqrange->end   = trange.end;
 
-      GtRange *seqrange = gt_malloc( sizeof(GtRange) );
-      GtRange trange;
-      GtError *err = gt_error_new();
-      gt_feature_index_get_orig_range_for_seqid(features, &trange, seqid, err);
-      seqrange->start = trange.start;
-      seqrange->end   = trange.end;
-      #pragma omp critical
-      {
-        totalloci += gt_interval_tree_size(loci);
-        gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
-        gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
-        agn_logger_log_status(logger, "loci for sequence '%s' identified by "
-                              "processor %d", seqid, rank);
-      }
-      gt_error_delete(err);
-    } // End parallelize
+    totalloci += gt_interval_tree_size(loci);
+    gt_hashmap_add(idx->locus_trees, (char *)seqid, loci);
+    gt_hashmap_add(idx->seqranges, (char *)seqid, seqrange);
+    agn_logger_log_status(logger, "computed loci for sequence '%s'", seqid);
+
+    gt_error_delete(err);
   }
-  omp_set_num_threads(orig_numprocs);
   gt_error_delete(error);
 
   return totalloci;

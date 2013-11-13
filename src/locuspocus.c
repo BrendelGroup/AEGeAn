@@ -1,4 +1,3 @@
-#include <omp.h>
 #include <getopt.h>
 #include "genometools.h"
 #include "AgnGeneLocus.h"
@@ -119,7 +118,6 @@ int main(int argc, char **argv)
 
   // Load data into memory
   gt_lib_init();
-  omp_set_num_threads(1);
   AgnLogger *logger = agn_logger_new();
   AgnLocusIndex *loci = agn_locus_index_new(true);
   unsigned long numloci = agn_locus_index_parse_disk(loci, numfiles,

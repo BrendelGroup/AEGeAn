@@ -117,7 +117,7 @@ void pe_comparative_analysis(AgnLocusIndex *locusindex, GtHashmap **comp_evalsp,
     analysis_data.comp_evals = comp_evals;
     analysis_data.locus_summaries = locus_summaries;
 
-    agn_locus_index_comparative_analysis(locusindex, seqid, options->numprocs,
+    agn_locus_index_comparative_analysis(locusindex, seqid,
                                      (AgnLocusIndexVisitFunc)pe_pre_analysis,
                                      (AgnLocusIndexVisitFunc)pe_post_analysis,
                                      &analysis_data, logger);
