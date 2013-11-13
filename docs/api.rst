@@ -553,19 +553,19 @@ Class AgnLocusIndex
 
   Class constructor
 
-.. c:function:: GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx, GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx, GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, AgnCompareFilters *filters, AgnLogger *logger)
 
   Given a pair of annotation feature sets in memory, identify loci while keeping the two sources of annotation separate (to enable comparison).
 
-.. c:function:: GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx, const char *refrfile, const char *predfile, int numprocs, AgnCompareFilters *filters, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx, const char *refrfile, const char *predfile, AgnCompareFilters *filters, AgnLogger *logger)
 
   Given a pair of annotation feature sets in memory, identify loci while keeping the two sources of annotation separate (to enable comparison).
 
-.. c:function:: GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx, GtFeatureIndex *features, int numprocs, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx, GtFeatureIndex *features, AgnLogger *logger)
 
   Identify loci given an index of annotation features.
 
-.. c:function:: GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles, const char **filenames, int numprocs, AgnLogger *logger)
+.. c:function:: GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles, const char **filenames, AgnLogger *logger)
 
   Identify loci from the given set of annotation files.
 

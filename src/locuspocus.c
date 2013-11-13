@@ -9,7 +9,6 @@ typedef struct
   bool debug;
   bool intloci;
   unsigned long delta;
-  int numprocs;
   FILE *outstream;
   bool skipends;
   bool verbose;
@@ -29,7 +28,6 @@ void print_usage(FILE *outstream)
 "    -l|--delta: INT       when parsing interval loci, use the following\n"
 "                          delta to extend gene loci and include potential\n"
 "                          regulatory regions; default is 500\n"
-"    -n|--numprocs: INT    number of processors to utilize; default is 1\n"
 "    -o|--outfile: FILE    name of file to which results will be written;\n"
 "                          default is terminal (standard output)\n"
 "    -s|--skipends         when enumerating interval loci, exclude gene-less\n"
@@ -51,12 +49,11 @@ int main(int argc, char **argv)
     { "help",     no_argument,       NULL, 'h' },
     { "intloci",  no_argument,       NULL, 'i' },
     { "delta",    required_argument, NULL, 'l' },
-    { "numprocs", required_argument, NULL, 'n' },
     { "outfile",  required_argument, NULL, 'o' },
     { "skipends", no_argument,       NULL, 's' },
     { "verbose",  no_argument,       NULL, 'v' },
   };
-  LocusPocusOptions options = { 0, 0, 500, 0, stdout, 0, 0 };
+  LocusPocusOptions options = { 0, 0, 500, stdout, 0, 0 };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex))
@@ -79,14 +76,6 @@ int main(int argc, char **argv)
         {
           fprintf(stderr, "[LocusPocus] error: could not convert delta '%s' to "
                   "an integer", optarg);
-          exit(1);
-        }
-        break;
-      case 'n':
-        if(sscanf(optarg, "%d", &options.numprocs) == EOF)
-        {
-          fprintf(stderr, "[LocusPocus] error: could not convert number of "
-                  "processors '%s' to an integer", optarg);
           exit(1);
         }
         break;
@@ -121,8 +110,7 @@ int main(int argc, char **argv)
   AgnLogger *logger = agn_logger_new();
   AgnLocusIndex *loci = agn_locus_index_new(true);
   unsigned long numloci = agn_locus_index_parse_disk(loci, numfiles,
-                              (const char **)argv + optind, options.numprocs,
-                              logger);
+                              (const char **)argv + optind, logger);
   if(options.verbose)
     fprintf(stderr, "[LocusPocus] found %lu total loci\n", numloci);
   bool haderror = agn_logger_print_all(logger, stderr, "[LocusPocus] loading "

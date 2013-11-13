@@ -35,7 +35,6 @@ struct PeOptions
   bool usefilter;
   const char *filterfile;
   AgnCompareFilters filters;
-  int numprocs;
   int trans_per_locus;
 };
 typedef struct PeOptions PeOptions;

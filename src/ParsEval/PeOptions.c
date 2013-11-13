@@ -20,7 +20,6 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     { "help",       no_argument,       NULL, 'h' },
     { "makefilter", no_argument,       NULL, 'k' },
     { "vectors",    no_argument,       NULL, 'm' },
-    { "numprocs",   required_argument, NULL, 'n' },
     { "outfile",    required_argument, NULL, 'o' },
     { "png",        no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
@@ -85,15 +84,6 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
       case 'm':
         options->vectors = true;
-        break;
-
-      case 'n':
-        if( sscanf(optarg, "%d", &options->numprocs) == EOF )
-        {
-          fprintf(stderr, "error: could not convert number of processors '%s' "
-                  "to an integer", optarg);
-          exit(1);
-        }
         break;
 
       case 'o':
@@ -277,13 +267,6 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
   }
   else
   {
-    if(options->numprocs != 1)
-    {
-      fprintf(stderr, "warning: multithreading only supported in HTML output "
-              "mode; using 1 processor");
-      options->numprocs = 1;
-    }
-
     if(options->locus_graphics)
     {
       fputs("warning: will only generate PNG graphics when outformat='html'; "
@@ -342,7 +325,6 @@ void pe_print_usage()
 "    -k|--makefilter             Create a default configuration file for\n"
 "                                filtering reported results\n"
 "    -m|--vectors:               Print model vectors in output file\n"
-"    -n|--numprocs: INT          Number of processors to use (default=1)\n"
 "    -o|--outfile: FILENAME      File/directory to which output will be\n"
 "                                written; default is the terminal (STDOUT)\n"
 "    -p|--png:                   Generate individual PNG graphics for each\n"
@@ -377,7 +359,6 @@ void pe_set_option_defaults(PeOptions *options)
   options->usefilter = false;
   options->filterfile = "";
   agn_compare_filters_init(&options->filters);
-  options->numprocs = 1;
   options->trans_per_locus = 32;
   options->refrlabel = "";
   options->predlabel = "";
@@ -399,7 +380,6 @@ void pe_option_print(PeOptions *options, FILE *outstream)
   fprintf(outstream, "data_path=%s\n", options->data_path);
   fprintf(outstream, "makefilter=%d\n", options->makefilter);
   fprintf(outstream, "usefilter=%d\n", options->usefilter);
-  fprintf(outstream, "numprocs=%d\n", options->numprocs);
   fprintf(outstream, "trans_per_locus=%d\n", options->trans_per_locus);
   fprintf(outstream, "refrlabel=%s\n", options->refrlabel);
   fprintf(outstream, "predlabel=%s\n", options->predlabel);

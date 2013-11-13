@@ -153,7 +153,7 @@ GtUword pe_load_and_parse_loci(AgnLocusIndex **locusindexp, GtArray **locip,
   AgnLocusIndex *locusindex = agn_locus_index_new(false);
   GtUword total = agn_locus_index_parse_pairwise_disk(locusindex,
                             options->refrfile, options->predfile,
-                            options->numprocs, &options->filters, logger);
+                            &options->filters, logger);
 
   // Collect IDs of all sequences annotated by input files
   GtStrArray *seqids = agn_locus_index_seqids(locusindex);

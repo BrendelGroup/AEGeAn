@@ -293,8 +293,7 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete)
 }
 
 GtUword agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
-                                   const char **filenames, int numprocs,
-                                   AgnLogger *logger)
+                                   const char **filenames, AgnLogger *logger)
 {
   gt_assert(idx != NULL);
   GtUword nloci;
@@ -306,7 +305,7 @@ GtUword agn_locus_index_parse_disk(AgnLocusIndex * idx, int numfiles,
     return 0;
   }
 
-  nloci = agn_locus_index_parse_memory(idx, features, numprocs, logger);
+  nloci = agn_locus_index_parse_memory(idx, features, logger);
   gt_feature_index_delete(features);
   return nloci;
 }
@@ -557,7 +556,6 @@ static GtIntervalTree *agn_locus_index_parse_pairwise(AgnLocusIndex *idx,
 GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                                               GtFeatureIndex *refrfeats,
                                               GtFeatureIndex *predfeats,
-                                              int numprocs,
                                               AgnCompareFilters *filters,
                                               AgnLogger *logger)
 {
@@ -618,7 +616,7 @@ GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
 
 GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
                                             const char *refrfile,
-                                            const char *predfile, int numprocs,
+                                            const char *predfile,
                                             AgnCompareFilters *filters,
                                             AgnLogger *logger)
 {
@@ -633,14 +631,14 @@ GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
     return 0;
   }
   nloci = agn_locus_index_parse_pairwise_memory(idx, refrfeats, predfeats,
-                                                numprocs, filters, logger);
+                                                filters, logger);
   gt_feature_index_delete(refrfeats);
   gt_feature_index_delete(predfeats);
   return nloci;
 }
 
 GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx,
-                                     GtFeatureIndex *features, int numprocs,
+                                     GtFeatureIndex *features,
                                      AgnLogger *logger)
 {
   int i;

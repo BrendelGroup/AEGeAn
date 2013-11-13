@@ -73,7 +73,6 @@ AgnLocusIndex *agn_locus_index_new(bool freeondelete);
 GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
                                               GtFeatureIndex *refrfeats,
                                               GtFeatureIndex *predfeats,
-                                              int numprocs,
                                               AgnCompareFilters *filters,
                                               AgnLogger *logger);
 
@@ -83,7 +82,7 @@ GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
  */
 GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
                                             const char *refrfile,
-                                            const char *predfile, int numprocs,
+                                            const char *predfile,
                                             AgnCompareFilters *filters,
                                             AgnLogger *logger);
 
@@ -91,14 +90,14 @@ GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx,
  * @function Identify loci given an index of annotation features.
  */
 GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx,
-                                     GtFeatureIndex *features, int numprocs,
+                                     GtFeatureIndex *features,
                                      AgnLogger *logger);
 
 /**
  * @function Identify loci from the given set of annotation files.
  */
 GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles,
-                                   const char **filenames, int numprocs,
+                                   const char **filenames,
                                    AgnLogger *logger);
 
 /**
