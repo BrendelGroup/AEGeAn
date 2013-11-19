@@ -4,3 +4,4 @@ inc/core/AgnVersion.h
 libaegean.a
 scratch
 docs/_*
+cov-int

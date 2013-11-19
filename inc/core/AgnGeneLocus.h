@@ -255,6 +255,12 @@ GtUword agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus);
 void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,void *data);
 #endif
 
+/**
+ * @function Print a mapping of the gene(s) associated with this locus in a two-
+ * column tab-delimited format: ``geneId<tab>locusId``.
+ */
+void agn_gene_locus_print_gene_mapping(AgnGeneLocus *locus, FILE *outstream);
+
 #ifndef WITHOUT_CAIRO
 /**
  * @function Print a PNG graphic for this locus.
@@ -262,6 +268,13 @@ void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,void *data);
 void agn_gene_locus_print_png(AgnGeneLocus *locus,
                               AgnGeneLocusPngMetadata *metadata);
 #endif
+
+/**
+ * @function Print a mapping of the transcript(s) associated with this locus in
+ * a two-column tab-delimited format: ``transcriptId<tab>locusId``.
+ */
+void agn_gene_locus_print_transcript_mapping(AgnGeneLocus *locus,
+                                             FILE *outstream);
 
 /**
  * @function Return the coordinates of this locus.

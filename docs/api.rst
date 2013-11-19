@@ -347,9 +347,17 @@ Class AgnGeneLocus
 
   Track selector function for generating PNG graphics of pairwise comparison loci. The track name to will be written to ``track``.
 
+.. c:function:: void agn_gene_locus_print_gene_mapping(AgnGeneLocus *locus, FILE *outstream)
+
+  Print a mapping of the gene(s) associated with this locus in a two- column tab-delimited format: ``geneId<tab>locusId``.
+
 .. c:function:: void agn_gene_locus_print_png(AgnGeneLocus *locus, AgnGeneLocusPngMetadata *metadata)
 
   Print a PNG graphic for this locus.
+
+.. c:function:: void agn_gene_locus_print_transcript_mapping(AgnGeneLocus *locus, FILE *outstream)
+
+  Print a mapping of the transcript(s) associated with this locus in a two-column tab-delimited format: ``transcriptId<tab>locusId``.
 
 .. c:function:: GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 

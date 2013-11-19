@@ -7,53 +7,34 @@
 typedef struct
 {
   bool debug;
+  FILE *genestream;
   bool intloci;
   unsigned long delta;
   FILE *outstream;
   bool skipends;
+  FILE *transstream;
   bool verbose;
 } LocusPocusOptions;
 
-// Usage statement
-void print_usage(FILE *outstream)
-{
-  fprintf( outstream,
-"Usage: ./locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
-"  Options:\n"
-"    -d|--debug            print detailed debugging messages to terminal\n"
-"                          (standard error)\n"
-"    -h|--help             print this help message and exit\n"
-"    -i|--intloci          parse and report interval loci rather than gene\n"
-"                          loci\n"
-"    -l|--delta: INT       when parsing interval loci, use the following\n"
-"                          delta to extend gene loci and include potential\n"
-"                          regulatory regions; default is 500\n"
-"    -o|--outfile: FILE    name of file to which results will be written;\n"
-"                          default is terminal (standard output)\n"
-"    -s|--skipends         when enumerating interval loci, exclude gene-less\n"
-"                          iloci at either end of the sequence\n"
-"    -v|--verbose          print detailed log messages to terminal (standard\n"
-"                          error)\n\n" );
-}
+void print_usage(FILE *outstream);
 
-// Main program
-int main(int argc, char **argv)
+void parse_options(int argc, char **argv, LocusPocusOptions *options)
 {
-  // Parse options from command line
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dhil:n:o:sv";
+  const char *optstr = "dg:hil:n:o:st:v";
   const struct option locuspocus_options[] =
   {
     { "debug",    no_argument,       NULL, 'd' },
+    { "genemap",  required_argument, NULL, 'g' },
     { "help",     no_argument,       NULL, 'h' },
     { "intloci",  no_argument,       NULL, 'i' },
     { "delta",    required_argument, NULL, 'l' },
     { "outfile",  required_argument, NULL, 'o' },
     { "skipends", no_argument,       NULL, 's' },
+    { "transmap", required_argument, NULL, 't' },
     { "verbose",  no_argument,       NULL, 'v' },
   };
-  LocusPocusOptions options = { 0, 0, 500, stdout, 0, 0 };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex))
@@ -61,18 +42,27 @@ int main(int argc, char **argv)
     switch(opt)
     {
       case 'd':
-        options.debug = 1;
-        options.verbose = 1;
+        options->debug = 1;
+        options->verbose = 1;
+        break;
+      case 'g':
+        options->genestream = fopen(optarg, "w");
+        if(options->genestream == NULL)
+        {
+          fprintf(stderr, "[LocusPocus] error: could not open genemap file "
+                  "'%s'\n", optarg);
+          exit(1);
+        }
         break;
       case 'h':
         print_usage(stdout);
         exit(0);
         break;
       case 'i':
-        options.intloci = 1;
+        options->intloci = 1;
         break;
       case 'l':
-        if(sscanf(optarg, "%lu", &options.delta) == EOF)
+        if(sscanf(optarg, "%lu", &options->delta) == EOF)
         {
           fprintf(stderr, "[LocusPocus] error: could not convert delta '%s' to "
                   "an integer", optarg);
@@ -80,8 +70,8 @@ int main(int argc, char **argv)
         }
         break;
       case 'o':
-        options.outstream = fopen(optarg, "w");
-        if(options.outstream == NULL)
+        options->outstream = fopen(optarg, "w");
+        if(options->outstream == NULL)
         {
           fprintf( stderr, "[LocusPocus] error: could not open outfile '%s'\n",
                    optarg );
@@ -89,20 +79,63 @@ int main(int argc, char **argv)
         }
         break;
       case 's':
-        options.skipends = 1;
+        options->skipends = 1;
+        break;
+      case 't':
+        options->transstream = fopen(optarg, "w");
+        if(options->transstream == NULL)
+        {
+          fprintf(stderr, "[LocusPocus] error: could not open transmap file "
+                  "'%s'\n", optarg);
+          exit(1);
+        }
         break;
       case 'v':
-        options.verbose = 1;
+        options->verbose = 1;
         break;
     }
   }
+}
+
+// Usage statement
+void print_usage(FILE *outstream)
+{
+  fprintf( outstream,
+"Usage: ./locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
+"  Options:\n"
+"    -d|--debug             print detailed debugging messages to terminal\n"
+"                           (standard error)\n"
+"    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
+"                           corresponding locus to the given file\n"
+"    -h|--help              print this help message and exit\n"
+"    -i|--intloci           parse and report interval loci rather than gene\n"
+"                           loci\n"
+"    -l|--delta: INT        when parsing interval loci, use the following\n"
+"                           delta to extend gene loci and include potential\n"
+"                           regulatory regions; default is 500\n"
+"    -o|--outfile: FILE     name of file to which results will be written;\n"
+"                           default is terminal (standard output)\n"
+"    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
+"                           iloci at either end of the sequence\n"
+"    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
+"                           to its corresponding locus to the given file\n"
+"    -v|--verbose           print detailed log messages to terminal (standard\n"
+"                           error)\n\n" );
+}
+
+// Main program
+int main(int argc, char **argv)
+{
+  // Parse options from command line
+  LocusPocusOptions options = { 0, NULL, 0, 500, stdout, 0, NULL, 0 };
+  parse_options(argc, argv, &options);
   int numfiles = argc - optind;
   if(numfiles < 1)
   {
     fprintf( stderr, "[LocusPocus] error: must provide at least one GFF3 file "
              "as input\n");
     print_usage(stderr);
-    exit(1);
+    return 1;
   }
 
   // Load data into memory
@@ -154,12 +187,19 @@ int main(int argc, char **argv)
     {
       AgnGeneLocus **locus = gt_array_pop(seqloci);
       agn_gene_locus_to_gff3(*locus, options.outstream, "AEGeAn::LocusPocus");
+      if(options.genestream != NULL)
+        agn_gene_locus_print_gene_mapping(*locus, options.genestream);
+      if(options.transstream != NULL)
+        agn_gene_locus_print_transcript_mapping(*locus, options.transstream);
       if(options.intloci)
         agn_gene_locus_delete(*locus);
     }
     gt_array_delete(seqloci);
   }
 
+  fclose(options.outstream);
+  if(options.genestream != NULL)  fclose(options.genestream);
+  if(options.transstream != NULL) fclose(options.transstream);
   agn_locus_index_delete(loci);
   gt_lib_clean();
   return 0;

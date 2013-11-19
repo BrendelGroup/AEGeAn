@@ -790,6 +790,18 @@ void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
 }
 #endif
 
+void agn_gene_locus_print_gene_mapping(AgnGeneLocus *locus, FILE *outstream)
+{
+  GtArray *geneids = agn_gene_locus_get_gene_ids(locus);
+  while(gt_array_size(geneids) > 0)
+  {
+    const char **geneid = gt_array_pop(geneids);
+    fprintf(outstream, "%s\t%s:%lu-%lu\n", *geneid, locus->region.seqid,
+            locus->region.range.start, locus->region.range.end);
+  }
+  gt_array_delete(geneids);
+}
+
 #ifndef WITHOUT_CAIRO
 // FIXME this function should use an AgnLogger
 void agn_gene_locus_print_png(AgnGeneLocus *locus,
@@ -885,6 +897,19 @@ void agn_gene_locus_print_png(AgnGeneLocus *locus,
   gt_error_delete(error);
 }
 #endif
+
+void agn_gene_locus_print_transcript_mapping(AgnGeneLocus *locus,
+                                             FILE *outstream)
+{
+  GtArray *transids = agn_gene_locus_get_transcript_ids(locus);
+  while(gt_array_size(transids) > 0)
+  {
+    const char **transid = gt_array_pop(transids);
+    fprintf(outstream, "%s\t%s:%lu-%lu\n", *transid, locus->region.seqid,
+            locus->region.range.start, locus->region.range.end);
+  }
+  gt_array_delete(transids);
+}
 
 GtRange agn_gene_locus_range(AgnGeneLocus *locus)
 {
