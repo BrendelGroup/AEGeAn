@@ -194,8 +194,11 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   // Handle initial ilocus
   AgnGeneLocus *l1 = *(AgnGeneLocus **)gt_array_get(loci, 0);
   GtRange r1 = agn_gene_locus_range(l1);
-  if(r1.start > seqrange->start + (2*delta))
+  if(r1.start >= seqrange->start + (2*delta))
   {
+    if(nloci == 1)
+      agn_gene_locus_set_range(l1, r1.start - delta, r1.end);
+
     if(!skipterminal)
     {
       AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
@@ -222,7 +225,12 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
       agn_gene_locus_set_range(llocus, lrange.start, rrange.start - 1);
       agn_gene_locus_set_range(rlocus, lrange.end + 1, rrange.end);
     }
-    else if(lrange.end + (2*delta) + 1 >= rrange.start)
+    else if(lrange.end + (2*delta) >= rrange.start)
+    {
+      agn_gene_locus_set_range(llocus, lrange.start, lrange.end + delta);
+      agn_gene_locus_set_range(rlocus, rrange.start - delta, rrange.end);
+    }
+    else if(lrange.end + (3*delta) >= rrange.start)
     {
       GtUword midpoint = (lrange.end + rrange.start) / 2;
       agn_gene_locus_set_range(llocus, lrange.start, midpoint);
@@ -245,12 +253,14 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   // Handle terminal ilocus
   l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci - 1);
   r1 = agn_gene_locus_range(l1);
-  if(r1.end < seqrange->end - (2*delta))
+  if(r1.end <= seqrange->end - (2*delta))
   {
+    agn_gene_locus_set_range(l1, r1.start, r1.end + delta);
+
     if(!skipterminal)
     {
       AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
-      agn_gene_locus_set_range(ilocus, r1.end + 1, seqrange->end);
+      agn_gene_locus_set_range(ilocus, r1.end + delta + 1, seqrange->end);
       gt_array_add(iloci, ilocus);
     }
   }
@@ -258,13 +268,8 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   {
     agn_gene_locus_set_range(l1, r1.start, seqrange->end);
   }
-
-  for(i = 0; i < nloci; i++)
-  {
-    AgnGeneLocus *locus = *(AgnGeneLocus **)gt_array_get(loci, i);
-    AgnGeneLocus *ilocus = agn_gene_locus_clone(locus);
-    gt_array_add(iloci, ilocus);
-  }
+  if(nloci == 1)
+    gt_array_add(iloci, l1);
 
   gt_array_delete(loci);
   return iloci;
