@@ -1,6 +1,7 @@
 #include "AgnTestData.h"
 
 #define fn_cast(X) ((GtFeatureNode *)X)
+#define rn_cast(X) ((GtRegionNode  *)X)
 
 GtArray *agn_test_data_grape()
 {
@@ -291,6 +292,210 @@ GtArray *agn_test_data_grape_sansexons()
 
   gt_str_delete(seqid);
   return genes;
+}
+
+GtFeatureIndex *agn_test_data_ilocus_data()
+{
+  GtFeatureIndex *data = gt_feature_index_memory_new();
+  GtError *error = gt_error_new();
+
+  GtArray *seqids = gt_array_new( sizeof(GtStr *) );
+  GtUword i;
+  for(i = 1; i <= 25; i++)
+  {
+    char buffer[16];
+    sprintf(buffer, "seq%02lu", i);
+    GtStr *seqid = gt_str_new_cstr(buffer);
+    gt_array_add(seqids, seqid);
+  }
+
+  GtGenomeNode *gene, *region;
+  GtStr *seqid;
+
+  seqid = *(GtStr **)gt_array_get(seqids, 0);
+  region = gt_region_node_new(seqid, 1, 900);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 1);
+  region = gt_region_node_new(seqid, 1, 900);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 401, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 2);
+  region = gt_region_node_new(seqid, 1, 900);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 402, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 3);
+  region = gt_region_node_new(seqid, 1, 900);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 200, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 4);
+  region = gt_region_node_new(seqid, 1, 900);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 201, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 5);
+  region = gt_region_node_new(seqid, 1, 900);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 202, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 6);
+  region = gt_region_node_new(seqid, 1, 2000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 1202, 1400, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 7);
+  region = gt_region_node_new(seqid, 1, 2000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 1201, 1400, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 8);
+  region = gt_region_node_new(seqid, 1, 2000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 1200, 1400, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 9);
+  region = gt_region_node_new(seqid, 1, 2000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 1002, 1300, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 10);
+  region = gt_region_node_new(seqid, 1, 2000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 1001, 1300, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 11);
+  region = gt_region_node_new(seqid, 1, 2000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 1000, 1300, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 12);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 803, 1100, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 13);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 802, 1100, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 14);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 801, 1100, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 15);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 800, 1100, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 16);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 606, 1000, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 17);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 602, 1000, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 18);
+  region = gt_region_node_new(seqid, 1, 1500);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+  gene = gt_feature_node_new(seqid, "gene", 601, 1000, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 19);
+  region = gt_region_node_new(seqid, 1, 1001);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 20);
+  region = gt_region_node_new(seqid, 1, 1000);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 21);
+  region = gt_region_node_new(seqid, 1, 999);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 22);
+  region = gt_region_node_new(seqid, 1, 801);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 23);
+  region = gt_region_node_new(seqid, 1, 800);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 24);
+  region = gt_region_node_new(seqid, 1, 799);
+  gt_feature_index_add_region_node(data, rn_cast(region), error);
+  gene = gt_feature_node_new(seqid, "gene", 400, 600, GT_STRAND_FORWARD);
+  gt_feature_index_add_feature_node(data, fn_cast(gene), error);
+
+  while(gt_array_size(seqids) > 0)
+  {
+    GtStr **seqid = gt_array_pop(seqids);
+    gt_str_delete(*seqid);
+  }
+  gt_error_delete(error);
+
+  return data;
 }
 
 GtFeatureNode *agn_test_data_eden()

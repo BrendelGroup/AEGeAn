@@ -51,7 +51,7 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
   const char *successstr = "FAILURE";
   if(test->passed)
     successstr = "SUCCESS";
-  fprintf(outstream, "    %-36s | %s\n", test->label, successstr);
+  fprintf(outstream, "    %-42s | %s\n", test->label, successstr);
 
   GtUword i;
   for(i = 0; i < gt_array_size(test->results); i++)
@@ -60,7 +60,7 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
     const char *resultstr = "FAIL";
     if(result->success)
       resultstr = "PASS";
-    fprintf(outstream, "        | %-30s | %s\n", result->label, resultstr);
+    fprintf(outstream, "        | %-36s | %s\n", result->label, resultstr);
   }
 }
 

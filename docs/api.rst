@@ -581,6 +581,10 @@ Class AgnLocusIndex
 
   Get a list of the seqids stored in this locus index.
 
+.. c:function:: bool agn_locus_index_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnLogger
 ---------------
 
@@ -668,6 +672,10 @@ A collection of functions facilitating unit testing of various AEGeAn classes an
 .. c:function:: GtArray *agn_test_data_grape_sansexons()
 
   Example from grape: gene structure annotated with CDS and UTR features--exons are implicitly defined by these features.
+
+.. c:function:: GtFeatureIndex *agn_test_data_ilocus_data()
+
+  Bogus data used for testing iLocus parsing.
 
 .. c:function:: GtFeatureNode *agn_test_data_eden()
 

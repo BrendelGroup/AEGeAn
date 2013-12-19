@@ -27,6 +27,11 @@ GtArray *agn_test_data_grape_codons();
 GtArray *agn_test_data_grape_sansexons();
 
 /**
+ * @function Bogus data used for testing iLocus parsing.
+ */
+GtFeatureIndex *agn_test_data_ilocus_data();
+
+/**
  * @function Create the canonical gene structure (from the GFF3 specification)
  * in memory.
  */

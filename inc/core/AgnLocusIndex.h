@@ -105,4 +105,9 @@ GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles,
  */
 GtStrArray *agn_locus_index_seqids(AgnLocusIndex *idx);
 
+/**
+ * @function Run unit tests for this class. Returns true if all tests passed.
+ */
+bool agn_locus_index_unit_test(AgnUnitTest *test);
+
 #endif

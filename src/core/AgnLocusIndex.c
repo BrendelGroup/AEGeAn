@@ -1,5 +1,6 @@
 #include "AgnLocusIndex.h"
 #include "AgnGeneLocus.h"
+#include "AgnTestData.h"
 #include "AgnUtils.h"
 
 //------------------------------------------------------------------------------
@@ -272,6 +273,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
     gt_array_add(iloci, l1);
 
   gt_array_delete(loci);
+  gt_array_sort(iloci, (GtCompare)agn_gene_locus_array_compare);
   return iloci;
 }
 
@@ -737,4 +739,578 @@ int agn_locus_index_test_overlap(AgnLocusIndex *idx, GtFeatureIndex *features,
 GtStrArray *agn_locus_index_seqids(AgnLocusIndex *idx)
 {
   return idx->seqids;
+}
+
+bool agn_locus_index_unit_test(AgnUnitTest *test)
+{
+  AgnLocusIndex *index = agn_locus_index_new(true);
+  AgnLogger *logger = agn_logger_new();
+  GtFeatureIndex *features = agn_test_data_ilocus_data();
+  agn_locus_index_parse_memory(index, features, logger);
+
+  GtArray *seqids = gt_array_new( sizeof(GtStr *) );
+  GtUword i;
+  for(i = 1; i <= 25; i++)
+  {
+    char buffer[16];
+    sprintf(buffer, "seq%02lu", i);
+    GtStr *seqid = gt_str_new_cstr(buffer);
+    gt_array_add(seqids, seqid);
+  }
+
+  GtArray *iloci;
+  AgnGeneLocus *ilocus;
+  GtStr *seqid;
+  GtUword delta = 200;
+
+  bool test1pass = true;
+  seqid = *(GtStr **)gt_array_get(seqids, 0);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange = agn_gene_locus_range(ilocus);
+    GtRange testrange = {1, 900};
+    if(gt_range_compare(&locusrange, &testrange) != 0)
+      test1pass = false;
+  }
+  else
+    test1pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 1);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 2)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange = agn_gene_locus_range(ilocus);
+    GtRange testrange = {1, 200};
+    if(gt_range_compare(&locusrange, &testrange) != 0)
+      test1pass = false;
+    else
+    {
+      ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+      locusrange = agn_gene_locus_range(ilocus);
+      GtRange newtestrange = {201, 900};
+      if(gt_range_compare(&locusrange, &newtestrange) != 0)
+        test1pass = false;
+    }
+  }
+  else
+    test1pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 2);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 2)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange = agn_gene_locus_range(ilocus);
+    GtRange testrange = {1, 201};
+    if(gt_range_compare(&locusrange, &testrange) != 0)
+      test1pass = false;
+    else
+    {
+      ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+      locusrange = agn_gene_locus_range(ilocus);
+      GtRange newtestrange = {202, 900};
+      if(gt_range_compare(&locusrange, &newtestrange) != 0)
+        test1pass = false;
+    }
+  }
+  else
+    test1pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 3);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange = agn_gene_locus_range(ilocus);
+    GtRange testrange = {1, 900};
+    if(gt_range_compare(&locusrange, &testrange) != 0)
+      test1pass = false;
+  }
+  else
+    test1pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 4);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange = agn_gene_locus_range(ilocus);
+    GtRange testrange = {1, 900};
+    if(gt_range_compare(&locusrange, &testrange) != 0)
+      test1pass = false;
+  }
+  else
+    test1pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 5);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange = agn_gene_locus_range(ilocus);
+    GtRange testrange = {1, 900};
+    if(gt_range_compare(&locusrange, &testrange) != 0)
+      test1pass = false;
+  }
+  else
+    test1pass = false;
+  gt_array_delete(iloci);
+
+  agn_unit_test_result(test, "iLocus parsing: initial iLoci", test1pass);
+
+
+  bool test2pass = true;
+  seqid = *(GtStr **)gt_array_get(seqids, 6);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 4)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {801, 1001};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1002, 1600};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 3);
+    GtRange locusrange4 = agn_gene_locus_range(ilocus);
+    GtRange testrange4 = {1601, 2000};
+    if(gt_range_compare(&locusrange4, &testrange4) != 0)
+      test2pass = false;
+  }
+  else
+    test2pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 7);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 4)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {801, 1000};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1001, 1600};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 3);
+    GtRange locusrange4 = agn_gene_locus_range(ilocus);
+    GtRange testrange4 = {1601, 2000};
+    if(gt_range_compare(&locusrange4, &testrange4) != 0)
+      test2pass = false;
+  }
+  else
+    test2pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 8);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 900};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {901, 1600};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test2pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1601, 2000};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test2pass = false;
+  }
+  else
+    test2pass = false;
+  gt_array_delete(iloci);
+
+  agn_unit_test_result(test, "iLocus parsing: internal 3delta", test2pass);
+
+
+  bool test3pass = true;
+  seqid = *(GtStr **)gt_array_get(seqids, 9);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 801};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test3pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {802, 1500};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test3pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1501, 2000};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test3pass = false;
+  }
+  else
+    test3pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 10);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test3pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {801, 1500};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test3pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1501, 2000};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test3pass = false;
+  }
+  else
+    test3pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 11);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test3pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {800, 1500};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test3pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1501, 2000};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test3pass = false;
+  }
+  else
+    test3pass = false;
+  gt_array_delete(iloci);
+
+  agn_unit_test_result(test, "iLocus parsing: internal 2delta", test3pass);
+
+
+  bool test4pass = true;
+  seqid = *(GtStr **)gt_array_get(seqids, 12);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {603, 1300};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1301, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test4pass = false;
+  }
+  else
+    test4pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 13);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {602, 1300};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1301, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test4pass = false;
+  }
+  else
+    test4pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 14);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {601, 1300};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1301, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test4pass = false;
+  }
+  else
+    test4pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 15);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 799};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {601, 1300};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test4pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1301, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test4pass = false;
+  }
+  else
+    test4pass = false;
+  gt_array_delete(iloci);
+
+  agn_unit_test_result(test, "iLocus parsing: internal delta", test4pass);
+
+
+  bool test5pass = true;
+  seqid = *(GtStr **)gt_array_get(seqids, 16);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 605};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test5pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {601, 1200};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test5pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1201, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test5pass = false;
+  }
+  else
+    test5pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 17);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 601};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test5pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {601, 1200};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test5pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1201, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test5pass = false;
+  }
+  else
+    test5pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 18);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 3)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 600};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test5pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {601, 1200};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test5pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 2);
+    GtRange locusrange3 = agn_gene_locus_range(ilocus);
+    GtRange testrange3 = {1201, 1500};
+    if(gt_range_compare(&locusrange3, &testrange3) != 0)
+      test5pass = false;
+  }
+  else
+    test5pass = false;
+  gt_array_delete(iloci);
+
+  agn_unit_test_result(test, "iLocus parsing: internal adjacent", test5pass);
+
+
+  bool test6pass = true;
+  seqid = *(GtStr **)gt_array_get(seqids, 19);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 2)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test6pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {801, 1001};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test6pass = false;
+  }
+  else
+    test6pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 20);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 2)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test6pass = false;
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 1);
+    GtRange locusrange2 = agn_gene_locus_range(ilocus);
+    GtRange testrange2 = {801, 1000};
+    if(gt_range_compare(&locusrange2, &testrange2) != 0)
+      test6pass = false;
+  }
+  else
+    test6pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 21);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 999};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test6pass = false;
+  }
+  else
+    test6pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 22);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 801};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test6pass = false;
+  }
+  else
+    test6pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 23);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 800};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test6pass = false;
+  }
+  else
+    test6pass = false;
+  gt_array_delete(iloci);
+
+  seqid = *(GtStr **)gt_array_get(seqids, 24);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  if(gt_array_size(iloci) == 1)
+  {
+    ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
+    GtRange locusrange1 = agn_gene_locus_range(ilocus);
+    GtRange testrange1 = {1, 799};
+    if(gt_range_compare(&locusrange1, &testrange1) != 0)
+      test6pass = false;
+  }
+  else
+    test6pass = false;
+  gt_array_delete(iloci);
+
+  agn_unit_test_result(test, "iLocus parsing: terminal iLoci", test6pass);
+
+
+  while(gt_array_size(seqids) > 0)
+  {
+    GtStr **seqid = gt_array_pop(seqids);
+    gt_str_delete(*seqid);
+  }
+  gt_array_delete(seqids);
+  agn_locus_index_delete(index);
+
+  return test1pass && test2pass && test3pass && test4pass && test5pass &&
+         test6pass;
 }
