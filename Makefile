@@ -124,3 +124,4 @@ test:		$(BINS) $(UT_EXE)
 		@- echo AEGeAn Functional Tests
 		@- test/AT1G05320.sh
 		@- test/FBgn0035002.sh
+		@- test/iLocusParsing.sh
