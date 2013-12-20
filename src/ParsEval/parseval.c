@@ -8,22 +8,14 @@
 // Main method
 int main(int argc, char * const argv[])
 {
-  // Variable domain
-  GtArray *       loci;
-  AgnLocusIndex * locusindex;
-  AgnLogger *     logger;
-  PeOptions       options;
-  GtStrArray *    seqids;
-  char *          start_time_str;
-  GtTimer *       timer;
-  GtUword         totalloci;
-
   // Initialize ParsEval
   gt_lib_init();
-  start_time_str = pe_get_start_time();
-  timer = gt_timer_new();
+  char *start_time_str = pe_get_start_time();
+  GtTimer *timer = gt_timer_new();
   gt_timer_start(timer);
   fputs("[ParsEval] Begin ParsEval\n", stderr);
+
+  PeOptions options;
   pe_set_option_defaults(&options);
   pe_parse_options(argc, argv, &options);
   if(options.refrfile == NULL || options.predfile == NULL)
@@ -33,9 +25,12 @@ int main(int argc, char * const argv[])
   }
 
   // Load data into memory
-  logger = agn_logger_new();
-  totalloci = pe_load_and_parse_loci(&locusindex, &loci, &seqids, &options,
-                                     logger);
+  AgnLogger *logger = agn_logger_new();
+  AgnLocusIndex *locusindex;
+  GtArray *loci;
+  GtStrArray *seqids;
+  GtUword totalloci = pe_load_and_parse_loci(&locusindex, &loci, &seqids,
+                                             &options, logger);
   bool haderror = agn_logger_print_all(logger, stderr, NULL);
   if(haderror) return EXIT_FAILURE;
 
@@ -51,9 +46,8 @@ int main(int argc, char * const argv[])
     GtHashmap *       locus_summaries;
     AgnCompEvaluation overall_eval;
     GtArray *         seqlevel_evals;
-    GtArray *         seqfiles;
 
-    seqfiles = pe_prep_output(seqids, &options);
+    GtArray *seqfiles = pe_prep_output(seqids, &options);
     pe_comparative_analysis(locusindex, &comp_evals, &locus_summaries, seqids,
                             seqfiles,loci, &options);
     pe_aggregate_results(&overall_eval, &seqlevel_evals, loci, seqfiles,
