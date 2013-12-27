@@ -13,7 +13,8 @@
 /**
  * @type This struct is used to aggregate counts and statistics regarding the
  * structural-level comparison (i.e., at the level of whole CDS segments, whole
- * exons, and whole UTRs) and analysis of gene structure.
+ * exons, and whole UTRs) and analysis of gene structure. See header file for
+ * details.
  */
 struct AgnCompStatsBinary
 {
@@ -33,7 +34,8 @@ typedef struct AgnCompStatsBinary AgnCompStatsBinary;
 
 /**
  * @type This struct is used to aggregate counts and statistics regarding the
- * nucleotide-level comparison and analysis of gene structure.
+ * nucleotide-level comparison and analysis of gene structure. See header file
+ * for details.
  */
 struct AgnCompStatsScaled
 {
@@ -59,6 +61,7 @@ typedef struct AgnCompStatsScaled AgnCompStatsScaled;
 /**
  * @type This struct aggregates all the counts and stats that go into a
  * comparison, including structural-level and nucleotide-level counts and stats.
+ * See header file for details.
  */
 struct AgnComparison
 {

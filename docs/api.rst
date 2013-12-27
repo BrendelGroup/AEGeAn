@@ -13,19 +13,19 @@ Data structures and functions related to comparative assessment of gene/transcri
 
 .. c:type:: AgnCompStatsBinary
 
-  This struct is used to aggregate counts and statistics regarding the structural-level comparison (i.e., at the level of whole CDS segments, whole exons, and whole UTRs) and analysis of gene structure.
+  This struct is used to aggregate counts and statistics regarding the structural-level comparison (i.e., at the level of whole CDS segments, whole exons, and whole UTRs) and analysis of gene structure. See header file for details.
 
 
 
 .. c:type:: AgnCompStatsScaled
 
-  This struct is used to aggregate counts and statistics regarding the nucleotide-level comparison and analysis of gene structure.
+  This struct is used to aggregate counts and statistics regarding the nucleotide-level comparison and analysis of gene structure. See header file for details.
 
 
 
 .. c:type:: AgnComparison
 
-  This struct aggregates all the counts and stats that go into a comparison, including structural-level and nucleotide-level counts and stats.
+  This struct aggregates all the counts and stats that go into a comparison, including structural-level and nucleotide-level counts and stats. See header file for details.
 
 
 

@@ -1,3 +1,5 @@
+#include <string.h>
+#include "core/queue_api.h"
 #include "AgnTranscriptClique.h"
 #include "AgnTypecheck.h"
 
@@ -34,6 +36,11 @@ static void clique_ids_put(GtFeatureNode *fn, GtHashmap *map);
  * associated with this transcript clique.
  */
 static void clique_size(GtFeatureNode *fn, GtWord *count);
+
+/**
+ * @function Generate data for unit testing.
+ */
+static void clique_test_data(GtQueue *queue);
 
 /**
  * @function Traversal function for copying members of this clique to an array.
@@ -83,12 +90,27 @@ static void clique_vector_update(AgnTranscriptClique *clique,
 //------------------------------------------------------------------------------
 
 void agn_transcript_clique_add(AgnTranscriptClique *clique,
-                               GtFeatureNode *transcript)
+                               GtFeatureNode *feature)
 {
-  gt_assert(agn_typecheck_transcript(transcript));
+  // Make sure ``feature`` is a transcript feature, and that it does not overlap
+  // with any other transcripts associated with this clique
+  gt_assert(agn_typecheck_transcript(feature));
+  GtRange range = gt_genome_node_get_range((GtGenomeNode *)feature);
   GtFeatureNode *cliquefn = gt_feature_node_cast(clique);
-  gt_feature_node_add_child(cliquefn, transcript);
-  clique_vector_update(clique, transcript);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(cliquefn);
+  GtFeatureNode *current;
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
+  {
+    gt_assert(agn_typecheck_transcript(current));
+    GtRange currentrange = gt_genome_node_get_range((GtGenomeNode *)current);
+    gt_assert(!gt_range_overlap(&range, &currentrange));
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  gt_feature_node_add_child(cliquefn, feature);
+  clique_vector_update(clique, feature);
 }
 
 GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
@@ -194,7 +216,6 @@ AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
 
 GtUword agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
 {
-  // FIXME Handle exons with same coordinates/strand
   GtUword count = 0;
   clique_traverse(clique, (AgnCliqueVisitFunc)clique_exon_count, &count);
   return count;
@@ -202,7 +223,6 @@ GtUword agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
 
 GtUword agn_transcript_clique_num_utrs(AgnTranscriptClique *clique)
 {
-  // FIXME Handle UTR segments with same coordinates/strand
   GtUword count = 0;
   clique_traverse(clique, (AgnCliqueVisitFunc)clique_utr_count, &count);
   return count;
@@ -250,7 +270,22 @@ void agn_transcript_clique_traverse(AgnTranscriptClique *clique,
 
 bool agn_transcript_clique_unit_test(AgnUnitTest *test)
 {
-  return false;
+  AgnTranscriptClique *clique;
+  GtQueue *queue = gt_queue_new();
+  const char *modelvector, *testmodelvector;
+  clique_test_data(queue);
+
+  clique = gt_queue_get(queue);
+  modelvector = agn_transcript_clique_get_model_vector(clique);
+  testmodelvector = "GGGGGGGGGCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+                    "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGG";
+  bool simplecheck = agn_transcript_clique_cds_length(clique) == 27 &&
+                     strcmp(modelvector, testmodelvector) == 0 &&
+                     agn_transcript_clique_size(clique) == 1;
+  agn_unit_test_result(test, "simple check", simplecheck);
+  agn_transcript_clique_delete(clique);
+
+  return simplecheck;
 }
 
 static void clique_cds_length(GtFeatureNode *fn, GtWord *length)
@@ -286,6 +321,26 @@ static void clique_size(GtFeatureNode *fn, GtWord *count)
   (*count)++;
 }
 
+static void clique_test_data(GtQueue *queue)
+{
+  AgnTranscriptClique *clique;
+  GtGenomeNode *gn1, *gn2;
+  GtFeatureNode *fn1, *fn2;
+
+  GtStr *seqid = gt_str_new_cstr("sequence");
+  GtRange range = { 1, 100 };
+  AgnSequenceRegion region = { gt_str_get(seqid), range };
+  
+  clique = agn_transcript_clique_new(&region);
+  gn1 = gt_feature_node_new(seqid, "mRNA", 10, 90, GT_STRAND_FORWARD);
+  gn2 = gt_feature_node_new(seqid, "CDS", 10, 90, GT_STRAND_FORWARD);
+  fn1 = gt_feature_node_cast(gn1);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  agn_transcript_clique_add(clique, fn1);
+  gt_queue_add(queue, clique);
+}
+
 static void clique_to_array(GtFeatureNode *fn, GtArray *transcripts)
 {
   gt_assert(agn_typecheck_transcript(fn));
@@ -299,7 +354,7 @@ static void clique_to_gff3(GtFeatureNode *fn, GtNodeVisitor *nv)
   gt_genome_node_accept((GtGenomeNode *)fn, visitor, error);
   if(gt_error_is_set(error))
   {
-    // FIXME?
+    // FIXME It would be onerous to introduce a logger here
     fprintf(stderr, "error with GFF3 output: %s\n", gt_error_get(error));
   }
   gt_error_delete(error);
