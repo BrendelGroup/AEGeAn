@@ -119,9 +119,9 @@ libaegean.a:	$(AGN_OBJS)
 inc/core/AgnVersion.h:	
 			@- bash -c "if [ -d .git ]; then perl data/scripts/version.pl > inc/core/AgnVersion.h; else perl data/scripts/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
-test:		$(BINS) $(UT_EXE)
+test:		$(AGN_OBJS) $(UT_EXE)
 		@- bin/unittests
-		@- echo AEGeAn Functional Tests
-		@- test/AT1G05320.sh
-		@- test/FBgn0035002.sh
-		@- test/iLocusParsing.sh
+		@- #echo AEGeAn Functional Tests
+		@- #test/AT1G05320.sh
+		@- #test/FBgn0035002.sh
+		@- #test/iLocusParsing.sh
