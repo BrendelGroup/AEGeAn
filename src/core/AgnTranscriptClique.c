@@ -9,7 +9,7 @@
 
 /**
  * @function Traversal function for determining the combined length of CDS(s)
- * for the mRNA(s) associated with this clique. Unit of length is amino acids.
+ * for the mRNA(s) associated with this clique. Unit of length is base pairs.
  */
 static void clique_cds_length(GtFeatureNode *fn, GtWord *length);
 
@@ -109,6 +109,7 @@ void agn_transcript_clique_add(AgnTranscriptClique *clique,
   }
   gt_feature_node_iterator_delete(iter);
 
+  gt_genome_node_ref((GtGenomeNode *)feature);
   gt_feature_node_add_child(cliquefn, feature);
   clique_vector_update(clique, feature);
 }
@@ -117,15 +118,10 @@ GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
 {
   GtUword length = 0;
   clique_traverse(clique, (AgnCliqueVisitFunc)clique_cds_length, &length);
-  if(length % 3 != 0)
-  {
-    // FIXME
-    // fprintf(stderr, "error: CDS length not divisible by 3\n");
-  }
-  return length / 3;
+  return length;
 }
 
-AgnTranscriptClique* agn_transcript_clique_copy(AgnTranscriptClique *clique)
+AgnTranscriptClique *agn_transcript_clique_copy(AgnTranscriptClique *clique)
 {
   GtStr *seqid = gt_genome_node_get_seqid(clique);
   GtRange range = gt_genome_node_get_range(clique);
@@ -201,6 +197,7 @@ AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
                                                            region->range.start,
                                                            region->range.end,
                                                            GT_STRAND_BOTH);
+  gt_str_delete(seqid);
 
   GtUword length = region->range.end - region->range.start + 1;
   char *modelvector = gt_malloc( sizeof(char) * (length + 1) );
@@ -270,7 +267,7 @@ void agn_transcript_clique_traverse(AgnTranscriptClique *clique,
 
 bool agn_transcript_clique_unit_test(AgnUnitTest *test)
 {
-  AgnTranscriptClique *clique;
+  AgnTranscriptClique *clique, *clique_copy;
   GtQueue *queue = gt_queue_new();
   const char *modelvector, *testmodelvector;
   clique_test_data(queue);
@@ -279,13 +276,41 @@ bool agn_transcript_clique_unit_test(AgnUnitTest *test)
   modelvector = agn_transcript_clique_get_model_vector(clique);
   testmodelvector = "GGGGGGGGGCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
                     "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGG";
-  bool simplecheck = agn_transcript_clique_cds_length(clique) == 27 &&
+  bool simplecheck = agn_transcript_clique_cds_length(clique) == 81 &&
+                     agn_transcript_clique_num_exons(clique) == 1 &&
+                     agn_transcript_clique_num_utrs(clique) == 0 &&
                      strcmp(modelvector, testmodelvector) == 0 &&
                      agn_transcript_clique_size(clique) == 1;
   agn_unit_test_result(test, "simple check", simplecheck);
   agn_transcript_clique_delete(clique);
 
-  return simplecheck;
+  clique = gt_queue_get(queue);
+  bool twomrnacheck = gt_genome_node_get_length(clique) == 6144 &&
+                      agn_transcript_clique_size(clique) == 2 &&
+                      agn_transcript_clique_num_exons(clique) == 10 &&
+                      agn_transcript_clique_num_utrs(clique) == 0;
+  agn_unit_test_result(test, "two mRNAs", twomrnacheck);
+
+  clique_copy = agn_transcript_clique_copy(clique);
+  GtArray *clique_feats = agn_transcript_clique_to_array(clique);
+  GtFeatureNode *fn1a = *(GtFeatureNode **)gt_array_get_first(clique_feats);
+  GtFeatureNode *fn2a = *(GtFeatureNode **)gt_array_get_last(clique_feats);
+  GtArray *copy_feats = agn_transcript_clique_to_array(clique_copy);
+  GtFeatureNode *fn1b = *(GtFeatureNode **)gt_array_get_first(copy_feats);
+  GtFeatureNode *fn2b = *(GtFeatureNode **)gt_array_get_last(copy_feats);
+  bool copycheck = clique != clique_copy &&
+                   gt_array_size(clique_feats) == 2 &&
+                   gt_array_size(copy_feats)   == 2 &&
+                   fn1a == fn1b &&
+                   fn2a == fn2b;
+  agn_unit_test_result(test, "copy check", copycheck);
+  agn_transcript_clique_delete(clique);
+  agn_transcript_clique_delete(clique_copy);
+  gt_array_delete(clique_feats);
+  gt_array_delete(copy_feats);
+
+  gt_queue_delete(queue);
+  return simplecheck && twomrnacheck && copycheck;
 }
 
 static void clique_cds_length(GtFeatureNode *fn, GtWord *length)
@@ -330,15 +355,94 @@ static void clique_test_data(GtQueue *queue)
   GtStr *seqid = gt_str_new_cstr("sequence");
   GtRange range = { 1, 100 };
   AgnSequenceRegion region = { gt_str_get(seqid), range };
-  
+
   clique = agn_transcript_clique_new(&region);
   gn1 = gt_feature_node_new(seqid, "mRNA", 10, 90, GT_STRAND_FORWARD);
-  gn2 = gt_feature_node_new(seqid, "CDS", 10, 90, GT_STRAND_FORWARD);
   fn1 = gt_feature_node_cast(gn1);
+  gn2 = gt_feature_node_new(seqid, "exon", 10, 90, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 10, 90, GT_STRAND_FORWARD);
   fn2 = gt_feature_node_cast(gn2);
   gt_feature_node_add_child(fn1, fn2);
   agn_transcript_clique_add(clique, fn1);
+  gt_genome_node_delete(gn1);
   gt_queue_add(queue, clique);
+
+  region.range.start = 2252360;
+  region.range.end   = 2258503;
+  clique = agn_transcript_clique_new(&region);
+  gn1 = gt_feature_node_new(seqid, "mRNA", 2252360, 2253643, GT_STRAND_FORWARD);
+  fn1 = gt_feature_node_cast(gn1);
+  gn2 = gt_feature_node_new(seqid, "exon", 2252360, 2252453, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2252360, 2252453, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2252587, 2252688, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2252587, 2252688, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2252982, 2253152, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2252982, 2253152, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2253324, 2253643, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2253324, 2253643, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  agn_transcript_clique_add(clique, fn1);
+  gt_genome_node_delete(gn1);
+  gn1 = gt_feature_node_new(seqid, "mRNA", 2253725, 2258503, GT_STRAND_FORWARD);
+  fn1 = gt_feature_node_cast(gn1);
+  gn2 = gt_feature_node_new(seqid, "exon", 2253725, 2253869, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2253725, 2253869, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2254186, 2254259, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2254186, 2254259, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2254337, 2254456, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2254337, 2254456, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2255698, 2255875, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2255698, 2255875, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2256174, 2256298, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2256174, 2256298, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "exon", 2258492, 2258503, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  gn2 = gt_feature_node_new(seqid, "CDS", 2258492, 2258503, GT_STRAND_FORWARD);
+  fn2 = gt_feature_node_cast(gn2);
+  gt_feature_node_add_child(fn1, fn2);
+  agn_transcript_clique_add(clique, fn1);
+  gt_genome_node_delete(gn1);
+  gt_queue_add(queue, clique);
+
+  gt_str_delete(seqid);
 }
 
 static void clique_to_array(GtFeatureNode *fn, GtArray *transcripts)

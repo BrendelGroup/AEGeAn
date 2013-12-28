@@ -82,7 +82,11 @@ Class AgnTranscriptClique
 
 .. c:function:: GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
 
-  Get the combined CDS length (in amino acids) for all transcripts in this clique.
+  Get the combined CDS length (in base pairs) for all transcripts in this clique.
+
+.. c:function:: AgnTranscriptClique* agn_transcript_clique_copy(AgnTranscriptClique *clique)
+
+  Make a shallow copy of this transcript clique.
 
 .. c:function:: void agn_transcript_clique_delete(AgnTranscriptClique *clique)
 

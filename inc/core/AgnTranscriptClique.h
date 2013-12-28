@@ -42,10 +42,15 @@ void agn_transcript_clique_add(AgnTranscriptClique *clique,
                                GtFeatureNode *transcript);
 
 /**
- * @function Get the combined CDS length (in amino acids) for all transcripts in
+ * @function Get the combined CDS length (in base pairs) for all transcripts in
  * this clique.
  */
 GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique);
+
+/**
+ * @function Make a shallow copy of this transcript clique.
+ */
+AgnTranscriptClique* agn_transcript_clique_copy(AgnTranscriptClique *clique);
 
 /**
  * @function Class destructor.
