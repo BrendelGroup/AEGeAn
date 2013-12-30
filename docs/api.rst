@@ -6,6 +6,45 @@ types implemented by the GenomeTools library. For data types beginning with
 ``Gt``, see the GenomeTools API documentation at
 http://genometools.org/libgenometools.html.
 
+Class AgnCliquePair
+-------------------
+
+.. c:type:: AgnCliquePair
+
+  The AgnCliquePair class facilitates comparison of two alternative sources of annotation for the same sequence. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCliquePair.h>`_.
+
+.. c:function:: AgnCompClassification agn_clique_pair_classify(AgnCliquePair *pair)
+
+  Based on the already-computed comparison statistics, classify this clique pair as a perfect match, a CDS match, etc. See :c:type:`AgnCompClassification`.
+
+.. c:function:: void agn_clique_pair_comparison_aggregate(AgnCliquePair *pair, AgnComparison *comp)
+
+  Add this clique pair's internal comparison stats to a larger set of aggregate stats.
+
+.. c:function:: int agn_clique_pair_compare(void *p1, void *p2)
+
+  Same as c:func:`agn_clique_pair_compare_direct`, but with pointer dereferencing.
+
+.. c:function:: int agn_clique_pair_compare_direct(AgnCliquePair *p1, AgnCliquePair *p2)
+
+  Determine which pair has higher comparison scores. Returns 1 if the first pair has better scores, -1 if the second pair has better scores, 0 if they are equal.
+
+.. c:function:: int agn_clique_pair_compare_reverse(void *p1, void *p2)
+
+  Negation of c:func:`agn_clique_pair_compare`.
+
+.. c:function:: void agn_clique_pair_delete(AgnCliquePair *pair)
+
+  Class destructor.
+
+.. c:function:: AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr, AgnTranscriptClique *pred)
+
+  Class constructor.
+
+.. c:function:: bool agn_clique_pair_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Module AgnComparison
 --------------------
 
@@ -26,6 +65,12 @@ Data structures and functions related to comparative assessment of gene/transcri
 .. c:type:: AgnComparison
 
   This struct aggregates all the counts and stats that go into a comparison, including structural-level and nucleotide-level counts and stats. See header file for details.
+
+
+
+.. c:type:: AgnCompClassification
+
+  This enumerated type refers to all the possible outcomes when annotations from two different sources are compared: ``AGN_COMP_CLASS_UNCLASSIFIED``, ``AGN_COMP_CLASS_PERFECT_MATCH``, ``AGN_COMP_CLASS_MISLABELED``, ``AGN_COMP_CLASS_CDS_MATCH``, ``AGN_COMP_CLASS_EXON_MATCH``, ``AGN_COMP_CLASS_UTR_MATCH``, and ``AGN_COMP_CLASS_NON_MATCH``.
 
 
 

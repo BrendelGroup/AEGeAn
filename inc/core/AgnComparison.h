@@ -76,6 +76,26 @@ struct AgnComparison
 typedef struct AgnComparison AgnComparison;
 
 /**
+ * @type This enumerated type refers to all the possible outcomes when
+ * annotations from two different sources are compared:
+ * ``AGN_COMP_CLASS_UNCLASSIFIED``, ``AGN_COMP_CLASS_PERFECT_MATCH``,
+ * ``AGN_COMP_CLASS_MISLABELED``,   ``AGN_COMP_CLASS_CDS_MATCH``,
+ * ``AGN_COMP_CLASS_EXON_MATCH``,   ``AGN_COMP_CLASS_UTR_MATCH``, and
+ * ``AGN_COMP_CLASS_NON_MATCH``.
+ */
+enum AgnCompClassification
+{
+  AGN_COMP_CLASS_UNCLASSIFIED,
+  AGN_COMP_CLASS_PERFECT_MATCH,
+  AGN_COMP_CLASS_MISLABELED,
+  AGN_COMP_CLASS_CDS_MATCH,
+  AGN_COMP_CLASS_EXON_MATCH,
+  AGN_COMP_CLASS_UTR_MATCH,
+  AGN_COMP_CLASS_NON_MATCH
+};
+typedef enum AgnCompClassification AgnCompClassification;
+
+/**
  * @function Function used to combine similarity stats from many different
  * comparisons into a single aggregate summary. 
  */

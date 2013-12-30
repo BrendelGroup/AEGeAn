@@ -1,4 +1,5 @@
 #include <string.h>
+#include "AgnCliquePair.h"
 #include "AgnTranscriptClique.h"
 
 int main(int argc, char **argv)
@@ -9,6 +10,8 @@ int main(int argc, char **argv)
   GtQueue *tests = gt_queue_new();
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnTranscriptClique",
                                         agn_transcript_clique_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnCliquePair",
+                                        agn_clique_pair_unit_test));
 
   while(gt_queue_size(tests) > 0)
   {
