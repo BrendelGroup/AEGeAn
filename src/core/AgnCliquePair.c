@@ -1,6 +1,8 @@
 #include <math.h>
+#include <string.h>
 #include "core/queue_api.h"
 #include "AgnCliquePair.h"
+#include "AgnUtils.h"
 
 #define char_is_exonic(C) (C == 'F' || C == 'T' || C == 'C')
 #define char_is_utric(C)  (C == 'F' || C == 'T')
@@ -224,8 +226,28 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
 
 bool agn_clique_pair_unit_test(AgnUnitTest *test)
 {
-  clique_pair_test_data(NULL);
-  return false;
+  GtQueue *pairs = gt_queue_new();
+  clique_pair_test_data(pairs);
+  gt_assert(gt_queue_size(pairs) == 2);
+
+  AgnCliquePair *pair = gt_queue_get(pairs);
+  AgnCompClassification result = agn_clique_pair_classify(pair);
+  bool simplecheck = (result == AGN_COMP_CLASS_PERFECT_MATCH);
+  agn_unit_test_result(test, "perfect match vs. self", simplecheck);
+  agn_transcript_clique_delete(pair->refr_clique);
+  agn_transcript_clique_delete(pair->pred_clique);
+  agn_clique_pair_delete(pair);
+
+  pair = gt_queue_get(pairs);
+  result = agn_clique_pair_classify(pair);
+  bool cdscheck = result == (AGN_COMP_CLASS_CDS_MATCH);
+  agn_unit_test_result(test, "CDS match", cdscheck);
+  agn_transcript_clique_delete(pair->refr_clique);
+  agn_transcript_clique_delete(pair->pred_clique);
+  agn_clique_pair_delete(pair);
+
+  gt_queue_delete(pairs);
+  return simplecheck && cdscheck;
 }
 
 static void clique_pair_calc_struct_stats(StructuralData *dat)
@@ -283,6 +305,11 @@ static void clique_pair_comparative_analysis(AgnCliquePair *pair)
                                                    "modelvector");
   char *pred_vector = gt_genome_node_get_user_data(pair->pred_clique,
                                                    "modelvector");
+  gt_assert(
+      strlen(refr_vector) == gt_genome_node_get_length(pair->refr_clique) &&
+      strlen(pred_vector) == gt_genome_node_get_length(pair->refr_clique)
+  );
+  pair->stats.overall_length = locus_length;
 
   StructuralData cdsstruct;
   clique_pair_init_struct_dat(&cdsstruct, &pair->stats.cds_struc_stats);
@@ -402,5 +429,76 @@ static void clique_pair_term_struct_dat(StructuralData *dat)
 
 static void clique_pair_test_data(GtQueue *queue)
 {
-  
+  gt_assert(queue != NULL);
+  GtArray *refrfeats, *predfeats;
+
+  GtError *error = gt_error_new();
+  const char *refrfile = "data/gff3/grape-refr-mrnas.gff3";
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &refrfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  refrfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(gff3in, refrfeats, error);
+  int pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
+            "reference features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(refrfeats, (GtCompare)agn_genome_node_compare);
+
+  const char *predfile = "data/gff3/grape-pred-mrnas.gff3";
+  gff3in = gt_gff3_in_stream_new_unsorted(1, &predfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  predfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  arraystream = gt_array_out_stream_new(gff3in, predfeats, error);
+  pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
+            "prediction features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(predfeats, (GtCompare)agn_genome_node_compare);
+
+  gt_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
+
+  GtRange range = { 26493, 29591 };
+  GtStr *seqid = gt_str_new_cstr("chr8");
+  AgnSequenceRegion region = { gt_str_get(seqid), range };
+  GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
+  AgnTranscriptClique *refrclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(refrclique, pred);
+  AgnTranscriptClique *predclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(predclique, pred);
+  AgnCliquePair *pair = agn_clique_pair_new(refrclique, predclique);
+  gt_queue_add(queue, pair);
+
+  region.range.end = 29602;
+  GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
+  refrclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(refrclique, refr);
+  predclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(predclique, pred);
+  pair = agn_clique_pair_new(refrclique, predclique);
+  gt_queue_add(queue, pair);
+
+  gt_str_delete(seqid);
+  while(gt_array_size(refrfeats) > 0)
+  {
+    GtGenomeNode **gn = gt_array_pop(refrfeats);
+    gt_genome_node_delete(*gn);
+  }
+  gt_array_delete(refrfeats);
+  while(gt_array_size(predfeats) > 0)
+  {
+    GtGenomeNode **gn = gt_array_pop(predfeats);
+    gt_genome_node_delete(*gn);
+  }
+  gt_array_delete(predfeats);
+  gt_error_delete(error);
 }

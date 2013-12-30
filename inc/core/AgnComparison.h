@@ -97,7 +97,7 @@ typedef enum AgnCompClassification AgnCompClassification;
 
 /**
  * @function Function used to combine similarity stats from many different
- * comparisons into a single aggregate summary. 
+ * comparisons into a single aggregate summary.
  */
 void agn_comparison_aggregate(AgnComparison *agg_cmp, AgnComparison *cmp);
 
@@ -113,7 +113,7 @@ void agn_comparison_resolve(AgnComparison *comparison);
 
 /**
  * @function Function used to combine similarity stats from many different
- * comparisons into a single aggregate summary. 
+ * comparisons into a single aggregate summary.
  */
 void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *agg_stats,
                                      AgnCompStatsBinary *stats);
@@ -130,7 +130,7 @@ void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
 
 /**
  * @function Function used to combine similarity stats from many different
- * comparisons into a single aggregate summary. 
+ * comparisons into a single aggregate summary.
  */
 void agn_comp_stats_scaled_aggregate(AgnCompStatsScaled *agg_stats,
                                      AgnCompStatsScaled *stats);

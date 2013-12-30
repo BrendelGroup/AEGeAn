@@ -249,3 +249,12 @@ Class AgnUnitTest
 
   Run the unit test.
 
+Module AgnUtils
+---------------
+
+Collection of assorted functions that are otherwise unrelated. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
+
+.. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
+
+  Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
+

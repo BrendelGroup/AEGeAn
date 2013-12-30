@@ -199,7 +199,7 @@ AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
                                                            GT_STRAND_BOTH);
   gt_str_delete(seqid);
 
-  GtUword length = region->range.end - region->range.start + 1;
+  GtUword length = gt_range_length(&region->range);
   char *modelvector = gt_malloc( sizeof(char) * (length + 1) );
   GtUword i;
   for(i = 0; i < length; i++)
@@ -508,7 +508,11 @@ static void clique_vector_update(AgnTranscriptClique *clique,
                                  GtFeatureNode *transcript)
 {
   GtRange locusrange = gt_genome_node_get_range(clique);
+  GtRange transrange = gt_genome_node_get_range((GtGenomeNode *)transcript);
   char *modelvector = gt_genome_node_get_user_data(clique, "modelvector");
+  gt_assert(gt_range_contains(&locusrange, &transrange) &&
+            gt_range_length(&locusrange) == strlen(modelvector));
+
   GtFeatureNode *fn;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
   for(fn = gt_feature_node_iterator_next(iter);
@@ -529,20 +533,17 @@ static void clique_vector_update(AgnTranscriptClique *clique,
     else if(agn_typecheck_intron(fn))
       c = 'I';
     else
-      c = 'G';
+      continue;
 
-    if(c != 'G')
+    GtUword fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
+    GtUword fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
+    GtUword i;
+
+    for(i = fn_start - locusrange.start;
+        i < fn_end - locusrange.start + 1;
+        i++)
     {
-      GtUword fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
-      GtUword fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
-      GtUword i;
-
-      for(i = fn_start - locusrange.start;
-          i < fn_end - locusrange.start + 1;
-          i++)
-      {
-        modelvector[i] = c;
-      }
+      modelvector[i] = c;
     }
   }
   gt_feature_node_iterator_delete(iter);
