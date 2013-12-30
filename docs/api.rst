@@ -110,6 +110,105 @@ Data structures and functions related to comparative assessment of gene/transcri
 
   Calculate stats from the given counts.
 
+Class AgnLocus
+--------------
+
+.. c:type:: AgnLocus
+
+  The AgnLocus class represents gene loci and interval loci in memory and can be used to facilitate comparison of two different sources of annotation. Under the hood, each ``AgnLocus`` object is a feature node with one or more transcript features as direct children. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocus.h>`_.
+
+.. c:type:: AgnComparisonSource
+
+  When tracking the source of an annotation for comparison purposes, use this enumerated type to refer to reference (``REFERENCESOURCE``) vs prediction (``PREDICTIONSOURCE``) annotations. ``DEFAULTSOURCE`` is for when the source is not a concern.
+
+
+
+.. c:type:: AgnLocusPngMetadata
+
+  This data structure provides a convenient container for metadata needed to produce a PNG graphic for pairwise comparison loci.
+
+
+
+.. c:function:: void agn_locus_add(AgnLocus *locus, GtFeatureNode *transcript, AgnComparisonSource source)
+
+  Associate the given transcript annotation with this locus. Rather than calling this function directly, users are recommended to use one of the following macros: ``agn_locus_add_pred_transcript(locus, trans)`` and ``agn_locus_add_refr_transcript(locus, trans)``, to be used when keeping track of an annotation's source is important (i.e. for pairwise comparison); and ``agn_locus_add_transcript(locus, trans)`` otherwise.
+
+.. c:function:: AgnLocus *agn_locus_clone(AgnLocus *locus)
+
+  Do a semi-shallow copy of this data structure--for members whose data types support reference counting, the same pointer is used and the reference is incremented. For the other members a new object is created and populated with the same content.
+
+.. c:function:: GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src)
+
+  The combined length of all coding sequences associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_refr_cds_length(locus)`` for the combined length of all reference CDSs, ``agn_locus_pred_cds_length(locus)`` for the combined length of all prediction CDSs, and ``agn_locus_get_cds_length(locus)`` for the combined length of all CDSs.
+
+.. c:function:: void agn_locus_comparative_analysis(AgnLocus *locus)
+
+  Compare every reference transcript clique with every prediction transcript clique. For gene loci with multiple transcript cliques, each comparison is not necessarily reported. Instead, we report the set of clique pairs that provides the optimal pairing of reference and prediction transcripts. If there are more reference transcript cliques than prediction cliques (or vice versa), these unmatched cliques are reported separately.
+
+.. c:function:: int agn_locus_array_compare(const void *p1, const void *p2)
+
+  Analog of ``strcmp`` for sorting AgnLocus objects. Loci are first sorted lexicographically by sequence ID, and then spatially by genomic coordinates.
+
+.. c:function:: void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp)
+
+  Add this locus' internal comparison stats to a larger set of aggregate stats.
+
+.. c:function:: void agn_locus_delete(AgnLocus *locus)
+
+  Class destructor.
+
+.. c:function:: GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
+
+  Get a list of all the prediction transcript cliques that have no corresponding reference transcript clique.
+
+.. c:function:: GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus)
+
+  Get a list of all the reference transcript cliques that have no corresponding prediction transcript clique.
+
+.. c:function:: AgnLocus* agn_locus_new(const char *seqid)
+
+  Class constructor.
+
+.. c:function:: GtUword agn_locus_num_clique_pairs(AgnLocus *locus)
+
+  Return the number of clique pairs to be reported for this locus.
+
+.. c:function:: void agn_locus_png_track_selector(GtBlock *block, GtStr *track,void *data)
+
+  Track selector function for generating PNG graphics of pairwise comparison loci. The track name to will be written to ``track``.
+
+.. c:function:: void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
+
+  Print a PNG graphic for this locus.
+
+.. c:function:: void agn_locus_print_transcript_mapping(AgnLocus *locus, FILE *outstream)
+
+  Print a mapping of the transcript(s) associated with this locus in a two-column tab-delimited format: ``transcriptId<tab>locusId``.
+
+.. c:function:: double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src)
+
+  Calculate the splice complexity of this gene locus. Rather than calling this method directly, users are recommended to use one of the following macros: ``agn_locus_prep_splice_complexity(locus)`` to calculate the splice complexity of just the prediction transcripts, ``agn_locus_refr_splice_complexity(locus)`` to calculate the splice complexity of just the reference transcripts, and ``agn_locus_calc_splice_complexity(locus)`` to calculate the splice complexity taking into account all transcripts.
+
+.. c:function:: GtArray *agn_locus_transcripts(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the transcripts associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_transcripts(locus)`` to retrieve prediction transcripts, ``agn_locus_refr_transcripts(locus)`` to retrieve reference transcripts, or ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_transcript_ids(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the transcript IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_transcripts(locus)`` to retrieve prediction IDs, ``agn_locus_refr_transcripts(locus)`` to retrieve reference IDs, or ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtUword agn_locus_transcript_num(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the number of transcripts for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_transcript_locus_num_pred_transcripts(locus)`` for the number of prediction transcripts, ``agn_transcript_locus_num_refr_transcripts(locus)`` for the number of reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: bool agn_locus_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnTranscriptClique
 -------------------------
 
@@ -253,6 +352,10 @@ Module AgnUtils
 ---------------
 
 Collection of assorted functions that are otherwise unrelated. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
+
+.. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
+
+  FIXME
 
 .. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 

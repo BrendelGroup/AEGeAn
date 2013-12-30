@@ -1,6 +1,7 @@
 #ifndef AGN_UTILS
 #define AGN_UTILS
 
+#include "core/array_api.h"
 #include "extended/genome_node_api.h"
 
 /**
@@ -8,6 +9,11 @@
  *
  * Collection of assorted functions that are otherwise unrelated.
  */ //;
+
+/**
+ * @function FIXME
+ */
+double agn_calc_splice_complexity(GtArray *transcripts);
 
 /**
  * @function Compare function for data type ``GtGenomeNode **``, needed for
