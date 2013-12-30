@@ -228,7 +228,7 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
 {
   GtQueue *pairs = gt_queue_new();
   clique_pair_test_data(pairs);
-  gt_assert(gt_queue_size(pairs) == 2);
+  gt_assert(gt_queue_size(pairs) == 3);
 
   AgnCliquePair *pair = gt_queue_get(pairs);
   AgnCompClassification result = agn_clique_pair_classify(pair);
@@ -246,8 +246,16 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
   agn_transcript_clique_delete(pair->pred_clique);
   agn_clique_pair_delete(pair);
 
+  pair = gt_queue_get(pairs);
+  result = agn_clique_pair_classify(pair);
+  bool nomatchcheck = result == (AGN_COMP_CLASS_NON_MATCH);
+  agn_unit_test_result(test, "non-match", nomatchcheck);
+  agn_transcript_clique_delete(pair->refr_clique);
+  agn_transcript_clique_delete(pair->pred_clique);
+  agn_clique_pair_delete(pair);
+
   gt_queue_delete(pairs);
-  return simplecheck && cdscheck;
+  return simplecheck && cdscheck && nomatchcheck;
 }
 
 static void clique_pair_calc_struct_stats(StructuralData *dat)
@@ -482,6 +490,17 @@ static void clique_pair_test_data(GtQueue *queue)
   GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
   refrclique = agn_transcript_clique_new(&region);
   agn_transcript_clique_add(refrclique, refr);
+  predclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(predclique, pred);
+  pair = agn_clique_pair_new(refrclique, predclique);
+  gt_queue_add(queue, pair);
+
+  region.range.start = 55535;
+  region.range.end = 61916;
+  refr = *(GtFeatureNode **)gt_array_get(refrfeats, 7);
+  refrclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(refrclique, refr);
+  pred = *(GtFeatureNode **)gt_array_get(predfeats, 9);
   predclique = agn_transcript_clique_new(&region);
   agn_transcript_clique_add(predclique, pred);
   pair = agn_clique_pair_new(refrclique, predclique);
