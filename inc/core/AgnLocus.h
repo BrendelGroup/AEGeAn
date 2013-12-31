@@ -98,7 +98,8 @@ GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src);
  * transcripts. If there are more reference transcript cliques than prediction
  * cliques (or vice versa), these unmatched cliques are reported separately.
  */
-void agn_locus_comparative_analysis(AgnLocus *locus);
+void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
+                                    GtUword maxpairs, GtLogger *logger);
 
 /**
  * @function Analog of ``strcmp`` for sorting AgnLocus objects. Loci are first

@@ -37,6 +37,14 @@ Class AgnCliquePair
 
   Class destructor.
 
+.. c:function:: AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair)
+
+  FIXME
+
+.. c:function:: AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair)
+
+  FIXME
+
 .. c:function:: AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr, AgnTranscriptClique *pred)
 
   Class constructor.
@@ -141,7 +149,7 @@ Class AgnLocus
 
   The combined length of all coding sequences associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_refr_cds_length(locus)`` for the combined length of all reference CDSs, ``agn_locus_pred_cds_length(locus)`` for the combined length of all prediction CDSs, and ``agn_locus_get_cds_length(locus)`` for the combined length of all CDSs.
 
-.. c:function:: void agn_locus_comparative_analysis(AgnLocus *locus)
+.. c:function:: void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts, GtUword maxpairs, GtLogger *logger)
 
   Compare every reference transcript clique with every prediction transcript clique. For gene loci with multiple transcript cliques, each comparison is not necessarily reported. Instead, we report the set of clique pairs that provides the optimal pairing of reference and prediction transcripts. If there are more reference transcript cliques than prediction cliques (or vice versa), these unmatched cliques are reported separately.
 

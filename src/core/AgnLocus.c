@@ -1,4 +1,5 @@
 #include <string.h>
+#include "core/array_api.h"
 #include "extended/feature_node_iterator_api.h"
 #include "AgnLocus.h"
 #include "AgnTypecheck.h"
@@ -7,6 +8,34 @@
 //------------------------------------------------------------------------------
 // Prototypes for private functions
 //------------------------------------------------------------------------------
+
+/**
+ * @function FIXME
+ */
+static void locus_aggregate_stats_internal(AgnLocus *locus);
+
+/**
+ * @function FIXME
+ */
+static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
+                                GtArray *cliques, bool skipsimplecliques);
+
+/**
+ * @function FIXME
+ */
+static GtArray *locus_enumerate_cliques(GtArray *trans);
+
+/**
+ * @function FIXME
+ */
+static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
+                                      GtArray *predcliques);
+
+/**
+ * @function FIXME
+ */
+static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
+                               GtArray *predcliques, GtArray *clique_pairs);
 
 /**
  * @function Test whether a transcript should be included.
@@ -135,9 +164,42 @@ GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src)
   return length;
 }
 
-void agn_locus_comparative_analysis(AgnLocus *locus)
+void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
+                                    GtUword maxpairs, GtLogger *logger)
 {
+  GtArray *pairs2report = gt_genome_node_get_user_data(locus, "pairs2report");
+  if(pairs2report != NULL)
+    return;
+
+  if(agn_locus_num_refr_transcripts(locus) > maxtranscripts &&
+     agn_locus_num_pred_transcripts(locus) > maxtranscripts)
+  {
+    // gt_logger
+    return;
+  }
+  GtArray *refr_trans = agn_locus_refr_transcripts(locus);
+  GtArray *refrcliques = locus_enumerate_cliques(refr_trans);
+  gt_array_delete(refr_trans);
+  GtArray *pred_trans = agn_locus_pred_transcripts(locus);
+  GtArray *predcliques = locus_enumerate_cliques(pred_trans);
+  gt_array_delete(pred_trans);
+
+  GtUword numpairs = gt_array_size(refrcliques) * gt_array_size(predcliques);
+  if(numpairs > maxpairs)
+  {
+    // gt_logger
+    return;
+  }
+  GtArray *clique_pairs = locus_enumerate_pairs(locus,refrcliques,predcliques);
+  gt_assert(numpairs == gt_array_size(clique_pairs));
+  gt_array_sort(clique_pairs, (GtCompare)agn_clique_pair_compare_reverse);
+  locus_select_pairs(locus, refrcliques, predcliques, clique_pairs);
   
+  gt_array_delete(refrcliques);
+  gt_array_delete(predcliques);
+  gt_array_delete(clique_pairs);
+
+  locus_aggregate_stats_internal(locus);
 }
 
 int agn_locus_array_compare(const void *p1, const void *p2)
@@ -448,7 +510,105 @@ GtUword agn_locus_transcript_num(AgnLocus *locus, AgnComparisonSource src)
 
 bool agn_locus_unit_test(AgnUnitTest *test)
 {
+  // FIXME
   return false;
+}
+
+static void locus_aggregate_stats_internal(AgnLocus *locus)
+{
+  // FIXME
+}
+
+static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
+                                GtArray *cliques, bool skipsimplecliques)
+{
+  // FIXME
+}
+
+static GtArray *locus_enumerate_cliques(GtArray *trans)
+{
+  // FIXME
+  locus_bron_kerbosch(NULL, NULL, NULL, NULL, false);
+  return NULL;
+}
+
+static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
+                                      GtArray *predcliques)
+{
+  // FIXME
+  return NULL;
+}
+
+static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
+                               GtArray *predcliques, GtArray *clique_pairs)
+{
+  GtHashmap *refrcliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  GtHashmap *predcliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  GtArray *pairs2report = gt_array_new( sizeof(AgnCliquePair *) );
+  GtUword i;
+  for(i = 0; i < gt_array_size(clique_pairs); i++)
+  {
+    AgnCliquePair **pair = gt_array_get(clique_pairs, i);
+    AgnTranscriptClique *rclique = agn_clique_pair_get_refr_clique(*pair);
+    AgnTranscriptClique *pclique = agn_clique_pair_get_pred_clique(*pair);
+    if(agn_transcript_clique_has_id_in_hash(rclique, refrcliques_acctd) &&
+       agn_transcript_clique_has_id_in_hash(pclique, predcliques_acctd))
+    {
+      agn_clique_pair_delete(*pair);
+    }
+    else
+    {
+      gt_array_add(pairs2report, *pair);
+      agn_transcript_clique_put_ids_in_hash(rclique, refrcliques_acctd);
+      agn_transcript_clique_put_ids_in_hash(pclique, predcliques_acctd);
+    }
+  }
+  gt_genome_node_add_user_data(locus,"pairs2report",gt_array_ref(pairs2report),
+                               (GtFree)gt_array_delete);
+  gt_array_delete(pairs2report);
+
+  GtArray *uniqrefr = gt_array_new( sizeof(AgnTranscriptClique *) );
+  for(i = 0; i < gt_array_size(refrcliques); i++)
+  {
+    AgnTranscriptClique *refr_clique;
+    refr_clique = *(AgnTranscriptClique **)gt_array_get(refrcliques, i);
+    if(!agn_transcript_clique_has_id_in_hash(refr_clique, refrcliques_acctd))
+    {
+      gt_array_add_elem(uniqrefr, gt_genome_node_ref(refr_clique),
+                        sizeof(GtArray *));
+      agn_transcript_clique_put_ids_in_hash(refr_clique, refrcliques_acctd);
+    }
+    agn_transcript_clique_delete(refr_clique);
+  }
+  if(gt_array_size(uniqrefr) > 0)
+  {
+    gt_genome_node_add_user_data(locus, "uniqrefr", gt_array_ref(uniqrefr),
+                                 (GtFree)gt_array_delete);
+  }
+  gt_array_delete(uniqrefr);
+
+  GtArray *uniqpred = gt_array_new( sizeof(AgnTranscriptClique *) );
+  for(i = 0; i < gt_array_size(predcliques); i++)
+  {
+    AgnTranscriptClique *pred_clique;
+    pred_clique = *(AgnTranscriptClique **)gt_array_get(predcliques, i);
+    if(!agn_transcript_clique_has_id_in_hash(pred_clique, predcliques_acctd))
+    {
+      gt_array_add_elem(uniqpred, gt_genome_node_ref(pred_clique),
+                        sizeof(GtArray *));
+      agn_transcript_clique_put_ids_in_hash(pred_clique, predcliques_acctd);
+    }
+    agn_transcript_clique_delete(pred_clique);
+  }
+  if(gt_array_size(uniqpred) > 0)
+  {
+    gt_genome_node_add_user_data(locus, "uniqpred", gt_array_ref(uniqpred),
+                                 (GtFree)gt_array_delete);
+  }
+  gt_array_delete(uniqpred);
+
+  gt_hashmap_delete(refrcliques_acctd);
+  gt_hashmap_delete(predcliques_acctd);
 }
 
 static bool locus_transcript_source_test(AgnLocus *locus,

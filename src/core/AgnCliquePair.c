@@ -203,6 +203,16 @@ void agn_clique_pair_delete(AgnCliquePair *pair)
   gt_free(pair);
 }
 
+AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair)
+{
+  return pair->pred_clique;
+}
+
+AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair)
+{
+  return pair->refr_clique;
+}
+
 AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
                                    AgnTranscriptClique *pred)
 {

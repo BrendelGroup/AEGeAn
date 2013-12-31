@@ -50,6 +50,16 @@ int agn_clique_pair_compare_reverse(void *p1, void *p2);
 void agn_clique_pair_delete(AgnCliquePair *pair);
 
 /**
+ * @function FIXME
+ */
+AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair);
+
+/**
+ * @function FIXME
+ */
+AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair);
+
+/**
  * @function Class constructor.
  */
 AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
