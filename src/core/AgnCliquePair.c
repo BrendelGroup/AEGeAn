@@ -198,6 +198,8 @@ int agn_clique_pair_compare_reverse(void *p1, void *p2)
 
 void agn_clique_pair_delete(AgnCliquePair *pair)
 {
+  agn_transcript_clique_delete(pair->refr_clique);
+  agn_transcript_clique_delete(pair->pred_clique);
   gt_free(pair);
 }
 
@@ -211,8 +213,8 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
             gt_str_cmp(seqidrefr, seqidpred) == 0);
 
   AgnCliquePair *pair = (AgnCliquePair *)gt_malloc( sizeof(AgnCliquePair) );
-  pair->refr_clique = refr;
-  pair->pred_clique = pred;
+  pair->refr_clique = gt_genome_node_ref(refr);
+  pair->pred_clique = gt_genome_node_ref(pred);
 
   agn_comparison_init(&pair->stats);
   double perc = 1.0 / (double)gt_genome_node_get_length(refr);
@@ -234,24 +236,18 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
   AgnCompClassification result = agn_clique_pair_classify(pair);
   bool simplecheck = (result == AGN_COMP_CLASS_PERFECT_MATCH);
   agn_unit_test_result(test, "perfect match vs. self", simplecheck);
-  agn_transcript_clique_delete(pair->refr_clique);
-  agn_transcript_clique_delete(pair->pred_clique);
   agn_clique_pair_delete(pair);
 
   pair = gt_queue_get(pairs);
   result = agn_clique_pair_classify(pair);
   bool cdscheck = result == (AGN_COMP_CLASS_CDS_MATCH);
   agn_unit_test_result(test, "CDS match", cdscheck);
-  agn_transcript_clique_delete(pair->refr_clique);
-  agn_transcript_clique_delete(pair->pred_clique);
   agn_clique_pair_delete(pair);
 
   pair = gt_queue_get(pairs);
   result = agn_clique_pair_classify(pair);
   bool nomatchcheck = result == (AGN_COMP_CLASS_NON_MATCH);
   agn_unit_test_result(test, "non-match", nomatchcheck);
-  agn_transcript_clique_delete(pair->refr_clique);
-  agn_transcript_clique_delete(pair->pred_clique);
   agn_clique_pair_delete(pair);
 
   gt_queue_delete(pairs);
@@ -485,6 +481,8 @@ static void clique_pair_test_data(GtQueue *queue)
   agn_transcript_clique_add(predclique, pred);
   AgnCliquePair *pair = agn_clique_pair_new(refrclique, predclique);
   gt_queue_add(queue, pair);
+  gt_genome_node_delete((GtGenomeNode *)refrclique);
+  gt_genome_node_delete((GtGenomeNode *)predclique);
 
   region.range.end = 29602;
   GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
@@ -494,6 +492,8 @@ static void clique_pair_test_data(GtQueue *queue)
   agn_transcript_clique_add(predclique, pred);
   pair = agn_clique_pair_new(refrclique, predclique);
   gt_queue_add(queue, pair);
+  gt_genome_node_delete((GtGenomeNode *)refrclique);
+  gt_genome_node_delete((GtGenomeNode *)predclique);
 
   region.range.start = 55535;
   region.range.end = 61916;
@@ -505,6 +505,8 @@ static void clique_pair_test_data(GtQueue *queue)
   agn_transcript_clique_add(predclique, pred);
   pair = agn_clique_pair_new(refrclique, predclique);
   gt_queue_add(queue, pair);
+  gt_genome_node_delete((GtGenomeNode *)refrclique);
+  gt_genome_node_delete((GtGenomeNode *)predclique);
 
   gt_str_delete(seqid);
   while(gt_array_size(refrfeats) > 0)
