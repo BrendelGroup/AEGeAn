@@ -10,6 +10,18 @@
  * Collection of assorted functions that are otherwise unrelated.
  */ //;
 
+
+/**
+ * @type This data structure combines sequence coordinates with a sequence ID to
+ * facilitate their usage together.
+ */
+typedef struct
+{
+  char *seqid;
+  GtRange range;
+} AgnSequenceRegion;
+
+
 /**
  * @function Similar to ``gt_array_copy``, except that array elements are
  * treated as pointers and dereferenced before being added to the new array.

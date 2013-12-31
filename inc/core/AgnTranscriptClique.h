@@ -4,6 +4,7 @@
 #include "extended/feature_node_api.h"
 #include "core/hashmap_api.h"
 #include "AgnUnitTest.h"
+#include "AgnUtils.h"
 
 /**
  * @class AgnTranscriptClique
@@ -26,13 +27,6 @@ typedef GtGenomeNode AgnTranscriptClique;
  * needed). See :c:func:`agn_transcript_clique_traverse`.
  */
 typedef void (*AgnCliqueVisitFunc)(GtFeatureNode*, void*);
-
-// FIXME this should go somewhere else
-typedef struct
-{
-  char *seqid;
-  GtRange range;
-} AgnSequenceRegion;
 
 
 /**

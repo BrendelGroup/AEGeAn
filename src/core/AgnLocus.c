@@ -44,6 +44,11 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
                                GtArray *predcliques, GtArray *clique_pairs);
 
 /**
+ * @function Generate data for unit testing.
+ */
+static void locus_test_data(GtQueue *queue);
+
+/**
  * @function For a set of features, we can construct a graph where each node
  * represents a feature and where two nodes are connected if the corresponding
  * features do not overlap. This function returns the intersection of
@@ -131,6 +136,15 @@ AgnLocus *agn_locus_clone(AgnLocus *locus)
     gt_genome_node_add_user_data(newlocus, "pairs2report", pairs2report,
                                  (GtFree)gt_array_delete);
   }
+
+  AgnComparison *compstats = gt_genome_node_get_user_data(locus, "compstats");
+  gt_assert(compstats != NULL);
+  AgnComparison *newstats = gt_malloc( sizeof(AgnComparison) );
+  agn_comparison_init(newstats);
+  agn_comparison_aggregate(newstats, compstats);
+  gt_genome_node_add_user_data(newlocus, "compstats", compstats,
+                               (GtFree)gt_free_func);
+
   GtArray *uniqrefr = gt_genome_node_get_user_data(locus, "uniqrefr");
   if(uniqrefr != NULL)
   {
@@ -186,10 +200,17 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
   if(pairs2report != NULL)
     return;
 
-  if(agn_locus_num_refr_transcripts(locus) > maxtranscripts &&
-     agn_locus_num_pred_transcripts(locus) > maxtranscripts)
+  GtUword numrefr = agn_locus_num_refr_transcripts(locus);
+  GtUword numpred = agn_locus_num_pred_transcripts(locus);
+  bool noneedanaly = numrefr > maxtranscripts && numpred > maxtranscripts;
+  if(maxtranscripts > 0 && noneedanaly)
   {
-    // gt_logger
+    GtStr *seqid = gt_genome_node_get_seqid(locus);
+    GtRange range = gt_genome_node_get_range(locus);
+    gt_logger_log(logger, "warning: locus %s[%lu, %lu] includes %lu reference "
+                  "transcripts and %lu prediction transcripts (maximum is %lu);"
+                  " skipping this locus\n", gt_str_get(seqid), range.start,
+                  range.end, numrefr, numpred, maxtranscripts);
     return;
   }
   GtArray *refr_trans = agn_locus_refr_transcripts(locus);
@@ -200,9 +221,16 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
   gt_array_delete(pred_trans);
 
   GtUword numpairs = gt_array_size(refrcliques) * gt_array_size(predcliques);
-  if(numpairs > maxpairs)
+  if(maxpairs > 0 && numpairs > maxpairs)
   {
-    // gt_logger
+    GtStr *seqid = gt_genome_node_get_seqid(locus);
+    GtRange range = gt_genome_node_get_range(locus);
+    gt_logger_log(logger, "warning: locus %s[%lu, %lu] includes %lu possible "
+                  "transcript clique pairs (maximum is %lu); skipping this "
+                  "locus", gt_str_get(seqid), range.start, range.end, numpairs,
+                  maxpairs);
+    gt_array_delete(refrcliques);
+    gt_array_delete(predcliques);
     return;
   }
   GtArray *clique_pairs = locus_enumerate_pairs(locus,refrcliques,predcliques);
@@ -233,8 +261,7 @@ int agn_locus_array_compare(const void *p1, const void *p2)
 void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp)
 {
   AgnComparison *stats = gt_genome_node_get_user_data(locus, "compstats");
-  if(stats == NULL)
-    return;
+  gt_assert(stats != NULL);
   agn_comparison_aggregate(comp, stats);
 }
 
@@ -285,8 +312,13 @@ GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus)
 
 AgnLocus *agn_locus_new(const char *seqid)
 {
-  return gt_feature_node_new(gt_str_new_cstr(seqid), "locus", 0, 0,
-                             GT_STRAND_BOTH);
+  AgnLocus *locus = gt_feature_node_new(gt_str_new_cstr(seqid), "locus", 0, 0,
+                                        GT_STRAND_BOTH);
+  AgnComparison *compstats = gt_malloc( sizeof(AgnComparison) );
+  agn_comparison_init(compstats);
+  gt_genome_node_add_user_data(locus, "compstats", compstats,
+                               (GtFree)gt_free_func);
+  return locus;
 }
 
 GtUword agn_locus_num_clique_pairs(AgnLocus *locus)
@@ -523,8 +555,26 @@ GtUword agn_locus_transcript_num(AgnLocus *locus, AgnComparisonSource src)
 
 bool agn_locus_unit_test(AgnUnitTest *test)
 {
-  // FIXME
-  return false;
+  GtQueue *queue = gt_queue_new();
+  locus_test_data(queue);
+  gt_assert(gt_queue_size(queue) == 1);
+
+  GtLogger *logger = gt_logger_new(true, "", stderr);
+  
+  AgnLocus *locus = gt_queue_get(queue);
+  agn_locus_comparative_analysis(locus, 0, 0, logger);
+  AgnComparison stats;
+  agn_comparison_init(&stats);
+  agn_locus_comparison_aggregate(locus, &stats);
+  bool grapetest1 = stats.cds_struc_stats.correct == 12 &&
+                    stats.cds_struc_stats.missing == 0  &&
+                    stats.cds_struc_stats.wrong   == 0;
+  agn_unit_test_result(test, "grape test 1", grapetest1);
+  agn_locus_delete(locus);
+
+  gt_logger_delete(logger);
+  gt_queue_delete(queue);
+  return grapetest1;
 }
 
 static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
@@ -648,6 +698,9 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
 {
   GtHashmap *refrcliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   GtHashmap *predcliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+
+  AgnComparison *stats = gt_genome_node_get_user_data(locus, "compstats");
+  gt_assert(stats != NULL);
   GtArray *pairs2report = gt_array_new( sizeof(AgnCliquePair *) );
   GtUword i;
   for(i = 0; i < gt_array_size(clique_pairs); i++)
@@ -663,6 +716,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
     else
     {
       gt_array_add(pairs2report, *pair);
+      agn_clique_pair_comparison_aggregate(*pair, stats);
       agn_transcript_clique_put_ids_in_hash(rclique, refrcliques_acctd);
       agn_transcript_clique_put_ids_in_hash(pclique, predcliques_acctd);
     }
@@ -713,6 +767,56 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
 
   gt_hashmap_delete(refrcliques_acctd);
   gt_hashmap_delete(predcliques_acctd);
+}
+
+static void locus_test_data(GtQueue *queue)
+{
+  gt_assert(queue != NULL);
+  GtArray *refrfeats, *predfeats;
+
+  GtError *error = gt_error_new();
+  const char *refrfile = "data/gff3/grape-refr-mrnas.gff3";
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &refrfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  refrfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(gff3in, refrfeats, error);
+  int pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
+            "reference features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(refrfeats, (GtCompare)agn_genome_node_compare);
+
+  const char *predfile = "data/gff3/grape-pred-mrnas.gff3";
+  gff3in = gt_gff3_in_stream_new_unsorted(1, &predfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  predfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  arraystream = gt_array_out_stream_new(gff3in, predfeats, error);
+  pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
+            "prediction features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(predfeats, (GtCompare)agn_genome_node_compare);
+
+  gt_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
+
+  GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
+  GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
+  AgnLocus *locus = agn_locus_new("chr8");
+  agn_locus_add_refr_transcript(locus, refr);
+  agn_locus_add_pred_transcript(locus, pred);
+  gt_queue_add(queue, locus);
+  gt_genome_node_delete((GtGenomeNode *)refr);
+  gt_genome_node_delete((GtGenomeNode *)pred);
 }
 
 static GtArray *locus_transcript_neighbors(GtGenomeNode *gn, GtArray *trans)
