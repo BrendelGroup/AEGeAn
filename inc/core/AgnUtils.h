@@ -11,6 +11,12 @@
  */ //;
 
 /**
+ * @function Similar to ``gt_array_copy``, except that array elements are
+ * treated as pointers and dereferenced before being added to the new array.
+ */
+GtArray* agn_array_copy(GtArray *source, size_t size);
+
+/**
  * @function FIXME
  */
 double agn_calc_splice_complexity(GtArray *transcripts);

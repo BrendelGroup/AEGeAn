@@ -10,35 +10,50 @@
 //------------------------------------------------------------------------------
 
 /**
- * @function FIXME
- */
-static void locus_aggregate_stats_internal(AgnLocus *locus);
-
-/**
- * @function FIXME
+ * @function The Bron-Kerbosch algorithm is an algorithm for enumerating all
+ * maximal cliques in an undirected graph. See the `algorithm's Wikipedia entry
+ * <http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm>`_
+ * for a description of ``R``, ``P``, and ``X``. All maximal cliques will be
+ * stored in ``cliques``. If ``skipsimplecliques`` is true, cliques containing a
+ * single item will not be stored.
  */
 static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
-                                GtArray *cliques, bool skipsimplecliques);
+                                GtArray *cliques, AgnSequenceRegion *region,
+                                bool skipsimplecliques);
 
 /**
- * @function FIXME
+ * @function If reference transcripts belonging to the same locus overlap, they
+ * must be separated before comparison with prediction transcript models (and
+ * vice versa). This is an instance of the maximal clique enumeration problem
+ * (NP-complete), for which the Bron-Kerbosch algorithm provides a solution.
  */
-static GtArray *locus_enumerate_cliques(GtArray *trans);
+static GtArray *locus_enumerate_cliques(AgnLocus *locus, GtArray *trans);
 
 /**
- * @function FIXME
+ * @function Once all reference transcript cliques and prediction transcript
+ * cliques have been enumerated, this function enumerates every possible
+ * pairing of 1 reference clique and 1 prediction clique.
  */
 static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
                                       GtArray *predcliques);
 
 /**
- * @function FIXME
+ * @function Determine which clique pairs will actually be reported.
  */
 static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
                                GtArray *predcliques, GtArray *clique_pairs);
 
 /**
- * @function Test whether a transcript should be included.
+ * @function For a set of features, we can construct a graph where each node
+ * represents a feature and where two nodes are connected if the corresponding
+ * features do not overlap. This function returns the intersection of
+ * ``trans`` with the neighbors of ``gn`` (where a "neighbor" refers to an
+ * adjacent node).
+ */
+static GtArray *locus_transcript_neighbors(GtGenomeNode *gn, GtArray *trans);
+
+/**
+ * @function Test whether a transcript should be filtered.
  */
 static bool locus_transcript_source_test(AgnLocus *locus,
                                          GtFeatureNode *transcript,
@@ -178,10 +193,10 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
     return;
   }
   GtArray *refr_trans = agn_locus_refr_transcripts(locus);
-  GtArray *refrcliques = locus_enumerate_cliques(refr_trans);
+  GtArray *refrcliques = locus_enumerate_cliques(locus, refr_trans);
   gt_array_delete(refr_trans);
   GtArray *pred_trans = agn_locus_pred_transcripts(locus);
-  GtArray *predcliques = locus_enumerate_cliques(pred_trans);
+  GtArray *predcliques = locus_enumerate_cliques(locus, pred_trans);
   gt_array_delete(pred_trans);
 
   GtUword numpairs = gt_array_size(refrcliques) * gt_array_size(predcliques);
@@ -198,8 +213,6 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
   gt_array_delete(refrcliques);
   gt_array_delete(predcliques);
   gt_array_delete(clique_pairs);
-
-  locus_aggregate_stats_internal(locus);
 }
 
 int agn_locus_array_compare(const void *p1, const void *p2)
@@ -514,29 +527,120 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   return false;
 }
 
-static void locus_aggregate_stats_internal(AgnLocus *locus)
-{
-  // FIXME
-}
-
 static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
-                                GtArray *cliques, bool skipsimplecliques)
+                                GtArray *cliques, AgnSequenceRegion *region,
+                                bool skipsimplecliques)
 {
-  // FIXME
+  gt_assert(R != NULL && P != NULL && X != NULL && cliques != NULL);
+
+  if(gt_array_size(P) == 0 && gt_array_size(X) == 0)
+  {
+    if(skipsimplecliques == false || gt_array_size(R) != 1)
+    {
+      GtUword i;
+      AgnTranscriptClique *clique = agn_transcript_clique_new(region);
+      for(i = 0; i < gt_array_size(R); i++)
+      {
+        GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(R, i);
+        agn_transcript_clique_add(clique, transcript);
+      }
+      gt_array_add(cliques, clique);
+    }
+  }
+
+  while(gt_array_size(P) > 0)
+  {
+    GtGenomeNode *v = *(GtGenomeNode **)gt_array_get(P, 0);
+
+    // newR = R \union {v}
+    GtArray *newR = agn_array_copy(R, sizeof(GtGenomeNode *));
+    gt_array_add(newR, v);
+    // newP = P \intersect N(v)
+    GtArray *newP = locus_transcript_neighbors(v, P);
+    // newX = X \intersect N(v)
+    GtArray *newX = locus_transcript_neighbors(v, X);
+
+    // Recursive call
+    // locus_bron_kerbosch(R \union {v}, P \intersect N(v), X \intersect N(X))
+    locus_bron_kerbosch(newR, newP, newX, cliques, region, skipsimplecliques);
+
+    // Delete temporary arrays just created
+    gt_array_delete(newR);
+    gt_array_delete(newP);
+    gt_array_delete(newX);
+
+    // P := P \ {v}
+    gt_array_rem(P, 0);
+
+    // X := X \union {v}
+    gt_array_add(X, v);
+  }
 }
 
-static GtArray *locus_enumerate_cliques(GtArray *trans)
+static GtArray *locus_enumerate_cliques(AgnLocus *locus, GtArray *trans)
 {
-  // FIXME
-  locus_bron_kerbosch(NULL, NULL, NULL, NULL, false);
-  return NULL;
+  GtArray *cliques = gt_array_new( sizeof(GtArray *) );
+  GtUword numtrans = gt_array_size(trans);
+  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  GtRange range = gt_genome_node_get_range(locus);
+  AgnSequenceRegion region = { gt_str_get(seqid), range };
+
+  if(numtrans == 1)
+  {
+    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(trans, 0);
+    AgnTranscriptClique *clique = agn_transcript_clique_new(&region);
+    agn_transcript_clique_add(clique, fn);
+    gt_array_add(cliques, clique);
+  }
+  else
+  {
+    // First add each transcript as a clique, even if it is not a maximal clique
+    GtUword i;
+    for(i = 0; i < numtrans; i++)
+    {
+      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(trans, i);
+      AgnTranscriptClique *clique = agn_transcript_clique_new(&region);
+      agn_transcript_clique_add(clique, fn);
+      gt_array_add(cliques, clique);
+    }
+
+    // Then use the Bron-Kerbosch algorithm to find all maximal cliques
+    // containing >1 transcript
+    GtArray *R = gt_array_new( sizeof(GtGenomeNode *) );
+    GtArray *P = agn_array_copy(trans, sizeof(GtGenomeNode *));
+    GtArray *X = gt_array_new( sizeof(GtGenomeNode *) );
+
+    // Initial call: locus_bron_kerbosch(\emptyset, vertex_set, \emptyset )
+    locus_bron_kerbosch(R, P, X, cliques, &region, true);
+
+    gt_array_delete(R);
+    gt_array_delete(P);
+    gt_array_delete(X);
+  }
+
+  return cliques;
 }
 
 static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
                                       GtArray *predcliques)
 {
-  // FIXME
-  return NULL;
+  gt_assert(refrcliques != NULL && predcliques != NULL);
+
+  GtArray *clique_pairs = gt_array_new( sizeof(AgnCliquePair *) );
+  GtUword i,j;
+  for(i = 0; i < gt_array_size(refrcliques); i++)
+  {
+    AgnTranscriptClique *refr_clique, *pred_clique;
+    refr_clique = *(AgnTranscriptClique **)gt_array_get(refrcliques, i);
+    for(j = 0; j < gt_array_size(predcliques); j++)
+    {
+      pred_clique = *(AgnTranscriptClique**)gt_array_get(predcliques, j);
+      AgnCliquePair *pair = agn_clique_pair_new(refr_clique, pred_clique);
+      gt_array_add(clique_pairs, pair);
+    }
+  }
+
+  return clique_pairs;
 }
 
 static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
@@ -609,6 +713,24 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
 
   gt_hashmap_delete(refrcliques_acctd);
   gt_hashmap_delete(predcliques_acctd);
+}
+
+static GtArray *locus_transcript_neighbors(GtGenomeNode *gn, GtArray *trans)
+{
+  GtArray *neighbors = gt_array_new( sizeof(GtGenomeNode *) );
+  GtUword i;
+  for(i = 0; i < gt_array_size(trans); i++)
+  {
+    GtGenomeNode *other = *(GtGenomeNode **)gt_array_get(trans, i);
+    if(other != gn)
+    {
+      GtRange gn_range = gt_genome_node_get_range(gn);
+      GtRange other_range = gt_genome_node_get_range(other);
+      if(gt_range_overlap(&gn_range, &other_range) == false)
+        gt_array_add(neighbors, other);
+    }
+  }
+  return neighbors;
 }
 
 static bool locus_transcript_source_test(AgnLocus *locus,

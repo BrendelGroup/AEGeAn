@@ -361,6 +361,10 @@ Module AgnUtils
 
 Collection of assorted functions that are otherwise unrelated. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
 
+.. c:function:: GtArray* agn_array_copy(GtArray *source, size_t size)
+
+  Similar to ``gt_array_copy``, except that array elements are treated as pointers and dereferenced before being added to the new array.
+
 .. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
 
   FIXME
