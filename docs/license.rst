@@ -2,7 +2,7 @@ License
 =======
 .. code-block:: text
 
-    Copyright (c) 2010-2013, Daniel S. Standage and CONTRIBUTORS
+    Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
     
     Permission to use, copy, modify, and/or distribute this software for any
     purpose with or without fee is hereby granted, provided that the above
