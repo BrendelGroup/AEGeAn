@@ -483,7 +483,7 @@ static void clique_pair_test_data(GtQueue *queue)
 
   GtRange range = { 26493, 29591 };
   GtStr *seqid = gt_str_new_cstr("chr8");
-  AgnSequenceRegion region = { gt_str_get(seqid), range };
+  AgnSequenceRegion region = { seqid, range };
   GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
   AgnTranscriptClique *refrclique = agn_transcript_clique_new(&region);
   agn_transcript_clique_add(refrclique, pred);
