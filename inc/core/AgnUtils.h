@@ -2,6 +2,7 @@
 #define AGN_UTILS
 
 #include "core/array_api.h"
+#include "core/str_api.h"
 #include "extended/genome_node_api.h"
 
 /**
@@ -17,7 +18,7 @@
  */
 typedef struct
 {
-  char *seqid;
+  GtStr *seqid;
   GtRange range;
 } AgnSequenceRegion;
 

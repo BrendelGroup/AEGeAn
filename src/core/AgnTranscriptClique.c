@@ -125,7 +125,7 @@ AgnTranscriptClique *agn_transcript_clique_copy(AgnTranscriptClique *clique)
 {
   GtStr *seqid = gt_genome_node_get_seqid(clique);
   GtRange range = gt_genome_node_get_range(clique);
-  AgnSequenceRegion region = { gt_str_get(seqid), range };
+  AgnSequenceRegion region = { seqid, range };
   AgnTranscriptClique *newclique = agn_transcript_clique_new(&region);
   clique_traverse_direct(clique, (AgnCliqueVisitFunc)clique_copy, newclique);
   return newclique;
@@ -192,12 +192,10 @@ const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
 
 AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
 {
-  GtStr *seqid = gt_str_new_cstr(region->seqid);
-  AgnTranscriptClique *clique = gt_feature_node_new_pseudo(seqid,
+  AgnTranscriptClique *clique = gt_feature_node_new_pseudo(region->seqid,
                                                            region->range.start,
                                                            region->range.end,
                                                            GT_STRAND_BOTH);
-  gt_str_delete(seqid);
 
   GtUword length = gt_range_length(&region->range);
   char *modelvector = gt_malloc( sizeof(char) * (length + 1) );
@@ -354,7 +352,7 @@ static void clique_test_data(GtQueue *queue)
 
   GtStr *seqid = gt_str_new_cstr("sequence");
   GtRange range = { 1, 100 };
-  AgnSequenceRegion region = { gt_str_get(seqid), range };
+  AgnSequenceRegion region = { seqid, range };
 
   clique = agn_transcript_clique_new(&region);
   gn1 = gt_feature_node_new(seqid, "mRNA", 10, 90, GT_STRAND_FORWARD);

@@ -150,7 +150,7 @@ GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus);
 /**
  * @function Class constructor.
  */
-AgnLocus* agn_locus_new(const char *seqid);
+AgnLocus* agn_locus_new(GtStr *seqid);
 
 /**
  * @function Return the number of clique pairs to be reported for this locus.
