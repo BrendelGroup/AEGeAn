@@ -177,7 +177,7 @@ Class AgnLocus
 
   Get a list of all the reference transcript cliques that have no corresponding prediction transcript clique.
 
-.. c:function:: AgnLocus* agn_locus_new(const char *seqid)
+.. c:function:: AgnLocus* agn_locus_new(GtStr *seqid)
 
   Class constructor.
 

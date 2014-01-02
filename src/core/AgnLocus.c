@@ -1,3 +1,4 @@
+#include <math.h>
 #include <string.h>
 #include "core/array_api.h"
 #include "extended/feature_node_iterator_api.h"
@@ -561,7 +562,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   locus_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 1);
+  gt_assert(gt_queue_size(queue) == 2);
 
   GtLogger *logger = gt_logger_new(true, "", stderr);
 
@@ -570,15 +571,26 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   AgnComparison stats;
   agn_comparison_init(&stats);
   agn_locus_comparison_aggregate(locus, &stats);
+  agn_comparison_resolve(&stats);
   bool grapetest1 = stats.cds_struc_stats.correct == 12 &&
                     stats.cds_struc_stats.missing == 0  &&
                     stats.cds_struc_stats.wrong   == 0;
   agn_unit_test_result(test, "grape test 1", grapetest1);
   agn_locus_delete(locus);
 
+  locus = gt_queue_get(queue);
+  agn_locus_comparative_analysis(locus, 0, 0, logger);
+  agn_comparison_init(&stats);
+  agn_locus_comparison_aggregate(locus, &stats);
+  agn_comparison_resolve(&stats);
+  bool grapetest2 = fabs(stats.cds_nuc_stats.cc - 0.43997) < 0.000001 &&
+                    fabs(stats.utr_nuc_stats.cc - 0.67762) < 0.000001;
+  agn_unit_test_result(test, "grape test 2", grapetest2);
+  agn_locus_delete(locus);
+
   gt_logger_delete(logger);
   gt_queue_delete(queue);
-  return grapetest1;
+  return grapetest1 && grapetest2;
 }
 
 static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
@@ -739,6 +751,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
   gt_genome_node_add_user_data(locus,"pairs2report",gt_array_ref(pairs2report),
                                (GtFree)locus_clique_array_delete);
   gt_array_delete(pairs2report);
+  agn_comparison_resolve(stats);
 
   GtArray *uniqrefr = gt_array_new( sizeof(AgnTranscriptClique *) );
   for(i = 0; i < gt_array_size(refrcliques); i++)
@@ -828,6 +841,13 @@ static void locus_test_data(GtQueue *queue)
   GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
   GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
   AgnLocus *locus = agn_locus_new(seqid);
+  agn_locus_add_refr_transcript(locus, refr);
+  agn_locus_add_pred_transcript(locus, pred);
+  gt_queue_add(queue, locus);
+
+  refr = *(GtFeatureNode **)gt_array_get(refrfeats, 9);
+  pred = *(GtFeatureNode **)gt_array_get(predfeats, 11);
+  locus = agn_locus_new(seqid);
   agn_locus_add_refr_transcript(locus, refr);
   agn_locus_add_pred_transcript(locus, pred);
   gt_queue_add(queue, locus);
