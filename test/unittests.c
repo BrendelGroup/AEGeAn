@@ -1,6 +1,7 @@
 #include <string.h>
 #include "AgnCliquePair.h"
 #include "AgnFilterStream.h"
+#include "AgnInferCDSVisitor.h"
 #include "AgnLocus.h"
 #include "AgnTranscriptClique.h"
 
@@ -18,6 +19,8 @@ int main(int argc, char **argv)
                                         agn_locus_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnFilterStream",
                                         agn_filter_stream_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnInferCDSVisitor",
+                                        agn_infer_cds_visitor_unit_test));
 
   while(gt_queue_size(tests) > 0)
   {

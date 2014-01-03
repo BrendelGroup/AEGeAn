@@ -157,6 +157,25 @@ Class AgnFilterStream
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnInferCDSVisitor
+------------------------
+
+.. c:type:: AgnInferCDSVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_infer_cds_visitor_new(GtLogger *logger)
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnLocus
 --------------
 
