@@ -566,25 +566,113 @@ bool agn_locus_unit_test(AgnUnitTest *test)
 
   GtLogger *logger = gt_logger_new(true, "", stderr);
 
+  AgnComparison c;
+  c.cds_nuc_stats.tp = 870;
+  c.cds_nuc_stats.fn = 0;
+  c.cds_nuc_stats.fp = 0;
+  c.cds_nuc_stats.tn = 2240;
+  c.cds_nuc_stats.mc = 1.0;
+  c.cds_nuc_stats.cc = 1.0;
+  c.cds_nuc_stats.sn = 1.0;
+  c.cds_nuc_stats.sp = 1.0;
+  c.cds_nuc_stats.f1 = 1.0;
+  c.cds_nuc_stats.ed = 0.0;
+  c.utr_nuc_stats.tp = 337;
+  c.utr_nuc_stats.fn = 11;
+  c.utr_nuc_stats.fp = 131;
+  c.utr_nuc_stats.tn = 2631;
+  c.utr_nuc_stats.mc = 0.954341;
+  c.utr_nuc_stats.cc = 0.811995;
+  c.utr_nuc_stats.sn = 0.968391;
+  c.utr_nuc_stats.sp = 0.952571;
+  c.utr_nuc_stats.f1 = 0.825980;
+  c.utr_nuc_stats.ed = 0.039519;
+  c.cds_struc_stats.correct = 12;
+  c.cds_struc_stats.missing = 0;
+  c.cds_struc_stats.wrong   = 0;
+  c.cds_struc_stats.sn = 1.0;
+  c.cds_struc_stats.sp = 1.0;
+  c.cds_struc_stats.f1 = 1.0;
+  c.cds_struc_stats.ed = 0.0;
+  c.exon_struc_stats.correct = 10;
+  c.exon_struc_stats.missing = 2;
+  c.exon_struc_stats.wrong   = 2;
+  c.exon_struc_stats.sn = 0.833333;
+  c.exon_struc_stats.sp = 0.833333;
+  c.exon_struc_stats.f1 = 0.833333;
+  c.exon_struc_stats.ed = 0.166667;
+  c.utr_struc_stats.correct = 0;
+  c.utr_struc_stats.missing = 1;
+  c.utr_struc_stats.wrong   = 2;
+  c.utr_struc_stats.sn = 0.0;
+  c.utr_struc_stats.sp = 0.0;
+  c.utr_struc_stats.f1 = 0 / (c.utr_nuc_stats.f1-c.utr_nuc_stats.f1);
+  c.utr_struc_stats.ed = 1.0;
+  c.overall_matches = 2968;
+  c.overall_length  = 3110;
+
   AgnLocus *locus = gt_queue_get(queue);
   agn_locus_comparative_analysis(locus, 0, 0, logger);
   AgnComparison stats;
   agn_comparison_init(&stats);
   agn_locus_comparison_aggregate(locus, &stats);
   agn_comparison_resolve(&stats);
-  bool grapetest1 = stats.cds_struc_stats.correct == 12 &&
-                    stats.cds_struc_stats.missing == 0  &&
-                    stats.cds_struc_stats.wrong   == 0;
+  bool grapetest1 = agn_comparison_test(&stats, &c);
   agn_unit_test_result(test, "grape test 1", grapetest1);
   agn_locus_delete(locus);
+
+  
+  
+  c.cds_nuc_stats.tp = 379;
+  c.cds_nuc_stats.fn = 194;
+  c.cds_nuc_stats.fp = 506;
+  c.cds_nuc_stats.tn = 3147;
+  c.cds_nuc_stats.mc = 0.834359;
+  c.cds_nuc_stats.cc = 0.439970;
+  c.cds_nuc_stats.sn = 0.661431;
+  c.cds_nuc_stats.sp = 0.861484;
+  c.cds_nuc_stats.f1 = 0.519890;
+  c.cds_nuc_stats.ed = 0.238543;
+  c.utr_nuc_stats.tp = 102;
+  c.utr_nuc_stats.fn = 0;
+  c.utr_nuc_stats.fp = 114;
+  c.utr_nuc_stats.tn = 4010;
+  c.utr_nuc_stats.mc = 0.973024;
+  c.utr_nuc_stats.cc = 0.677620;
+  c.utr_nuc_stats.sn = 1.0;
+  c.utr_nuc_stats.sp = 0.972357;
+  c.utr_nuc_stats.f1 = 0.641509;
+  c.utr_nuc_stats.ed = 0.013822;
+  c.cds_struc_stats.correct = 0;
+  c.cds_struc_stats.missing = 4;
+  c.cds_struc_stats.wrong   = 1;
+  c.cds_struc_stats.sn = 0.0;
+  c.cds_struc_stats.sp = 0.0;
+  c.cds_struc_stats.f1 = 0 / (c.utr_nuc_stats.f1-c.utr_nuc_stats.f1);
+  c.cds_struc_stats.ed = 1.0;
+  c.exon_struc_stats.correct = 2;
+  c.exon_struc_stats.missing = 3;
+  c.exon_struc_stats.wrong   = 1;
+  c.exon_struc_stats.sn = 0.400000;
+  c.exon_struc_stats.sp = 0.666667;
+  c.exon_struc_stats.f1 = 0.500000;
+  c.exon_struc_stats.ed = 0.466667;
+  c.utr_struc_stats.correct = 1;
+  c.utr_struc_stats.missing = 1;
+  c.utr_struc_stats.wrong   = 2;
+  c.utr_struc_stats.sn = 0.500000;
+  c.utr_struc_stats.sp = 0.333333;
+  c.utr_struc_stats.f1 = 0.400000;
+  c.utr_struc_stats.ed = 0.583333;
+  c.overall_matches = 3379;
+  c.overall_length  = 4226;
 
   locus = gt_queue_get(queue);
   agn_locus_comparative_analysis(locus, 0, 0, logger);
   agn_comparison_init(&stats);
   agn_locus_comparison_aggregate(locus, &stats);
   agn_comparison_resolve(&stats);
-  bool grapetest2 = fabs(stats.cds_nuc_stats.cc - 0.43997) < 0.000001 &&
-                    fabs(stats.utr_nuc_stats.cc - 0.67762) < 0.000001;
+  bool grapetest2 = agn_comparison_test(&stats, &c);
   agn_unit_test_result(test, "grape test 2", grapetest2);
   agn_locus_delete(locus);
 

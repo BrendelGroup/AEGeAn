@@ -1,6 +1,8 @@
 #ifndef AEGEAN_COMPARISON
 #define AEGEAN_COMPARISON
 
+#include <stdbool.h>
+#include <stdio.h>
 #include "core/types_api.h"
 
 /**
@@ -107,9 +109,20 @@ void agn_comparison_aggregate(AgnComparison *agg_cmp, AgnComparison *cmp);
 void agn_comparison_init(AgnComparison *comparison);
 
 /**
+ * @function Print the comparison stats to the given file.
+ */
+void agn_comparison_print(AgnComparison *stats, FILE *outstream);
+
+/**
  * @function Calculate stats from the given counts.
  */
 void agn_comparison_resolve(AgnComparison *comparison);
+
+/**
+ * @function Returns true if c1 and c2 contain identical values, false
+ * otherwise.
+ */
+bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2);
 
 /**
  * @function Function used to combine similarity stats from many different
@@ -124,9 +137,20 @@ void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *agg_stats,
 void agn_comp_stats_binary_init(AgnCompStatsBinary *stats);
 
 /**
+ * @function Print the comparison stats to the given file.
+ */
+void agn_comp_stats_binary_print(AgnCompStatsBinary *stats, FILE *outstream);
+
+/**
  * @function Calculate stats from the given counts.
  */
 void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats);
+
+/**
+ * @function Returns true if s1 and s2 contain identical values, false
+ * otherwise.
+ */
+bool agn_comp_stats_binary_test(AgnCompStatsBinary *s1, AgnCompStatsBinary *s2);
 
 /**
  * @function Function used to combine similarity stats from many different
@@ -141,8 +165,19 @@ void agn_comp_stats_scaled_aggregate(AgnCompStatsScaled *agg_stats,
 void agn_comp_stats_scaled_init(AgnCompStatsScaled *stats);
 
 /**
+ * @function Print the comparison stats to the given file.
+ */
+void agn_comp_stats_scaled_print(AgnCompStatsScaled *stats, FILE *outstream);
+
+/**
  * @function Calculate stats from the given counts.
  */
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats);
+
+/**
+ * @function Returns true if s1 and s2 contain identical values, false
+ * otherwise.
+ */
+bool agn_comp_stats_scaled_test(AgnCompStatsScaled *s1, AgnCompStatsScaled *s2);
 
 #endif

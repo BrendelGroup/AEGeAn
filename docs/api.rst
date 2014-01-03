@@ -90,9 +90,17 @@ Data structures and functions related to comparative assessment of gene/transcri
 
   Initialize comparison stats to default values.
 
+.. c:function:: void agn_comparison_print(AgnComparison *stats, FILE *outstream)
+
+  Print the comparison stats to the given file.
+
 .. c:function:: void agn_comparison_resolve(AgnComparison *comparison)
 
   Calculate stats from the given counts.
+
+.. c:function:: bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2)
+
+  Returns true if c1 and c2 contain identical values, false otherwise.
 
 .. c:function:: void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *agg_stats, AgnCompStatsBinary *stats)
 
@@ -102,9 +110,17 @@ Data structures and functions related to comparative assessment of gene/transcri
 
   Initialize comparison counts/stats to default values.
 
+.. c:function:: void agn_comp_stats_binary_print(AgnCompStatsBinary *stats, FILE *outstream)
+
+  Print the comparison stats to the given file.
+
 .. c:function:: void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
 
   Calculate stats from the given counts.
+
+.. c:function:: bool agn_comp_stats_binary_test(AgnCompStatsBinary *s1, AgnCompStatsBinary *s2)
+
+  Returns true if s1 and s2 contain identical values, false otherwise.
 
 .. c:function:: void agn_comp_stats_scaled_aggregate(AgnCompStatsScaled *agg_stats, AgnCompStatsScaled *stats)
 
@@ -114,9 +130,17 @@ Data structures and functions related to comparative assessment of gene/transcri
 
   Initialize comparison counts/stats to default values.
 
+.. c:function:: void agn_comp_stats_scaled_print(AgnCompStatsScaled *stats, FILE *outstream)
+
+  Print the comparison stats to the given file.
+
 .. c:function:: void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
 
   Calculate stats from the given counts.
+
+.. c:function:: bool agn_comp_stats_scaled_test(AgnCompStatsScaled *s1, AgnCompStatsScaled *s2)
+
+  Returns true if s1 and s2 contain identical values, false otherwise.
 
 Class AgnLocus
 --------------

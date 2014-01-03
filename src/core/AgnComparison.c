@@ -25,6 +25,22 @@ void agn_comparison_init(AgnComparison *comparison)
   comparison->overall_length   = 0;
 }
 
+void agn_comparison_print(AgnComparison *stats, FILE *outstream)
+{
+  fprintf(outstream, "CDS nucleotide stats: ");
+  agn_comp_stats_scaled_print(&stats->cds_nuc_stats, outstream);
+  fprintf(outstream, "UTR nucleotide stats: ");
+  agn_comp_stats_scaled_print(&stats->utr_nuc_stats, outstream);
+  fprintf(outstream, "CDS structure stats: ");
+  agn_comp_stats_binary_print(&stats->cds_struc_stats, outstream);
+  fprintf(outstream, "exon structure stats: ");
+  agn_comp_stats_binary_print(&stats->exon_struc_stats, outstream);
+  fprintf(outstream, "UTR structure stats: ");
+  agn_comp_stats_binary_print(&stats->utr_struc_stats, outstream);
+  fprintf(outstream, "Overall matches: %lu, overall length: %lu\n",
+          stats->overall_matches, stats->overall_length);
+}
+
 void agn_comparison_resolve(AgnComparison *comparison)
 {
   agn_comp_stats_scaled_resolve(&comparison->cds_nuc_stats);
@@ -32,6 +48,15 @@ void agn_comparison_resolve(AgnComparison *comparison)
   agn_comp_stats_binary_resolve(&comparison->cds_struc_stats);
   agn_comp_stats_binary_resolve(&comparison->exon_struc_stats);
   agn_comp_stats_binary_resolve(&comparison->utr_struc_stats);
+}
+
+bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2)
+{
+  return agn_comp_stats_scaled_test(&c1->cds_nuc_stats, &c2->cds_nuc_stats) &&
+         agn_comp_stats_scaled_test(&c1->utr_nuc_stats, &c2->utr_nuc_stats) &&
+     agn_comp_stats_binary_test(&c1->cds_struc_stats, &c2->cds_struc_stats) &&
+     agn_comp_stats_binary_test(&c1->exon_struc_stats, &c2->exon_struc_stats) &&
+     agn_comp_stats_binary_test(&c1->utr_struc_stats, &c2->utr_struc_stats);
 }
 
 void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *a,
@@ -51,6 +76,13 @@ void agn_comp_stats_binary_init(AgnCompStatsBinary *stats)
   stats->sp      = 0.0;
   stats->f1      = 0.0;
   stats->ed      = 0.0;
+}
+
+void agn_comp_stats_binary_print(AgnCompStatsBinary *stats, FILE *outstream)
+{
+  fprintf(outstream, "%lu, %lu, %lu, %.6lf, %.6lf, %.6lf, %.6lf\n",
+          stats->correct, stats->missing, stats->wrong, stats->sn, stats->sp,
+          stats->f1, stats->ed);
 }
 
 void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
@@ -91,6 +123,17 @@ void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
     sprintf(stats->eds, "%.3lf", stats->ed);
 }
 
+bool agn_comp_stats_binary_test(AgnCompStatsBinary *s1, AgnCompStatsBinary *s2)
+{
+  bool counts = s1->correct == s2->correct && s1->missing == s2->missing &&
+                s1->wrong == s2->wrong;
+  bool sn = (isnan(s1->sn) && isnan(s2->sn)) || fabs(s1->sn - s2->sn) < 0.0001;
+  bool sp = (isnan(s1->sp) && isnan(s2->sp)) || fabs(s1->sp - s2->sp) < 0.0001;
+  bool f1 = (isnan(s1->f1) && isnan(s2->f1)) || fabs(s1->f1 - s2->f1) < 0.0001;
+  bool ed = (isnan(s1->ed) && isnan(s2->ed)) || fabs(s1->ed - s2->ed) < 0.0001;
+  return counts && sn && sp && f1 && ed;
+}
+
 void agn_comp_stats_scaled_aggregate(AgnCompStatsScaled *a,
                                      AgnCompStatsScaled *b)
 {
@@ -112,6 +155,13 @@ void agn_comp_stats_scaled_init(AgnCompStatsScaled *stats)
   stats->sp = 0.0;
   stats->f1 = 0.0;
   stats->ed = 0.0;
+}
+
+void agn_comp_stats_scaled_print(AgnCompStatsScaled *stats, FILE *outstream)
+{
+  fprintf(outstream, "%lu, %lu, %lu, %lu, %.6lf, %.6lf, %.6lf, %.6lf, %.6lf, "
+          "%.6lf\n", stats->tp, stats->fn, stats->fp, stats->tn, stats->mc,
+          stats->cc, stats->sn, stats->sp, stats->f1, stats->ed);
 }
 
 void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
@@ -165,4 +215,17 @@ void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
     sprintf(stats->eds, "--");
   else
     sprintf(stats->eds, "%.3lf", stats->ed);
+}
+
+bool agn_comp_stats_scaled_test(AgnCompStatsScaled *s1, AgnCompStatsScaled *s2)
+{
+  bool counts = s1->tp == s2->tp && s1->fn == s2->fn && s1->fp == s2->fp &&
+                s1->tn == s2->tn;
+  bool mc = (isnan(s1->mc) && isnan(s2->mc)) || fabs(s1->mc - s2->mc) < 0.0001;
+  bool cc = (isnan(s1->cc) && isnan(s2->cc)) || fabs(s1->cc - s2->cc) < 0.0001;
+  bool sn = (isnan(s1->sn) && isnan(s2->sn)) || fabs(s1->sn - s2->sn) < 0.0001;
+  bool sp = (isnan(s1->sp) && isnan(s2->sp)) || fabs(s1->sp - s2->sp) < 0.0001;
+  bool f1 = (isnan(s1->f1) && isnan(s2->f1)) || fabs(s1->f1 - s2->f1) < 0.0001;
+  bool ed = (isnan(s1->ed) && isnan(s2->ed)) || fabs(s1->ed - s2->ed) < 0.0001;
+  return counts && mc && cc && sn && sp && f1 && ed;
 }
