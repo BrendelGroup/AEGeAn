@@ -39,11 +39,11 @@ Class AgnCliquePair
 
 .. c:function:: AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair)
 
-  FIXME
+  Return a pointer to the prediction annotation from this pair.
 
 .. c:function:: AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair)
 
-  FIXME
+  Return a pointer to the reference annotation from this pair.
 
 .. c:function:: AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr, AgnTranscriptClique *pred)
 
@@ -397,7 +397,7 @@ Collection of assorted functions that are otherwise unrelated. See the `module h
 
 .. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
 
-  FIXME
+  Determine the splice complexity of the given set of transcripts.
 
 .. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 

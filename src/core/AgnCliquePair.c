@@ -44,7 +44,8 @@ typedef struct
 static void clique_pair_calc_struct_stats(StructuralData *dat);
 
 /**
- * @function FIXME
+ * @function Compare this pair of annotations at the nucleotide level and at the
+ * structural level, recording relevant similarity statistics.
  */
 static void clique_pair_comparative_analysis(AgnCliquePair *pair);
 

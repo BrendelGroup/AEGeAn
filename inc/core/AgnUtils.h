@@ -31,7 +31,7 @@ typedef struct AgnSequenceRegion AgnSequenceRegion;
 GtArray* agn_array_copy(GtArray *source, size_t size);
 
 /**
- * @function FIXME
+ * @function Determine the splice complexity of the given set of transcripts.
  */
 double agn_calc_splice_complexity(GtArray *transcripts);
 

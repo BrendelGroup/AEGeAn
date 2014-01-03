@@ -50,12 +50,12 @@ int agn_clique_pair_compare_reverse(void *p1, void *p2);
 void agn_clique_pair_delete(AgnCliquePair *pair);
 
 /**
- * @function FIXME
+ * @function Return a pointer to the prediction annotation from this pair.
  */
 AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair);
 
 /**
- * @function FIXME
+ * @function Return a pointer to the reference annotation from this pair.
  */
 AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair);
 

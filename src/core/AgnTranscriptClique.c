@@ -456,7 +456,6 @@ static void clique_to_gff3(GtFeatureNode *fn, GtNodeVisitor *nv)
   gt_genome_node_accept((GtGenomeNode *)fn, visitor, error);
   if(gt_error_is_set(error))
   {
-    // FIXME It would be onerous to introduce a logger here
     fprintf(stderr, "error with GFF3 output: %s\n", gt_error_get(error));
   }
   gt_error_delete(error);

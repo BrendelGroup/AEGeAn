@@ -23,7 +23,9 @@ static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
                                 bool skipsimplecliques);
 
 /**
- * @function FIXME
+ * @function ``GtFree`` function: treats each entry in the array as an
+ * ``AgnCliquePair **``, dereferences & deletes each entry, and deletes the
+ * array.
  */
 static void locus_clique_array_delete(GtArray *array);
 
