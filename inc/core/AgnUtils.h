@@ -16,11 +16,12 @@
  * @type This data structure combines sequence coordinates with a sequence ID to
  * facilitate their usage together.
  */
-typedef struct
+struct AgnSequenceRegion
 {
   GtStr *seqid;
   GtRange range;
-} AgnSequenceRegion;
+};
+typedef struct AgnSequenceRegion AgnSequenceRegion;
 
 
 /**

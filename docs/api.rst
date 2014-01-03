@@ -385,7 +385,7 @@ Module AgnUtils
 
 Collection of assorted functions that are otherwise unrelated. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
 
-.. c:type:: 
+.. c:type:: AgnSequenceRegion
 
   This data structure combines sequence coordinates with a sequence ID to facilitate their usage together.
 
