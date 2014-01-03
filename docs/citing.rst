@@ -2,7 +2,7 @@ Citing AEGeAn
 =============
 Use the following if you want to cite the AEGeAn Toolkit as a whole.
 
-* **Daniel S. Standage** (2010-2013). AEGeAn: an integrated toolkit for analysis
+* **Daniel S. Standage** (2010-2014). AEGeAn: an integrated toolkit for analysis
   and evaluation of annotated genomes, https://github.com/standage/AEGeAn.
 
 ParsEval was intially developed as an independent tool and published on its own.
