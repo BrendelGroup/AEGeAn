@@ -30,6 +30,23 @@ bool agn_typecheck_intron(GtFeatureNode *fn);
 bool agn_typecheck_mrna(GtFeatureNode *fn);
 
 /**
+ * @function Gather the children of a given feature that have a certain type.
+ * Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
+ */
+GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *));
+
+/**
+ * @function Returns true if the given feature is a start codon; false
+ * otherwise.
+ */
+bool agn_typecheck_start_codon(GtFeatureNode *fn);
+
+/**
+ * @function Returns true if the given feature is a stop codon; false otherwise.
+ */
+bool agn_typecheck_stop_codon(GtFeatureNode *fn);
+
+/**
  * @function Returns true if the given feature is an mRNA, tRNA, or rRNA; false
  * otherwise.
  */

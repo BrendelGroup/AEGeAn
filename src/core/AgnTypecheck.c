@@ -1,4 +1,6 @@
+#include "extended/feature_node_iterator_api.h"
 #include "AgnTypecheck.h"
+#include "AgnUtils.h"
 
 bool agn_typecheck_cds(GtFeatureNode *fn)
 {
@@ -18,10 +20,41 @@ bool agn_typecheck_intron(GtFeatureNode *fn)
 }
 
 bool agn_typecheck_mrna(GtFeatureNode *fn)
-{
+{ 
   return gt_feature_node_has_type(fn, "mRNA") ||
          gt_feature_node_has_type(fn, "messenger RNA") ||
          gt_feature_node_has_type(fn, "messenger_RNA");
+}
+
+GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+{
+  GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *current;
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
+  {
+    if(func(current))
+      gt_array_add(children, current);
+  }
+  gt_feature_node_iterator_delete(iter);
+  gt_array_sort(children, (GtCompare)agn_genome_node_compare);
+  return children;
+}
+
+bool agn_typecheck_start_codon(GtFeatureNode *fn)
+{
+  return gt_feature_node_has_type(fn, "start_codon") ||
+         gt_feature_node_has_type(fn, "start codon") ||
+         gt_feature_node_has_type(fn, "initiation codon");
+}
+
+bool agn_typecheck_stop_codon(GtFeatureNode *fn)
+{
+  return gt_feature_node_has_type(fn, "stop_codon") ||
+         gt_feature_node_has_type(fn, "stop codon");
+         // What about 'termination codon'?
 }
 
 bool agn_typecheck_transcript(GtFeatureNode *fn)

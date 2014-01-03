@@ -371,6 +371,18 @@ Functions for testing feature types. See the `module header <https://github.com/
 
   Returns true if the given feature is an mRNA; false otherwise.
 
+.. c:function:: GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+
+  Gather the children of a given feature that have a certain type. Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
+
+.. c:function:: bool agn_typecheck_start_codon(GtFeatureNode *fn)
+
+  Returns true if the given feature is a start codon; false otherwise.
+
+.. c:function:: bool agn_typecheck_stop_codon(GtFeatureNode *fn)
+
+  Returns true if the given feature is a stop codon; false otherwise.
+
 .. c:function:: bool agn_typecheck_transcript(GtFeatureNode *fn)
 
   Returns true if the given feature is an mRNA, tRNA, or rRNA; false otherwise.
