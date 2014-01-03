@@ -142,6 +142,21 @@ Data structures and functions related to comparative assessment of gene/transcri
 
   Returns true if s1 and s2 contain identical values, false otherwise.
 
+Class AgnFilterStream
+---------------------
+
+.. c:type:: AgnFilterStream
+
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
+
+  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
+
+.. c:function:: bool agn_filter_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnLocus
 --------------
 

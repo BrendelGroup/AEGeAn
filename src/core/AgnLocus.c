@@ -902,8 +902,8 @@ static void locus_test_data(GtQueue *queue)
   int pullresult = gt_node_stream_pull(arraystream, error);
   if(pullresult == -1)
   {
-    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
-            "reference features: %s\n", gt_error_get(error));
+    fprintf(stderr, "[AgnLocus::locus_test_data] error processing reference "
+            "features: %s\n", gt_error_get(error));
   }
   gt_node_stream_delete(gff3in);
   gt_node_stream_delete(arraystream);
@@ -918,8 +918,8 @@ static void locus_test_data(GtQueue *queue)
   pullresult = gt_node_stream_pull(arraystream, error);
   if(pullresult == -1)
   {
-    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
-            "prediction features: %s\n", gt_error_get(error));
+    fprintf(stderr, "[AgnLocus::locus_test_data] error processing prediction "
+            "features: %s\n", gt_error_get(error));
   }
   gt_node_stream_delete(gff3in);
   gt_node_stream_delete(arraystream);
