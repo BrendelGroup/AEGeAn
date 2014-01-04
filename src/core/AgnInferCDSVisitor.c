@@ -1,6 +1,8 @@
 #include "core/array_api.h"
+#include "AgnFilterStream.h"
 #include "AgnInferCDSVisitor.h"
 #include "AgnTypecheck.h"
+#include "AgnUtils.h"
 
 #define infer_cds_visitor_cast(GV)\
         gt_node_visitor_cast(infer_cds_visitor_class(), GV)
@@ -85,6 +87,11 @@ static bool infer_cds_visitor_infer_range(GtRange *exon_range,
 static void infer_cds_visitor_infer_utrs(AgnInferCDSVisitor *v);
 
 /**
+ * @function Generate data for unit testing.
+ */
+static void infer_cds_visitor_test_data(GtQueue *queue);
+
+/**
  * @function Identify any mRNA subfeatures associated with this top-level
  * feature and apply the CDS inference procedure.
  */
@@ -116,7 +123,30 @@ GtNodeVisitor *agn_infer_cds_visitor_new(GtLogger *logger)
 
 bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
 {
-  return false;
+  GtQueue *queue = gt_queue_new();
+  infer_cds_visitor_test_data(queue);
+  gt_assert(gt_queue_size(queue) == 4);
+
+  GtFeatureNode *fn = gt_queue_get(queue);
+  GtArray *cds = agn_typecheck_select(fn, agn_typecheck_cds);
+  bool grape1 = (gt_array_size(cds) == 4);
+  if(grape1)
+  {
+    GtGenomeNode *cds2 = *(GtGenomeNode **)gt_array_get(cds, 1);
+    GtRange range = gt_genome_node_get_range(cds2);
+    grape1 = (range.start == 349 && range.end == 522);
+  }
+  agn_unit_test_result(test, "grape test 1", grape1);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(cds);
+
+  while(gt_queue_size(queue) > 0)
+  {
+    GtGenomeNode *cds_n = gt_queue_get(queue);
+    gt_genome_node_delete(cds_n);
+  }
+  gt_queue_delete(queue);
+  return grape1;
 }
 
 static void infer_cds_visitor_check_cds_multi(AgnInferCDSVisitor *v)
@@ -435,6 +465,38 @@ static void infer_cds_visitor_infer_utrs(AgnInferCDSVisitor *v)
       gt_array_add(v->utrs, utr);
     }
   }
+}
+
+static void infer_cds_visitor_test_data(GtQueue *queue)
+{
+  GtError *error = gt_error_new();
+  const char *file = "data/gff3/grape-codons.gff3";
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &file);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  GtLogger *logger = gt_logger_new(true, "", stderr);
+  GtNodeStream *icv_stream = agn_infer_cds_stream_new(gff3in, logger);
+  GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(icv_stream, feats, error);
+  int pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnInferCDSVisitor::infer_cds_visitor_test_data] error "
+            "processing features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(icv_stream);
+  gt_node_stream_delete(arraystream);
+  gt_logger_delete(logger);
+  gt_array_sort(feats, (GtCompare)agn_genome_node_compare);
+  gt_array_reverse(feats);
+  while(gt_array_size(feats) > 0)
+  {
+    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(feats);
+    gt_queue_add(queue, fn);
+  }
+  gt_array_delete(feats);
+  gt_error_delete(error);
 }
 
 static int infer_cds_visitor_visit_feature_node(GtNodeVisitor *nv,
