@@ -4,6 +4,7 @@
 #include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
 #include "AgnLocus.h"
+#include "AgnLocusStream.h"
 #include "AgnTranscriptClique.h"
 #include "AgnTranscriptStream.h"
 
@@ -27,6 +28,8 @@ int main(int argc, char **argv)
                                         agn_infer_exons_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnTranscriptStream",
                                         agn_transcript_stream_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnLocusStream",
+                                        agn_locus_stream_unit_test));
 
   while(gt_queue_size(tests) > 0)
   {

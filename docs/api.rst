@@ -294,6 +294,25 @@ Class AgnLocus
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnLocusStream
+--------------------
+
+.. c:type:: AgnLocusStream
+
+  Implements the ``GtNodeStream`` interface. The only feature nodes delivered by this stream have type ``locus``, and the only direct children of these features are transcript features (of types mRNA, rRNA, or tRNA) present in the input stream. Any overlapping transcripts are children of the same locus feature. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusStream.h>`_.
+
+.. c:function:: GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
+
+  This constructor searches the complete feature graph of each feature node in the input stream for transcript features.
+
+.. c:function:: GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream, GtNodeStream *pred_stream, GtLogger *logger)
+
+  This constructor accepts two :c:type:`AgnTranscriptStream` objects as input. Locus features are created as per the class description, with additional data stored to track the source (reference vs prediction) of each transcript in each locus.
+
+.. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnTranscriptClique
 -------------------------
 
