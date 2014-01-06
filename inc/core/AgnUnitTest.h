@@ -32,6 +32,12 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream);
 void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success);
 
 /**
+ * @function Returns true if all the results checked with this unit test passed,
+ * false otherwise.
+ */
+bool agn_unit_test_success(AgnUnitTest *test);
+
+/**
  * @function Run the unit test.
  */
 void agn_unit_test_run(AgnUnitTest *test);

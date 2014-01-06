@@ -308,7 +308,7 @@ bool agn_transcript_clique_unit_test(AgnUnitTest *test)
   gt_array_delete(copy_feats);
 
   gt_queue_delete(queue);
-  return simplecheck && twomrnacheck && copycheck;
+  return agn_unit_test_success(test);
 }
 
 static void clique_cds_length(GtFeatureNode *fn, GtWord *length)

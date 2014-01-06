@@ -72,6 +72,19 @@ void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success)
   gt_array_add(test->results, result);
 }
 
+bool agn_unit_test_success(AgnUnitTest *test)
+{
+  gt_assert(gt_array_size(test->results) > 0);
+  GtUword i;
+  for(i = 0; i < gt_array_size(test->results); i++)
+  {
+    UnitTestResult *result = gt_array_get(test->results, i);
+    if(!result->success)
+      return false;
+  }
+  return true;
+}
+
 void agn_unit_test_run(AgnUnitTest *test)
 {
   test->passed = test->testfunc(test);

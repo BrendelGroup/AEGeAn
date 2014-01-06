@@ -680,7 +680,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
 
   gt_logger_delete(logger);
   gt_queue_delete(queue);
-  return grapetest1 && grapetest2;
+  return agn_unit_test_success(test);
 }
 
 static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,

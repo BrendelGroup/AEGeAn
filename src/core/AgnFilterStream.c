@@ -258,7 +258,7 @@ bool agn_filter_stream_unit_test(AgnUnitTest *test)
 
   gt_error_delete(error);
   gt_queue_delete(queue);
-  return test1 && test2 && test3 && test4;
+  return agn_unit_test_success(test);
 }
 
 static void filter_stream_test_data(GtQueue *queue)

@@ -187,7 +187,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
     gt_genome_node_delete(cds_n);
   }
   gt_queue_delete(queue);
-  return grape1 && grape2 && grape3 && grape4;
+  return agn_unit_test_success(test);
 }
 
 static void infer_cds_visitor_check_cds_multi(AgnInferCDSVisitor *v)

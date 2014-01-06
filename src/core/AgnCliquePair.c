@@ -262,7 +262,7 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
   agn_clique_pair_delete(pair);
 
   gt_queue_delete(pairs);
-  return simplecheck && cdscheck && nomatchcheck;
+  return agn_unit_test_success(test);
 }
 
 static void clique_pair_calc_struct_stats(StructuralData *dat)

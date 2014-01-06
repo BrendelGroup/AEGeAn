@@ -445,6 +445,10 @@ Class AgnUnitTest
 
   Add a result to this unit test.
 
+.. c:function:: bool agn_unit_test_success(AgnUnitTest *test)
+
+  Returns true if all the results checked with this unit test passed, false otherwise.
+
 .. c:function:: void agn_unit_test_run(AgnUnitTest *test)
 
   Run the unit test.
