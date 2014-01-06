@@ -41,4 +41,16 @@ double agn_calc_splice_complexity(GtArray *transcripts);
  */
 int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b);
 
+/**
+ * @function Dereference the given pointers and compare the resulting strings
+ * (*a la* ``strcmp``).
+ */
+int agn_string_compare(const void *p1, const void *p2);
+
+/**
+ * @function Find the strings that are present in either (or both) of the string
+ * arrays.
+ */
+GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2);
+
 #endif

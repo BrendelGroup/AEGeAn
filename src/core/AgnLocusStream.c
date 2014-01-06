@@ -68,6 +68,7 @@ static int locus_stream_query_overlap(AgnLocusStream *stream, AgnLocus *locus,
  */
 static int locus_stream_query_overlap_pairwise(AgnLocusStream *stream,
                                                AgnLocus *locus,
+                                               AgnComparisonSource source,
                                                GtHashmap *visited);
 
 /**
@@ -255,11 +256,118 @@ static void locus_stream_parse(AgnLocusStream *stream)
     gt_str_delete(seqidstr);
     gt_array_delete(features);
   } // end iterate over seqids
+
+  gt_error_delete(error);
 }
 
 static void locus_stream_parse_pairwise(AgnLocusStream *stream)
 {
-  locus_stream_query_overlap_pairwise(stream, NULL, NULL);
+  GtUword numseqs, i, j;
+  GtError *error = gt_error_new();
+
+  GtStrArray *refrseqids = gt_feature_index_get_seqids(stream->refrtrans,error);
+  GtStrArray *predseqids = gt_feature_index_get_seqids(stream->predtrans,error);
+  if(gt_error_is_set(error))
+  {
+    gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse] error "
+                  "retrieving sequence IDs: %s\n", gt_error_get(error));
+  }
+  GtStrArray *seqids = agn_str_array_union(refrseqids, predseqids);
+  numseqs = gt_str_array_size(seqids);
+
+  for(i = 0; i < numseqs; i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtStr *seqidstr = gt_str_new_cstr(seqid);
+    GtArray *refr_list;
+    refr_list = gt_feature_index_get_features_for_seqid(stream->refrtrans,
+                                                        seqid, error);
+    if(gt_error_is_set(error))
+    {
+      gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse_"
+                    "pairwise] error retrieving reference features for sequence"
+                    " '%s': %s", seqid, gt_error_get(error));
+    }
+
+    GtHashmap *visited = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
+    for(j = 0; j < gt_array_size(refr_list); j++)
+    {
+      GtFeatureNode **transcript = gt_array_get(refr_list, j);
+      if(gt_hashmap_get(visited, *transcript) != NULL)
+        continue; // Already been processed and assigned to a locus
+
+      gt_hashmap_add(visited, *transcript, *transcript);
+      AgnLocus *locus = agn_locus_new(seqidstr);
+      agn_locus_add_refr_transcript(locus, *transcript);
+
+      int new_trans_count = 0;
+      do
+      {
+        int new_refr_count, new_pred_count;
+        new_refr_count = locus_stream_query_overlap_pairwise(stream, locus,
+                                                             REFERENCESOURCE,
+                                                             visited);
+        new_pred_count = locus_stream_query_overlap_pairwise(stream, locus,
+                                                             PREDICTIONSOURCE,
+                                                             visited);
+        new_trans_count = new_refr_count + new_pred_count;
+      } while(new_trans_count > 0);
+      GtFeatureNode *locusfn = gt_feature_node_cast(locus);
+      gt_feature_index_add_feature_node(stream->loci, locusfn, error);
+      if(gt_error_is_set(error))
+      {
+        gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse"
+                      "_pairwise] error adding locus %s[%lu, %lu] to feature "
+                      "index: %s", seqid, gt_genome_node_get_start(locus),
+                      gt_genome_node_get_end(locus), gt_error_get(error));
+      }
+    } // end iterate over features
+    gt_array_delete(refr_list);
+
+    GtArray *pred_list;
+    pred_list = gt_feature_index_get_features_for_seqid(stream->refrtrans,
+                                                        seqid, error);
+    if(gt_error_is_set(error))
+    {
+      gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse_"
+                    "pairwise] error retrieving prediction features for "
+                    "sequence '%s': %s", seqid, gt_error_get(error));
+    }
+    for(j = 0; j < gt_array_size(pred_list); j++)
+    {
+      GtFeatureNode **transcript = gt_array_get(pred_list, j);
+      if(gt_hashmap_get(visited, *transcript) != NULL)
+        continue; // Already been processed and assigned to a locus
+
+      gt_hashmap_add(visited, *transcript, *transcript);
+      AgnLocus *locus = agn_locus_new(seqidstr);
+      agn_locus_add_pred_transcript(locus, *transcript);
+
+      int new_trans_count = 0;
+      do
+      {
+        new_trans_count = locus_stream_query_overlap_pairwise(stream, locus,
+                                                              PREDICTIONSOURCE,
+                                                              visited);
+      } while(new_trans_count > 0);
+      GtFeatureNode *locusfn = gt_feature_node_cast(locus);
+      gt_feature_index_add_feature_node(stream->loci, locusfn, error);
+      if(gt_error_is_set(error))
+      {
+        gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse"
+                      "_pairwise] error adding locus %s[%lu, %lu] to feature "
+                      "index: %s", seqid, gt_genome_node_get_start(locus),
+                      gt_genome_node_get_end(locus), gt_error_get(error));
+      }
+    } // end iterate over features
+    gt_array_delete(pred_list);
+    gt_str_delete(seqidstr);
+    gt_hashmap_delete(visited);
+
+  } // end iterate over seqids
+
+  gt_str_array_delete(seqids);
+  gt_error_delete(error);
 }
 
 static int locus_stream_query_overlap(AgnLocusStream *stream, AgnLocus *locus,
@@ -303,9 +411,49 @@ static int locus_stream_query_overlap(AgnLocusStream *stream, AgnLocus *locus,
 
 static int locus_stream_query_overlap_pairwise(AgnLocusStream *stream,
                                                AgnLocus *locus,
+                                               AgnComparisonSource source,
                                                GtHashmap *visited)
 {
-  return 0;
+  GtError *error = gt_error_new();
+  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  GtRange range = gt_genome_node_get_range(locus);
+  bool has_seqid;
+  GtFeatureIndex *transcripts = (source == REFERENCESOURCE) ? stream->refrtrans
+                                                            : stream->predtrans;
+  gt_feature_index_has_seqid(transcripts, &has_seqid, gt_str_get(seqid), error);
+  if(!has_seqid)
+  {
+    gt_error_delete(error);
+    return 0;
+  }
+
+  int new_trans_count = 0;
+  GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
+  gt_feature_index_get_features_for_range(transcripts, overlapping,
+                                          gt_str_get(seqid), &range, error);
+  if(gt_error_is_set(error))
+  {
+    const char *src = (source == REFERENCESOURCE) ? "reference" : "prediction";
+    gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_query_overlap"
+                  "_pairwise] error retrieving overlapping %s transcripts for "
+                  "locus %s[%lu, %lu]: %s\n", src, gt_str_get(seqid),
+                  range.start, range.end, gt_error_get(error));
+  }
+
+  while(gt_array_size(overlapping) > 0)
+  {
+    GtFeatureNode **fn = gt_array_pop(overlapping);
+    if(gt_hashmap_get(visited, *fn) == NULL)
+    {
+      gt_hashmap_add(visited, *fn, *fn);
+      agn_locus_add(locus, *fn, source);
+      new_trans_count++;
+    }
+  }
+
+  gt_array_delete(overlapping);
+  gt_error_delete(error);
+  return new_trans_count;
 }
 
 static void locus_stream_test_data(GtQueue *queue)

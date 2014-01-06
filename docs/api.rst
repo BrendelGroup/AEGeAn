@@ -510,3 +510,11 @@ Collection of assorted functions that are otherwise unrelated. See the `module h
 
   Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
 
+.. c:function:: int agn_string_compare(const void *p1, const void *p2)
+
+  Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
+
+.. c:function:: GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2)
+
+  Find the strings that are present in either (or both) of the string arrays.
+
