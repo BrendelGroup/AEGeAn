@@ -20,6 +20,11 @@ bool agn_typecheck_cds(GtFeatureNode *fn);
 bool agn_typecheck_exon(GtFeatureNode *fn);
 
 /**
+ * @function Returns true if the given feature is a gene; false otherwise.
+ */
+bool agn_typecheck_gene(GtFeatureNode *fn);
+
+/**
  * @function Returns true if the given feature is an intron; false otherwise.
  */
 bool agn_typecheck_intron(GtFeatureNode *fn);

@@ -176,6 +176,25 @@ Class AgnInferCDSVisitor
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnInferExonsVisitor
+--------------------------
+
+.. c:type:: AgnInferExonsVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly.  See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor* agn_infer_exons_visitor_new(GtLogger *logger)
+
+  Class constructor for the node visitor.
+
+.. c:function:: bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class.
+
 Class AgnLocus
 --------------
 
@@ -362,6 +381,10 @@ Functions for testing feature types. See the `module header <https://github.com/
 .. c:function:: bool agn_typecheck_exon(GtFeatureNode *fn)
 
   Returns true if the given feature is an exon; false otherwise.
+
+.. c:function:: bool agn_typecheck_gene(GtFeatureNode *fn)
+
+  Returns true if the given feature is a gene; false otherwise.
 
 .. c:function:: bool agn_typecheck_intron(GtFeatureNode *fn)
 

@@ -14,6 +14,11 @@ bool agn_typecheck_exon(GtFeatureNode *fn)
   return gt_feature_node_has_type(fn, "exon");
 }
 
+bool agn_typecheck_gene(GtFeatureNode *fn)
+{
+  return gt_feature_node_has_type(fn, "gene");
+}
+
 bool agn_typecheck_intron(GtFeatureNode *fn)
 {
   return gt_feature_node_has_type(fn, "intron");
