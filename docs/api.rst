@@ -369,6 +369,21 @@ Class AgnTranscriptClique
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnTranscriptStream
+-------------------------
+
+.. c:type:: AgnTranscriptStream
+
+  Implements the ``GtNodeStream`` interface. Searches the complete feature graph of each feature node in the input for transcript features (mRNA, rRNA, or tRNA). Only transcripts that pass validation are delivered-- warning messages for all other transcripts are printed to the console. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTranscriptStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_transcript_stream_new(GtNodeStream *in_stream, GtLogger *logger)
+
+  Class constructor.
+
+.. c:function:: bool agn_transcript_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Module AgnTypecheck
 -------------------
 

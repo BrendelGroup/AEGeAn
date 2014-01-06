@@ -217,7 +217,7 @@ infer_exons_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
       current != NULL;
       current = gt_feature_node_iterator_next(iter))
   {
-    if(!agn_typecheck_gene(current))
+    if(!agn_typecheck_gene(current) && !agn_typecheck_transcript(current))
       continue;
     
     GtUword i;
