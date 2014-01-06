@@ -136,7 +136,48 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
     GtRange range = gt_genome_node_get_range(cds2);
     grape1 = (range.start == 349 && range.end == 522);
   }
-  agn_unit_test_result(test, "grape test 1", grape1);
+  agn_unit_test_result(test, "grape test sans UTRs", grape1);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(cds);
+
+  fn = gt_queue_get(queue);
+  cds = agn_typecheck_select(fn, agn_typecheck_cds);
+  bool grape2 = (gt_array_size(cds) == 1);
+  if(grape2)
+  {
+    GtGenomeNode *cds1 = *(GtGenomeNode **)gt_array_get(cds, 0);
+    GtRange range = gt_genome_node_get_range(cds1);
+    GtStrand strand = gt_feature_node_get_strand((GtFeatureNode *)cds1);
+    grape2 = (range.start == 10747 && range.end == 11577 &&
+              strand == GT_STRAND_REVERSE);
+  }
+  agn_unit_test_result(test, "grape test with UTRs, strand check", grape2);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(cds);
+
+  fn = gt_queue_get(queue);
+  cds = agn_typecheck_select(fn, agn_typecheck_cds);
+  bool grape3 = (gt_array_size(cds) == 2);
+  if(grape3)
+  {
+    GtGenomeNode *cds2 = *(GtGenomeNode **)gt_array_get(cds, 1);
+    GtRange range = gt_genome_node_get_range(cds2);
+    grape3 = (range.start == 22651 && range.end == 23022);
+  }
+  agn_unit_test_result(test, "grape test 3", grape3);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(cds);
+
+  fn = gt_queue_get(queue);
+  cds = agn_typecheck_select(fn, agn_typecheck_cds);
+  bool grape4 = (gt_array_size(cds) == 12);
+  if(grape4)
+  {
+    GtGenomeNode *cds7 = *(GtGenomeNode **)gt_array_get(cds, 6);
+    GtRange range = gt_genome_node_get_range(cds7);
+    grape4 = (range.start == 27956 && range.end == 27996);
+  }
+  agn_unit_test_result(test, "grape test 4", grape4);
   gt_genome_node_delete((GtGenomeNode *)fn);
   gt_array_delete(cds);
 
