@@ -2,6 +2,7 @@
 #include "extended/feature_index_memory_api.h"
 #include "AgnLocus.h"
 #include "AgnLocusStream.h"
+#include "AgnTranscriptStream.h"
 #include "AgnTypecheck.h"
 
 #define locus_stream_cast(GS)\
@@ -87,6 +88,7 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 
   GtNodeStream *ns = gt_node_stream_create(locus_stream_class(), false);
   AgnLocusStream *stream = locus_stream_cast(ns);
+  stream->in_stream = gt_node_stream_ref(in_stream);
   stream->logger = logger;
 
   GtError *error = gt_error_new();
@@ -136,7 +138,6 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
                  "error processing reference input: %s\n", gt_error_get(error));
   }
   gt_node_stream_delete(refr_instream);
-  gt_error_delete(error);
   GtNodeStream *pred_instream = gt_feature_in_stream_new(pred_stream,
                                                          stream->predtrans);
   result = gt_node_stream_pull(pred_instream, error);
@@ -161,9 +162,33 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
   GtQueue *queue = gt_queue_new();
   locus_stream_test_data(queue);
 
+  GtUword starts[] = {    72, 10503, 22053, 26493, 30020, 37652, 42669, 48012,
+                       49739, 55535, 67307, 77131, 83378, 88551 };
+  GtUword ends[] =   {  5081, 11678, 23448, 29602, 33324, 38250, 45569, 48984,
+                       54823, 61916, 69902, 81356, 86893, 92176 };
+  GtUword numrefr[] = { 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 };
+  GtUword numpred[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 };
+  bool grapetest = gt_queue_size(queue) == 14;
+  if(grapetest)
+  {
+    int i = 0;
+    while(gt_queue_size(queue) > 0)
+    {
+      AgnLocus *locus = gt_queue_get(queue);
+      GtRange range = gt_genome_node_get_range(locus);
+      GtUword refrtrans = agn_locus_num_refr_transcripts(locus);
+      GtUword predtrans = agn_locus_num_pred_transcripts(locus);
+      grapetest = grapetest && starts[i] == range.start &&
+                  ends[i] == range.end && numrefr[i] == refrtrans &&
+                  numpred[i] == predtrans;
+      i++;
+      //agn_locus_delete(locus);
+    }
+  }
+  agn_unit_test_result(test, "grape test (pairwise)", grapetest);
+
   gt_queue_delete(queue);
-  // return agn_unit_test_success(test);
-  return false;
+  return agn_unit_test_success(test);
 }
 
 static const GtNodeStreamClass *locus_stream_class(void)
@@ -188,6 +213,7 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 static void locus_stream_free(GtNodeStream *ns)
 {
   AgnLocusStream *stream = locus_stream_cast(ns);
+  gt_node_stream_delete(stream->in_stream);
   gt_node_stream_delete(stream->out_stream);
   if(stream->transcripts != NULL)
     gt_feature_index_delete(stream->transcripts);
@@ -325,7 +351,7 @@ static void locus_stream_parse_pairwise(AgnLocusStream *stream)
     gt_array_delete(refr_list);
 
     GtArray *pred_list;
-    pred_list = gt_feature_index_get_features_for_seqid(stream->refrtrans,
+    pred_list = gt_feature_index_get_features_for_seqid(stream->predtrans,
                                                         seqid, error);
     if(gt_error_is_set(error))
     {
@@ -458,5 +484,46 @@ static int locus_stream_query_overlap_pairwise(AgnLocusStream *stream,
 
 static void locus_stream_test_data(GtQueue *queue)
 {
+  GtError *error = gt_error_new();
+  GtLogger *logger = gt_logger_new(true, "", stderr);
 
+  const char *file = "data/gff3/grape-refr-mrnas.gff3";
+  GtNodeStream *refrgff3 = gt_gff3_in_stream_new_unsorted(1, &file);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)refrgff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)refrgff3);
+  GtNodeStream *refrtrans = agn_transcript_stream_new(refrgff3, logger);
+
+  file = "data/gff3/grape-pred-mrnas.gff3";
+  GtNodeStream *predgff3 = gt_gff3_in_stream_new_unsorted(1, &file);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)predgff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)predgff3);
+  GtNodeStream *predtrans = agn_transcript_stream_new(predgff3, logger);
+
+  GtNodeStream *locusstream;
+  locusstream = agn_locus_stream_new_pairwise(refrtrans, predtrans, logger);
+  GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(locusstream, loci, error);
+  gt_node_stream_pull(arraystream, error);
+  if(gt_error_is_set(error))
+  {
+    fprintf(stderr, "[AgnLocusStream::locus_stream_test_data] error processing "
+            "node stream: %s\n", gt_error_get(error));
+  }
+  gt_array_reverse(loci);
+  while(gt_array_size(loci) > 0)
+  {
+    AgnLocus **locus = gt_array_pop(loci);
+    gt_queue_add(queue, *locus);
+  }
+  gt_array_delete(loci);
+
+  gt_node_stream_delete(refrgff3);
+  gt_node_stream_delete(predgff3);
+  gt_node_stream_delete(refrtrans);
+  gt_node_stream_delete(predtrans);
+  gt_node_stream_delete(locusstream);
+  //gt_node_stream_delete(arraystream);
+  gt_error_delete(error);
+  gt_logger_delete(logger);
 }
+

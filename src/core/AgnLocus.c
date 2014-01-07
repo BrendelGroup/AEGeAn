@@ -89,19 +89,28 @@ void agn_locus_add(AgnLocus *locus, GtFeatureNode *transcript,
   gt_feature_node_add_child((GtFeatureNode *)locus, transcript);
   locus_update_range(locus, transcript);
 
-  const char *key = "refrtrans";
   if(source == DEFAULTSOURCE)
     return;
-  else if(source == PREDICTIONSOURCE)
-    key = "predtrans";
 
-  GtHashmap *trans = gt_genome_node_get_user_data(locus, key);
+  GtHashmap *trans = gt_genome_node_get_user_data(locus, "refrtrans");
   if(trans == NULL)
   {
     trans = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-    gt_genome_node_add_user_data(locus, key, trans, (GtFree)gt_hashmap_delete);
+    gt_genome_node_add_user_data(locus, "refrtrans", trans,
+                                 (GtFree)gt_hashmap_delete);
   }
-  gt_hashmap_add(trans, transcript, transcript);
+  if(source == REFERENCESOURCE)
+    gt_hashmap_add(trans, transcript, transcript);
+
+  trans = gt_genome_node_get_user_data(locus, "predtrans");
+  if(trans == NULL)
+  {
+    trans = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
+    gt_genome_node_add_user_data(locus, "predtrans", trans,
+                                 (GtFree)gt_hashmap_delete);
+  }
+  if(source == PREDICTIONSOURCE)
+    gt_hashmap_add(trans, transcript, transcript);
 }
 
 AgnLocus *agn_locus_clone(AgnLocus *locus)

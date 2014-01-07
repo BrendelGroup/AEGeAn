@@ -53,6 +53,9 @@ endif
 ifeq ($(64bit),yes)
   CFLAGS += -m64
 endif
+ifneq ($(debug),no)
+  CFLAGS += -g
+endif
 LDFLAGS=-lgenometools -lm -L$(GT_INSTALL_DIR)/lib
 ifdef lib
   LDFLAGS += -L$(lib)
