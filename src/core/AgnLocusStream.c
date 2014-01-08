@@ -206,7 +206,7 @@ static const GtNodeStreamClass *locus_stream_class(void)
 static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                              GtError *error)
 {
-  AgnLocusStream *stream = stream = locus_stream_cast(ns);
+  AgnLocusStream *stream = locus_stream_cast(ns);
   return gt_node_stream_next(stream->out_stream, gn, error);
 }
 
@@ -300,6 +300,8 @@ static void locus_stream_parse_pairwise(AgnLocusStream *stream)
   }
   GtStrArray *seqids = agn_str_array_union(refrseqids, predseqids);
   numseqs = gt_str_array_size(seqids);
+  gt_str_array_delete(refrseqids);
+  gt_str_array_delete(predseqids);
 
   for(i = 0; i < numseqs; i++)
   {
@@ -522,7 +524,7 @@ static void locus_stream_test_data(GtQueue *queue)
   gt_node_stream_delete(refrtrans);
   gt_node_stream_delete(predtrans);
   gt_node_stream_delete(locusstream);
-  //gt_node_stream_delete(arraystream);
+  gt_node_stream_delete(arraystream);
   gt_error_delete(error);
   gt_logger_delete(logger);
 }

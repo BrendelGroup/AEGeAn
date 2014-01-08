@@ -271,8 +271,14 @@ infer_exons_visitor_visit_gene_collapse_feature(AgnInferExonsVisitor *v,
       gt_genome_node_ref((GtGenomeNode *)fn);
       const char *parentattr = gt_feature_node_get_attribute(fn, "Parent");
       const char *tid = gt_feature_node_get_attribute(mrna, "ID");
+      if(strlen(tid) > 1023)
+      {
+        gt_logger_log(v->logger, "[AgnInferExonsVisitor::infer_exons_visitor"
+                      "_visit_gene_collapse_feature] mRNA ID is too long (%lu "
+                      "characters), will be truncated\n", strlen(tid));
+      }
       char parentstr[1024];
-      strcpy(parentstr, parentattr);
+      strncpy(parentstr, parentattr, 1023);
       sprintf(parentstr + strlen(parentstr), ",%s", tid);
       gt_feature_node_set_attribute(fn, "Parent", parentstr);
 

@@ -755,7 +755,7 @@ static void locus_clique_array_delete(GtArray *array)
 
 static GtArray *locus_enumerate_cliques(AgnLocus *locus, GtArray *trans)
 {
-  GtArray *cliques = gt_array_new( sizeof(GtArray *) );
+  GtArray *cliques = gt_array_new( sizeof(AgnTranscriptClique *) );
   GtUword numtrans = gt_array_size(trans);
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   GtRange range = gt_genome_node_get_range(locus);
@@ -859,8 +859,8 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
     refr_clique = *(AgnTranscriptClique **)gt_array_get(refrcliques, i);
     if(!agn_transcript_clique_has_id_in_hash(refr_clique, refrcliques_acctd))
     {
-      gt_array_add_elem(uniqrefr, gt_genome_node_ref(refr_clique),
-                        sizeof(GtArray *));
+      gt_genome_node_ref(refr_clique);
+      gt_array_add(uniqrefr, refr_clique);
       agn_transcript_clique_put_ids_in_hash(refr_clique, refrcliques_acctd);
     }
     agn_transcript_clique_delete(refr_clique);

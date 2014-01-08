@@ -95,7 +95,7 @@ bool agn_transcript_stream_unit_test(AgnUnitTest *test)
   GtArray *utr5p = agn_typecheck_select(fn, agn_typecheck_utr5p);
   GtRange range = gt_genome_node_get_range((GtGenomeNode *)fn);
   bool test1 = (gt_array_size(utr3p) == 1 && gt_array_size(utr5p) == 0);
-  if(test)
+  if(test1)
   {
     GtGenomeNode *utr = *(GtGenomeNode **)gt_array_get(utr3p, 0);
     GtRange utrrange = gt_genome_node_get_range(utr);
@@ -253,7 +253,8 @@ static void transcript_stream_test_data(GtQueue *queue)
   gt_node_stream_delete(stream);
   gt_node_stream_delete(arraystream);
   gt_logger_delete(logger);
-  fclose(log);
+  if(log != NULL)
+    fclose(log);
   gt_array_sort(feats, (GtCompare)agn_genome_node_compare);
   gt_array_reverse(feats);
   while(gt_array_size(feats) > 0)

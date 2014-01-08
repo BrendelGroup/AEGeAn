@@ -66,5 +66,6 @@ GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2)
     const char *str = *(const char **)gt_array_get(strings, i);
     gt_str_array_add_cstr(uniona, str);
   }
+  gt_array_delete(strings);
   return uniona;
 }
