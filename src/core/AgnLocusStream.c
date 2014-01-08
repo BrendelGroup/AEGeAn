@@ -182,7 +182,7 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
                   ends[i] == range.end && numrefr[i] == refrtrans &&
                   numpred[i] == predtrans;
       i++;
-      //agn_locus_delete(locus);
+      agn_locus_delete(locus);
     }
   }
   agn_unit_test_result(test, "grape test (pairwise)", grapetest);
