@@ -242,7 +242,26 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
   stream = locus_tstream_init(3, filenames, logger);
   locus_stream_test_data(queue, stream, NULL);
 
-  //asdf
+  GtUword augstarts[] = {     1, 36466, 44388, 72127, 76794 };
+  GtUword augends[]   = { 33764, 41748, 70877, 76431, 97981 };
+  GtUword augntrans[] = { 6, 3, 4, 2, 6 };
+  bool augtest = gt_queue_size(queue) == 5;
+  if(augtest)
+  {
+    int i = 0;
+    while(gt_queue_size(queue) > 0)
+    {
+      AgnLocus *locus = gt_queue_get(queue);
+      GtRange range = gt_genome_node_get_range(locus);
+      GtUword ntrans = agn_locus_num_transcripts(locus);
+      augtest = augtest &&
+                augstarts[i] == range.start && augends[i] == range.end &&
+                augntrans[i] == ntrans;
+      i++;
+      agn_locus_delete(locus);
+    }
+  }
+  agn_unit_test_result(test, "Amel test (Augustus)", augtest);
   gt_node_stream_delete(stream);
 
   gt_queue_delete(queue);
@@ -341,6 +360,7 @@ static void locus_stream_parse(AgnLocusStream *stream)
     gt_str_delete(seqidstr);
     gt_array_delete(features);
   } // end iterate over seqids
+  gt_str_array_delete(seqids);
 
   gt_error_delete(error);
 }
@@ -564,7 +584,8 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
     fprintf(stderr, "[AgnLocusStream::locus_stream_test_data] error processing "
             "node stream: %s\n", gt_error_get(error));
   }
-  if(gt_array_size(loci) > 0) gt_array_reverse(loci);
+  gt_assert(gt_array_size(loci) > 0);
+  gt_array_reverse(loci);
   while(gt_array_size(loci) > 0)
   {
     AgnLocus **locus = gt_array_pop(loci);
