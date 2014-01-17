@@ -179,6 +179,11 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata);
 void agn_locus_print_transcript_mapping(AgnLocus *locus, FILE *outstream);
 
 /**
+ * @function Set the start and end coordinates for this locus.
+ */
+void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end);
+
+/**
  * @function Calculate the splice complexity of this gene locus. Rather than
  * calling this method directly, users are recommended to use one of the
  * following macros: ``agn_locus_prep_splice_complexity(locus)`` to

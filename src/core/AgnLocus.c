@@ -501,6 +501,12 @@ void agn_locus_print_transcript_mapping(AgnLocus *locus, FILE *outstream)
   gt_array_delete(transids);
 }
 
+void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end)
+{
+  GtRange range = { start, end };
+  gt_genome_node_set_range(locus, &range);
+}
+
 double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src)
 {
   GtArray *trans = agn_locus_transcripts(locus, src);
