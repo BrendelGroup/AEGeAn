@@ -191,7 +191,7 @@ GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
 
   GtFeatureIndex *features = gt_feature_index_memory_new();
   GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3, logger);
-  GtNodeStream *featstream = gt_feature_in_stream_new(cgstream, features);
+  GtNodeStream *featstream = gt_feature_out_stream_new(cgstream, features);
 
   GtError *error = gt_error_new();
   int result = gt_node_stream_pull(featstream, error);
@@ -226,7 +226,7 @@ GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
   gt_hashmap_add(typestokeep, type, type);
   GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep);
 
-  GtNodeStream *featstream = gt_feature_in_stream_new(filterstream, features);
+  GtNodeStream *featstream = gt_feature_out_stream_new(filterstream, features);
 
   GtError *error = gt_error_new();
   int result = gt_node_stream_pull(featstream, error);
