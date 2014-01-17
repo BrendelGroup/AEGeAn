@@ -22,6 +22,7 @@ typedef struct AgnIntervalLocusStream AgnIntervalLocusStream;
  */
 GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
                                             GtUword delta,
+                                            bool skipterminal,
                                             GtLogger *logger);
 
 /**
