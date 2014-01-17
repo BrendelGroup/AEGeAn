@@ -102,8 +102,8 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   stream->transcripts = gt_feature_index_memory_new();
   stream->refrtrans = NULL;
   stream->predtrans = NULL;
-  GtNodeStream *trans_stream = gt_feature_in_stream_new(in_stream,
-                                                        stream->transcripts);
+  GtNodeStream *trans_stream = gt_feature_out_stream_new(in_stream,
+                                                         stream->transcripts);
   int result = gt_node_stream_pull(trans_stream, error);
   if(result == -1)
   {
@@ -116,7 +116,7 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 
   stream->loci = gt_feature_index_memory_new();
   locus_stream_parse(stream);
-  stream->out_stream = gt_feature_out_stream_new(stream->loci);
+  stream->out_stream = gt_feature_in_stream_new(stream->loci);
 
   return ns;
 }
@@ -135,8 +135,8 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   stream->transcripts = NULL;
   stream->refrtrans = gt_feature_index_memory_new();
   stream->predtrans = gt_feature_index_memory_new();
-  GtNodeStream *refr_instream = gt_feature_in_stream_new(refr_stream,
-                                                         stream->refrtrans);
+  GtNodeStream *refr_instream = gt_feature_out_stream_new(refr_stream,
+                                                          stream->refrtrans);
   int result = gt_node_stream_pull(refr_instream, error);
   if(result == -1)
   {
@@ -145,8 +145,8 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
                  "error processing reference input: %s\n", gt_error_get(error));
   }
   gt_node_stream_delete(refr_instream);
-  GtNodeStream *pred_instream = gt_feature_in_stream_new(pred_stream,
-                                                         stream->predtrans);
+  GtNodeStream *pred_instream = gt_feature_out_stream_new(pred_stream,
+                                                          stream->predtrans);
   result = gt_node_stream_pull(pred_instream, error);
   if(result == -1)
   {
@@ -159,7 +159,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
 
   stream->loci = gt_feature_index_memory_new();
   locus_stream_parse_pairwise(stream);
-  stream->out_stream = gt_feature_out_stream_new(stream->loci);
+  stream->out_stream = gt_feature_in_stream_new(stream->loci);
 
   return ns;
 }

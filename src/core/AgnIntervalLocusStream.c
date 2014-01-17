@@ -63,8 +63,8 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
 
   GtError *error = gt_error_new();
   stream->in_loci = gt_feature_index_memory_new();
-  GtNodeStream *locus_instream = gt_feature_in_stream_new(in_stream,
-                                                          stream->in_loci);
+  GtNodeStream *locus_instream = gt_feature_out_stream_new(in_stream,
+                                                           stream->in_loci);
   int result = gt_node_stream_pull(locus_instream, error);
   if(result == -1)
   {
@@ -77,7 +77,7 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
 
   stream->out_loci = gt_feature_index_memory_new();
   ilocus_stream_parse(stream);
-  stream->out_stream = gt_feature_out_stream_new(stream->out_loci);
+  stream->out_stream = gt_feature_in_stream_new(stream->out_loci);
 
   return ns;
 }
