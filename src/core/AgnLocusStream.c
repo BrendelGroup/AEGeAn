@@ -112,11 +112,14 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
                   "processing input: %s\n", gt_error_get(error));
   }
   gt_node_stream_delete(trans_stream);
-  gt_error_delete(error);
 
   stream->loci = gt_feature_index_memory_new();
+  agn_feature_index_copy_regions(stream->loci, stream->transcripts, true,error);
+  gt_error_delete(error);
+
   locus_stream_parse(stream);
   stream->out_stream = gt_feature_in_stream_new(stream->loci);
+  gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->out_stream);
 
   return ns;
 }
@@ -155,11 +158,15 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
                  "error processing prediction input: %s\n",gt_error_get(error));
   }
   gt_node_stream_delete(pred_instream);
-  gt_error_delete(error);
 
   stream->loci = gt_feature_index_memory_new();
+  agn_feature_index_copy_regions_pairwise(stream->loci, stream->refrtrans,
+                                          stream->predtrans, true, error);
+  gt_error_delete(error);
+
   locus_stream_parse_pairwise(stream);
   stream->out_stream = gt_feature_in_stream_new(stream->loci);
+  gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->loci);
 
   return ns;
 }

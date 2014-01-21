@@ -20,6 +20,87 @@ double agn_calc_splice_complexity(GtArray *transcripts)
   return -1.0;
 }
 
+GtUword
+agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src,
+                               bool use_orig, GtError *error)
+{
+  gt_assert(dest && src);
+  GtStrArray *seqids = gt_feature_index_get_seqids(src, error);
+  GtUword i, rncount = 0;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtStr *seqidstr = gt_str_new_cstr(seqid);
+    GtRange range;
+    if(use_orig)
+      gt_feature_index_get_orig_range_for_seqid(src, &range, seqid, error);
+    else
+      gt_feature_index_get_range_for_seqid(src, &range, seqid, error);
+
+    GtGenomeNode *rn = gt_region_node_new(seqidstr, range.start, range.end);
+    gt_feature_index_add_region_node(dest, (GtRegionNode *)rn, error);
+    rncount++;
+
+    gt_genome_node_delete(rn);
+    gt_str_delete(seqidstr);
+  }
+  gt_str_array_delete(seqids);
+  return rncount;
+}
+
+GtUword
+agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
+                                        GtFeatureIndex *refrsrc,
+                                        GtFeatureIndex *predsrc,
+                                        bool use_orig, GtError *error)
+{
+  gt_assert(dest && refrsrc && predsrc);
+  GtStrArray *refr_seqids = gt_feature_index_get_seqids(refrsrc, error);
+  GtStrArray *pred_seqids = gt_feature_index_get_seqids(predsrc, error);
+  GtStrArray *seqids = agn_str_array_union(refr_seqids, pred_seqids);
+  gt_str_array_delete(refr_seqids);
+  gt_str_array_delete(pred_seqids);
+
+  GtUword i, rncount = 0;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtStr *seqidstr = gt_str_new_cstr(seqid);
+    GtRange range, refrrange, predrange;
+    bool refrhas, predhas;
+    gt_feature_index_has_seqid(refrsrc, &refrhas, seqid, error);
+    gt_feature_index_has_seqid(refrsrc, &predhas, seqid, error);
+
+    int (*range_func)(GtFeatureIndex *, GtRange *, const char *, GtError *);
+    range_func = gt_feature_index_get_range_for_seqid;
+    if(use_orig)
+      range_func = gt_feature_index_get_orig_range_for_seqid;
+
+    if(refrhas && predhas)
+    {
+      range_func(refrsrc, &refrrange, seqid, error);
+      range_func(predsrc, &predrange, seqid, error);
+      range = gt_range_join(&refrrange, &predrange);
+    }
+    else if(refrhas)
+      range_func(refrsrc, &range, seqid, error);
+    else
+    {
+      gt_assert(predhas);
+      range_func(predsrc, &range, seqid, error);
+    }
+
+    GtGenomeNode *rn = gt_region_node_new(seqidstr, range.start, range.end);
+    gt_feature_index_add_region_node(dest, (GtRegionNode *)rn, error);
+    rncount++;
+
+    gt_genome_node_delete(rn);
+    gt_str_delete(seqidstr);
+  }
+  gt_str_array_delete(seqids);
+  return rncount;
+}
+
 int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 {
   return gt_genome_node_cmp(*gn_a, *gn_b);

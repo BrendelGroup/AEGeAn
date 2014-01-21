@@ -81,7 +81,7 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
 /**
  * @function Generate data for unit testing.
  */
-static void ilocus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
+static void ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
                                     GtNodeStream *s2, GtUword delta,
                                     bool skipends, GtLogger *logger);
 
@@ -114,42 +114,52 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
   }
   gt_node_stream_delete(locus_stream);
   gt_node_stream_delete(fstream);
-  gt_error_delete(error);
 
   stream->out_loci = gt_feature_index_memory_new();
+  agn_feature_index_copy_regions(stream->out_loci, stream->in_loci, true,error);
+  gt_error_delete(error);
+
   ilocus_stream_parse(stream, delta, skipterminal);
   stream->ilocus_stream = gt_feature_in_stream_new(stream->out_loci);
+  gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->out_loci);
 
   return ns;
 }
 
 bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
 {
-  GtQueue *queue = gt_queue_new();
+  GtFeatureIndex *iloci = gt_feature_index_memory_new();
   GtLogger *logger = gt_logger_new(true, "", stderr);
+  GtError *error = gt_error_new();
 
   const char *infile = "data/gff3/ilocus.in.gff3";
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(1, &infile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-  ilocus_stream_test_data(queue, gff3, NULL, 200, false, logger);
+  ilocus_stream_test_data(iloci, gff3, NULL, 200, false, logger);
 
-  if(gt_queue_size(queue) != 25)
+  GtStrArray *seqids = gt_feature_index_get_seqids(iloci, error);
+  if(gt_str_array_size(seqids) != 25)
   {
-    agn_unit_test_result(test, "Manual iLocus test", false);
+    agn_unit_test_result(test, "Test 1", false);
     return agn_unit_test_success(test);
   }
-  
-  //while(gt_queue_size(queue) > 0)
-  //{
-  //  AgnLocus *ilocus = gt_queue_get(queue);
-  //  gt_genome_node_delete(ilocus);
-  //}
-  agn_unit_test_result(test, "bogus", true);
 
-  gt_queue_delete(queue);
+  const char *seqid = gt_str_array_get(seqids, 0);
+  GtArray *seqloci = gt_feature_index_get_features_for_seqid(iloci,seqid,error);
+  bool test1_1 = (gt_array_size(seqloci) == 1);
+  if(test1_1)
+  {
+    AgnLocus *locus = *(AgnLocus **)gt_array_get(seqloci, 0);
+    GtRange range = gt_genome_node_get_range(locus);
+    test1_1 = range.start == 1 && range.end == 900;
+  }
+  agn_unit_test_result(test, "Test 1.1", test1_1);
+
+  // gt_feature_index_delete(iloci);
   gt_logger_delete(logger);
-  //gt_node_stream_delete(gff3);
+  gt_node_stream_delete(gff3);
+  gt_error_delete(error);
   return agn_unit_test_success(test);
 }
 
@@ -215,7 +225,7 @@ static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
   {
     if(gt_array_size(seqloci) == 1)
       agn_locus_set_range(l1, r1.start - delta, r1.end);
-  
+
     if(!skipterminal)
     {
       AgnLocus *ilocus = agn_locus_new(region->seqid);
@@ -356,7 +366,7 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
   }
 }
 
-static void ilocus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
+static void ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
                                     GtNodeStream *s2, GtUword delta,
                                     bool skipends, GtLogger *logger)
 {
@@ -370,25 +380,13 @@ static void ilocus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
     locusstream = agn_locus_stream_new_pairwise(s1, s2, logger);
   ilocusstream = agn_interval_locus_stream_new(locusstream, delta, skipends,
                                                logger);
-  
-  GtFeatureIndex *iloci = gt_feature_index_memory_new();
+
   GtNodeStream *fstream = gt_feature_out_stream_new(ilocusstream, iloci);
   gt_node_stream_pull(fstream, error);
   if(gt_error_is_set(error))
   {
     fprintf(stderr, "[AgnLocusStream::interval_locus_stream_test_data] error "
             "processing node stream: %s\n", gt_error_get(error));
-  }
-
-  GtUword i;
-  GtStrArray *seqids = gt_feature_index_get_seqids(iloci, error);
-  for(i = 0; i < gt_str_array_size(seqids); i++)
-  {
-    const char *seqid = gt_str_array_get(seqids, i);
-    GtArray *ilocus_feats = gt_feature_index_get_features_for_seqid(iloci,
-                                                                    seqid,
-                                                                    error);
-    gt_queue_add(queue, ilocus_feats);
   }
 
   //gt_node_stream_delete(locusstream);

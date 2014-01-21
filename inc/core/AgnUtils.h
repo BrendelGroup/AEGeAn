@@ -3,6 +3,7 @@
 
 #include "core/array_api.h"
 #include "core/str_api.h"
+#include "extended/feature_index_api.h"
 #include "extended/genome_node_api.h"
 
 /**
@@ -34,6 +35,28 @@ GtArray* agn_array_copy(GtArray *source, size_t size);
  * @function Determine the splice complexity of the given set of transcripts.
  */
 double agn_calc_splice_complexity(GtArray *transcripts);
+
+/**
+ * @function Copy the sequence regions from ``src`` to ``dest``. If ``use_orig``
+ * is true, regions specified by input region nodes (such as those parsed from
+ * ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred
+ * directly from the feature nodes are used.
+ */
+GtUword
+agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src,
+                               bool use_orig, GtError *error);
+
+/**
+ * @function Copy the sequence regions from ``refrsrc`` and ``predsrc`` to
+ * ``dest``. If ``use_orig`` is true, regions specified by input region nodes
+ * (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used.
+ * Otherwise, regions inferred directly from the feature nodes are used.
+ */
+GtUword
+agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
+                                        GtFeatureIndex *refrsrc,
+                                        GtFeatureIndex *predsrc,
+                                        bool use_orig, GtError *error);
 
 /**
  * @function Compare function for data type ``GtGenomeNode **``, needed for
