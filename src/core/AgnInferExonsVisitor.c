@@ -72,6 +72,11 @@ static void visit_gene_infer_exons(AgnInferExonsVisitor *v);
 static void visit_gene_infer_introns(AgnInferExonsVisitor *v);
 
 
+/**
+ * @function Check each mRNA to ensure none of its exons overlap.
+ */
+static void visit_mrna_check_overlap(AgnInferExonsVisitor *v);
+
 //----------------------------------------------------------------------------//
 // Method implementations
 //----------------------------------------------------------------------------//
@@ -170,7 +175,7 @@ static bool unit_test_grape(AgnUnitTest *test)
   gt_array_delete(exons);
   gt_array_delete(introns);
   gt_genome_node_delete(gn);
-  
+
   agn_logger_delete(logger);
   gt_node_stream_delete(ievstream);
   gt_array_delete(genes);
@@ -313,7 +318,7 @@ static bool unit_test_grape_sansexons(AgnUnitTest *test)
   gt_array_delete(exons);
   gt_array_delete(introns);
   gt_genome_node_delete(gn);
-  
+
   agn_logger_delete(logger);
   gt_node_stream_delete(ievstream);
   gt_array_delete(genes);
@@ -336,9 +341,10 @@ static int visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
   {
     if(!agn_gt_feature_node_is_gene_feature(current))
       continue;
-    
+
     GtUword i;
     v->gene = current;
+    visit_mrna_check_overlap(v);
 
     v->exonsbyrange = gt_interval_tree_new(NULL);
     v->exons = agn_gt_feature_node_children_of_type(current,
@@ -527,7 +533,7 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
       GtGenomeNode **exon2 = gt_array_get(exons, i);
       GtRange first_range  = gt_genome_node_get_range(*exon1);
       GtRange second_range = gt_genome_node_get_range(*exon2);
-      
+
       if(first_range.end == second_range.start - 1)
       {
         agn_logger_log_error(v->logger, "mRNA '%s' (line %u) has directly "
@@ -540,7 +546,7 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
         gt_array_add(introns_to_add, irange);
       }
     }
-    
+
     for(i = 0; i < gt_array_size(introns_to_add); i++)
     {
       GtRange *irange = gt_array_get(introns_to_add, i);
@@ -569,3 +575,40 @@ void visit_gene_infer_introns(AgnInferExonsVisitor *v)
   }
   gt_feature_node_iterator_delete(iter);
 }
+
+static void visit_mrna_check_overlap(AgnInferExonsVisitor *v)
+{
+  GtArray *mrnas = agn_gt_feature_node_children_of_type(v->gene,
+                                           agn_gt_feature_node_is_mrna_feature);
+  while(gt_array_size(mrnas) > 0)
+  {
+    GtGenomeNode **mrna = gt_array_pop(mrnas);
+    GtFeatureNode *mrnafn = gt_feature_node_cast(*mrna);
+    GtArray *exons = agn_gt_feature_node_children_of_type(mrnafn,
+                                           agn_gt_feature_node_is_exon_feature);
+    GtUword i,j;
+    for(i = 0; i < gt_array_size(exons); i++)
+    {
+      GtGenomeNode **gni = gt_array_get(exons, i);
+      GtRange rangei = gt_genome_node_get_range(*gni);
+      for(j = i + 1; j < gt_array_size(exons); j++)
+      {
+        GtGenomeNode **gnj = gt_array_get(exons, j);
+        GtRange rangej = gt_genome_node_get_range(*gnj);
+        if(gt_range_overlap(&rangei, &rangej))
+        {
+          GtStr *seqid = gt_genome_node_get_seqid(*mrna);
+          GtRange mrnarange = gt_genome_node_get_range(*mrna);
+          fprintf(stderr, "error: mRNA %s:%lu-%lu has overlapping exons",
+                  gt_str_get(seqid), mrnarange.start, mrnarange.end);
+          exit(1);
+        }
+      }
+    }
+
+    gt_array_delete(exons);
+  }
+
+  gt_array_delete(mrnas);
+}
+
