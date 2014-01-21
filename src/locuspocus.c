@@ -12,6 +12,7 @@ typedef struct
   unsigned long delta;
   FILE *outstream;
   bool skipends;
+  bool reportemptyseqs;
   FILE *transstream;
   bool verbose;
 } LocusPocusOptions;
@@ -22,18 +23,19 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dg:hil:n:o:st:v";
+  const char *optstr = "deg:hil:n:o:st:v";
   const struct option locuspocus_options[] =
   {
-    { "debug",    no_argument,       NULL, 'd' },
-    { "genemap",  required_argument, NULL, 'g' },
-    { "help",     no_argument,       NULL, 'h' },
-    { "intloci",  no_argument,       NULL, 'i' },
-    { "delta",    required_argument, NULL, 'l' },
-    { "outfile",  required_argument, NULL, 'o' },
-    { "skipends", no_argument,       NULL, 's' },
-    { "transmap", required_argument, NULL, 't' },
-    { "verbose",  no_argument,       NULL, 'v' },
+    { "debug",     no_argument,       NULL, 'd' },
+    { "emptyseqs", no_argument,       NULL, 'e' },
+    { "genemap",   required_argument, NULL, 'g' },
+    { "help",      no_argument,       NULL, 'h' },
+    { "intloci",   no_argument,       NULL, 'i' },
+    { "delta",     required_argument, NULL, 'l' },
+    { "outfile",   required_argument, NULL, 'o' },
+    { "skipends",  no_argument,       NULL, 's' },
+    { "transmap",  required_argument, NULL, 't' },
+    { "verbose",   no_argument,       NULL, 'v' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -44,6 +46,9 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
       case 'd':
         options->debug = 1;
         options->verbose = 1;
+        break;
+      case 'e':
+        options->reportemptyseqs = 1;
         break;
       case 'g':
         options->genestream = fopen(optarg, "w");
@@ -105,6 +110,8 @@ void print_usage(FILE *outstream)
 "  Options:\n"
 "    -d|--debug             print detailed debugging messages to terminal\n"
 "                           (standard error)\n"
+"    -e|--emptyseqs         when reporting interval loci, include sequences\n"
+"                           with no annotated genes\n"
 "    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
 "                           corresponding locus to the given file\n"
 "    -h|--help              print this help message and exit\n"
@@ -127,7 +134,7 @@ void print_usage(FILE *outstream)
 int main(int argc, char **argv)
 {
   // Parse options from command line
-  LocusPocusOptions options = { 0, NULL, 0, 500, stdout, 0, NULL, 0 };
+  LocusPocusOptions options = { 0, NULL, 0, 500, stdout, 0, 0, NULL, 0 };
   parse_options(argc, argv, &options);
   int numfiles = argc - optind;
   if(numfiles < 1)
@@ -170,12 +177,19 @@ int main(int argc, char **argv)
     if(options.intloci)
     {
        seqloci = agn_locus_index_interval_loci(loci, seqid, options.delta,
-                                               options.skipends);
+                                               options.skipends,
+                                               options.reportemptyseqs);
     }
     else
     {
       seqloci = agn_locus_index_get(loci, seqid);
     }
+    if(gt_array_size(seqloci) == 0)
+    {
+      gt_array_delete(seqloci);
+      continue;
+    }
+
     gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
     gt_array_reverse(seqloci);
     if(options.verbose)

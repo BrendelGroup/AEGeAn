@@ -160,7 +160,8 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
 }
 
 GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
-                                       GtUword delta, bool skipterminal)
+                                       GtUword delta, bool skipterminal,
+                                       bool reportemptyseqs)
 {
   GtArray *loci = agn_locus_index_get(idx, seqid);
   if(loci == NULL)
@@ -181,10 +182,13 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   }
   gt_array_delete(loci);
   loci = clonedloci;
-  
+
   // Handle trivial case
   if(nloci == 0)
   {
+    if(!reportemptyseqs)
+      return iloci;
+
     AgnGeneLocus *ilocus = agn_gene_locus_new(seqid);
     agn_gene_locus_set_range(ilocus, seqrange->start, seqrange->end);
     gt_array_add(iloci, ilocus);
@@ -765,7 +769,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
 
   bool test1pass = true;
   seqid = *(GtStr **)gt_array_get(seqids, 0);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -779,7 +783,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 1);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 2)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -801,7 +805,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 2);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 2)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -823,7 +827,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 3);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -837,7 +841,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 4);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -851,7 +855,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 5);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -869,7 +873,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
 
   bool test2pass = true;
   seqid = *(GtStr **)gt_array_get(seqids, 6);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 4)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -898,7 +902,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 7);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 4)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -927,7 +931,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 8);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -955,7 +959,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
 
   bool test3pass = true;
   seqid = *(GtStr **)gt_array_get(seqids, 9);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -979,7 +983,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 10);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1003,7 +1007,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 11);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1031,7 +1035,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
 
   bool test4pass = true;
   seqid = *(GtStr **)gt_array_get(seqids, 12);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1055,7 +1059,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 13);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1079,7 +1083,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 14);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1103,7 +1107,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 15);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1131,7 +1135,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
 
   bool test5pass = true;
   seqid = *(GtStr **)gt_array_get(seqids, 16);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1155,7 +1159,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 17);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1179,7 +1183,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 18);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 3)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1207,7 +1211,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
 
   bool test6pass = true;
   seqid = *(GtStr **)gt_array_get(seqids, 19);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 2)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1226,7 +1230,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 20);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 2)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1245,7 +1249,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 21);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1259,7 +1263,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 22);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1273,7 +1277,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 23);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
@@ -1287,7 +1291,7 @@ bool agn_locus_index_unit_test(AgnUnitTest *test)
   gt_array_delete(iloci);
 
   seqid = *(GtStr **)gt_array_get(seqids, 24);
-  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false);
+  iloci = agn_locus_index_interval_loci(index, gt_str_get(seqid), delta, false, false);
   if(gt_array_size(iloci) == 1)
   {
     ilocus = *(AgnGeneLocus **)gt_array_get(iloci, 0);
