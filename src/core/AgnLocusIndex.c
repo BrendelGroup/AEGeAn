@@ -258,7 +258,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   // Handle terminal ilocus
   l1 = *(AgnGeneLocus **)gt_array_get(loci, nloci - 1);
   r1 = agn_gene_locus_range(l1);
-  if(r1.end <= seqrange->end - (2*delta))
+  if(seqrange->end > (2*delta) && r1.end <= seqrange->end - (2*delta))
   {
     agn_gene_locus_set_range(l1, r1.start, r1.end + delta);
 
