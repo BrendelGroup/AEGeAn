@@ -5,17 +5,19 @@ import os, sys
 #gff file as output, kepping only those features listed below.
 
 usage = [ "python gffTidy.py [options] <input> <output>" ]
-example = ["python gffTidy.py -nc ref_Amel_4.5_top_level.gff3 apis.new.gff3"]
+example = [ "python gffTidy.py -nc ref_Amel_4.5_top_level.gff3 apis.new.gff3" ]
 
 options = {'-nc':['Include non-coding features ',False], '-features':['Include features from text file', False], '-quiet':['Turn off GFF summary statistics', False]}
 
-features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region', 'transcript']
+features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region', 'transcript', 'primary_transcript']
 
-attributes = ['Dbxref', 'gene', 'genome', 'mol_type', 'strain', 'product']
+attributes = ['Dbxref', 'gene', 'genome', 'mol_type', 'strain', 'product', 'ID', 'Parent']
 
 noncoding = ['ncRNA', 'miRNA', 'tRNA', 'rRNA', 'lincRNA']
 
-ids = {'gene':0, 'rna':0, 'id':0}
+ids = {'gene':0, 'rna':0, 'id':0, 'cds':0}
+
+seq_region = {0:0}
 
 def main():
     if len(sys.argv) < 3:
@@ -67,80 +69,69 @@ def main():
         for x in noncoding:
             if x not in features: features.append(x)
 
-    start, geneFeatures=False, []
+    start, geneFeatures, region = False, [], False
     for line in f:
         if not line.startswith('#'):
-            splitter = line.split()
-            if splitter and len(splitter) == 9 and splitter[2] in features:
-                if splitter[2] == 'gene':
-                    if start: 
+            splitter = line.strip().split('\t')
+            if splitter[2] == 'region': region = True
+            #if splitter and len(splitter) == 9 and splitter[2] in features:
+            if splitter:
+                if splitter[2] == 'gene' or region:
+                    if start and geneFeatures: 
                         writeGene(o, geneFeatures)
                         geneFeatures = [] 
                     else: start = True
             geneFeatures.append(splitter)
+            region = False
         else:
             if line.startswith('##FASTA') or line.startswith('>'): break
-            if not line.startswith('\n'): o.write(line)
-    writeGene(o, geneFeatures)
+            elif 'sequence-region' in line:
+                 o.write(line)
+                 region = True
+            elif not line.startswith('\n'): 
+                region = False
+                o.write(line)
+    if geneFeatures:
+        writeGene(o, geneFeatures)
     f.close()
     o.close()
     gffStat(outputFile)
 
 def writeGene(o, geneFeatures):
-    mRNA, region, coding, newL, geneSplit = False, False, True, '', []
-    min, max = 10000000000, 0
+    o1 = open('misfits.txt', 'a')
+    coding,block, geneSplit = True, '', []
+    rnas = ['mRNA', 'ncRNA', 'transcript', 'misc_RNA', 'tRNA']
     for x in geneFeatures:
+        newL = ''
+        splitee = x[8].split(';')
         if not options['-nc'][1]:
             for nc in noncoding:
                 if nc in x[8] or nc in x[1] or nc in x[2]: coding = False
-        if coding and x[2] in features:
-            splitee = x[8].split(';')
-            if x[2] == 'gene':
-                geneSplit = x
-                start, stop = x[3], x[4]
-                ids['gene'] += 1
-                geneID = 'gene' + str(ids['gene'])
-                attrib = 'ID='+geneID + ';'
-            elif x[2] == 'mRNA' or x[2] == 'ncRNA' or x[2] == 'transcript':
-                mRNA = True
-                ids['rna'] += 1
-                attrib = 'ID=rna'+str(ids['rna']) + ';Parent=gene'+str(ids['gene'])+';'
-            elif x[2] == 'CDS' or x[2] == 'exon':
-                start, stop = int(x[3]), int(x[4])
-                ids['id'] += 1
-                attrib = 'ID=id' + str(ids['id']) + ';Parent=rna'+str(ids['rna']) + ';'
-            elif x[2] in features:
-                ids['id'] += 1
-                attrib = 'ID=id' + str(ids['id']) + ';'
-            for y in x[:8]: newL += y + '\t'
-            for column in splitee:
+        if x[2] in features and coding:
+            for i in x[:8]:
+                newL += i + '\t'
+            for each in splitee:
                 for attribute in attributes:
-                    if column.startswith(attribute): attrib += column + ';'
-            newL += attrib + '\n'
-    if not mRNA and geneSplit:
-        geneFeats = newL.split('\n')
-        newL = geneFeats[0] + '\n'
-        ids['rna'] += 1
-        geneSplit[2],geneSplit[8] = 'mRNA', 'ID=rna'+str(ids['rna']) +';Parent=gene'+str(ids['gene'])+';'
-        for x in geneSplit: newL += x +'\t'
-        newL = newL[:-1] + '\n'    
-        for x in geneFeats: 
-            if x: newL += x + '\n'
-                
-    if coding and geneSplit:  #condition name no longer relevant
-        o.write(newL)
-        
+                    if attribute in each and attribute not in newL:
+                        newL += each + ';'
+            if newL[-1] == ';': newL = newL[:-1]
+            if newL[-1] == '\t': newL = newL[:-1]
+            if newL[-1] != '\n': newL += '\n'
+            block += newL
+    o.write(block)
+
 def gffStat(fileHandle):
     f = open(fileHandle)
     genes, sources, seqs, types, geneCount, seqids = {}, {}, {}, {}, 0, 0
     for line in f:
-        if not line.startswith('#'):
+        if not line.startswith('#') and not line.startswith('\n'):
             x = line.split()
+            
             seqid= x[0]
             source = x[1]
             type = x[2]
             if seqid not in seqs:
-                seqs[seqid] = 1
+                seqs[seqid] = 0
             seqs[seqid] += 1
             if source not in sources:
                 sources[source] = 0
