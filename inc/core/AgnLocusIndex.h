@@ -59,8 +59,7 @@ GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid);
  * ``skipterminal`` to true to ignore the ends of the sequence.
  */
 GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
-                                       GtUword delta, bool skipterminal,
-                                       bool reportemptyseqs);
+                                       GtUword delta, bool skipterminal);
 
 /**
  * @function Class constructor
