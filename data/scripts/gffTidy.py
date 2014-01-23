@@ -9,11 +9,11 @@ example = ["python gffTidy.py -nc ref_Amel_4.5_top_level.gff3 apis.new.gff3"]
 
 options = {'-nc':['Include non-coding features ',False], '-features':['Include features from text file', False], '-quiet':['Turn off GFF summary statistics', False]}
 
-features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region']
+features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region', 'transcript']
 
 attributes = ['Dbxref', 'gene', 'genome', 'mol_type', 'strain', 'product']
 
-noncoding = ['ncRNA', 'microRNA', 'tRNA', 'rRNA']
+noncoding = ['ncRNA', 'miRNA', 'tRNA', 'rRNA', 'lincRNA']
 
 ids = {'gene':0, 'rna':0, 'id':0}
 
@@ -60,7 +60,9 @@ def main():
             print "Can't open feature file: " + featureFile
         for line in f1:
             feat = line.strip()
+            for x in features: features.remove(x)
             if feat not in features: features.append(feat)
+
     if options['-nc'][1] == True:
         for x in noncoding:
             if x not in features: features.append(x)
@@ -85,11 +87,8 @@ def main():
     gffStat(outputFile)
 
 def writeGene(o, geneFeatures):
-    never = False
-    mRNA = False
-    region = False
-    coding = True
-    newL = ''
+    mRNA, region, coding, newL, geneSplit = False, False, True, '', []
+    min, max = 10000000000, 0
     for x in geneFeatures:
         if not options['-nc'][1]:
             for nc in noncoding:
@@ -101,13 +100,13 @@ def writeGene(o, geneFeatures):
                 start, stop = x[3], x[4]
                 ids['gene'] += 1
                 geneID = 'gene' + str(ids['gene'])
-                mRNA = True
                 attrib = 'ID='+geneID + ';'
-            elif x[2] == 'mRNA' or x[2] == 'ncRNA':
-                if mRNA: mRNA = False
+            elif x[2] == 'mRNA' or x[2] == 'ncRNA' or x[2] == 'transcript':
+                mRNA = True
                 ids['rna'] += 1
                 attrib = 'ID=rna'+str(ids['rna']) + ';Parent=gene'+str(ids['gene'])+';'
             elif x[2] == 'CDS' or x[2] == 'exon':
+                start, stop = int(x[3]), int(x[4])
                 ids['id'] += 1
                 attrib = 'ID=id' + str(ids['id']) + ';Parent=rna'+str(ids['rna']) + ';'
             elif x[2] in features:
@@ -118,7 +117,17 @@ def writeGene(o, geneFeatures):
                 for attribute in attributes:
                     if column.startswith(attribute): attrib += column + ';'
             newL += attrib + '\n'
-    if coding:
+    if not mRNA and geneSplit:
+        geneFeats = newL.split('\n')
+        newL = geneFeats[0] + '\n'
+        ids['rna'] += 1
+        geneSplit[2],geneSplit[8] = 'mRNA', 'ID=rna'+str(ids['rna']) +';Parent=gene'+str(ids['gene'])+';'
+        for x in geneSplit: newL += x +'\t'
+        newL = newL[:-1] + '\n'    
+        for x in geneFeats: 
+            if x: newL += x + '\n'
+                
+    if coding and geneSplit:  #condition name no longer relevant
         o.write(newL)
         
 def gffStat(fileHandle):
@@ -153,7 +162,7 @@ def gffStat(fileHandle):
         sumRNA += y['rna']
         sumExons += y['exon']
     print "GFF Report: " + fileHandle
-    print "    %d Scaffolds" % len(seqs)
+    print "    %d Sequences" % len(seqs)
     print "    %d Genes" % geneCount
     print "    %.4f Average mRNAs per Gene" % ( float(sumRNA) / float(geneCount) )
     print "    %.4f Average exons per Gene" % ( float(sumExons) / float(geneCount) )
@@ -171,6 +180,7 @@ def printUsage():
     for x,y in options.iteritems():
          if not x == '-features': print '  '+x+'\n    '+ y[0] + '\tdefault=' + str(y[1])
          else: print '  '+x+' <text file>\n    '+y[0] + '\tdefault=' + str(y[1])
+
 def gffCheck(inputFile):
     try:
         f = open(inputFile)
