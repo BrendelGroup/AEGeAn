@@ -949,8 +949,12 @@ void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
   if(source != NULL)
     src = source;
 
+  GtArray *types = gt_array_new( sizeof(const char *) );
+  GtHashmap *countsbytype = gt_hashmap_new(GT_HASH_STRING,
+                                           gt_free_func,
+                                           gt_free_func);
+
   GtDlistelem *elem;
-  GtArray *mrnacounts = gt_array_new( sizeof(GtUword) );
   for(elem = gt_dlist_first(locus->genes);
       elem != NULL;
       elem = gt_dlistelem_next(elem))
@@ -958,36 +962,39 @@ void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream,
     GtFeatureNode *gene = gt_dlistelem_get_data(elem);
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(gene);
     GtFeatureNode *child;
-    GtUword mrnacount = 0;
     for(child  = gt_feature_node_iterator_next(iter);
         child != NULL;
         child  = gt_feature_node_iterator_next(iter))
     {
-      if(agn_gt_feature_node_is_mrna_feature(child))
-        mrnacount++;
+      const char *transtype = gt_feature_node_get_type(child);
+      GtUword *num_of_type = gt_hashmap_get(countsbytype, transtype);
+      if(num_of_type == NULL)
+      {
+        char *type = gt_cstr_dup(transtype);
+        gt_array_add(types, type);
+        num_of_type = gt_malloc( sizeof(GtUword) );
+        (*num_of_type) = 0;
+        gt_hashmap_add(countsbytype, type, num_of_type);
+      }
+      (*num_of_type)++;
     }
     gt_feature_node_iterator_delete(iter);
-    gt_array_add(mrnacounts, mrnacount);
   }
 
-  fprintf(outstream,
-          "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tnum_genes=%lu",
+  fprintf(outstream, "%s\t%s\tlocus\t%lu\t%lu\t.\t.\t.\tgene=%lu",
           locus->region.seqid, src, locus->region.range.start,
           locus->region.range.end, gt_dlist_size(locus->genes));
-  GtUword i;
-  if(gt_array_size(mrnacounts) > 0)
+  while(gt_array_size(types) > 0)
   {
-    fputs(";mrnas_per_gene=", outstream);
-    for(i = 0; i < gt_array_size(mrnacounts); i++)
-    {
-      GtUword *mrnacount = gt_array_get(mrnacounts, i);
-      if(i > 0)
-        fputc(',', outstream);
-      fprintf(outstream, "%lu", *mrnacount);
-    }
+    const char **type = gt_array_pop(types);
+    GtUword *num_of_type = gt_hashmap_get(countsbytype, *type);
+    gt_assert(num_of_type);
+    fprintf(outstream, ";%s=%lu", *type, *num_of_type);
   }
   fputc('\n', outstream);
-  gt_array_delete(mrnacounts);
+
+  gt_hashmap_delete(countsbytype);
+  gt_array_delete(types);
 }
 
 GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus,
