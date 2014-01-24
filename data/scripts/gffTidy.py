@@ -84,9 +84,11 @@ def main():
             geneFeatures.append(splitter)
             region = False
         else:
-            if line.startswith('##FASTA') or line.startswith('>'): break
+            if line.startswith('###'):
+                never = 1+1
+            elif line.startswith('##FASTA') or line.startswith('>'): break
             elif 'sequence-region' in line:
-                 o.write(line)
+                 if len(line.split()) == 4: o.write(line)
                  region = True
             elif not line.startswith('\n'): 
                 region = False
@@ -98,7 +100,7 @@ def main():
     gffStat(outputFile)
 
 def writeGene(o, geneFeatures):
-    o1 = open('misfits.txt', 'a')
+    last_id, last_strand = '', ''
     coding,block, geneSplit = True, '', []
     rnas = ['mRNA', 'ncRNA', 'transcript', 'misc_RNA', 'tRNA']
     for x in geneFeatures:
@@ -108,6 +110,14 @@ def writeGene(o, geneFeatures):
             for nc in noncoding:
                 if nc in x[8] or nc in x[1] or nc in x[2]: coding = False
         if x[2] in features and coding:
+            if x[2] == 'CDS':
+                strand = x[6]
+                attrib = x[8].split(';')
+                id = attrib[0].split('ID=')[1]
+                if id == last_id: 
+                    if strand != last_strand:
+                        x[6]=last_strand
+                last_id, last_strand = id, strand
             for i in x[:8]:
                 newL += i + '\t'
             for each in splitee:
@@ -118,7 +128,7 @@ def writeGene(o, geneFeatures):
             if newL[-1] == '\t': newL = newL[:-1]
             if newL[-1] != '\n': newL += '\n'
             block += newL
-    o.write(block)
+    if coding: o.write(block)
 
 def gffStat(fileHandle):
     f = open(fileHandle)
