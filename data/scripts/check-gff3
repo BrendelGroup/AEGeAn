@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 import os, re, sys
 
+# Usage: check-gff3 < annot.gff3
+
 types = {}
+topleveltypes = {}
 relationships = {}
 
 for line in sys.stdin:
@@ -25,6 +28,8 @@ for line in sys.stdin:
     if not values[2] in relationships:
       relationships[values[2]] = {}
     relationships[values[2]][parenttype] = 1
+  else:
+    topleveltypes[values[2]] = 1
 
   if values[2] == "gene" and line.count("pseudo") > 0:
     print >> sys.stderr, "gene at %s[%s, %s] is probably a pseudogene" % (values[0], values[3], values[4])
@@ -33,10 +38,13 @@ print "\n===== Types ====="
 featuretypes = list(set(types.values()))
 featuretypes.sort()
 for featuretype in featuretypes:
-  print featuretype
+  sys.stdout.write(featuretype)
+  if featuretype in topleveltypes:
+    sys.stdout.write(" (includes top-level features)")
+  print ""
 
 print "\n===== Relationships (child --> parent) ====="
-childtypes = list(relationships.keys())
+childtypes = relationships.keys()
 childtypes.sort()
 for childtype in childtypes:
   parenttypes = list(relationships[childtype].keys())
