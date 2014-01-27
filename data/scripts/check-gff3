@@ -44,7 +44,7 @@ for line in sys.stdin:
     print >> sys.stderr, "gene at %s[%s, %s] is probably a pseudogene" % (values[0], values[3], values[4])
 
 print "\n===== Types ====="
-featuretypes = list(set(types.values()))
+featuretypes = counts.keys()
 featuretypes.sort()
 for featuretype in featuretypes:
   count = counts[featuretype]
