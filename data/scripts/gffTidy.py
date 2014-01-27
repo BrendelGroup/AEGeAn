@@ -7,7 +7,7 @@ import os, sys
 usage = [ "python gffTidy.py [options] <input> <output>" ]
 example = [ "python gffTidy.py -nc ref_Amel_4.5_top_level.gff3 apis.new.gff3" ]
 
-options = {'-nc':['Include non-coding features ',True], '-features':['Include features from text file', False], '-quiet':['Turn off GFF summary statistics', False], '-seqids':['Remove sequences listed in text file', False], '-ignore':['Ignore a specific sequence ID (e.g. NT_001566)',False]}
+options = {'-nc':['Include non-coding features           ',True], '-features':['Include features from text file      ', False], '-quiet':['Turn off GFF summary statistics       ', False], '-seqids':['Remove sequences listed in text file    ', False], '-ignore':['Ignore a specific sequence ID (NT_001566)',False]}
 
 features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region', 'transcript', 'primary_transcript', 'STS']
 
@@ -268,7 +268,7 @@ def writeMisfits(outFile):
             if start < min: min = start
             if stop > max: max = stop
         geneL = x[0]+'\t'+x[1]+'\tgene\t'+str(start)+'\t'+str(stop)
-        geneL += '\t.\t'+x[6]+'\t'+x[7]+'\tID='+ str(ids['gene']) + '\n'
+        geneL += '\t.\t'+x[6]+'\t'+x[7]+'\tID=gene'+ str(ids['gene']) + '\n'
         if feats:
             o.write(geneL)
             for i in feats:
