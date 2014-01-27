@@ -4,6 +4,7 @@ import os, re, sys
 # Usage: check-gff3 < annot.gff3
 
 types = {}
+counts = {}
 topleveltypes = {}
 relationships = {}
 
@@ -14,6 +15,10 @@ for line in sys.stdin:
   line.rstrip()
   values = line.split("\t")
   assert len(values) == 9
+
+  if not values[2] in counts:
+    counts[values[2]] = 0
+  counts[values[2]] += 1
 
   m = re.search("ID=([^;\n]+)", values[8])
   if m:
@@ -27,9 +32,13 @@ for line in sys.stdin:
     assert parenttype
     if not values[2] in relationships:
       relationships[values[2]] = {}
-    relationships[values[2]][parenttype] = 1
+    if not parenttype in relationships[values[2]]:
+      relationships[values[2]][parenttype] = 0
+    relationships[values[2]][parenttype] += 1
   else:
-    topleveltypes[values[2]] = 1
+    if not values[2] in topleveltypes:
+      topleveltypes[values[2]] = 0
+    topleveltypes[values[2]] += 1
 
   if values[2] == "gene" and line.count("pseudo") > 0:
     print >> sys.stderr, "gene at %s[%s, %s] is probably a pseudogene" % (values[0], values[3], values[4])
@@ -38,10 +47,11 @@ print "\n===== Types ====="
 featuretypes = list(set(types.values()))
 featuretypes.sort()
 for featuretype in featuretypes:
-  sys.stdout.write(featuretype)
+  count = counts[featuretype]
+  topcount = 0
   if featuretype in topleveltypes:
-    sys.stdout.write(" (includes top-level features)")
-  print ""
+    topcount = topleveltypes[featuretype]
+  print "%s (%lu total, %lu top-level)" % (featuretype, count, topcount)
 
 print "\n===== Relationships (child --> parent) ====="
 childtypes = relationships.keys()
@@ -50,5 +60,6 @@ for childtype in childtypes:
   parenttypes = list(relationships[childtype].keys())
   parenttypes.sort()
   for parenttype in parenttypes:
-    print "%s --> %s" % (childtype, parenttype)
+    count = relationships[childtype][parenttype]
+    print "%s --> %s (%lu occurrences)" % (childtype, parenttype, count)
 
