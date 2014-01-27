@@ -257,7 +257,7 @@ def writeMisfits(outFile):
             attrib = x[8].split(';')
             for each in x[:8]: newL += each + '\t'
             if x[2] == 'tRNA' or x[2] == 'rRNA':
-                newAttrib = attrib[0] + ';Parent='+str(ids['gene'])
+                newAttrib = attrib[0] + ';Parent=gene'+str(ids['gene'])
                 for j in attrib[1:]:
                     if not j.startswith('ID=') or j.startswith('Parent='):
                         newAttrib += ';' + j
