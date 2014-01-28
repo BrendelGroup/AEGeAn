@@ -7,9 +7,9 @@ import os, sys
 usage = [ "python gffTidy.py [options] <input> <output>" ]
 example = [ "python gffTidy.py -nc ref_Amel_4.5_top_level.gff3 apis.new.gff3" ]
 
-options = {'-nc':['Include non-coding features ',False], '-features':['Include features from text file', False], '-quiet':['Turn off GFF summary statistics', False]}
+options = {'-nc':['Include non-coding features           ',True], '-features':['Include features from text file      ', False], '-quiet':['Turn off GFF summary statistics       ', False], '-seqids':['Remove sequences listed in text file    ', False], '-ignore':['Ignore a specific sequence ID       ',False]}
 
-features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region', 'transcript', 'primary_transcript']
+features = ['CDS', 'exon', 'gene', 'misc_RNA', 'intron', "5'UTR", "3'UTR", 'mRNA', 'region', 'transcript', 'primary_transcript', 'STS', 'tRNA']
 
 attributes = ['Dbxref', 'gene', 'genome', 'mol_type', 'strain', 'product', 'ID', 'Parent']
 
@@ -17,7 +17,7 @@ noncoding = ['ncRNA', 'miRNA', 'tRNA', 'rRNA', 'lincRNA']
 
 ids = {'gene':0, 'rna':0, 'id':0, 'cds':0}
 
-seq_region = {0:0}
+seqids, misfits, flagged, flagOut = [], [], [], []
 
 def main():
     if len(sys.argv) < 3:
@@ -25,14 +25,25 @@ def main():
         printUsage()
         sys.exit()
     for x in range(0, len(sys.argv)):
-        if sys.argv[x] == '-nc': options['-nc'][1] = True
-        if sys.argv[x] == '-features': 
+        if sys.argv[x] == '-nc':
+            booly = sys.argv[x+1]
+            if booly == 'T' or booly == 'True': options['-nc'][1]=True
+            elif booly == 'F' or booly == 'False': options['-nc'][1] = False
+        elif sys.argv[x] == '-features': 
             options['-features'][1] = True
             featureFile = sys.argv[x+1]
-        if sys.argv[x] == '-quiet': options['-quiet'][1] = True
-        if sys.argv[x] == '-help' or sys.argv[x] == '-h':
+        elif sys.argv[x] == '-quiet' or sys.argv[x]== '-q':
+            options['-quiet'][1] = True
+        elif sys.argv[x] == '-help' or sys.argv[x] == '-h':
             printUsage()
             sys.exit()
+        elif sys.argv[x] == '-seqids' or sys.argv[x] == '-s':
+            options['-seqids'][1] = True
+            idFile = sys.argv[x+1]
+        elif sys.argv[x] == '-ignore' or sys.argv[x] == '=i':
+            otpions['-ignore'][1] = True
+            ignoreID = sys.argv[x+1]
+            
     inputFile = sys.argv[-2]
     outputFile = sys.argv[-1]
     if not inputFile.startswith('-') and not outputFile.startswith('-'):
@@ -64,17 +75,26 @@ def main():
             feat = line.strip()
             for x in features: features.remove(x)
             if feat not in features: features.append(feat)
-
+    if options['-seqids'][1] == True:
+        try:
+            f2 = open(idFile)
+        except IOError as e:
+            print "Can't open sequence id file: " + idFile
+        for line in f2:
+            seqid = line.strip()
+            seqids.append(seqid)
+    if options['-ignore'][1] == True:
+        seqids.append(ignoreID)
     if options['-nc'][1] == True:
         for x in noncoding:
             if x not in features: features.append(x)
-
+    
+    checkRel(inputFile)
     start, geneFeatures, region = False, [], False
     for line in f:
         if not line.startswith('#'):
             splitter = line.strip().split('\t')
             if splitter[2] == 'region': region = True
-            #if splitter and len(splitter) == 9 and splitter[2] in features:
             if splitter:
                 if splitter[2] == 'gene' or region:
                     if start and geneFeatures: 
@@ -98,18 +118,34 @@ def main():
     f.close()
     o.close()
     gffStat(outputFile)
-
+    if flagOut:
+        print 'Writing out misfits to : ' + outputFile.split('.gff')[0]+'.misfits.gff3'
+        writeMisfits(outputFile.split('.gff')[0] + '.misfits.gff3')
+    if misfits: 
+        print 'Removed misfits of feature type: ' 
+        for z in misfits: print '    ' + z
+    
 def writeGene(o, geneFeatures):
+    feat = []
+    flag, parentID = False, ''
     last_id, last_strand = '', ''
     coding,block, geneSplit = True, '', []
     rnas = ['mRNA', 'ncRNA', 'transcript', 'misc_RNA', 'tRNA']
     for x in geneFeatures:
+        pseudo = False
         newL = ''
         splitee = x[8].split(';')
-        if not options['-nc'][1]:
+        featID = splitee[0].split('ID=')[1]
+        if 'Parent=' in splitee[1]: parentID = splitee[1].split('Parent=')[1]
+        if featID in flagged: 
+            flag = True
+        if parentID:
+            if parentID in flagged: 
+                flag = True                
+        if options['-nc'][1] == False:    
             for nc in noncoding:
                 if nc in x[8] or nc in x[1] or nc in x[2]: coding = False
-        if x[2] in features and coding:
+        if x[2] in features and x[0] not in seqids and coding:
             if x[2] == 'CDS':
                 strand = x[6]
                 attrib = x[8].split(';')
@@ -127,8 +163,12 @@ def writeGene(o, geneFeatures):
             if newL[-1] == ';': newL = newL[:-1]
             if newL[-1] == '\t': newL = newL[:-1]
             if newL[-1] != '\n': newL += '\n'
-            block += newL
-    if coding: o.write(block)
+            if not flag: block += newL
+            else: feat.append(newL)
+        elif x[2] not in features or x[0] in seqids:
+            if x[2] not in misfits: misfits.append(x[2])
+    if coding and not flag: o.write(block)
+    elif coding and flag: flagOut.append(feat)
 
 def gffStat(fileHandle):
     f = open(fileHandle)
@@ -136,7 +176,6 @@ def gffStat(fileHandle):
     for line in f:
         if not line.startswith('#') and not line.startswith('\n'):
             x = line.split()
-            
             seqid= x[0]
             source = x[1]
             type = x[2]
@@ -157,16 +196,15 @@ def gffStat(fileHandle):
                 genes[ID]['rna'] += 1
             elif 'exon' in type:
                 genes[ID]['exon'] += 1
-
     sumRNA, sumExons = 0,0
     for x,y in genes.iteritems():
         sumRNA += y['rna']
         sumExons += y['exon']
     print "GFF Report: " + fileHandle
-    print "    %d Sequences" % len(seqs)
-    print "    %d Genes" % geneCount
-    print "    %.4f Average mRNAs per Gene" % ( float(sumRNA) / float(geneCount) )
-    print "    %.4f Average exons per Gene" % ( float(sumExons) / float(geneCount) )
+    print "    %d sequence IDs" % len(seqs)
+    print "    %d genes" % geneCount
+    print "    %.4f average mRNAs per Gene" % ( float(sumRNA) / float(geneCount) )
+    print "    %.4f average exons per Gene" % ( float(sumExons) / float(geneCount) )
     srcList, typeList = '\t', '\t'
     for x,y in sources.iteritems(): srcList += x +'('+ str(y)+')' + ','
     print "    sources:\n",srcList[:-1]
@@ -174,12 +212,13 @@ def gffStat(fileHandle):
     print "    types:\n", typeList[:-1]
     print '\n'
 
-
 def printUsage():
     print "Usage: ", usage[0]
     print "[options]"
     for x,y in options.iteritems():
-         if not x == '-features': print '  '+x+'\n    '+ y[0] + '\tdefault=' + str(y[1])
+         if x == '-ignore': print '  '+x+' <sequence_id>\n    '+y[0]+'\tdefault='+str(y[1])
+         elif x == '-nc': print '  '+x+ ' <T|F>\n    '+y[0]+'\tdefault='+str(y[1])
+         elif not x == '-features' and not x == '-seqids': print '  '+x+'\n    '+ y[0] + '\tdefault=' + str(y[1])
          else: print '  '+x+' <text file>\n    '+y[0] + '\tdefault=' + str(y[1])
 
 def gffCheck(inputFile):
@@ -200,12 +239,65 @@ def gffCheck(inputFile):
         elif len(line.split()) == 9:
             nineFields = True
             break
-        if num > 100: break
+        if num > 30: break
     if gffHeader or nineFields: return True
     else: 
         if not gffHeader: print "No #gff-version 3 line found."
         return False 
-     
 
-
+def checkRel(file1):
+    f = open(file1)
+    for line in f:
+        if not line.startswith('#'):
+            x = line.split()
+            if x[2] == 'rRNA' or x[2] == 'tRNA':
+                if 'Parent=' not in x[8] and 'Parent' not in x[8]:
+                    if 'ID=' in x[8]:
+                        attSplit = x[8].split(';')[0]
+                        id = attSplit.split('ID=')[1]
+                        flagged.append(id)
+                            
+def writeMisfits(outFile):
+    o = open(outFile, 'w')
+    o.write("##gff-version 3\n")
+    for featBlock in flagOut:
+        cds = False
+        ids['gene'] += 1
+        feats = []
+        min, max = 10000000000, 0
+        for line in featBlock:
+            newL = ''
+            x = line.split('\t')
+            attrib = x[8].split(';')
+            for each in x[:8]: newL += each + '\t'
+            if x[2] == 'tRNA' or x[2] == 'rRNA':
+                ids['rna'] += 1
+                cds = False
+                newAttrib = 'ID=rna'+str(ids['rna']) + ';Parent=gene'+str(ids['gene'])
+            elif x[2] != 'CDS':
+                ids['id'] += 1
+                cds = False
+                newAttrib = 'ID='+x[2]+str(ids['id'])+';Parent=rna'+str(ids['rna'])
+            elif x[2] == 'CDS':
+                if cds: newAttrib = 'ID='+x[2]+str(ids['cds'])+';Parent=rna'+str(ids['rna'])
+                else: 
+                    cds = True
+                    ids['cds'] += 1
+                    newAttrib = 'ID='+x[2]+str(ids['cds'])+';Parent=rna'+str(ids['rna'])
+            for j in attrib[1:]:
+                if not j.startswith('ID=') and not j.startswith('Parent='):
+                    newAttrib += ';' + j
+            newL += newAttrib
+            if newL[-1] != '\n': newL += '\n'
+            feats.append(newL)
+            start, stop = int(x[3]), int(x[4])
+            if start < min: min = start
+            if stop > max: max = stop
+        geneL = x[0]+'\t'+x[1]+'\tgene\t'+str(start)+'\t'+str(stop)
+        geneL += '\t.\t'+x[6]+'\t'+x[7]+'\tID=gene'+ str(ids['gene']) + '\n'
+        if feats:
+            o.write(geneL)
+            for i in feats:
+                o.write(i)
 main()   
+
