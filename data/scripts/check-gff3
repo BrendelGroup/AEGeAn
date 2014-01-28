@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, sys
+import re, sys
 
 # Usage: check-gff3 < annot.gff3
 
@@ -9,10 +9,10 @@ topleveltypes = {}
 relationships = {}
 
 for line in sys.stdin:
-  if line.startswith("#"):
+  line = line.rstrip()
+  if line == "" or line.startswith("#"):
     continue
 
-  line.rstrip()
   values = line.split("\t")
   assert len(values) == 9
 
@@ -39,9 +39,6 @@ for line in sys.stdin:
     if not values[2] in topleveltypes:
       topleveltypes[values[2]] = 0
     topleveltypes[values[2]] += 1
-
-  if values[2] == "gene" and line.count("pseudo") > 0:
-    print >> sys.stderr, "gene at %s[%s, %s] is probably a pseudogene" % (values[0], values[3], values[4])
 
 print "\n===== Types ====="
 featuretypes = counts.keys()
