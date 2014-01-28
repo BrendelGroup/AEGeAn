@@ -239,7 +239,7 @@ def gffCheck(inputFile):
         elif len(line.split()) == 9:
             nineFields = True
             break
-        if num > 50: break
+        if num > 30: break
     if gffHeader or nineFields: return True
     else: 
         if not gffHeader: print "No #gff-version 3 line found."
@@ -256,17 +256,6 @@ def checkRel(file1):
                         attSplit = x[8].split(';')[0]
                         id = attSplit.split('ID=')[1]
                         flagged.append(id)
-    #f=open(file1)
-    #for line in f:
-    #    if not line.startswith('#'):
-    #        x = line.split('\t')
-    #        if 'Parent=' in x[8].split(';')[1]:
-    #            attrib = x[8].split(';')
-    #            parent_id = attrib[1].split('Parent=')[1]
-    #            feat_id = attrib[0].split('ID=')[1]
-    #            if parent_id in flagged:
-    #                if feat_id not in flagged: 
-    #                    flagged.append(id)
                             
 def writeMisfits(outFile):
     o = open(outFile, 'w')
