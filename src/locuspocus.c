@@ -93,6 +93,8 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
       case 'v':
         options->verbose = 1;
         break;
+      default:
+        fprintf(stderr, "[LocusPocus] error: option '%c' unsupported\n", opt);
     }
   }
 }
