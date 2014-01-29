@@ -6,11 +6,13 @@ import re, sys
 transtypes = { "mRNA":1, "tRNA":1, "rRNA":1, "ncRNA":1 }
 pseudogenefixes = {}
 transfixes = {}
+newgenes = {}
 
 for line in sys.stdin:
   line = line.rstrip()
   if line == "" or line.startswith("#"):
-    print line
+    if line != "###":
+      print line
     continue
 
   values = line.split("\t")
@@ -30,13 +32,29 @@ for line in sys.stdin:
     transfixes[ftype][region] = 1
 
     parentid = "%s:gene" % region
+    m = re.search("ID=([^;\n]+)", values[8])
+    if m:
+      parentid = "%s.gene" % m.group(1)
+
+    parentgff3 = [ values[0], "AEGeAn::tidy", "gene", values[3], values[4], ".", values[6], ".", "ID="+parentid ]
+    if m:
+      if m.group(1) in newgenes:
+        oldgff3 = newgenes[m.group(1)]
+        parentgff3[3] = str(min(long(parentgff3[3]), long(oldgff3[3])))
+        parentgff3[4] = str(min(long(parentgff3[4]), long(oldgff3[4])))
+      newgenes[m.group(1)] = parentgff3
+    else:
+      print "\t".join(parentgff3)
+    
     if values[8] != "":
       line += ";"
     line += "Parent=%s" % parentid
-    parentgff3 = "%s\ttidy\tgene\t%s\t%s\t.\t%s\t.\tID=%s" % (values[0], values[3], values[4], values[6], parentid)
-    print parentgff3
 
   print line
+
+for transid in newgenes.keys():
+  parentgff3 = newgenes[transid]
+  print "\t".join(parentgff3)
 
 print >> sys.stderr, "===== Fixes ====="
 print >> sys.stderr, "  gene --> pseudogene: %lu" % len(pseudogenefixes.keys())
