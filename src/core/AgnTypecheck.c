@@ -31,6 +31,11 @@ bool agn_typecheck_mrna(GtFeatureNode *fn)
          gt_feature_node_has_type(fn, "messenger_RNA");
 }
 
+bool agn_typecheck_pseudogene(GtFeatureNode *fn)
+{
+  return gt_feature_node_has_type(fn, "pseudogene");
+}
+
 GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
 {
   GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );

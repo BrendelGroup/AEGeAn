@@ -1,5 +1,5 @@
-#ifndef AEGEAN_INFER_CDS_STREAM
-#define AEGEAN_INFER_CDS_STREAM
+#ifndef AEGEAN_INFER_CDS_VISITOR
+#define AEGEAN_INFER_CDS_VISITOR
 
 #include "core/logger_api.h"
 #include "extended/node_stream_api.h"

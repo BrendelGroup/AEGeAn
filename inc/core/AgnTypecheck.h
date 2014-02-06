@@ -35,6 +35,12 @@ bool agn_typecheck_intron(GtFeatureNode *fn);
 bool agn_typecheck_mrna(GtFeatureNode *fn);
 
 /**
+ * @function Returns true if the given feature is declared as a pseudogene;
+ * false otherwise.
+ */
+bool agn_typecheck_pseudogene(GtFeatureNode *fn);
+
+/**
  * @function Gather the children of a given feature that have a certain type.
  * Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
  */

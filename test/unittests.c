@@ -6,6 +6,7 @@
 #include "AgnIntervalLocusStream.h"
 #include "AgnLocus.h"
 #include "AgnLocusStream.h"
+#include "AgnPseudogeneFixVisitor.h"
 #include "AgnTranscriptClique.h"
 #include "AgnTranscriptStream.h"
 
@@ -15,6 +16,8 @@ int main(int argc, char **argv)
   gt_lib_init();
 
   GtQueue *tests = gt_queue_new();
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnPseudogeneFixVisitor",
+                                        agn_pseudogene_fix_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnTranscriptClique",
                                         agn_transcript_clique_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnCliquePair",
