@@ -155,8 +155,9 @@ bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
     test1_1 = range.start == 1 && range.end == 900;
   }
   agn_unit_test_result(test, "Test 1.1", test1_1);
+  gt_array_delete(seqloci);
 
-  // gt_feature_index_delete(iloci);
+  gt_feature_index_delete(iloci);
   gt_logger_delete(logger);
   gt_node_stream_delete(gff3);
   gt_error_delete(error);
@@ -389,8 +390,9 @@ static void ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
             "processing node stream: %s\n", gt_error_get(error));
   }
 
+  // FIXME memory leaks
   //gt_node_stream_delete(locusstream);
-  //gt_node_stream_delete(ilocusstream);
+  gt_node_stream_delete(ilocusstream);
   //gt_node_stream_delete(fstream);
   gt_error_delete(error);
 }
