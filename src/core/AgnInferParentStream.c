@@ -1,6 +1,4 @@
-//#include "core/queue_api.h"
-//#include "extended/array_in_stream_api.h"
-//#include "extended/array_out_stream_api.h"
+#include <string.h>
 #include "extended/feature_node_iterator_api.h"
 #include "AgnInferParentStream.h"
 #include "AgnUtils.h"
@@ -211,16 +209,106 @@ bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   infer_parent_stream_test_data(queue);
+  gt_assert(gt_queue_size(queue) == 5);
 
-  agn_unit_test_result(test, "bogus", false);
+  GtGenomeNode *gn = gt_queue_get(queue);
+  GtRange range = gt_genome_node_get_range(gn);
+  GtFeatureNode *fn = gt_feature_node_cast(gn);
+  const char *type = gt_feature_node_get_type(fn);
+  bool t1 = strcmp(type, "gene") == 0 && range.start == 1000 &&
+            range.end == 2000;
+  agn_unit_test_result(test, "Test 1: basic", t1);
+  gt_genome_node_delete(gn);
 
-  while(gt_queue_size(queue) > 0)
+  gn = gt_queue_get(queue);
+  fn = gt_feature_node_cast(gn);
+  bool t2 = gt_feature_node_is_pseudo(fn);
+  if(t2)
   {
-    GtGenomeNode *gn = gt_queue_get(queue);
-    gt_genome_node_delete(gn);
+    GtQueue *children = gt_queue_new();
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+    GtFeatureNode *child;
+    for(child  = gt_feature_node_iterator_next(iter);
+        child != NULL;
+        child  = gt_feature_node_iterator_next(iter))
+    {
+      gt_queue_add(children, child);
+    }
+    gt_feature_node_iterator_delete(iter);
+    t2 = t2 && gt_queue_size(children) == 2;
+    if(t2)
+    {
+      child = gt_queue_get(children);
+      range = gt_genome_node_get_range((GtGenomeNode *)child);
+      type = gt_feature_node_get_type(child);
+      t2 = t2 && range.start == 2000 && range.end == 3000 &&
+           strcmp(type, "gene") == 0;
+
+      child = gt_queue_get(children);
+      range = gt_genome_node_get_range((GtGenomeNode *)child);
+      type = gt_feature_node_get_type(child);
+      t2 = t2 && range.start == 2350 && range.end == 2920 &&
+           strcmp(type, "protein") == 0;
+    }
+    gt_queue_delete(children);
   }
-  gt_queue_delete(queue);
-  
+  agn_unit_test_result(test, "Test 2: 2 top-level", t2);
+  gt_genome_node_delete(gn);
+
+  gn = gt_queue_get(queue);
+  fn = gt_feature_node_cast(gn);
+  bool t3 = gt_feature_node_is_pseudo(fn);
+  if(t3)
+  {
+    GtQueue *children = gt_queue_new();
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+    GtFeatureNode *child;
+    for(child  = gt_feature_node_iterator_next(iter);
+        child != NULL;
+        child  = gt_feature_node_iterator_next(iter))
+    {
+      gt_queue_add(children, child);
+    }
+    gt_feature_node_iterator_delete(iter);
+    t3 = t3 && gt_queue_size(children) == 2;
+    if(t3)
+    {
+      child = gt_queue_get(children);
+      range = gt_genome_node_get_range((GtGenomeNode *)child);
+      type = gt_feature_node_get_type(child);
+      t3 = t3 && range.start == 3000 && range.end == 4000 &&
+           strcmp(type, "gene") == 0;
+
+      child = gt_queue_get(children);
+      range = gt_genome_node_get_range((GtGenomeNode *)child);
+      type = gt_feature_node_get_type(child);
+      t3 = t3 && range.start == 3350 && range.end == 3920 &&
+           strcmp(type, "protein") == 0;
+    }
+    gt_queue_delete(children);
+  }
+  agn_unit_test_result(test, "Test 3: 2 top-level, inferred parent", t3);
+  gt_genome_node_delete(gn);
+
+  gn = gt_queue_get(queue);
+  range = gt_genome_node_get_range(gn);
+  fn = gt_feature_node_cast(gn);
+  type = gt_feature_node_get_type(fn);
+  bool t4 = strcmp(type, "gene") == 0 && range.start == 5000 &&
+            range.end == 6000;
+  agn_unit_test_result(test, "Test 4: multichild", t4);
+  gt_genome_node_delete(gn);
+
+  gn = gt_queue_get(queue);
+  range = gt_genome_node_get_range(gn);
+  fn = gt_feature_node_cast(gn);
+  type = gt_feature_node_get_type(fn);
+  bool t5 = strcmp(type, "gene") == 0 && range.start == 7000 &&
+            range.end == 8000;
+  agn_unit_test_result(test, "Test 5: multichild, inferred parent", t5);
+  gt_genome_node_delete(gn);
+
+  gt_queue_delete(queue);  
   return agn_unit_test_success(test);
 }
 
