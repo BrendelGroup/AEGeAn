@@ -596,6 +596,8 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
   while(gt_array_size(loci) > 0)
   {
     AgnLocus **locus = gt_array_pop(loci);
+    // FIXME these objects must be deleted twice; why?
+    agn_locus_delete(*locus);
     gt_queue_add(queue, *locus);
   }
   gt_array_delete(loci);

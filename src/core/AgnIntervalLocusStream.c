@@ -15,6 +15,8 @@ struct AgnIntervalLocusStream
 {
   const GtNodeStream parent_instance;
   GtNodeStream *ilocus_stream;
+  GtNodeStream *locus_stream;
+  GtNodeStream *fstream;
   GtFeatureIndex *in_loci;
   GtFeatureIndex *out_loci;
   GtLogger *logger;
@@ -81,7 +83,7 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
 /**
  * @function Generate data for unit testing.
  */
-static void ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
+static GtNodeStream *ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
                                     GtNodeStream *s2, GtUword delta,
                                     bool skipends, GtLogger *logger);
 
@@ -102,18 +104,16 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
   stream->logger = logger;
 
   GtError *error = gt_error_new();
+  stream->locus_stream = gt_node_stream_ref(locus_stream);
   stream->in_loci = gt_feature_index_memory_new();
-  GtNodeStream *fstream = gt_feature_out_stream_new(locus_stream,
-                                                    stream->in_loci);
-  int result = gt_node_stream_pull(fstream, error);
+  stream->fstream = gt_feature_out_stream_new(locus_stream, stream->in_loci);
+  int result = gt_node_stream_pull(stream->fstream, error);
   if(result == -1)
   {
     gt_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnIntervalLocusStream::agn_interval_locus_stream_"
                   "new] error processing input: %s\n", gt_error_get(error));
   }
-  gt_node_stream_delete(locus_stream);
-  gt_node_stream_delete(fstream);
 
   stream->out_loci = gt_feature_index_memory_new();
   agn_feature_index_copy_regions(stream->out_loci, stream->in_loci, true,error);
@@ -136,7 +136,7 @@ bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(1, &infile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-  ilocus_stream_test_data(iloci, gff3, NULL, 200, false, logger);
+  GtNodeStream *fstream = ilocus_stream_test_data(iloci, gff3, NULL, 200, false, logger);
 
   GtStrArray *seqids = gt_feature_index_get_seqids(iloci, error);
   if(gt_str_array_size(seqids) != 25)
@@ -157,9 +157,24 @@ bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
   agn_unit_test_result(test, "Test 1.1", test1_1);
   gt_array_delete(seqloci);
 
+  GtUword i;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    seqloci = gt_feature_index_get_features_for_seqid(iloci, seqid, error);
+    while(gt_array_size(seqloci) > 0)
+    {
+      AgnLocus **locus = gt_array_pop(seqloci);
+      gt_genome_node_delete(*locus);
+    }
+    gt_array_delete(seqloci);
+  }
+
   gt_feature_index_delete(iloci);
+  gt_str_array_delete(seqids);
   gt_logger_delete(logger);
   gt_node_stream_delete(gff3);
+  gt_node_stream_delete(fstream);
   gt_error_delete(error);
   return agn_unit_test_success(test);
 }
@@ -182,6 +197,8 @@ static void ilocus_stream_free(GtNodeStream *ns)
   gt_node_stream_delete(stream->ilocus_stream);
   gt_feature_index_delete(stream->in_loci);
   gt_feature_index_delete(stream->out_loci);
+  gt_node_stream_delete(stream->locus_stream);
+  gt_node_stream_delete(stream->fstream);
 }
 
 static int ilocus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
@@ -367,9 +384,10 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
   }
 }
 
-static void ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
-                                    GtNodeStream *s2, GtUword delta,
-                                    bool skipends, GtLogger *logger)
+static GtNodeStream *ilocus_stream_test_data(GtFeatureIndex *iloci,
+                                             GtNodeStream *s1,
+                                             GtNodeStream *s2, GtUword delta,
+                                             bool skipends, GtLogger *logger)
 {
   gt_assert(s1);
   GtError *error = gt_error_new();
@@ -391,8 +409,8 @@ static void ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
   }
 
   // FIXME memory leaks
-  //gt_node_stream_delete(locusstream);
+  gt_node_stream_delete(locusstream);
   gt_node_stream_delete(ilocusstream);
-  //gt_node_stream_delete(fstream);
   gt_error_delete(error);
+  return fstream;
 }
