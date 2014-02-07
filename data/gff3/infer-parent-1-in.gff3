@@ -1,0 +1,53 @@
+##gff-version   3
+##sequence-region   seq1 1000 8000
+seq1	nano	gene	1000	2000	.	+	.	ID=g1
+seq1	nano	mRNA	1000	2000	.	+	.	ID=t1;Parent=g1
+seq1	nano	exon	1000	1100	.	+	.	ID=g1.e1;Parent=t1
+seq1	nano	exon	1300	1500	.	+	.	ID=g1.e2;Parent=t1
+seq1	nano	exon	1600	1700	.	+	.	ID=g1.e3;Parent=t1
+seq1	nano	exon	1900	2000	.	+	.	ID=g1.e4;Parent=t1
+seq1	nano	five_prime_utr	1000	1100	.	+	.	ID=t1.utr5;Parent=t1
+seq1	nano	five_prime_utr	1300	1349	.	+	.	ID=t1.utr5;Parent=t1
+seq1	nano	CDS	1350	1500	.	+	0	ID=t1.cds;Parent=t1
+seq1	nano	CDS	1600	1700	.	+	2	ID=t1.cds;Parent=t1
+seq1	nano	CDS	1900	1920	.	+	0	ID=t1.cds;Parent=t1
+seq1	nano	three_prime_utr	1921	2000	.	+	.	ID=t1.utr3;Parent=t1
+###
+seq1	nano	gene	2000	3000	.	+	.	ID=g2
+seq1	nano	mRNA	2000	3000	.	+	.	ID=t2;Parent=g2
+seq1	nano	protein	2350	2920	.	+	.	ID=p2
+seq1	nano	exon	2000	2100	.	+	.	ID=g2.e1;Parent=t2
+seq1	nano	exon	2300	2500	.	+	.	ID=g2.e2;Parent=t2
+seq1	nano	exon	2600	2700	.	+	.	ID=g2.e3;Parent=t2
+seq1	nano	exon	2900	3000	.	+	.	ID=g2.e4;Parent=t2
+seq1	nano	five_prime_utr	2000	2100	.	+	.	ID=t2.utr5;Parent=t2
+seq1	nano	five_prime_utr	2300	2349	.	+	.	ID=t2.utr5;Parent=t2
+seq1	nano	CDS	2350	2500	.	+	0	ID=t2.cds;Parent=t2,p2
+seq1	nano	CDS	2600	2700	.	+	2	ID=t2.cds;Parent=t2,p2
+seq1	nano	CDS	2900	2920	.	+	0	ID=t2.cds;Parent=t2,p2
+seq1	nano	three_prime_utr	2921	3000	.	+	.	ID=t2.utr3;Parent=t2
+###
+seq1	nano	mRNA	3000	4000	.	+	.	ID=t3
+seq1	nano	protein	3350	3920	.	+	.	ID=p3
+seq1	nano	exon	3000	3100	.	+	.	ID=t3.e1;Parent=t3
+seq1	nano	exon	3300	3500	.	+	.	ID=t3.e2;Parent=t3
+seq1	nano	exon	3600	3700	.	+	.	ID=t3.e3;Parent=t3
+seq1	nano	exon	3900	4000	.	+	.	ID=t3.e4;Parent=t3
+seq1	nano	five_prime_utr	3000	3100	.	+	.	ID=t3.utr5;Parent=t3
+seq1	nano	five_prime_utr	3300	3349	.	+	.	ID=t3.utr5;Parent=t3
+seq1	nano	CDS	3350	3500	.	+	0	ID=t3.cds;Parent=t3,p3
+seq1	nano	CDS	3600	3700	.	+	2	ID=t3.cds;Parent=t3,p3
+seq1	nano	CDS	3900	3920	.	+	0	ID=t3.cds;Parent=t3,p3
+seq1	nano	three_prime_utr	3921	4000	.	+	.	ID=t3.utr3;Parent=t3
+###
+seq1	nano	gene	5000	6000	.	+	.	ID=g4
+seq1	nano	tRNA	5000	5400	.	+	.	ID=t4;Parent=g4
+seq1	nano	tRNA	5800	6000	.	+	.	ID=t4;Parent=g4
+seq1	nano	exon	5000	5400	.	+	.	ID=t4.e1;Parent=t4
+seq1	nano	exon	5800	6000	.	+	.	ID=t4.e2;Parent=t4
+###
+seq1	nano	tRNA	7000	7400	.	+	.	ID=t5
+seq1	nano	tRNA	7800	8000	.	+	.	ID=t5
+seq1	nano	exon	7000	7400	.	+	.	ID=t5.e1;Parent=t5
+seq1	nano	exon	7800	8000	.	+	.	ID=t5.e2;Parent=t5
+###

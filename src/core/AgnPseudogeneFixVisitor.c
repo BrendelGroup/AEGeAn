@@ -4,15 +4,6 @@
 #include "AgnTypecheck.h"
 
 
-/*#define pseudogene_fix_visitor_cast(GV)\
-        gt_node_visitor_cast(pseudogene_fix_visitor_class(), GV)
-
-struct AgnPseudogeneFixVisitor
-{
-  const GtNodeVisitor parent_instance;
-};*/
-
-
 //------------------------------------------------------------------------------
 // Prototypes for private functions
 //------------------------------------------------------------------------------

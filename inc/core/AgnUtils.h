@@ -59,6 +59,13 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
                                         bool use_orig, GtError *error);
 
 /**
+ * @function If a top-level feature ``top`` contains a multifeature child (with
+ * multi representative ``rep``), use this function to get the complete range of
+ * the multifeature.
+ */
+GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep);
+
+/**
  * @function Compare function for data type ``GtGenomeNode **``, needed for
  * sorting ``GtGenomeNode *`` stored in ``GtArray`` objects.
  */

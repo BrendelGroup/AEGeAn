@@ -408,7 +408,6 @@ static GtNodeStream *ilocus_stream_test_data(GtFeatureIndex *iloci,
             "processing node stream: %s\n", gt_error_get(error));
   }
 
-  // FIXME memory leaks
   gt_node_stream_delete(locusstream);
   gt_node_stream_delete(ilocusstream);
   gt_error_delete(error);

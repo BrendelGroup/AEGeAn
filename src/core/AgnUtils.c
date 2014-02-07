@@ -1,5 +1,6 @@
 #include <string.h>
 #include "core/hashmap_api.h"
+#include "extended/feature_node_iterator_api.h"
 #include "AgnUtils.h"
 
 GtArray* agn_array_copy(GtArray *source, size_t size)
@@ -99,6 +100,31 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
   }
   gt_str_array_delete(seqids);
   return rncount;
+}
+
+GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
+{
+  GtRange range = {0, 0};
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(top);
+  GtFeatureNode *child;
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
+  {
+    if(!gt_feature_node_is_multi(child))
+      continue;
+
+    if(gt_feature_node_get_multi_representative(child) == rep)
+    {
+      GtRange fnrange = gt_genome_node_get_range((GtGenomeNode *)child);
+      if(range.start == 0 && range.end == 0)
+        range = fnrange;
+      else
+        range = gt_range_join(&range, &fnrange);
+    }
+  }
+  gt_feature_node_iterator_delete(iter);
+  return range;
 }
 
 int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
