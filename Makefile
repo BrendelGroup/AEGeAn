@@ -15,8 +15,9 @@ PE_EXE=bin/parseval
 CN_EXE=bin/canon-gff3
 VN_EXE=bin/vang
 LP_EXE=bin/locuspocus
+RP_EXE=bin/pmrna
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE)
+BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(RP_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -111,6 +112,10 @@ $(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
+
+$(RP_EXE):	src/pmrna.c $(AGN_OBJS)
+		@- mkdir -p bin
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
 
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 		@- mkdir -p bin
