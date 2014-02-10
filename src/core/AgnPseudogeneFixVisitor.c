@@ -39,9 +39,7 @@ GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
 
 GtNodeVisitor *agn_pseudogene_fix_visitor_new(GtLogger *logger)
 {
-  GtNodeVisitor *nv = gt_node_visitor_create(pseudogene_fix_visitor_class());
-  //AgnPseudogeneFixVisitor *v = pseudogene_fix_visitor_cast(nv);
-  return nv;
+  return gt_node_visitor_create(pseudogene_fix_visitor_class());
 }
 
 bool agn_pseudogene_fix_visitor_unit_test(AgnUnitTest *test)
@@ -57,7 +55,6 @@ bool agn_pseudogene_fix_visitor_unit_test(AgnUnitTest *test)
   fn = gt_feature_node_cast(gn);
   frange = gt_genome_node_get_range(gn);
   type = gt_feature_node_get_type(fn);
-//fprintf(stderr, "%s[%lu, %lu]\n", type, frange.start, frange.end);
   bool t1 = frange.start == 1 && frange.end == 1000 && strcmp(type,"gene") == 0;
   agn_unit_test_result(test, "Gene, no pseudo attribute", t1);
   gt_genome_node_delete(gn);
@@ -121,7 +118,7 @@ static const GtNodeVisitorClass *pseudogene_fix_visitor_class()
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (GtNodeStream), NULL, NULL,
+    nvc = gt_node_visitor_class_new(sizeof (GtNodeVisitor), NULL, NULL,
                                     visit_feature_node, NULL, NULL, NULL);
   }
   return nvc;

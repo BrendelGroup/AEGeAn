@@ -7,6 +7,7 @@
 #include "AgnIntervalLocusStream.h"
 #include "AgnLocus.h"
 #include "AgnLocusStream.h"
+#include "AgnMrnaRepVisitor.h"
 #include "AgnPseudogeneFixVisitor.h"
 #include "AgnTranscriptClique.h"
 #include "AgnTranscriptStream.h"
@@ -21,6 +22,8 @@ int main(int argc, char **argv)
                                         agn_pseudogene_fix_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnInferParentStream",
                                         agn_infer_parent_stream_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnMrnaRepVisitor",
+                                        agn_mrna_rep_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnTranscriptClique",
                                         agn_transcript_clique_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnCliquePair",
