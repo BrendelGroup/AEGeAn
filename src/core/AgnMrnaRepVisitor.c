@@ -56,8 +56,28 @@ GtNodeVisitor *agn_mrna_rep_visitor_new(GtLogger *logger)
 
 bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 {
-  mrna_rep_visitor_test_data(NULL);
-  return false;
+  GtQueue *queue = gt_queue_new();
+  mrna_rep_visitor_test_data(queue);
+  gt_assert(gt_queue_size(queue) == 1);
+
+  GtGenomeNode *gene = gt_queue_get(queue);
+  GtFeatureNode *genefn = gt_feature_node_cast(gene);
+  GtArray *mrnas = agn_typecheck_select(genefn, agn_typecheck_mrna);
+  bool test1 = gt_array_size(mrnas) == 1;
+  if(test1)
+  {
+    GtGenomeNode **mrna = gt_array_get(mrnas, 0);
+    GtFeatureNode *mrnafn = gt_feature_node_cast(*mrna);
+    GtUword cdslength = mrna_rep_cds_length(mrnafn);
+    GtRange range = gt_genome_node_get_range(*mrna);
+    test1 = cdslength == 738 && range.start == 5928 && range.end == 8737;
+  }
+  agn_unit_test_result(test, "TAIR10: test 1", test1);
+  gt_genome_node_delete(gene);
+  gt_array_delete(mrnas);
+
+  gt_queue_delete(queue);
+  return agn_unit_test_success(test);
 }
 
 static GtUword mrna_rep_cds_length(GtFeatureNode *mrna)
@@ -86,15 +106,13 @@ static GtUword mrna_rep_cds_length(GtFeatureNode *mrna)
 static void mrna_rep_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 {
   gt_assert(root && fn);
-
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
   GtFeatureNode *child;
   for(child = gt_feature_node_iterator_next(iter);
       child != NULL;
       child = gt_feature_node_iterator_next(iter))
   {
-    mrna_rep_remove_tree(root, child);
-    gt_feature_node_remove_leaf(fn, child);
+    mrna_rep_remove_tree(fn, child);
   }
   gt_feature_node_iterator_delete(iter);
   gt_feature_node_remove_leaf(root, fn);
@@ -114,8 +132,8 @@ static const GtNodeVisitorClass *mrna_rep_visitor_class()
 
 static void mrna_rep_visitor_test_data(GtQueue *queue)
 {
-  /*GtError *error = gt_error_new();
-  const char *file = "data/gff3/grape-codons.gff3";
+  GtError *error = gt_error_new();
+  const char *file = "data/gff3/tair-altsplice.gff3";
   GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &file);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
@@ -139,7 +157,7 @@ static void mrna_rep_visitor_test_data(GtQueue *queue)
     gt_queue_add(queue, fn);
   }
   gt_array_delete(feats);
-  gt_error_delete(error);*/
+  gt_error_delete(error);
 }
 
 static int
