@@ -1,16 +1,26 @@
 #include <getopt.h>
 #include "genometools.h"
+#include "AgnInferParentStream.h"
 #include "AgnMrnaRepVisitor.h"
 
 int main()
 {
   gt_lib_init();
+  GtHashmap *type_parents = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(type_parents, "mRNA", "gene");
+  gt_hashmap_add(type_parents, "tRNA", "gene");
+  gt_hashmap_add(type_parents, "rRNA", "gene");
+  gt_hashmap_add(type_parents, "miRNA", "gene");
+  gt_hashmap_add(type_parents, "ncRNA", "gene");
+  gt_hashmap_add(type_parents, "transcript", "gene");
+  gt_hashmap_add(type_parents, "primary_transcript", "gene");
 
   GtNodeStream *in = gt_gff3_in_stream_new_unsorted(0, NULL);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)in);
   GtNodeStream *ais = gt_add_introns_stream_new(in);
-  GtNodeStream *rep_stream = agn_mrna_rep_stream_new(ais);
+  GtNodeStream *ips = agn_infer_parent_stream_new(in, type_parents);
+  GtNodeStream *rep_stream = agn_mrna_rep_stream_new(ips);
   GtFile *fh = gt_file_new_from_fileptr(stdout);
   GtNodeStream *out = gt_gff3_out_stream_new(rep_stream, fh);
   gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)out);
@@ -23,9 +33,11 @@ int main()
   }
   gt_error_delete(error);
 
+  gt_hashmap_delete(type_parents);
   gt_node_stream_delete(out);
   gt_node_stream_delete(rep_stream);
   gt_node_stream_delete(ais);
+  gt_node_stream_delete(ips);
   gt_node_stream_delete(in);
   gt_file_delete_without_handle(fh);
   gt_lib_clean();
