@@ -102,6 +102,21 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
   return rncount;
 }
 
+void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
+{
+  gt_assert(root && fn);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+  GtFeatureNode *child;
+  for(child = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child = gt_feature_node_iterator_next(iter))
+  {
+    agn_feature_node_remove_tree(fn, child);
+  }
+  gt_feature_node_iterator_delete(iter);
+  gt_feature_node_remove_leaf(root, fn);
+}
+
 GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
 {
   GtRange range = {0, 0};

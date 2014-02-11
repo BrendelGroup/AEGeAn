@@ -59,6 +59,13 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
                                         bool use_orig, GtError *error);
 
 /**
+ * @function Remove feature ``fn`` and all its subfeatures from ``root``.
+ * Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn``
+ * need not be a leaf feature.
+ */
+void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
+
+/**
  * @function If a top-level feature ``top`` contains a multifeature child (with
  * multi representative ``rep``), use this function to get the complete range of
  * the multifeature.

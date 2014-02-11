@@ -16,11 +16,6 @@
 static GtUword mrna_rep_cds_length(GtFeatureNode *mrna);
 
 /**
- * @function Remove feature ``fn`` and all its subfeatures from ``root``.
- */
-static void mrna_rep_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
-
-/**
  * @function Implement the interface to the GtNodeVisitor class.
  */
 static const GtNodeVisitorClass *mrna_rep_visitor_class();
@@ -103,21 +98,6 @@ static GtUword mrna_rep_cds_length(GtFeatureNode *mrna)
   return totallength;
 }
 
-static void mrna_rep_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
-{
-  gt_assert(root && fn);
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
-  GtFeatureNode *child;
-  for(child = gt_feature_node_iterator_next(iter);
-      child != NULL;
-      child = gt_feature_node_iterator_next(iter))
-  {
-    mrna_rep_remove_tree(fn, child);
-  }
-  gt_feature_node_iterator_delete(iter);
-  gt_feature_node_remove_leaf(root, fn);
-}
-
 static const GtNodeVisitorClass *mrna_rep_visitor_class()
 {
   static const GtNodeVisitorClass *nvc = NULL;
@@ -198,7 +178,7 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
     {
       GtFeatureNode *mrna = *(GtFeatureNode **)gt_array_get(mrnas, j);
       if(mrna != longest_mrna)
-        mrna_rep_remove_tree(fn, mrna);
+        agn_feature_node_remove_tree(fn, mrna);
     }
     gt_array_delete(mrnas);
   }
