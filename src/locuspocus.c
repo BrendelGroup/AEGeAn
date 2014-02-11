@@ -16,7 +16,31 @@ typedef struct
   bool verbose;
 } LocusPocusOptions;
 
-void print_usage(FILE *outstream);
+// Usage statement
+void print_usage(FILE *outstream)
+{
+  fprintf( outstream,
+"Usage: ./locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
+"  Options:\n"
+"    -d|--debug             print detailed debugging messages to terminal\n"
+"                           (standard error)\n"
+"    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
+"                           corresponding locus to the given file\n"
+"    -h|--help              print this help message and exit\n"
+"    -i|--intloci           parse and report interval loci rather than gene\n"
+"                           loci\n"
+"    -l|--delta: INT        when parsing interval loci, use the following\n"
+"                           delta to extend gene loci and include potential\n"
+"                           regulatory regions; default is 500\n"
+"    -o|--outfile: FILE     name of file to which results will be written;\n"
+"                           default is terminal (standard output)\n"
+"    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
+"                           iloci at either end of the sequence\n"
+"    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
+"                           to its corresponding locus to the given file\n"
+"    -v|--verbose           print detailed log messages to terminal (standard\n"
+"                           error)\n\n" );
+}
 
 void parse_options(int argc, char **argv, LocusPocusOptions *options)
 {
@@ -95,32 +119,6 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
         break;
     }
   }
-}
-
-// Usage statement
-void print_usage(FILE *outstream)
-{
-  fprintf( outstream,
-"Usage: ./locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
-"  Options:\n"
-"    -d|--debug             print detailed debugging messages to terminal\n"
-"                           (standard error)\n"
-"    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
-"                           corresponding locus to the given file\n"
-"    -h|--help              print this help message and exit\n"
-"    -i|--intloci           parse and report interval loci rather than gene\n"
-"                           loci\n"
-"    -l|--delta: INT        when parsing interval loci, use the following\n"
-"                           delta to extend gene loci and include potential\n"
-"                           regulatory regions; default is 500\n"
-"    -o|--outfile: FILE     name of file to which results will be written;\n"
-"                           default is terminal (standard output)\n"
-"    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
-"                           iloci at either end of the sequence\n"
-"    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
-"                           to its corresponding locus to the given file\n"
-"    -v|--verbose           print detailed log messages to terminal (standard\n"
-"                           error)\n\n" );
 }
 
 // Main program

@@ -64,7 +64,8 @@ endif
 INCS=-I $(GT_INSTALL_DIR)/include/genometools/ -I inc/core -I inc/ParsEval -I inc/VAnG -I /usr/include/cairo/ -I /sw/include/cairo/
 
 # Targets
-all:		$(BINS) $(UT_EXE) libaegean.a
+#all:		$(LP_EXE) $(UT_EXE) libaegean.a
+all:		$(UT_EXE) libaegean.a
 		
 
 install:	all
@@ -127,7 +128,7 @@ libaegean.a:	$(AGN_OBJS)
 inc/core/AgnVersion.h:	
 			@- bash -c "if [ -d .git ]; then perl data/scripts/version.pl > inc/core/AgnVersion.h; else perl data/scripts/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
-test:		$(AGN_OBJS) $(UT_EXE)
+test:		all
 		@- bin/unittests
 		@- #echo AEGeAn Functional Tests
 		@- #test/AT1G05320.sh
