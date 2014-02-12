@@ -64,8 +64,7 @@ endif
 INCS=-I $(GT_INSTALL_DIR)/include/genometools/ -I inc/core -I inc/ParsEval -I inc/VAnG -I /usr/include/cairo/ -I /sw/include/cairo/
 
 # Targets
-#all:		$(LP_EXE) $(UT_EXE) libaegean.a
-all:		$(UT_EXE) libaegean.a
+all:		$(LP_EXE) $(UT_EXE) libaegean.a
 		
 
 install:	all

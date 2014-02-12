@@ -1,7 +1,6 @@
 #include <getopt.h>
 #include "genometools.h"
-#include "AgnGeneLocus.h"
-#include "AgnLocusIndex.h"
+#include "aegean.h"
 
 // Simple data structure for program options
 typedef struct
@@ -10,17 +9,37 @@ typedef struct
   FILE *genestream;
   bool intloci;
   unsigned long delta;
-  FILE *outstream;
+  GtFile *outstream;
+  void (*filefreefunc)(GtFile *);
+  bool retainids;
   bool skipends;
   FILE *transstream;
+  bool pseudofix;
   bool verbose;
 } LocusPocusOptions;
 
-// Usage statement
-void print_usage(FILE *outstream)
+// Set default values for program
+static void set_option_defaults(LocusPocusOptions *options)
 {
-  fprintf( outstream,
-"Usage: ./locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
+  options->debug = false;
+  options->genestream = NULL;
+  options->intloci = false;
+  options->delta = 500;
+  options->outstream = gt_file_new_from_fileptr(stdout);
+  options->filefreefunc = gt_file_delete_without_handle;
+  options->retainids = false;
+  options->skipends = false;
+  options->transstream = NULL;
+  options->pseudofix = false;
+  options->verbose = false;
+}
+
+// Usage statement
+static void print_usage(FILE *outstream)
+{
+  fprintf(outstream,
+"\nLocusPocus: calculate locus coordinates for the given gene annotation\n"
+"Usage: locuspocus [options] gff3file1 [gff3file2 gff3file3 ...]\n"
 "  Options:\n"
 "    -d|--debug             print detailed debugging messages to terminal\n"
 "                           (standard error)\n"
@@ -34,30 +53,38 @@ void print_usage(FILE *outstream)
 "                           regulatory regions; default is 500\n"
 "    -o|--outfile: FILE     name of file to which results will be written;\n"
 "                           default is terminal (standard output)\n"
+"    -r|--retainids         retain IDs from input data; selecting 'genemap'\n"
+"                           and/or 'transmap' will activate this setting\n"
 "    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
 "                           iloci at either end of the sequence\n"
 "    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
 "                           to its corresponding locus to the given file\n"
-"    -v|--verbose           print detailed log messages to terminal (standard\n"
-"                           error)\n\n" );
+"    -u|--pseudo            correct erroneously labeled pseudogenes\n"
+"    -v|--verbose           include all locus subfeatures (genes, RNAs, etc)\n"
+"                           in the GFF3 output; default includes only locus\n"
+"                           features\n\n");
 }
 
-void parse_options(int argc, char **argv, LocusPocusOptions *options)
+// Adjust program settings from command-line arguments/options
+static void
+parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dg:hil:n:o:st:v";
+  const char *optstr = "dg:hil:o:rst:uv";
   const struct option locuspocus_options[] =
   {
-    { "debug",    no_argument,       NULL, 'd' },
-    { "genemap",  required_argument, NULL, 'g' },
-    { "help",     no_argument,       NULL, 'h' },
-    { "intloci",  no_argument,       NULL, 'i' },
-    { "delta",    required_argument, NULL, 'l' },
-    { "outfile",  required_argument, NULL, 'o' },
-    { "skipends", no_argument,       NULL, 's' },
-    { "transmap", required_argument, NULL, 't' },
-    { "verbose",  no_argument,       NULL, 'v' },
+    { "debug",     no_argument,       NULL, 'd' },
+    { "genemap",   required_argument, NULL, 'g' },
+    { "help",      no_argument,       NULL, 'h' },
+    { "intloci",   no_argument,       NULL, 'i' },
+    { "delta",     required_argument, NULL, 'l' },
+    { "outfile",   required_argument, NULL, 'o' },
+    { "retainids", no_argument,       NULL, 'r' },
+    { "skipends",  no_argument,       NULL, 's' },
+    { "transmap",  required_argument, NULL, 't' },
+    { "pseudo",    no_argument,       NULL, 'u' },
+    { "verbose",   no_argument,       NULL, 'v' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -67,16 +94,12 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
     {
       case 'd':
         options->debug = 1;
-        options->verbose = 1;
         break;
       case 'g':
+        options->retainids = 1;
         options->genestream = fopen(optarg, "w");
         if(options->genestream == NULL)
-        {
-          fprintf(stderr, "[LocusPocus] error: could not open genemap file "
-                  "'%s'\n", optarg);
-          exit(1);
-        }
+          gt_error_set(error, "could not open genemap file '%s'", optarg);
         break;
       case 'h':
         print_usage(stdout);
@@ -88,31 +111,29 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
       case 'l':
         if(sscanf(optarg, "%lu", &options->delta) == EOF)
         {
-          fprintf(stderr, "[LocusPocus] error: could not convert delta '%s' to "
-                  "an integer", optarg);
-          exit(1);
+          gt_error_set(error, "could not convert delta '%s' to an integer",
+                       optarg);
         }
         break;
       case 'o':
-        options->outstream = fopen(optarg, "w");
-        if(options->outstream == NULL)
-        {
-          fprintf( stderr, "[LocusPocus] error: could not open outfile '%s'\n",
-                   optarg );
-          exit(1);
-        }
+        options->filefreefunc(options->outstream);
+        options->outstream = gt_file_new(optarg, "w", error);
+        options->filefreefunc = gt_file_delete;
+        break;
+      case 'r':
+        options->retainids = 1;
         break;
       case 's':
         options->skipends = 1;
         break;
       case 't':
+        options->retainids = 1;
         options->transstream = fopen(optarg, "w");
         if(options->transstream == NULL)
-        {
-          fprintf(stderr, "[LocusPocus] error: could not open transmap file "
-                  "'%s'\n", optarg);
-          exit(1);
-        }
+          gt_error_set(error, "could not open genemap file '%s'", optarg);
+        break;
+      case 'u':
+        options->pseudofix = 1;
         break;
       case 'v':
         options->verbose = 1;
@@ -124,81 +145,114 @@ void parse_options(int argc, char **argv, LocusPocusOptions *options)
 // Main program
 int main(int argc, char **argv)
 {
-  // Parse options from command line
-  LocusPocusOptions options = { 0, NULL, 0, 500, stdout, 0, NULL, 0 };
-  parse_options(argc, argv, &options);
+  GtError *error;
+  GtLogger *logger;
+  GtQueue *streams;
+  GtNodeStream *current_stream, *last_stream;
+  gt_lib_init();
+
+  // Parse command-line options
+  LocusPocusOptions options;
+  set_option_defaults(&options);
+  error = gt_error_new();
+  parse_options(argc, argv, &options, error);
+  if(gt_error_is_set(error))
+  {
+    fprintf(stderr, "[LocusPocus] error: %s", gt_error_get(error));
+    return 1;
+  }
   int numfiles = argc - optind;
   if(numfiles < 1)
   {
-    fprintf( stderr, "[LocusPocus] error: must provide at least one GFF3 file "
-             "as input\n");
+    fprintf(stderr, "[LocusPocus] error: must provide at least one GFF3 file "
+            "as input; use '-' if you want to provide data via standard "
+            "input\n");
     print_usage(stderr);
     return 1;
   }
 
-  // Load data into memory
-  gt_lib_init();
-  AgnLogger *logger = agn_logger_new();
-  AgnLocusIndex *loci = agn_locus_index_new(true);
-  unsigned long numloci = agn_locus_index_parse_disk(loci, numfiles,
-                              (const char **)argv + optind, logger);
-  if(options.verbose)
-    fprintf(stderr, "[LocusPocus] found %lu total loci\n", numloci);
-  bool haderror = agn_logger_print_all(logger, stderr, "[LocusPocus] loading "
-                                       "features from %d input files",
-                                       numfiles);
-  if(haderror)
-    return 1;
-  agn_logger_delete(logger);
+  logger = gt_logger_new(true, "", stderr);
+  streams = gt_queue_new();
 
-  // Iterate over each gene to find sets of mutually overlapping genes and print
-  // them
-  fputs("##gff-version\t3\n", options.outstream);
-  GtStrArray *seqids = agn_locus_index_seqids(loci);
-  if(options.verbose)
+
+  //----- Set up the node processing stream -----//
+  //---------------------------------------------//
+
+  current_stream = gt_gff3_in_stream_new_unsorted(numfiles,
+                                                  (const char **)argv + optind);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  if(options.pseudofix)
   {
-    fprintf(stderr, "[LocusPocus] found %lu sequences\n",
-            gt_str_array_size(seqids));
-  }
-  unsigned long i;
-  for(i = 0; i < gt_str_array_size(seqids); i++)
-  {
-    const char *seqid = gt_str_array_get(seqids, i);
-    GtArray *seqloci;
-    if(options.intloci)
-    {
-       seqloci = agn_locus_index_interval_loci(loci, seqid, options.delta,
-                                               options.skipends);
-    }
-    else
-    {
-      seqloci = agn_locus_index_get(loci, seqid);
-    }
-    gt_array_sort(seqloci, (GtCompare)agn_gene_locus_array_compare);
-    gt_array_reverse(seqloci);
-    if(options.verbose)
-    {
-      fprintf(stderr,"[LocusPocus] found %lu loci for sequence '%s'\n",
-              gt_array_size(seqloci), seqid);
-    }
-    while(gt_array_size(seqloci) > 0)
-    {
-      AgnGeneLocus **locus = gt_array_pop(seqloci);
-      agn_gene_locus_to_gff3(*locus, options.outstream, "AEGeAn::LocusPocus");
-      if(options.genestream != NULL)
-        agn_gene_locus_print_gene_mapping(*locus, options.genestream);
-      if(options.transstream != NULL)
-        agn_gene_locus_print_transcript_mapping(*locus, options.transstream);
-      if(options.intloci)
-        agn_gene_locus_delete(*locus);
-    }
-    gt_array_delete(seqloci);
+    current_stream = agn_pseudogene_fix_stream_new(last_stream);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
   }
 
-  fclose(options.outstream);
+  current_stream = agn_locus_stream_new(last_stream, logger);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  if(options.intloci)
+  {
+    current_stream = agn_interval_locus_stream_new(last_stream, options.delta,
+                                                   options.skipends, logger);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+  }
+
+  if(options.genestream != NULL || options.transstream != NULL)
+  {
+    current_stream = agn_locus_map_stream_new(last_stream, options.genestream,
+                                              options.transstream);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+  }
+
+  if(options.verbose == 0)
+  {
+    current_stream = agn_remove_children_stream_new(last_stream);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+  }
+
+  //GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
+  //GtNodeVisitor *nv = gt_set_source_visitor_new(source);
+  //current_stream = gt_visitor_stream_new(last_stream, nv);
+  //gt_queue_add(streams, current_stream);
+  //last_stream = current_stream;
+  //gt_str_delete(source);
+
+  current_stream = gt_gff3_out_stream_new(last_stream, options.outstream);
+  if(options.retainids)
+    gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)current_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+
+  //----- Execute the node processing stream -----//
+  //----------------------------------------------//
+
+  int result = gt_node_stream_pull(last_stream, error);
+  if(result == -1)
+    fprintf(stderr, "[LocusPocus] error: %s", gt_error_get(error));
+
+
+  // Free memory and terminate
+  options.filefreefunc(options.outstream);
   if(options.genestream != NULL)  fclose(options.genestream);
   if(options.transstream != NULL) fclose(options.transstream);
-  agn_locus_index_delete(loci);
+  while(gt_queue_size(streams) > 0)
+  {
+    current_stream = gt_queue_get(streams);
+    gt_node_stream_delete(current_stream);
+  }
+  gt_queue_delete(streams);
+  gt_logger_delete(logger);
+  gt_error_delete(error);
   gt_lib_clean();
   return 0;
 }

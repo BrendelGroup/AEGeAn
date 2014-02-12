@@ -21,6 +21,7 @@ struct AgnLocusStream
   GtFeatureIndex *loci;
   GtNodeStream *out_stream;
   GtLogger *logger;
+  GtStr *source;
 };
 
 
@@ -97,6 +98,7 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   AgnLocusStream *stream = locus_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
   stream->logger = logger;
+  stream->source = gt_str_new_cstr("AEGeAn");
 
   GtError *error = gt_error_new();
   stream->transcripts = gt_feature_index_memory_new();
@@ -133,6 +135,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   GtNodeStream *ns = gt_node_stream_create(locus_stream_class(), false);
   AgnLocusStream *stream = locus_stream_cast(ns);
   stream->logger = logger;
+  stream->source = gt_str_new_cstr("AEGeAn");
 
   GtError *error = gt_error_new();
   stream->transcripts = NULL;
@@ -292,7 +295,14 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                              GtError *error)
 {
   AgnLocusStream *stream = locus_stream_cast(ns);
-  return gt_node_stream_next(stream->out_stream, gn, error);
+  int result = gt_node_stream_next(stream->out_stream, gn, error);
+  if(result || !*gn)
+    return result;
+
+  GtFeatureNode *fn = gt_feature_node_try_cast(*gn);
+  if(fn)
+    gt_feature_node_set_source(fn, stream->source);
+  return result;
 }
 
 static void locus_stream_free(GtNodeStream *ns)
@@ -307,6 +317,7 @@ static void locus_stream_free(GtNodeStream *ns)
   if(stream->predtrans != NULL)
     gt_feature_index_delete(stream->predtrans);
   gt_feature_index_delete(stream->loci);
+  gt_str_delete(stream->source);
 }
 
 static void locus_stream_parse(AgnLocusStream *stream)
