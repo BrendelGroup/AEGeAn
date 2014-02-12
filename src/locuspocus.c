@@ -219,13 +219,6 @@ int main(int argc, char **argv)
     last_stream = current_stream;
   }
 
-  //GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
-  //GtNodeVisitor *nv = gt_set_source_visitor_new(source);
-  //current_stream = gt_visitor_stream_new(last_stream, nv);
-  //gt_queue_add(streams, current_stream);
-  //last_stream = current_stream;
-  //gt_str_delete(source);
-
   current_stream = gt_gff3_out_stream_new(last_stream, options.outstream);
   if(options.retainids)
     gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)current_stream);
