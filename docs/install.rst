@@ -18,7 +18,11 @@ For the impatient
     git clone https://github.com/standage/AEGeAn.git
     cd AEGeAn
 
-    # Compile and install AEGeAn and its prerequisites
+    # Download the GenomeTools source code
+    git submodule init
+    git submodule update
+
+    # Compile and install GenomeTools and AEGeAn
     make
     sudo make install
 
@@ -79,8 +83,21 @@ system setup`_"  for platform-specific instructions. After running those
 commands, complete the installation by running ``make`` and ``make install``.
 
 If you have already installed GenomeTools system-wide and do not want to
-overwrite that installation, substitute ``make agn`` and ``make agn-install``
-for ``make`` and ``make install``.
+overwrite that installation, you can replace 
+
+..code-block:: bash
+
+    git submodule init
+    git submodule update
+    make
+    make install
+
+with
+
+..code-block:: bash
+
+    make agn
+    make agn-install
 
 See the section labeled `Compilation flags`_ for a complete description of
 configurable settings for compilation and installation.
