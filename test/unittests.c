@@ -46,15 +46,33 @@ int main(int argc, char **argv)
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnIntervalLocusStream",
                                         agn_interval_locus_stream_unit_test));
 
+  unsigned passes   = 0;
+  unsigned failures = 0;
   while(gt_queue_size(tests) > 0)
   {
     AgnUnitTest *test = gt_queue_get(tests);
     agn_unit_test_run(test);
     agn_unit_test_print(test, stdout);
+    if(agn_unit_test_success(test))
+      passes++;
+    else
+      failures++;
     agn_unit_test_delete(test);
+  }
+
+  bool returnval = 0;
+  if(failures == 0)
+  {
+    printf("\n===== Unit tests passed for all %u classes! =====\n\n", passes);
+  }
+  else
+  {
+    printf("\n===== Unit tests failed for %u/%u classes! ===== \n\n", failures,
+           passes+failures);
+    returnval = 1;
   }
 
   gt_queue_delete(tests);
   gt_lib_clean();
-  return 0;
+  return returnval;
 }

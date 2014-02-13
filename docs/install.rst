@@ -7,21 +7,20 @@ For the impatient
 
 .. code-block:: bash
 
-    # Install pre-requisites with your package manager
+    # Install pre-requisite packages with your OS's package manager
     sudo apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
-    # Make sure /usr/local/bin is in your $PATH, and that /usr/local/lib is in
-    # your LD path
 
-    git clone https://github.com/genometools/genometools.git
-    cd genometools
-    make 64bit=yes
-    sudo make 64bit=yes install
+    # Make sure that /usr/local/lib is in your LD path
+    sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
+    sudo ldconfig
 
-    cd ..
+    # Download the AEGeAn source code
     git clone https://github.com/standage/AEGeAn.git
     cd AEGeAn
-    make 64bit=yes
-    sudo make 64bit=yes install
+
+    # Compile and install AEGeAn and its prerequisites
+    make
+    sudo make install
 
 
 Prerequisites
@@ -29,17 +28,16 @@ Prerequisites
 In principle, AEGeAn should compile and run on any POSIX-compliant UNIX system
 (Linux, Mac OS X, Cygwin), although in practice, it has only been tested on
 Linux and Mac systems. Native Windows support is not anticipated any time soon.
-We have made an effort to minimize dependency on external software, but
-compiling and installing does require a few prerequisites.
 
-* common UNIX tools for building software: specifically, GNU make and a C
-  compiler with OpenMP support
-* GenomeTools library (see http://genometools.org/ for download and installation
-  instructions)
+We have made an effort to minimize dependency on external software. Aside from
+the GenomeTools library (which is included in the AEGeAn source code
+distribution), compiling and installing AEGeAn requires only GNU make and a C
+compiler.
 
 While not a strict requirement, fully leveraging the graphics capabilities
-provided by AEGeAn requires that the system also have an installation of the
-Cairo graphics library (see the GenomeTools documentation).
+provided by AEGeAn (through GenomeTools) requires that the system also have an
+installation of the Cairo graphics library (see "`Appendix: system setup`_" for
+platform-specific installation instructions).
 
 
 Downloading
@@ -54,8 +52,8 @@ the most recent updates) is to clone from Github.
 Alternatively, you can download an archive of the source from
 https://github.com/standage/AEGeAn.
 
-If you would prefer to work with a thoroughly tested stable release, do one of
-the following.
+If you would prefer instead to work with a more  thoroughly tested stable
+release, do one of the following.
 
 * If you used git to clone AEGeAn, then run ``git tag`` to list all stable
   releases. Then before compiling run ``git checkout vx.y.z`` where ``vx.y.z``
@@ -72,95 +70,82 @@ stable releases.
 Compiling and installing
 ------------------------
 
-It is generally assumed that the user will follow standard Linux/UNIX procedures
-when downloading, compiling, and installing the GenomeTools prerequisite. The
-default install directory is ``/usr/local``, which means that we assume the
-GenomeTools binaries have been installed in ``/usr/local/bin`` and the shared
-libraries have been installed in ``/usr/local/lib``.
+The instructions under the section labeled "`For the impatient`_" are a good
+starting point for most users. Chances are many users will be able to
+successfully install by running those commands verbatim. The first few commands
+are specific to Debian-based Linux operating systems such as Ubuntu.
+If you are using a different operating system, please see "`Appendix:
+system setup`_"  for platform-specific instructions. After running those
+commands, complete the installation by running ``make`` and ``make install``.
 
-If this is the case, then the default installation procedure should work just
-fine. From the directory containing the AEGeAn source code distribution, enter
-the following commands.
+If you have already installed GenomeTools system-wide and do not want to
+overwrite that installation, substitute ``make agn`` and ``make agn-install``
+for ``make`` and ``make install``.
+
+See the section labeled `Compilation flags`_ for a complete description of
+configurable settings for compilation and installation.
+
+Compilation flags
+~~~~~~~~~~~~~~~~~
+
+Compilation settings can be configured using the following flags with the
+``make`` command.
+
+* ``64bit=no``: do not compile for a 64-bit architecture
+* ``cairo=no``: compile without graphics support (if your system does not have
+  the Cairo graphics libraries installed)
+* ``prefix=$DIR``: install GenomeTools and AEGeAn in ``$DIR`` rather than the
+  default directory ``/usr/local``
+* ``optimize=yes``: enable performance optimization for the AEGeAn code
+* ``errorcheck=no``: allow code to compile even if there are warnings
+* ``debug=no``: disable debugging support
+* ``clean``: remove all compiler-generated AEGeAn files
+* ``clean-all``: remove all compiler generated files for AEGeAn and GenomeTools
+
+For example, if you want to compile the code with performance optimizations
+enabled and graphics support disabled, run ``make optimize=yes cairo=no``
+instead of just ``make``.
+
+Compiling without administrative privileges
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The default installation location is ``/usr/local/``, which means:
+
+* programs are installed in ``/usr/local/bin``
+* header files are installed in ``/usr/local/include``
+* libraries are installed in ``/usr/local/lib``
+* auxiliary data files are installed in ``/usr/local/share``
+
+If you do not have administrative privileges on your
+machine, then you will not be able to run ``make install`` without specifying an
+alternative installation directory with ``prefix``. Creating an installation
+directory within your home directory, as shown in the following example, is
+recommended.
 
 .. code-block:: bash
 
-    make
-    make install # requires root access
+  mkdir ~/local
+  make prefix=~/local
+  make prefix=~/local install
 
-If you have some reason to install GenomeTools in some other directory (e.g.
-if you don't have permissions to modify ``/usr/local``), this should not be a
-problem for AEGeAn. You must simply tell AEGeAn where to find GenomeTools. For
-example, if you installed GenomeTools in ``/home/alice/local``, then you must
-indicate this fact when compiling AEGeAn.
-
-The following make options are available if you encounter any problems during
-installation or if you want to customize your installation.
-
-* ``64bit=yes`` if you want compile for a 64-bit architecture
-* ``cairo=no`` if your system does not have Cairo graphics libraries installed
-  (you will not be able to generate graphics)
-* ``GT_INSTALL_DIR=?`` if you did not install GenomeTools in ``/usr/local``
-* ``prefix=?`` to install AEGeAn in a directory other than
-  ``/usr/local`` (e.g. if you do not have admin privileges)
-
-For example, if I need to install GenomeTools and AEGeAn in my home directory
-``/home/alice``, then I could do something like this.
-
-.. code-block:: bash
-
-    test -d /home/alice/local/src || mkdir -p /home/alice/local/src
-
-    cd /home/alice/local/src
-    git clone https://github.com/genometools/genometools.git
-    cd genometools
-    make prefix=/home/alice/local 64bit=yes
-    make prefix=/home/alice/local 64bit=yes install
-
-    cd /home/alice/local/src
-    git clone git://github.com/standage/AEGeAn.git
-    cd AEGeAn
-    make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local
-    make prefix=/home/alice/local GT_INSTALL_DIR=/home/alice/local install
-
-Remember that if you install the GenomeTools library in a non-standard location,
-you will need to make sure that the AEGeAn binariescan find that library at
-runtime. This can be done on a temporary basis using the ``LD_LIBRARY_PATH``
-environmental variable or on a permanent system-wide basis using the
-``ldconfig`` command.
-
-Although the ``/usr/local`` directory is the standard install location for third
-party libraries, on some distributions this directory is not pre-configured.
-If you use the default install locations and still run into problems, make sure
-that ``/usr/local/bin`` is in your path (using the ``export`` or ``setenv``
-commands) and that ``/usr/local/lib`` is in the LD path (using the ``ldconfig``
-command).
-
-If you are not familiar with system administration, see the
-:ref:`appendix <appendix-config>` below, which includes instructions for
-installing prerequisites and setting up system paths on a variety of operating
-systems.
-
+This will install the programs in ``~/local/bin``, the libraries in
+``~/local/lib``, etc. You will probably want to add ``~/local/bin`` to your
+``PATH`` environmental variable and ``~/local/lib`` to your ``LD_LIBRARY_PATH``
+environmental variable (or ``DYLD_LIBRARY_PATH`` on Mac OS X).
 
 .. _appendix-config:
 
 Appendix: system setup
 ----------------------
 Below are instructions for installing prerequisites and configuring system paths
-for the most common operating systems. You'll want to 
+for the most common operating systems. Note that running these commands requires
+administrative/sudo privileges.
 
 * Debian-based systems including Ubuntu, Mint/LMDE, etc (tested on Ubuntu 11.10)
 
   .. code-block:: bash
   
-      echo $PATH | grep /usr/local/bin > /dev/null
-      if [ $? != 0 ]; then
-        export PATH=/usr/local/bin:$PATH
-        echo 'export PATH=/usr/local/bin:$PATH' >> /etc/bashrc
-      fi
-      grep '/usr/local/lib' /etc/ld.so.conf /etc/ld.so.conf.d/* > /dev/null
-      if [ $? != 0 ]; then
-        echo '/usr/local/lib' >> /etc/ld.so.conf.d/genometools-x86_64.conf
-      fi
+      sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
       ldconfig
       apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
 
@@ -168,15 +153,7 @@ for the most common operating systems. You'll want to
 
   .. code-block:: bash
   
-      echo $PATH | grep /usr/local/bin > /dev/null
-      if [ $? != 0 ]; then
-        export PATH=/usr/local/bin:$PATH
-        echo 'export PATH=/usr/local/bin:$PATH' >> /etc/bashrc
-      fi
-      grep '/usr/local/lib' /etc/ld.so.conf /etc/ld.so.conf.d/* > /dev/null
-      if [ $? != 0 ]; then
-        echo '/usr/local/lib' >> /etc/ld.so.conf.d/genometools-x86_64.conf
-      fi
+      sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
       /sbin/ldconfig
       yum install -y git cairo-devel pango-devel
 
@@ -187,5 +164,5 @@ for the most common operating systems. You'll want to
       # Download and install Git: http://git-scm.com
       # Download and install the Fink package manager: http://www.finkproject.org/download
       # Then install the following packages using Fink
-      apt-get install -y cairo-devel ncurses-devel pango1-xft2-ft219-dev
+      apt-get install -y cairo-devel pango1-xft2-ft219-dev
       

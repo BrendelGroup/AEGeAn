@@ -1,0 +1,3 @@
+[submodule "src/genometools"]
+	path = src/genometools
+	url = https://github.com/genometools/genometools.git

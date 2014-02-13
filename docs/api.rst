@@ -195,6 +195,36 @@ Class AgnInferExonsVisitor
 
   Run unit tests for this class.
 
+Class AgnInferParentStream
+--------------------------
+
+.. c:type:: AgnInferParentStream
+
+  Implements the GenomeTools ``GtNodeStream`` interface. This node stream blah blah blah See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream, GtHashmap *type_parents)
+
+  Class constructor. The hashmap contains a list of key-value pairs, both strings. Any time the stream encounters a top-level (parentless) feature whose type is a key in the hashmap, a parent will be created for this feature of the type associated with the key.
+
+.. c:function:: bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnIntervalLocusStream
+----------------------------
+
+.. c:type:: AgnIntervalLocusStream
+
+  Implements the ``GtNodeStream`` interface. Input is a stream of gene/transcript loci and output is a stream of interval loci. See online docs for more information about interval loci (iLoci). See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnIntervalLocusStream.h>`_.
+
+.. c:function:: GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream, GtUword delta, bool skipterminal, GtLogger *logger)
+
+  Class constructor. The delta parameter specifies how far beyond each transcript the iLocus boundaries should extend, and the minimum length of an iLocus containing no transcripts. See the online docs for a complete description of iLoci.
+
+.. c:function:: bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnLocus
 --------------
 
@@ -274,6 +304,10 @@ Class AgnLocus
 
   Print a mapping of the transcript(s) associated with this locus in a two-column tab-delimited format: ``transcriptId<tab>locusId``.
 
+.. c:function:: void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end)
+
+  Set the start and end coordinates for this locus.
+
 .. c:function:: double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src)
 
   Calculate the splice complexity of this gene locus. Rather than calling this method directly, users are recommended to use one of the following macros: ``agn_locus_prep_splice_complexity(locus)`` to calculate the splice complexity of just the prediction transcripts, ``agn_locus_refr_splice_complexity(locus)`` to calculate the splice complexity of just the reference transcripts, and ``agn_locus_calc_splice_complexity(locus)`` to calculate the splice complexity taking into account all transcripts.
@@ -294,6 +328,21 @@ Class AgnLocus
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnLocusMapVisitor
+------------------------
+
+.. c:type:: AgnLocusMapVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
+
+  Constructor for a node stream based on this node visitor. See :c:func:`agn_locus_map_visitor_new` for a description of the function arguments.
+
+.. c:function:: GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
+
+  Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
+
 Class AgnLocusStream
 --------------------
 
@@ -310,6 +359,63 @@ Class AgnLocusStream
   This constructor accepts two :c:type:`AgnTranscriptStream` objects as input. Locus features are created as per the class description, with additional data stored to track the source (reference vs prediction) of each transcript in each locus.
 
 .. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnMrnaRepVisitor
+-----------------------
+
+.. c:type:: AgnMrnaRepVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_mrna_rep_visitor_new()
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnPseudogeneFixVisitor
+-----------------------------
+
+.. c:type:: AgnPseudogeneFixVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting the ``type`` value for pseudogene features erroneously using the ``gene`` type instead of the more appropriate ``pseudogene`` type. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnPseudogeneFixVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_pseudogene_fix_visitor_new()
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_pseudogene_fix_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnRemoveChildrenVisitor
+------------------------------
+
+.. c:type:: AgnRemoveChildrenVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting removing all children of each top-level feature. Psuedo-features are not modified. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnRemoveChildrenVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_remove_children_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_remove_children_visitor_new()
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_remove_children_visitor_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
 
@@ -428,6 +534,10 @@ Functions for testing feature types. See the `module header <https://github.com/
 
   Returns true if the given feature is an mRNA; false otherwise.
 
+.. c:function:: bool agn_typecheck_pseudogene(GtFeatureNode *fn)
+
+  Returns true if the given feature is declared as a pseudogene; false otherwise.
+
 .. c:function:: GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
 
   Gather the children of a given feature that have a certain type. Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
@@ -505,6 +615,22 @@ Collection of assorted functions that are otherwise unrelated. See the `module h
 .. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
 
   Determine the splice complexity of the given set of transcripts.
+
+.. c:function:: GtUword agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src, bool use_orig, GtError *error)
+
+  Copy the sequence regions from ``src`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
+
+.. c:function:: GtUword agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest, GtFeatureIndex *refrsrc, GtFeatureIndex *predsrc, bool use_orig, GtError *error)
+
+  Copy the sequence regions from ``refrsrc`` and ``predsrc`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
+
+.. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
+
+  Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
+
+.. c:function:: GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
+
+  If a top-level feature ``top`` contains a multifeature child (with multi representative ``rep``), use this function to get the complete range of the multifeature.
 
 .. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 
