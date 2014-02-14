@@ -26,6 +26,13 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
                                             GtLogger *logger);
 
 /**
+ * @function Set the source value to be used for all iLoci created by this
+ * stream. Default value is 'AEGeAn::AgnIntervalLocusStream'.
+ */
+void agn_interval_locus_stream_set_source(AgnIntervalLocusStream *stream,
+                                          GtStr *source);
+
+/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_interval_locus_stream_unit_test(AgnUnitTest *test);

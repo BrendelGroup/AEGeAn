@@ -99,7 +99,7 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   AgnLocusStream *stream = locus_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
   stream->logger = logger;
-  stream->source = gt_str_new_cstr("AEGeAn");
+  stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
 
   GtError *error = gt_error_new();
   stream->transcripts = gt_feature_index_memory_new();
@@ -136,7 +136,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   GtNodeStream *ns = gt_node_stream_create(locus_stream_class(), false);
   AgnLocusStream *stream = locus_stream_cast(ns);
   stream->logger = logger;
-  stream->source = gt_str_new_cstr("AEGeAn");
+  stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
 
   GtError *error = gt_error_new();
   stream->transcripts = NULL;
@@ -173,6 +173,12 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->loci);
 
   return ns;
+}
+
+void agn_locus_stream_set_source(AgnLocusStream *stream, GtStr *source)
+{
+  gt_str_delete(stream->source);
+  stream->source = gt_str_ref(source);
 }
 
 bool agn_locus_stream_unit_test(AgnUnitTest *test)

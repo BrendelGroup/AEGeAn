@@ -35,6 +35,12 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
                                             GtLogger *logger);
 
 /**
+ * @function Set the source value to be used for all iLoci created by this
+ * stream. Default value is 'AEGeAn::AgnLocusStream'.
+ */
+void agn_locus_stream_set_source(AgnLocusStream *stream, GtStr *source);
+
+/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_locus_stream_unit_test(AgnUnitTest *test);

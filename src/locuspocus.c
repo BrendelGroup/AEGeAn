@@ -192,7 +192,9 @@ int main(int argc, char **argv)
     last_stream = current_stream;
   }
 
+  GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
   current_stream = agn_locus_stream_new(last_stream, logger);
+  agn_locus_stream_set_source((AgnLocusStream *)current_stream, source);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
@@ -200,9 +202,12 @@ int main(int argc, char **argv)
   {
     current_stream = agn_interval_locus_stream_new(last_stream, options.delta,
                                                    options.skipends, logger);
+    agn_interval_locus_stream_set_source(
+                              (AgnIntervalLocusStream *)current_stream, source);
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }
+  gt_str_delete(source);
 
   /* FIXME I don't understand why this is needed, but without it memory is
    * leaked; if it's not in this precise location, no memory is leaked but

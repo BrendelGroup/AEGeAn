@@ -20,6 +20,7 @@ struct AgnIntervalLocusStream
   GtFeatureIndex *in_loci;
   GtFeatureIndex *out_loci;
   GtLogger *logger;
+  GtStr *source;
 };
 
 
@@ -102,6 +103,7 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
   GtNodeStream *ns = gt_node_stream_create(ilocus_stream_class(), false);
   AgnIntervalLocusStream *stream = ilocus_stream_cast(ns);
   stream->logger = logger;
+  stream->source = gt_str_new_cstr("AEGeAn::AgnIntervalLocusStream");
 
   GtError *error = gt_error_new();
   stream->locus_stream = gt_node_stream_ref(locus_stream);
@@ -124,6 +126,13 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
   gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->out_loci);
 
   return ns;
+}
+
+void agn_interval_locus_stream_set_source(AgnIntervalLocusStream *stream,
+                                          GtStr *source)
+{
+  gt_str_delete(stream->source);
+  stream->source = gt_str_ref(source);
 }
 
 bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
@@ -200,13 +209,22 @@ static void ilocus_stream_free(GtNodeStream *ns)
   gt_feature_index_delete(stream->out_loci);
   gt_node_stream_delete(stream->locus_stream);
   gt_node_stream_delete(stream->fstream);
+  gt_str_delete(stream->source);
 }
 
 static int ilocus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                               GtError *error)
 {
   AgnIntervalLocusStream *stream = ilocus_stream_cast(ns);
-  return gt_node_stream_next(stream->ilocus_stream, gn, error);
+  int result = gt_node_stream_next(stream->ilocus_stream, gn, error);
+  if(result || !*gn)
+    return result;
+
+  GtFeatureNode *fn = gt_feature_node_try_cast(*gn);
+  if(fn)
+    gt_feature_node_set_source(fn, stream->source);
+
+  return result;
 }
 
 static void ilocus_stream_parse(AgnIntervalLocusStream *stream, GtUword delta,
