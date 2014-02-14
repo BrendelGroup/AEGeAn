@@ -204,6 +204,13 @@ int main(int argc, char **argv)
     last_stream = current_stream;
   }
 
+  /* FIXME I don't understand why this is needed, but without it memory is
+   * leaked; if it's not in this precise location, no memory is leaked but
+   * segfaults result */
+  current_stream = agn_node_delete_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
   if(options.genestream != NULL || options.transstream != NULL)
   {
     current_stream = agn_locus_map_stream_new(last_stream, options.genestream,

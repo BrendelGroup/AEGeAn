@@ -2,6 +2,7 @@
 #include "extended/feature_index_memory_api.h"
 #include "AgnLocus.h"
 #include "AgnLocusStream.h"
+#include "AgnNodeDeleteVisitor.h"
 #include "AgnTranscriptStream.h"
 #include "AgnTypecheck.h"
 
@@ -302,6 +303,7 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   GtFeatureNode *fn = gt_feature_node_try_cast(*gn);
   if(fn)
     gt_feature_node_set_source(fn, stream->source);
+
   return result;
 }
 
@@ -595,7 +597,9 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
     locusstream = agn_locus_stream_new_pairwise(s1, s2, logger);
 
   GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
-  GtNodeStream *arraystream = gt_array_out_stream_new(locusstream, loci, error);
+  // FIXME Why is this required?
+  GtNodeStream *dstream = agn_node_delete_stream_new(locusstream);
+  GtNodeStream *arraystream = gt_array_out_stream_new(dstream, loci, error);
   gt_node_stream_pull(arraystream, error);
   if(gt_error_is_set(error))
   {
@@ -607,14 +611,13 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
   while(gt_array_size(loci) > 0)
   {
     AgnLocus **locus = gt_array_pop(loci);
-    // FIXME these objects must be deleted twice; why?
-    agn_locus_delete(*locus);
     gt_queue_add(queue, *locus);
   }
   gt_array_delete(loci);
 
   gt_node_stream_delete(locusstream);
   gt_node_stream_delete(arraystream);
+  gt_node_stream_delete(dstream);
   gt_error_delete(error);
   gt_logger_delete(logger);
 }

@@ -83,9 +83,9 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
 /**
  * @function Generate data for unit testing.
  */
-static GtNodeStream *ilocus_stream_test_data(GtFeatureIndex *iloci, GtNodeStream *s1,
-                                    GtNodeStream *s2, GtUword delta,
-                                    bool skipends, GtLogger *logger);
+static GtNodeStream*
+ilocus_stream_test_data(GtFeatureIndex *iloci,GtNodeStream *s1,GtNodeStream *s2,
+                        GtUword delta, bool skipends, GtLogger *logger);
 
 
 //------------------------------------------------------------------------------
@@ -136,7 +136,8 @@ bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
   GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(1, &infile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-  GtNodeStream *fstream = ilocus_stream_test_data(iloci, gff3, NULL, 200, false, logger);
+  GtNodeStream *fstream = ilocus_stream_test_data(iloci, gff3, NULL, 200, false,
+                                                  logger);
 
   GtStrArray *seqids = gt_feature_index_get_seqids(iloci, error);
   if(gt_str_array_size(seqids) != 25)
@@ -384,10 +385,9 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
   }
 }
 
-static GtNodeStream *ilocus_stream_test_data(GtFeatureIndex *iloci,
-                                             GtNodeStream *s1,
-                                             GtNodeStream *s2, GtUword delta,
-                                             bool skipends, GtLogger *logger)
+static GtNodeStream*
+ilocus_stream_test_data(GtFeatureIndex *iloci,GtNodeStream *s1,GtNodeStream *s2,
+                        GtUword delta, bool skipends, GtLogger *logger)
 {
   gt_assert(s1);
   GtError *error = gt_error_new();
