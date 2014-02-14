@@ -85,7 +85,7 @@ commands, complete the installation by running ``make`` and ``make install``.
 If you have already installed GenomeTools system-wide and do not want to
 overwrite that installation, you can replace 
 
-..code-block:: bash
+.. code-block:: bash
 
     git submodule init
     git submodule update
@@ -94,7 +94,7 @@ overwrite that installation, you can replace
 
 with
 
-..code-block:: bash
+.. code-block:: bash
 
     make agn
     make agn-install
