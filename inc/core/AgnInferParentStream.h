@@ -8,7 +8,11 @@
 /**
  * @class AgnInferParentStream
  *
- * Implements the GenomeTools ``GtNodeStream`` interface. This node stream blah blah blah
+ * Implements the GenomeTools ``GtNodeStream`` interface. This node stream
+ * creates new features as parents for the specified types. For example, if
+ * ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as
+ * the value, this node stream will create a ``gene`` feature for any ``tRNA``
+ * feature that lacks a gene parent.
  */
 typedef struct AgnInferParentStream AgnInferParentStream;
 

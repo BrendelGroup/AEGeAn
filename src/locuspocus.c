@@ -1,4 +1,5 @@
 #include <getopt.h>
+#include <string.h>
 #include "genometools.h"
 #include "aegean.h"
 
@@ -6,11 +7,13 @@
 typedef struct
 {
   bool debug;
+  GtHashmap *filter;
   FILE *genestream;
   bool intloci;
   unsigned long delta;
   GtFile *outstream;
   void (*filefreefunc)(GtFile *);
+  GtHashmap *type_parents;
   bool retainids;
   bool skipends;
   FILE *transstream;
@@ -22,16 +25,31 @@ typedef struct
 static void set_option_defaults(LocusPocusOptions *options)
 {
   options->debug = false;
+  options->filter = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
+  gt_hashmap_add(options->filter, gt_cstr_dup("gene"), gt_cstr_dup("gene"));
   options->genestream = NULL;
   options->intloci = false;
   options->delta = 500;
   options->outstream = gt_file_new_from_fileptr(stdout);
   options->filefreefunc = gt_file_delete_without_handle;
+  options->type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                         gt_free_func);
   options->retainids = false;
   options->skipends = false;
   options->transstream = NULL;
   options->pseudofix = false;
   options->verbose = false;
+}
+
+static void free_option_memory(LocusPocusOptions *options)
+{
+  options->filefreefunc(options->outstream);
+  gt_hashmap_delete(options->type_parents);
+  gt_hashmap_delete(options->filter);
+  if(options->genestream != NULL)
+    fclose(options->genestream);
+  if(options->transstream != NULL)
+    fclose(options->transstream);
 }
 
 // Usage statement
@@ -43,6 +61,8 @@ static void print_usage(FILE *outstream)
 "  Options:\n"
 "    -d|--debug             print detailed debugging messages to terminal\n"
 "                           (standard error)\n"
+"    -f|--filter: TYPE      comma-separated list of feature types to use in\n"
+"                           constructing loci/iLoci; default is 'gene'"
 "    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
 "                           corresponding locus to the given file\n"
 "    -h|--help              print this help message and exit\n"
@@ -53,6 +73,11 @@ static void print_usage(FILE *outstream)
 "                           regulatory regions; default is 500\n"
 "    -o|--outfile: FILE     name of file to which results will be written;\n"
 "                           default is terminal (standard output)\n"
+"    -p|--parent: CT:PT     if a feature of type $CT exists without a parent,\n"
+"                           create a parent for this feature with type $PT;\n"
+"                           for example, mRNA:gene will create a gene feature\n"
+"                           as a parent for any top-level mRNA feature\n;"
+"                           this option can be specified multiple times\n"
 "    -r|--retainids         retain IDs from input data; selecting 'genemap'\n"
 "                           and/or 'transmap' will activate this setting\n"
 "    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
@@ -71,15 +96,18 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "dg:hil:o:rst:uv";
+  const char *optstr = "df:g:hil:o:p:rst:uv";
+  const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
     { "debug",     no_argument,       NULL, 'd' },
+    { "filter",    required_argument, NULL, 'f' },
     { "genemap",   required_argument, NULL, 'g' },
     { "help",      no_argument,       NULL, 'h' },
     { "intloci",   no_argument,       NULL, 'i' },
     { "delta",     required_argument, NULL, 'l' },
     { "outfile",   required_argument, NULL, 'o' },
+    { "parent",    required_argument, NULL, 'p' },
     { "retainids", no_argument,       NULL, 'r' },
     { "skipends",  no_argument,       NULL, 's' },
     { "transmap",  required_argument, NULL, 't' },
@@ -94,6 +122,23 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     {
       case 'd':
         options->debug = 1;
+        break;
+      case 'f':
+        gt_hashmap_delete(options->filter);
+        options->filter = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                         gt_free_func);
+
+        value = strtok(optarg, ",");
+        gt_hashmap_add(options->filter, gt_cstr_dup(value), gt_cstr_dup(value));
+        while((value = strtok(NULL, ",")) != NULL)
+        {
+          oldvalue = gt_hashmap_get(options->filter, value);
+          if(!oldvalue)
+          {
+            gt_hashmap_add(options->filter, gt_cstr_dup(value),
+                           gt_cstr_dup(value));
+          }
+        }
         break;
       case 'g':
         options->retainids = 1;
@@ -119,6 +164,21 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         options->filefreefunc(options->outstream);
         options->outstream = gt_file_new(optarg, "w", error);
         options->filefreefunc = gt_file_delete;
+        break;
+      case 'p':
+        key   = strtok(optarg, ":");
+        value = strtok(NULL, ":");
+        oldvalue = gt_hashmap_get(options->type_parents, "key");
+        if(oldvalue)
+        {
+          gt_error_set(error, "cannot set parent type for '%s' to '%s'; "
+                       "already set to '%s'", key, value, oldvalue);
+        }
+        else
+        {
+          gt_hashmap_add(options->type_parents, gt_cstr_dup(key),
+                         gt_cstr_dup(value));
+        }
         break;
       case 'r':
         options->retainids = 1;
@@ -192,6 +252,15 @@ int main(int argc, char **argv)
     last_stream = current_stream;
   }
 
+  current_stream = agn_infer_parent_stream_new(last_stream,
+                                               options.type_parents);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_filter_stream_new(last_stream, options.filter);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
   GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
   current_stream = agn_locus_stream_new(last_stream, logger);
   agn_locus_stream_set_source((AgnLocusStream *)current_stream, source);
@@ -247,9 +316,7 @@ int main(int argc, char **argv)
 
 
   // Free memory and terminate
-  options.filefreefunc(options.outstream);
-  if(options.genestream != NULL)  fclose(options.genestream);
-  if(options.transstream != NULL) fclose(options.transstream);
+  free_option_memory(&options);
   while(gt_queue_size(streams) > 0)
   {
     current_stream = gt_queue_get(streams);
