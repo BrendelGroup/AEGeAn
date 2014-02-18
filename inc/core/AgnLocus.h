@@ -12,7 +12,7 @@
  * The AgnLocus class represents gene loci and interval loci in memory and can
  * be used to facilitate comparison of two different sources of annotation.
  * Under the hood, each ``AgnLocus`` object is a feature node with one or more
- * transcript features as direct children.
+ * gene features as direct children.
  */
 typedef GtGenomeNode AgnLocus;
 
@@ -49,21 +49,21 @@ struct AgnLocusPngMetadata
 typedef struct AgnLocusPngMetadata AgnLocusPngMetadata;
 
 /**
- * @function Associate the given transcript annotation with this locus. Rather
+ * @function Associate the given annotation with this locus. Rather
  * than calling this function directly, users are recommended to use one of the
- * following macros: ``agn_locus_add_pred_transcript(locus, trans)`` and
- * ``agn_locus_add_refr_transcript(locus, trans)``, to be used when keeping
+ * following macros: ``agn_locus_add_pred_feature(locus, gene)`` and
+ * ``agn_locus_add_refr_feature(locus, gene)``, to be used when keeping
  * track of an annotation's source is important (i.e. for pairwise comparison);
- * and ``agn_locus_add_transcript(locus, trans)`` otherwise.
+ * and ``agn_locus_add_feature(locus, gene)`` otherwise.
  */
-void agn_locus_add(AgnLocus *locus, GtFeatureNode *transcript,
+void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature,
                    AgnComparisonSource source);
-#define agn_locus_add_pred_transcript(LC, TR)\
-        agn_locus_add(LC, TR, PREDICTIONSOURCE)
-#define agn_locus_add_refr_transcript(LC, TR)\
-        agn_locus_add(LC, TR, REFERENCESOURCE)
-#define agn_locus_add_transcript(LC, TR)\
-        agn_locus_add(LC, TR, DEFAULTSOURCE)
+#define agn_locus_add_pred_feature(LC, GN)\
+        agn_locus_add(LC, GN, PREDICTIONSOURCE)
+#define agn_locus_add_refr_feature(LC, GN)\
+        agn_locus_add(LC, GN, REFERENCESOURCE)
+#define agn_locus_add_feature(LC, GN)\
+        agn_locus_add(LC, GN, DEFAULTSOURCE)
 
 /**
  * @function Do a semi-shallow copy of this data structure--for members whose
@@ -148,6 +148,54 @@ GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus);
 GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus);
 
 /**
+ * @function Get the mRNAs associated with this locus. Rather than calling
+ * this function directly, users are encouraged to use one of the following
+ * macros: ``agn_locus_pred_mrnas(locus)`` to retrieve prediction mRNAs,
+ * ``agn_locus_refr_mrnas(locus)`` to retrieve reference mRNAs, or
+ * ``agn_locus_get_mrnas(locus)`` if the source of annotation is undesignated or
+ * irrelevant.
+ */
+GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src);
+#define agn_locus_pred_mrnas(LC)\
+        agn_locus_mrnas(LC, PREDICTIONSOURCE)
+#define agn_locus_refr_mrnas(LC)\
+        agn_locus_mrnas(LC, REFERENCESOURCE)
+#define agn_locus_get_mrnas(LC)\
+        agn_locus_mrnas(LC, DEFAULTSOURCE)
+
+/**
+ * @function Get the mRNA IDs associated with this locus. Rather than
+ * calling this function directly, users are encouraged to use one of the
+ * following macros: ``agn_locus_pred_mrna_ids(locus)`` to retrieve
+ * prediction IDs, ``agn_locus_refr_mrna_ids(locus)`` to retrieve
+ * reference IDs, or ``agn_locus_get_mrna_ids(locus)`` if the source of
+ * annotation is undesignated or irrelevant.
+ */
+GtArray *agn_locus_mrna_ids(AgnLocus *locus, AgnComparisonSource src);
+#define agn_locus_pred_mrna_ids(LC)\
+        agn_locus_mrna_ids(LC, PREDICTIONSOURCE)
+#define agn_locus_refr_mrna_ids(LC)\
+        agn_locus_mrna_ids(LC, REFERENCESOURCE)
+#define agn_locus_get_mrna_ids(LC)\
+        agn_locus_mrna_ids(LC, DEFAULTSOURCE)
+
+/**
+ * @function Get the number of mRNAs for the locus. Rather than calling
+ * this function directly, users are encouraged to use one of the following
+ * macros: ``agn_locus_num_pred_mrnas(locus)`` for the number of prediction
+ * mRNAs, ``agn_locus_num_refr_mrnas(locus)`` for the number of reference
+ * mRNAs, or ``agn_locus_num_mrnas(locus)`` if the source of annotation is
+ * undesignated or irrelevant.
+ */
+GtUword agn_locus_mrna_num(AgnLocus *locus, AgnComparisonSource src);
+#define agn_locus_num_pred_mrnas(LC)\
+        agn_locus_mrna_num(LC, PREDICTIONSOURCE)
+#define agn_locus_num_refr_mrnas(LC)\
+        agn_locus_mrna_num(LC, REFERENCESOURCE)
+#define agn_locus_num_mrnas(LC)\
+        agn_locus_mrna_num(LC, DEFAULTSOURCE)
+
+/**
  * @function Class constructor.
  */
 AgnLocus* agn_locus_new(GtStr *seqid);
@@ -200,55 +248,6 @@ double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src);
         agn_locus_splice_complexity(LC, REFERENCESOURCE)
 #define agn_locus_calc_splice_complexity(LC)\
         agn_locus_splice_complexity(LC, DEFAULTSOURCE)
-
-/**
- * @function Get the transcripts associated with this locus. Rather than calling
- * this function directly, users are encouraged to use one of the following
- * macros: ``agn_locus_pred_transcripts(locus)`` to retrieve prediction
- * transcripts, ``agn_locus_refr_transcripts(locus)`` to retrieve reference
- * transcripts, or ``agn_locus_get_genes(locus)`` if the source of
- * annotation is undesignated or irrelevant.
- */
-GtArray *agn_locus_transcripts(AgnLocus *locus, AgnComparisonSource src);
-#define agn_locus_pred_transcripts(LC)\
-        agn_locus_transcripts(LC, PREDICTIONSOURCE)
-#define agn_locus_refr_transcripts(LC)\
-        agn_locus_transcripts(LC, REFERENCESOURCE)
-#define agn_locus_get_transcripts(LC)\
-        agn_locus_transcripts(LC, DEFAULTSOURCE)
-
-/**
- * @function Get the transcript IDs associated with this locus. Rather than
- * calling this function directly, users are encouraged to use one of the
- * following macros: ``agn_locus_pred_transcripts(locus)`` to retrieve
- * prediction IDs, ``agn_locus_refr_transcripts(locus)`` to retrieve
- * reference IDs, or ``agn_locus_get_genes(locus)`` if the source of
- * annotation is undesignated or irrelevant.
- */
-GtArray *agn_locus_transcript_ids(AgnLocus *locus, AgnComparisonSource src);
-#define agn_locus_pred_transcript_ids(LC)\
-        agn_locus_transcript_ids(LC, PREDICTIONSOURCE)
-#define agn_locus_refr_transcript_ids(LC)\
-        agn_locus_transcript_ids(LC, REFERENCESOURCE)
-#define agn_locus_get_transcript_ids(LC)\
-        agn_locus_transcript_ids(LC, DEFAULTSOURCE)
-
-/**
- * @function Get the number of transcripts for the locus. Rather than calling
- * this function directly, users are encouraged to use one of the following
- * macros: ``agn_transcript_locus_num_pred_transcripts(locus)`` for the number
- * of prediction transcripts,
- * ``agn_transcript_locus_num_refr_transcripts(locus)`` for the number of
- * reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)``
- * if the source of annotation is undesignated or irrelevant.
- */
-GtUword agn_locus_transcript_num(AgnLocus *locus, AgnComparisonSource src);
-#define agn_locus_num_pred_transcripts(LC)\
-        agn_locus_transcript_num(LC, PREDICTIONSOURCE)
-#define agn_locus_num_refr_transcripts(LC)\
-        agn_locus_transcript_num(LC, REFERENCESOURCE)
-#define agn_locus_num_transcripts(LC)\
-        agn_locus_transcript_num(LC, DEFAULTSOURCE)
 
 /**
  * @function Run unit tests for this class. Returns true if all tests passed.

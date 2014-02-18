@@ -82,35 +82,35 @@ static void locus_update_range(AgnLocus *locus, GtFeatureNode *transcript);
 // Method implementations
 //------------------------------------------------------------------------------
 
-void agn_locus_add(AgnLocus *locus, GtFeatureNode *transcript,
+void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature,
                    AgnComparisonSource source)
 {
-  gt_genome_node_ref((GtGenomeNode *)transcript);
-  gt_feature_node_add_child((GtFeatureNode *)locus, transcript);
-  locus_update_range(locus, transcript);
+  gt_genome_node_ref((GtGenomeNode *)feature);
+  gt_feature_node_add_child((GtFeatureNode *)locus, feature);
+  locus_update_range(locus, feature);
 
   if(source == DEFAULTSOURCE)
     return;
 
-  GtHashmap *trans = gt_genome_node_get_user_data(locus, "refrtrans");
-  if(trans == NULL)
+  GtHashmap *feats = gt_genome_node_get_user_data(locus, "refrfeats");
+  if(feats == NULL)
   {
-    trans = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-    gt_genome_node_add_user_data(locus, "refrtrans", trans,
+    feats = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
+    gt_genome_node_add_user_data(locus, "refrfeats", feats,
                                  (GtFree)gt_hashmap_delete);
   }
   if(source == REFERENCESOURCE)
-    gt_hashmap_add(trans, transcript, transcript);
+    gt_hashmap_add(feats, feature, feature);
 
-  trans = gt_genome_node_get_user_data(locus, "predtrans");
-  if(trans == NULL)
+  feats = gt_genome_node_get_user_data(locus, "predfeats");
+  if(feats == NULL)
   {
-    trans = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
-    gt_genome_node_add_user_data(locus, "predtrans", trans,
+    feats = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
+    gt_genome_node_add_user_data(locus, "predfeats", feats,
                                  (GtFree)gt_hashmap_delete);
   }
   if(source == PREDICTIONSOURCE)
-    gt_hashmap_add(trans, transcript, transcript);
+    gt_hashmap_add(feats, feature, feature);
 }
 
 AgnLocus *agn_locus_clone(AgnLocus *locus)
@@ -131,18 +131,18 @@ AgnLocus *agn_locus_clone(AgnLocus *locus)
     locus_update_range(newlocus, fn);
   }
 
-  GtHashmap *refr_trans = gt_genome_node_get_user_data(locus, "refrtrans");
-  if(refr_trans != NULL)
+  GtHashmap *refr_feats = gt_genome_node_get_user_data(locus, "refrfeats");
+  if(refr_feats != NULL)
   {
-    gt_hashmap_ref(refr_trans);
-    gt_genome_node_add_user_data(newlocus, "refrtrans", refr_trans,
+    gt_hashmap_ref(refr_feats);
+    gt_genome_node_add_user_data(newlocus, "refrfeats", refr_feats,
                                  (GtFree)gt_hashmap_delete);
   }
-  GtHashmap *pred_trans = gt_genome_node_get_user_data(locus, "predtrans");
-  if(pred_trans != NULL)
+  GtHashmap *pred_feats = gt_genome_node_get_user_data(locus, "predfeats");
+  if(pred_feats != NULL)
   {
-    gt_hashmap_ref(pred_trans);
-    gt_genome_node_add_user_data(newlocus, "predtrans", pred_trans,
+    gt_hashmap_ref(pred_feats);
+    gt_genome_node_add_user_data(newlocus, "predfeats", pred_feats,
                                  (GtFree)gt_hashmap_delete);
   }
 
@@ -190,7 +190,7 @@ GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src)
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_transcript(feature));
+    gt_assert(agn_typecheck_mrna(feature));
     if(locus_transcript_source_test(locus, feature, src) == false)
       continue;
 
@@ -217,8 +217,8 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
   if(pairs2report != NULL)
     return;
 
-  GtUword numrefr = agn_locus_num_refr_transcripts(locus);
-  GtUword numpred = agn_locus_num_pred_transcripts(locus);
+  GtUword numrefr = agn_locus_num_refr_mrnas(locus);
+  GtUword numpred = agn_locus_num_pred_mrnas(locus);
   bool noneedanaly = numrefr > maxtranscripts && numpred > maxtranscripts;
   if(maxtranscripts > 0 && noneedanaly)
   {
@@ -230,10 +230,10 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
                   range.end, numrefr, numpred, maxtranscripts);
     return;
   }
-  GtArray *refr_trans = agn_locus_refr_transcripts(locus);
+  GtArray *refr_trans = agn_locus_refr_mrnas(locus);
   GtArray *refrcliques = locus_enumerate_cliques(locus, refr_trans);
   gt_array_delete(refr_trans);
-  GtArray *pred_trans = agn_locus_pred_transcripts(locus);
+  GtArray *pred_trans = agn_locus_pred_mrnas(locus);
   GtArray *predcliques = locus_enumerate_cliques(locus, pred_trans);
   gt_array_delete(pred_trans);
 
@@ -327,6 +327,69 @@ GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus)
   return gt_genome_node_get_user_data(locus, "unique_refr");
 }
 
+GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
+{
+  GtArray *mrnas = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNode *fn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    bool ismrna = agn_typecheck_mrna(feature);
+    bool meets_crit = locus_transcript_source_test(locus, feature, src);
+    if(ismrna && meets_crit)
+      gt_array_add(mrnas, feature);
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return mrnas;
+}
+
+GtArray *agn_locus_mrna_ids(AgnLocus *locus, AgnComparisonSource src)
+{
+  GtArray *ids = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNode *fn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    bool ismrna = agn_typecheck_mrna(feature);
+    bool meets_crit = locus_transcript_source_test(locus, feature, src);
+    if(ismrna && meets_crit)
+    {
+      const char *id = gt_feature_node_get_attribute(feature, "ID");
+      gt_array_add(ids, id);
+    }
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return ids;
+}
+
+GtUword agn_locus_mrna_num(AgnLocus *locus, AgnComparisonSource src)
+{
+  GtUword count = 0;
+  GtFeatureNode *fn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    bool ismrna = agn_typecheck_mrna(feature);
+    bool meets_crit = locus_transcript_source_test(locus, feature, src);
+    if(ismrna && meets_crit)
+      count++;
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return count;
+}
+
 AgnLocus *agn_locus_new(GtStr *seqid)
 {
   AgnLocus *locus = gt_feature_node_new(seqid, "locus", 0, 0, GT_STRAND_BOTH);
@@ -393,7 +456,7 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
   GtFeatureIndex *index = gt_feature_index_memory_new();
   GtUword i;
 
-  GtArray *refr_trans = agn_locus_refr_transcripts(locus);
+  GtArray *refr_trans = agn_locus_refr_mrnas(locus);
   for(i = 0; i < gt_array_size(refr_trans); i++)
   {
     GtFeatureNode *trans = *(GtFeatureNode **)gt_array_get(refr_trans, i);
@@ -406,7 +469,7 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
   }
   gt_array_delete(refr_trans);
 
-  GtArray *pred_trans = agn_locus_pred_transcripts(locus);
+  GtArray *pred_trans = agn_locus_pred_mrnas(locus);
   for(i = 0; i < gt_array_size(pred_trans); i++)
   {
     GtFeatureNode *trans = *(GtFeatureNode **)gt_array_get(pred_trans, i);
@@ -491,7 +554,7 @@ void agn_locus_print_transcript_mapping(AgnLocus *locus, FILE *outstream)
 {
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   GtRange locusrange = gt_genome_node_get_range(locus);
-  GtArray *transids = agn_locus_get_transcript_ids(locus);
+  GtArray *transids = agn_locus_get_mrna_ids(locus);
   while(gt_array_size(transids) > 0)
   {
     const char **transid = gt_array_pop(transids);
@@ -509,70 +572,10 @@ void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end)
 
 double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src)
 {
-  GtArray *trans = agn_locus_transcripts(locus, src);
+  GtArray *trans = agn_locus_mrnas(locus, src);
   double sc = agn_calc_splice_complexity(trans);
   gt_array_delete(trans);
   return sc;
-}
-
-GtArray *agn_locus_transcripts(AgnLocus *locus, AgnComparisonSource src)
-{
-  GtArray *transcripts = gt_array_new( sizeof(GtFeatureNode *) );
-  GtFeatureNode *fn = gt_feature_node_cast(locus);
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
-  GtFeatureNode *feature;
-  for(feature  = gt_feature_node_iterator_next(iter);
-      feature != NULL;
-      feature  = gt_feature_node_iterator_next(iter))
-  {
-    gt_assert(agn_typecheck_transcript(feature));
-    if(locus_transcript_source_test(locus, feature, src))
-      gt_array_add(transcripts, feature);
-  }
-  gt_feature_node_iterator_delete(iter);
-
-  return transcripts;
-}
-
-GtArray *agn_locus_transcript_ids(AgnLocus *locus, AgnComparisonSource src)
-{
-  GtArray *ids = gt_array_new( sizeof(GtFeatureNode *) );
-  GtFeatureNode *fn = gt_feature_node_cast(locus);
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
-  GtFeatureNode *feature;
-  for(feature  = gt_feature_node_iterator_next(iter);
-      feature != NULL;
-      feature  = gt_feature_node_iterator_next(iter))
-  {
-    gt_assert(agn_typecheck_transcript(feature));
-    if(locus_transcript_source_test(locus, feature, src))
-    {
-      const char *id = gt_feature_node_get_attribute(feature, "ID");
-      gt_array_add(ids, id);
-    }
-  }
-  gt_feature_node_iterator_delete(iter);
-
-  return ids;
-}
-
-GtUword agn_locus_transcript_num(AgnLocus *locus, AgnComparisonSource src)
-{
-  GtUword count = 0;
-  GtFeatureNode *fn = gt_feature_node_cast(locus);
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
-  GtFeatureNode *feature;
-  for(feature  = gt_feature_node_iterator_next(iter);
-      feature != NULL;
-      feature  = gt_feature_node_iterator_next(iter))
-  {
-    gt_assert(agn_typecheck_transcript(feature));
-    if(locus_transcript_source_test(locus, feature, src))
-      count++;
-  }
-  gt_feature_node_iterator_delete(iter);
-
-  return count;
 }
 
 bool agn_locus_unit_test(AgnUnitTest *test)
@@ -946,15 +949,15 @@ static void locus_test_data(GtQueue *queue)
   GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
   GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
   AgnLocus *locus = agn_locus_new(seqid);
-  agn_locus_add_refr_transcript(locus, refr);
-  agn_locus_add_pred_transcript(locus, pred);
+  agn_locus_add_refr_feature(locus, refr);
+  agn_locus_add_pred_feature(locus, pred);
   gt_queue_add(queue, locus);
 
   refr = *(GtFeatureNode **)gt_array_get(refrfeats, 9);
   pred = *(GtFeatureNode **)gt_array_get(predfeats, 11);
   locus = agn_locus_new(seqid);
-  agn_locus_add_refr_transcript(locus, refr);
-  agn_locus_add_pred_transcript(locus, pred);
+  agn_locus_add_refr_feature(locus, refr);
+  agn_locus_add_pred_feature(locus, pred);
   gt_queue_add(queue, locus);
 
   while(gt_array_size(refrfeats) > 0)
@@ -999,10 +1002,10 @@ static bool locus_transcript_source_test(AgnLocus *locus,
   if(source == DEFAULTSOURCE)
     return true;
 
-  GtHashmap *refr_trans = gt_genome_node_get_user_data(locus, "refrtrans");
-  GtHashmap *pred_trans = gt_genome_node_get_user_data(locus, "predtrans");
-  bool inrefr = (gt_hashmap_get(refr_trans, transcript) != NULL);
-  bool inpred = (gt_hashmap_get(pred_trans, transcript) != NULL);
+  GtHashmap *refr_feats = gt_genome_node_get_user_data(locus, "refrfeats");
+  GtHashmap *pred_feats = gt_genome_node_get_user_data(locus, "predfeats");
+  bool inrefr = (gt_hashmap_get(refr_feats, transcript) != NULL);
+  bool inpred = (gt_hashmap_get(pred_feats, transcript) != NULL);
   if(source == REFERENCESOURCE  && inrefr)
     return true;
   else if(source == PREDICTIONSOURCE && inpred)
