@@ -200,7 +200,7 @@ Class AgnInferParentStream
 
 .. c:type:: AgnInferParentStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This node stream blah blah blah See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This node stream creates new features as parents for the specified types. For example, if ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as the value, this node stream will create a ``gene`` feature for any ``tRNA`` feature that lacks a gene parent. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream, GtHashmap *type_parents)
 
@@ -221,6 +221,10 @@ Class AgnIntervalLocusStream
 
   Class constructor. The delta parameter specifies how far beyond each transcript the iLocus boundaries should extend, and the minimum length of an iLocus containing no transcripts. See the online docs for a complete description of iLoci.
 
+.. c:function:: void agn_interval_locus_stream_set_source(AgnIntervalLocusStream *stream, GtStr *source)
+
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnIntervalLocusStream'.
+
 .. c:function:: bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
@@ -230,7 +234,7 @@ Class AgnLocus
 
 .. c:type:: AgnLocus
 
-  The AgnLocus class represents gene loci and interval loci in memory and can be used to facilitate comparison of two different sources of annotation. Under the hood, each ``AgnLocus`` object is a feature node with one or more transcript features as direct children. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocus.h>`_.
+  The AgnLocus class represents gene loci and interval loci in memory and can be used to facilitate comparison of two different sources of annotation. Under the hood, each ``AgnLocus`` object is a feature node with one or more gene features as direct children. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocus.h>`_.
 
 .. c:type:: AgnComparisonSource
 
@@ -244,9 +248,9 @@ Class AgnLocus
 
 
 
-.. c:function:: void agn_locus_add(AgnLocus *locus, GtFeatureNode *transcript, AgnComparisonSource source)
+.. c:function:: void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature, AgnComparisonSource source)
 
-  Associate the given transcript annotation with this locus. Rather than calling this function directly, users are recommended to use one of the following macros: ``agn_locus_add_pred_transcript(locus, trans)`` and ``agn_locus_add_refr_transcript(locus, trans)``, to be used when keeping track of an annotation's source is important (i.e. for pairwise comparison); and ``agn_locus_add_transcript(locus, trans)`` otherwise.
+  Associate the given annotation with this locus. Rather than calling this function directly, users are recommended to use one of the following macros: ``agn_locus_add_pred_feature(locus, gene)`` and ``agn_locus_add_refr_feature(locus, gene)``, to be used when keeping track of an annotation's source is important (i.e. for pairwise comparison); and ``agn_locus_add_feature(locus, gene)`` otherwise.
 
 .. c:function:: AgnLocus *agn_locus_clone(AgnLocus *locus)
 
@@ -284,6 +288,18 @@ Class AgnLocus
 
   Get a list of all the reference transcript cliques that have no corresponding prediction transcript clique.
 
+.. c:function:: GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the mRNAs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_mrnas(locus)`` to retrieve prediction mRNAs, ``agn_locus_refr_mrnas(locus)`` to retrieve reference mRNAs, or ``agn_locus_get_mrnas(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_mrna_ids(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the mRNA IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_mrna_ids(locus)`` to retrieve prediction IDs, ``agn_locus_refr_mrna_ids(locus)`` to retrieve reference IDs, or ``agn_locus_get_mrna_ids(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtUword agn_locus_mrna_num(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the number of mRNAs for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_mrnas(locus)`` for the number of prediction mRNAs, ``agn_locus_num_refr_mrnas(locus)`` for the number of reference mRNAs, or ``agn_locus_num_mrnas(locus)`` if the source of annotation is undesignated or irrelevant.
+
 .. c:function:: AgnLocus* agn_locus_new(GtStr *seqid)
 
   Class constructor.
@@ -311,18 +327,6 @@ Class AgnLocus
 .. c:function:: double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src)
 
   Calculate the splice complexity of this gene locus. Rather than calling this method directly, users are recommended to use one of the following macros: ``agn_locus_prep_splice_complexity(locus)`` to calculate the splice complexity of just the prediction transcripts, ``agn_locus_refr_splice_complexity(locus)`` to calculate the splice complexity of just the reference transcripts, and ``agn_locus_calc_splice_complexity(locus)`` to calculate the splice complexity taking into account all transcripts.
-
-.. c:function:: GtArray *agn_locus_transcripts(AgnLocus *locus, AgnComparisonSource src)
-
-  Get the transcripts associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_transcripts(locus)`` to retrieve prediction transcripts, ``agn_locus_refr_transcripts(locus)`` to retrieve reference transcripts, or ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: GtArray *agn_locus_transcript_ids(AgnLocus *locus, AgnComparisonSource src)
-
-  Get the transcript IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_transcripts(locus)`` to retrieve prediction IDs, ``agn_locus_refr_transcripts(locus)`` to retrieve reference IDs, or ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: GtUword agn_locus_transcript_num(AgnLocus *locus, AgnComparisonSource src)
-
-  Get the number of transcripts for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_transcript_locus_num_pred_transcripts(locus)`` for the number of prediction transcripts, ``agn_transcript_locus_num_refr_transcripts(locus)`` for the number of reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)`` if the source of annotation is undesignated or irrelevant.
 
 .. c:function:: bool agn_locus_unit_test(AgnUnitTest *test)
 
@@ -358,6 +362,10 @@ Class AgnLocusStream
 
   This constructor accepts two :c:type:`AgnTranscriptStream` objects as input. Locus features are created as per the class description, with additional data stored to track the source (reference vs prediction) of each transcript in each locus.
 
+.. c:function:: void agn_locus_stream_set_source(AgnLocusStream *stream, GtStr *source)
+
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
+
 .. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
@@ -380,6 +388,21 @@ Class AgnMrnaRepVisitor
 .. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnNodeDeleteVisitor
+--------------------------
+
+.. c:type:: AgnNodeDeleteVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used to decrement the reference count to all feature nodes passing through the node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnNodeDeleteVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_node_delete_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_node_delete_visitor_new()
+
+  Constructor for the node visitor.
 
 Class AgnPseudogeneFixVisitor
 -----------------------------

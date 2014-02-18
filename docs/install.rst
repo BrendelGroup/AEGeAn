@@ -152,6 +152,13 @@ environmental variable (or ``DYLD_LIBRARY_PATH`` on Mac OS X).
 
 .. _appendix-config:
 
+Note on updating
+----------------
+If you are using git and GitHub to keep up-to-date with AEGeAn's latest
+developments, be sure that whenever you run ``git pull`` to update the code, you
+also run ``git submodule update``. This will make sure that the version of
+GenomeTools on which AEGeAn depends is correct.
+
 Appendix: system setup
 ----------------------
 Below are instructions for installing prerequisites and configuring system paths
