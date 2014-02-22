@@ -200,8 +200,7 @@ GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid,
   GtRange r1 = agn_gene_locus_range(l1);
   if(r1.start >= seqrange->start + (2*delta))
   {
-    if(nloci == 1)
-      agn_gene_locus_set_range(l1, r1.start - delta, r1.end);
+    agn_gene_locus_set_range(l1, r1.start - delta, r1.end);
 
     if(!skipterminal)
     {
