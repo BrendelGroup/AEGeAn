@@ -260,8 +260,7 @@ static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
   GtRange r1 = gt_genome_node_get_range(l1);
   if(r1.start >= seqrange->start + (2*delta))
   {
-    if(gt_array_size(seqloci) == 1)
-      agn_locus_set_range(l1, r1.start - delta, r1.end);
+    agn_locus_set_range(l1, r1.start - delta, r1.end);
 
     if(!skipterminal)
     {
