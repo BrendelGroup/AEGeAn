@@ -84,8 +84,64 @@ GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 
 bool agn_gene_stream_unit_test(AgnUnitTest *test)
 {
-  gene_stream_test_data(NULL);
-  return false;
+  GtQueue *queue = gt_queue_new();
+  gene_stream_test_data(queue);
+  gt_assert(gt_queue_size(queue) == 3);
+
+  GtFeatureNode *fn = gt_queue_get(queue);
+  GtArray *mrnas = agn_typecheck_select(fn, agn_typecheck_mrna);
+  bool test1 = (gt_array_size(mrnas) == 2);
+  if(test1)
+  {
+    GtGenomeNode **fn1 = gt_array_get(mrnas, 0);
+    GtGenomeNode **fn2 = gt_array_get(mrnas, 1);
+    GtRange range1 = gt_genome_node_get_range(*fn1);
+    GtRange range2 = gt_genome_node_get_range(*fn2);
+    test1 = (range1.start == 5000 && range1.end == 9000 &&
+             range2.start == 6000 && range2.end == 9000);
+  }
+  agn_unit_test_result(test, "1 gene, 2 mRNAs", test1);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(mrnas);
+
+  fn = gt_queue_get(queue);
+  mrnas = agn_typecheck_select(fn, agn_typecheck_mrna);
+  bool test2 = (gt_array_size(mrnas) == 1);
+  if(test2)
+  {
+    GtGenomeNode **fn1 = gt_array_get(mrnas, 0);
+    GtRange range1 = gt_genome_node_get_range(*fn1);
+    test2 = (range1.start == 15000 && range1.end == 19000);
+  }
+  agn_unit_test_result(test, "1 gene, 2 mRNAs (one sans CDS)", test2);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(mrnas);
+
+  fn = gt_queue_get(queue);
+  mrnas = agn_typecheck_select(fn, agn_typecheck_mrna);
+  bool test3 = gt_array_size(mrnas) == 1;
+  if(test3)
+  {
+    GtArray *utr3p = agn_typecheck_select(fn, agn_typecheck_utr3p);
+    GtArray *utr5p = agn_typecheck_select(fn, agn_typecheck_utr5p);
+    GtRange range = gt_genome_node_get_range((GtGenomeNode *)fn);
+    test3 = (gt_array_size(utr3p) == 1 && gt_array_size(utr5p) == 0);
+    if(test3)
+    {
+      GtGenomeNode *utr = *(GtGenomeNode **)gt_array_get(utr3p, 0);
+      GtRange utrrange = gt_genome_node_get_range(utr);
+      test3 = (utrrange.start == 32926 && utrrange.end == 33035 &&
+               range.start == 30600 && range.end == 33035);
+    }
+    gt_array_delete(utr3p);
+    gt_array_delete(utr5p);
+  }
+  agn_unit_test_result(test, "mRNA only", test3);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(mrnas);
+
+  gt_queue_delete(queue);
+  return agn_unit_test_success(test);
 }
 
 static const GtNodeStreamClass *gene_stream_class(void)
@@ -205,5 +261,40 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
 
 static void gene_stream_test_data(GtQueue *queue)
 {
-  
+  GtError *error = gt_error_new();
+  const char *file = "data/gff3/gene-stream-data.gff3";
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &file);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  FILE *log = fopen("/dev/null", "w");
+  if(log == NULL)
+  {
+    fprintf(stderr, "[AgnGeneStream::gene_stream_test_data] error opening "
+            "/dev/null");
+  }
+  GtLogger *logger = gt_logger_new(true, "", log);
+  GtNodeStream *stream = agn_gene_stream_new(gff3in, logger);
+  GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(stream, feats, error);
+  int pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnGeneStream::gene_stream_test_data] error processing "
+            "features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(stream);
+  gt_node_stream_delete(arraystream);
+  gt_logger_delete(logger);
+  if(log != NULL)
+    fclose(log);
+  gt_array_sort(feats, (GtCompare)agn_genome_node_compare);
+  gt_array_reverse(feats);
+  while(gt_array_size(feats) > 0)
+  {
+    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(feats);
+    gt_queue_add(queue, fn);
+  }
+  gt_array_delete(feats);
+  gt_error_delete(error);
 }

@@ -68,9 +68,8 @@ static GtArray *locus_transcript_neighbors(GtGenomeNode *gn, GtArray *trans);
 /**
  * @function Test whether a transcript should be filtered.
  */
-static bool locus_transcript_source_test(AgnLocus *locus,
-                                         GtFeatureNode *transcript,
-                                         AgnComparisonSource source);
+static bool locus_gene_source_test(AgnLocus *locus, GtFeatureNode *transcript,
+                                   AgnComparisonSource source);
 
 /**
  * @function Update the locus feature when a transcript is added.
@@ -183,29 +182,13 @@ AgnLocus *agn_locus_clone(AgnLocus *locus)
 GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src)
 {
   GtUword length = 0;
-  GtFeatureNode *fn = gt_feature_node_cast(locus);
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
-  GtFeatureNode *feature;
-  for(feature  = gt_feature_node_iterator_next(iter);
-      feature != NULL;
-      feature  = gt_feature_node_iterator_next(iter))
+  GtArray *mrnas = agn_locus_mrnas(locus, src);
+  while(gt_array_size(mrnas) > 0)
   {
-    gt_assert(agn_typecheck_mrna(feature));
-    if(locus_transcript_source_test(locus, feature, src) == false)
-      continue;
-
-    GtFeatureNodeIterator *subiter = gt_feature_node_iterator_new(feature);
-    GtFeatureNode *subfeature;
-    for(subfeature  = gt_feature_node_iterator_next(subiter);
-        subfeature != NULL;
-        subfeature  = gt_feature_node_iterator_next(subiter))
-    {
-      if(agn_typecheck_cds(subfeature))
-        length += gt_genome_node_get_length((GtGenomeNode *)subfeature);
-    }
-    gt_feature_node_iterator_delete(subiter);
+    GtFeatureNode **mrna = gt_array_pop(mrnas);
+    length += agn_mrna_cds_length(*mrna);
   }
-  gt_feature_node_iterator_delete(iter);
+  gt_array_delete(mrnas);
 
   return length;
 }
@@ -297,8 +280,8 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_transcript(feature));
-    if(locus_transcript_source_test(locus, feature, src) == false)
+    gt_assert(agn_typecheck_gene(feature));
+    if(locus_gene_source_test(locus, feature, src) == false)
       continue;
 
     GtFeatureNodeIterator *subiter = gt_feature_node_iterator_new(feature);
@@ -337,10 +320,21 @@ GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    bool ismrna = agn_typecheck_mrna(feature);
-    bool meets_crit = locus_transcript_source_test(locus, feature, src);
-    if(ismrna && meets_crit)
-      gt_array_add(mrnas, feature);
+    bool isgene = agn_typecheck_gene(feature);
+    bool meets_crit = locus_gene_source_test(locus, feature, src);
+    if(!isgene || !meets_crit)
+      continue;
+
+    GtFeatureNodeIterator *subiter = gt_feature_node_iterator_new(feature);
+    GtFeatureNode *subfeature;
+    for(subfeature  = gt_feature_node_iterator_next(subiter);
+        subfeature != NULL;
+        subfeature  = gt_feature_node_iterator_next(subiter))
+    {
+      if(agn_typecheck_mrna(subfeature))
+        gt_array_add(mrnas, subfeature);
+    }
+    gt_feature_node_iterator_delete(subiter);
   }
   gt_feature_node_iterator_delete(iter);
 
@@ -357,13 +351,24 @@ GtArray *agn_locus_mrna_ids(AgnLocus *locus, AgnComparisonSource src)
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    bool ismrna = agn_typecheck_mrna(feature);
-    bool meets_crit = locus_transcript_source_test(locus, feature, src);
-    if(ismrna && meets_crit)
+    bool isgene = agn_typecheck_gene(feature);
+    bool meets_crit = locus_gene_source_test(locus, feature, src);
+    if(!isgene || !meets_crit)
+      continue;
+
+    GtFeatureNodeIterator *subiter = gt_feature_node_iterator_new(feature);
+    GtFeatureNode *subfeature;
+    for(subfeature  = gt_feature_node_iterator_next(subiter);
+        subfeature != NULL;
+        subfeature  = gt_feature_node_iterator_next(subiter))
     {
-      const char *id = gt_feature_node_get_attribute(feature, "ID");
-      gt_array_add(ids, id);
+      if(agn_typecheck_mrna(subfeature))
+      {
+        const char *id = gt_feature_node_get_attribute(feature, "ID");
+        gt_array_add(ids, id);
+      }
     }
+    gt_feature_node_iterator_delete(subiter);
   }
   gt_feature_node_iterator_delete(iter);
 
@@ -380,10 +385,21 @@ GtUword agn_locus_mrna_num(AgnLocus *locus, AgnComparisonSource src)
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    bool ismrna = agn_typecheck_mrna(feature);
-    bool meets_crit = locus_transcript_source_test(locus, feature, src);
-    if(ismrna && meets_crit)
-      count++;
+    bool isgene = agn_typecheck_gene(feature);
+    bool meets_crit = locus_gene_source_test(locus, feature, src);
+    if(!isgene || !meets_crit)
+      continue;
+
+    GtFeatureNodeIterator *subiter = gt_feature_node_iterator_new(feature);
+    GtFeatureNode *subfeature;
+    for(subfeature  = gt_feature_node_iterator_next(subiter);
+        subfeature != NULL;
+        subfeature  = gt_feature_node_iterator_next(subiter))
+    {
+      if(agn_typecheck_mrna(subfeature))
+        count++;
+    }
+    gt_feature_node_iterator_delete(subiter);
   }
   gt_feature_node_iterator_delete(iter);
 
@@ -911,7 +927,7 @@ static void locus_test_data(GtQueue *queue)
   GtArray *refrfeats, *predfeats;
 
   GtError *error = gt_error_new();
-  const char *refrfile = "data/gff3/grape-refr-mrnas.gff3";
+  const char *refrfile = "data/gff3/grape-refr.gff3";
   GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &refrfile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
@@ -927,7 +943,7 @@ static void locus_test_data(GtQueue *queue)
   gt_node_stream_delete(arraystream);
   gt_array_sort(refrfeats, (GtCompare)agn_genome_node_compare);
 
-  const char *predfile = "data/gff3/grape-pred-mrnas.gff3";
+  const char *predfile = "data/gff3/grape-pred.gff3";
   gff3in = gt_gff3_in_stream_new_unsorted(1, &predfile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
@@ -995,9 +1011,8 @@ static GtArray *locus_transcript_neighbors(GtGenomeNode *gn, GtArray *trans)
   return neighbors;
 }
 
-static bool locus_transcript_source_test(AgnLocus *locus,
-                                         GtFeatureNode *transcript,
-                                         AgnComparisonSource source)
+static bool locus_gene_source_test(AgnLocus *locus, GtFeatureNode *transcript,
+                                   AgnComparisonSource source)
 {
   if(source == DEFAULTSOURCE)
     return true;

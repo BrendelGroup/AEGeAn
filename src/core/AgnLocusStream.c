@@ -1,9 +1,10 @@
 #include "core/queue_api.h"
 #include "extended/feature_index_memory_api.h"
+#include "AgnGeneStream.h"
+#include "AgnInferParentStream.h"
 #include "AgnLocus.h"
 #include "AgnLocusStream.h"
 #include "AgnNodeDeleteVisitor.h"
-#include "AgnTranscriptStream.h"
 #include "AgnTypecheck.h"
 
 #define locus_stream_cast(GS)\
@@ -83,7 +84,7 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
 /**
  * @function Auxiliary function for generating data for unit testing.
  */
-static GtNodeStream *locus_tstream_init(int numfiles, const char **filenames,
+static GtNodeStream *locus_gstream_init(int numfiles, const char **filenames,
                                         GtLogger *logger);
 
 
@@ -188,10 +189,10 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
   GtNodeStream *stream, *refrstream, *predstream;
   const char *refrfile, *predfile;
 
-  refrfile = "data/gff3/grape-refr-mrnas.gff3";
-  predfile = "data/gff3/grape-pred-mrnas.gff3";
-  refrstream = locus_tstream_init(1, &refrfile, logger);
-  predstream = locus_tstream_init(1, &predfile, logger);
+  refrfile = "data/gff3/grape-refr.gff3";
+  predfile = "data/gff3/grape-pred.gff3";
+  refrstream = locus_gstream_init(1, &refrfile, logger);
+  predstream = locus_gstream_init(1, &predfile, logger);
   locus_stream_test_data(queue, refrstream, predstream);
 
   GtUword starts[] = {    72, 10503, 22053, 26493, 30020, 37652, 42669, 48012,
@@ -223,8 +224,8 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
 
   refrfile = "data/gff3/pd0159-refr.gff3";
   predfile = "data/gff3/pd0159-pred.gff3";
-  refrstream = locus_tstream_init(1, &refrfile, logger);
-  predstream = locus_tstream_init(1, &predfile, logger);
+  refrstream = locus_gstream_init(1, &refrfile, logger);
+  predstream = locus_gstream_init(1, &predfile, logger);
   locus_stream_test_data(queue, refrstream, predstream);
 
   GtUword pdstarts[] = { 15005, 25101, 27822,  33635,  40258,  42504, 50007,
@@ -256,7 +257,7 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
   const char *filenames[] = { "data/gff3/amel-aug-nvit-param.gff3",
                               "data/gff3/amel-aug-dmel-param.gff3",
                               "data/gff3/amel-aug-athal-param.gff3" };
-  stream = locus_tstream_init(3, filenames, logger);
+  stream = locus_gstream_init(3, filenames, logger);
   locus_stream_test_data(queue, stream, NULL);
 
   GtUword augstarts[] = {     1, 36466, 44388, 72127, 76794 };
@@ -635,13 +636,22 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
   gt_logger_delete(logger);
 }
 
-static GtNodeStream *locus_tstream_init(int numfiles, const char **filenames,
+static GtNodeStream *locus_gstream_init(int numfiles, const char **filenames,
                                         GtLogger *logger)
 {
   GtNodeStream *gff3stream = gt_gff3_in_stream_new_unsorted(numfiles,filenames);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3stream);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3stream);
-  GtNodeStream *transstream = agn_transcript_stream_new(gff3stream, logger);
+
+  GtHashmap *type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                           gt_free_func);
+  gt_hashmap_add(type_parents, gt_cstr_dup("mRNA"), gt_cstr_dup("gene"));
+  GtNodeStream *ips = agn_infer_parent_stream_new(gff3stream, type_parents);
+
+  GtNodeStream *genestream = agn_gene_stream_new(ips, logger);
+
   gt_node_stream_delete(gff3stream);
-  return transstream;
+  gt_node_stream_delete(ips);
+  gt_hashmap_delete(type_parents);
+  return genestream;
 }

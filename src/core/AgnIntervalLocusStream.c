@@ -3,7 +3,6 @@
 #include "AgnIntervalLocusStream.h"
 #include "AgnLocus.h"
 #include "AgnLocusStream.h"
-#include "AgnTranscriptStream.h"
 
 #define ilocus_stream_cast(GS)\
         gt_node_stream_cast(ilocus_stream_class(), GS)

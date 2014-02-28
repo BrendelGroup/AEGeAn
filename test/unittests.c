@@ -1,6 +1,7 @@
 #include <string.h>
 #include "AgnCliquePair.h"
 #include "AgnFilterStream.h"
+#include "AgnGeneStream.h"
 #include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
 #include "AgnInferParentStream.h"
@@ -11,7 +12,6 @@
 #include "AgnPseudogeneFixVisitor.h"
 #include "AgnRemoveChildrenVisitor.h"
 #include "AgnTranscriptClique.h"
-#include "AgnTranscriptStream.h"
 
 int main(int argc, char **argv)
 {
@@ -39,8 +39,8 @@ int main(int argc, char **argv)
                                         agn_infer_cds_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnInferExonsVisitor",
                                         agn_infer_exons_visitor_unit_test));
-  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnTranscriptStream",
-                                        agn_transcript_stream_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnGeneStream",
+                                        agn_gene_stream_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnLocusStream",
                                         agn_locus_stream_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnIntervalLocusStream",

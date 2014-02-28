@@ -11,11 +11,6 @@
 //------------------------------------------------------------------------------
 
 /**
- * @function Determine the length of an mRNA's coding sequence.
- */
-static GtUword mrna_rep_cds_length(GtFeatureNode *mrna);
-
-/**
  * @function Implement the interface to the GtNodeVisitor class.
  */
 static const GtNodeVisitorClass *mrna_rep_visitor_class();
@@ -63,7 +58,7 @@ bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
   {
     GtGenomeNode **mrna = gt_array_get(mrnas, 0);
     GtFeatureNode *mrnafn = gt_feature_node_cast(*mrna);
-    GtUword cdslength = mrna_rep_cds_length(mrnafn);
+    GtUword cdslength = agn_mrna_cds_length(mrnafn);
     GtRange range = gt_genome_node_get_range(*mrna);
     test1 = cdslength == 738 && range.start == 5928 && range.end == 8737;
   }
@@ -73,29 +68,6 @@ bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
   gt_queue_delete(queue);
   return agn_unit_test_success(test);
-}
-
-static GtUword mrna_rep_cds_length(GtFeatureNode *mrna)
-{
-  GtUword totallength = 0;
-  const char *cdsid = NULL;
-  GtArray *cds_segments = agn_typecheck_select(mrna, agn_typecheck_cds);
-  while(gt_array_size(cds_segments) > 0)
-  {
-    GtGenomeNode **segment = gt_array_pop(cds_segments);
-    GtFeatureNode *segmentfn = gt_feature_node_cast(*segment);
-    const char *fid = gt_feature_node_get_attribute(segmentfn, "ID");
-    if(fid)
-    {
-      if(cdsid == NULL)
-        cdsid = fid;
-      else
-        gt_assert(strcmp(cdsid, fid) == 0);
-    }
-    totallength += gt_genome_node_get_length(*segment);
-  }
-  gt_array_delete(cds_segments);
-  return totallength;
 }
 
 static const GtNodeVisitorClass *mrna_rep_visitor_class()
@@ -165,7 +137,7 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
     {
       GtGenomeNode **mrna = gt_array_get(mrnas, j);
       GtFeatureNode *mrnafn = gt_feature_node_cast(*mrna);
-      GtUword length = mrna_rep_cds_length(mrnafn);
+      GtUword length = agn_mrna_cds_length(mrnafn);
       if(longest_length == 0 || length > longest_length)
       {
         longest_mrna = mrnafn;

@@ -66,6 +66,11 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
 
 /**
+ * @function Determine the length of an mRNA's coding sequence.
+ */
+GtUword agn_mrna_cds_length(GtFeatureNode *mrna);
+
+/**
  * @function If a top-level feature ``top`` contains a multifeature child (with
  * multi representative ``rep``), use this function to get the complete range of
  * the multifeature.

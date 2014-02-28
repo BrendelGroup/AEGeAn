@@ -34,3 +34,13 @@ chr1	nano	exon	16000	16400	.	-	.	Parent=mRNA5
 chr1	nano	exon	16100	16400	.	-	.	Parent=mRNA4
 chr1	nano	exon	17000	19000	.	-	.	Parent=mRNA4,mRNA5
 ###
+chr1	nano	gene	30600	33035	.	+	.	ID=gene3;Name=wacko
+chr1	nano	mRNA	30600	33035	.	+	.	ID=mRNA6;Parent=gene3
+chr1	nano	CDS	30600	30850	.	+	1	ID=CDS5;Parent=mRNA6
+chr1	nano	CDS	31004	31222	.	+	2	ID=CDS5;Parent=mRNA6
+chr1	nano	CDS	32157	32288	.	+	2	ID=CDS5;Parent=mRNA6
+chr1	nano	CDS	32802	32925	.	+	2	ID=CDS5;Parent=mRNA6
+chr1	nano	exon	30600	30850	.	+	.	Parent=mRNA6
+chr1	nano	exon	31004	31222	.	+	.	Parent=mRNA6
+chr1	nano	exon	32157	32288	.	+	.	Parent=mRNA6
+chr1	nano	exon	32802	33035	.	+	.	Parent=mRNA6
