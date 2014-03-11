@@ -295,7 +295,8 @@ static void ilocus_stream_parse_internal(AgnIntervalLocusStream *stream,
     GtRange rrange = gt_genome_node_get_range(rlocus);
 
     GtFeatureNode *llocusfn = gt_feature_node_cast(llocus);
-    gt_feature_index_add_feature_node(stream->out_loci, llocusfn, error);
+    if(endmode <= 0)
+      gt_feature_index_add_feature_node(stream->out_loci, llocusfn, error);
     if(lrange.end + delta >= rrange.start)
     {
       agn_locus_set_range(llocus, lrange.start, rrange.start - 1);
