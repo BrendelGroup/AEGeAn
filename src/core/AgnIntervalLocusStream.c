@@ -47,13 +47,13 @@ static int ilocus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
  * @function Use gene/transcript loci to determine iLoci using the given delta.
  */
 static void ilocus_stream_parse(AgnIntervalLocusStream *stream, GtUword delta,
-                                bool skipterminal);
+                                int endmode);
 
 /**
  * @function Handle the first locus while parsing iLoci.
  */
 static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
-                                        GtUword delta, bool skipterminal,
+                                        GtUword delta, int endmode,
                                         AgnSequenceRegion *region,
                                         GtArray *seqloci, GtError *error);
 
@@ -61,7 +61,7 @@ static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
  * @function Handle internal loci while parsing iLoci.
  */
 static void ilocus_stream_parse_internal(AgnIntervalLocusStream *stream,
-                                         GtUword delta, bool skipterminal,
+                                         GtUword delta, int endmode,
                                          GtStr *seqidstr, GtArray *seqloci,
                                          GtError *error);
 
@@ -69,14 +69,14 @@ static void ilocus_stream_parse_internal(AgnIntervalLocusStream *stream,
  * @function Parse all iLoci for a given sequence.
  */
 static void ilocus_stream_parse_seq(AgnIntervalLocusStream *stream,
-                                    GtUword delta, bool skipterminal,
+                                    GtUword delta, int endmode,
                                     const char *seqid, GtError *error);
 
 /**
  * @function Handle the final locus while parsing iLoci.
  */
 static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
-                                         GtUword delta, bool skipterminal,
+                                         GtUword delta, int endmode,
                                          AgnSequenceRegion *region,
                                          GtArray *seqloci, GtError *error);
 
@@ -93,8 +93,7 @@ ilocus_stream_test_data(GtFeatureIndex *iloci,GtNodeStream *s1,GtNodeStream *s2,
 //------------------------------------------------------------------------------
 
 GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
-                                            GtUword delta,
-                                            bool skipterminal,
+                                            GtUword delta, int endmode,
                                             GtLogger *logger)
 {
   gt_assert(locus_stream);
@@ -120,7 +119,7 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
   agn_feature_index_copy_regions(stream->out_loci, stream->in_loci, true,error);
   gt_error_delete(error);
 
-  ilocus_stream_parse(stream, delta, skipterminal);
+  ilocus_stream_parse(stream, delta, endmode);
   stream->ilocus_stream = gt_feature_in_stream_new(stream->out_loci);
   gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->out_loci);
 
@@ -234,7 +233,7 @@ static int ilocus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 }
 
 static void ilocus_stream_parse(AgnIntervalLocusStream *stream, GtUword delta,
-                                bool skipterminal)
+                                int endmode)
 {
   GtError *error = gt_error_new();
   GtStrArray *seqids = gt_feature_index_get_seqids(stream->in_loci, error);
@@ -249,7 +248,7 @@ static void ilocus_stream_parse(AgnIntervalLocusStream *stream, GtUword delta,
   for(i = 0; i < gt_str_array_size(seqids); i++)
   {
     const char *seqid = gt_str_array_get(seqids, i);
-    ilocus_stream_parse_seq(stream, delta, skipterminal, seqid, error);
+    ilocus_stream_parse_seq(stream, delta, endmode, seqid, error);
   }
 
   gt_error_delete(error);
@@ -257,7 +256,7 @@ static void ilocus_stream_parse(AgnIntervalLocusStream *stream, GtUword delta,
 }
 
 static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
-                                        GtUword delta, bool skipterminal,
+                                        GtUword delta, int endmode,
                                         AgnSequenceRegion *region,
                                         GtArray *seqloci, GtError *error)
 {
@@ -268,7 +267,7 @@ static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
   {
     agn_locus_set_range(l1, r1.start - delta, r1.end);
 
-    if(!skipterminal)
+    if(endmode >= 0)
     {
       AgnLocus *ilocus = agn_locus_new(region->seqid);
       agn_locus_set_range(ilocus, seqrange->start, r1.start - delta - 1);
@@ -283,7 +282,7 @@ static void ilocus_stream_parse_initial(AgnIntervalLocusStream *stream,
 }
 
 static void ilocus_stream_parse_internal(AgnIntervalLocusStream *stream,
-                                         GtUword delta, bool skipterminal,
+                                         GtUword delta, int endmode,
                                          GtStr *seqidstr, GtArray *seqloci,
                                          GtError *error)
 {
@@ -318,14 +317,17 @@ static void ilocus_stream_parse_internal(AgnIntervalLocusStream *stream,
       agn_locus_set_range(llocus, lrange.start, lrange.end + delta);
       agn_locus_set_range(rlocus, rrange.start - delta, rrange.end);
 
-      AgnLocus *ilocus = agn_locus_new(seqidstr);
-      agn_locus_set_range(ilocus, lrange.end + delta + 1,
-                          rrange.start - delta - 1);
-      GtFeatureNode *ilocusfn = gt_feature_node_cast(ilocus);
-      gt_feature_index_add_feature_node(stream->out_loci, ilocusfn, error);
+      if(endmode <= 0)
+      {
+        AgnLocus *ilocus = agn_locus_new(seqidstr);
+        agn_locus_set_range(ilocus, lrange.end + delta + 1,
+                            rrange.start - delta - 1);
+        GtFeatureNode *ilocusfn = gt_feature_node_cast(ilocus);
+        gt_feature_index_add_feature_node(stream->out_loci, ilocusfn, error);
+      }
     }
 
-    if(i == gt_array_size(seqloci) - 2)
+    if(i == gt_array_size(seqloci) - 2 && endmode <= 0)
     {
       GtFeatureNode *rlocusfn = gt_feature_node_cast(rlocus);
       gt_feature_index_add_feature_node(stream->out_loci, rlocusfn, error);
@@ -334,7 +336,7 @@ static void ilocus_stream_parse_internal(AgnIntervalLocusStream *stream,
 }
 
 static void ilocus_stream_parse_seq(AgnIntervalLocusStream *stream,
-                                    GtUword delta, bool skipterminal,
+                                    GtUword delta, int endmode,
                                     const char *seqid, GtError *error)
 {
   GtStr *seqidstr = gt_str_new_cstr(seqid);
@@ -351,7 +353,7 @@ static void ilocus_stream_parse_seq(AgnIntervalLocusStream *stream,
     gt_array_sort(seqloci, (GtCompare)agn_genome_node_compare);
 
   // Handle trivial case
-  if(nloci == 0)
+  if(nloci == 0 && endmode >= 0)
   {
     AgnLocus *ilocus = agn_locus_new(seqidstr);
     GtFeatureNode *ilocusfn = gt_feature_node_cast(ilocus);
@@ -362,13 +364,13 @@ static void ilocus_stream_parse_seq(AgnIntervalLocusStream *stream,
     return;
   }
 
-  ilocus_stream_parse_initial(stream, delta, skipterminal,
+  ilocus_stream_parse_initial(stream, delta, endmode,
                               &seqregion, seqloci, error);
 
-  ilocus_stream_parse_internal(stream, delta, skipterminal,
+  ilocus_stream_parse_internal(stream, delta, endmode,
                                seqidstr, seqloci, error);
 
-  ilocus_stream_parse_terminal(stream, delta, skipterminal,
+  ilocus_stream_parse_terminal(stream, delta, endmode,
                                &seqregion, seqloci, error);
 
   gt_str_delete(seqidstr);
@@ -376,7 +378,7 @@ static void ilocus_stream_parse_seq(AgnIntervalLocusStream *stream,
 }
 
 static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
-                                         GtUword delta, bool skipterminal,
+                                         GtUword delta, int endmode,
                                          AgnSequenceRegion *region,
                                          GtArray *seqloci, GtError *error)
 {
@@ -388,7 +390,7 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
   {
     agn_locus_set_range(locus, range.start, range.end + delta);
   
-    if(!skipterminal)
+    if(endmode >= 0)
     {
       AgnLocus *ilocus = agn_locus_new(region->seqid);
       agn_locus_set_range(ilocus, range.end + delta + 1, seqrange->end);
@@ -401,7 +403,7 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
     agn_locus_set_range(locus, range.start, seqrange->end);
   }
 
-  if(nloci == 1)
+  if(nloci == 1 && endmode <= 0)
   {
     GtFeatureNode *locusfn = gt_feature_node_cast(locus);
     gt_feature_index_add_feature_node(stream->out_loci, locusfn, error);

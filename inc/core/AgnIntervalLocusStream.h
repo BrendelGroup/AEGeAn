@@ -17,12 +17,14 @@ typedef struct AgnIntervalLocusStream AgnIntervalLocusStream;
 /**
  * @function Class constructor. The delta parameter specifies how far beyond
  * each transcript the iLocus boundaries should extend, and the minimum length
- * of an iLocus containing no transcripts. See the online docs for a complete
+ * of an iLocus containing no transcripts. If ``endmode == 0``, all iLoci will
+ * be included in the output; if ``endmode < 0``, terminal iLoci will not be
+ * included in the output; and if ``endmode > 0``, then _only_ terminal iLoci
+ * will be included in the output. See the online docs for a complete
  * description of iLoci.
  */
 GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
-                                            GtUword delta,
-                                            bool skipterminal,
+                                            GtUword delta, int endmode,
                                             GtLogger *logger);
 
 /**
