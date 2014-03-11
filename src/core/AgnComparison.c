@@ -193,7 +193,7 @@ void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
     sprintf(stats->sns, "%.3lf", stats->sn);
 
   // Specificity
-  stats->sp = tn/(tn + fp);
+  stats->sp = tp/(tp + fp);
   if(isnan(stats->sp))
     sprintf(stats->sps, "--");
   else

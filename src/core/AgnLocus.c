@@ -620,9 +620,9 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   c.utr_nuc_stats.mc = 0.954341;
   c.utr_nuc_stats.cc = 0.811995;
   c.utr_nuc_stats.sn = 0.968391;
-  c.utr_nuc_stats.sp = 0.952571;
+  c.utr_nuc_stats.sp = 0.720085;
   c.utr_nuc_stats.f1 = 0.825980;
-  c.utr_nuc_stats.ed = 0.039519;
+  c.utr_nuc_stats.ed = 0.155762;
   c.cds_struc_stats.correct = 12;
   c.cds_struc_stats.missing = 0;
   c.cds_struc_stats.wrong   = 0;
@@ -657,8 +657,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   agn_unit_test_result(test, "grape test 1", grapetest1);
   agn_locus_delete(locus);
 
-  
-  
+
   c.cds_nuc_stats.tp = 379;
   c.cds_nuc_stats.fn = 194;
   c.cds_nuc_stats.fp = 506;
@@ -666,9 +665,9 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   c.cds_nuc_stats.mc = 0.834359;
   c.cds_nuc_stats.cc = 0.439970;
   c.cds_nuc_stats.sn = 0.661431;
-  c.cds_nuc_stats.sp = 0.861484;
+  c.cds_nuc_stats.sp = 0.428249;
   c.cds_nuc_stats.f1 = 0.519890;
-  c.cds_nuc_stats.ed = 0.238543;
+  c.cds_nuc_stats.ed = 0.455160;
   c.utr_nuc_stats.tp = 102;
   c.utr_nuc_stats.fn = 0;
   c.utr_nuc_stats.fp = 114;
@@ -676,9 +675,9 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   c.utr_nuc_stats.mc = 0.973024;
   c.utr_nuc_stats.cc = 0.677620;
   c.utr_nuc_stats.sn = 1.0;
-  c.utr_nuc_stats.sp = 0.972357;
+  c.utr_nuc_stats.sp = 0.472222;
   c.utr_nuc_stats.f1 = 0.641509;
-  c.utr_nuc_stats.ed = 0.013822;
+  c.utr_nuc_stats.ed = 0.263889;
   c.cds_struc_stats.correct = 0;
   c.cds_struc_stats.missing = 4;
   c.cds_struc_stats.wrong   = 1;
