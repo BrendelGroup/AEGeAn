@@ -313,7 +313,7 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     GtStr *seqid = gt_genome_node_get_seqid(*gn);
     GtRange range = gt_genome_node_get_range(*gn);
     char locusid[1024];
-    sprintf(locusid, "%s:%lu-%lu", gt_str_get(seqid), range.start, range.end);
+    sprintf(locusid, "%s_%lu-%lu", gt_str_get(seqid), range.start, range.end);
     gt_feature_node_set_attribute(fn, "ID", locusid);
     gt_feature_node_set_source(fn, stream->source);
   }
