@@ -15,7 +15,7 @@ typedef struct
   void (*filefreefunc)(GtFile *);
   GtHashmap *type_parents;
   bool retainids;
-  bool skipends;
+  int endmode;
   FILE *transstream;
   bool pseudofix;
   bool verbose;
@@ -35,7 +35,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
                                          gt_free_func);
   options->retainids = false;
-  options->skipends = false;
+  options->endmode = 0;
   options->transstream = NULL;
   options->pseudofix = false;
   options->verbose = false;
@@ -69,7 +69,9 @@ static void print_usage(FILE *outstream)
 "                           delta to extend gene loci and include potential\n"
 "                           regulatory regions; default is 500\n"
 "    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
-"                           iloci at either end of the sequence\n\n"
+"                           iLoci at either end of the sequence\n"
+"    -e|--endsonly          report only gene-less iLoci at the ends of\n"
+"                           sequences (complement of --skipends)\n\n"
 "  Output options:\n"
 "    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
 "                           corresponding locus to the given file\n"
@@ -99,11 +101,12 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "df:g:hil:o:p:rst:uv";
+  const char *optstr = "def:g:hil:o:p:rst:uv";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
     { "debug",     no_argument,       NULL, 'd' },
+    { "endsonly",  no_argument,       NULL, 'e' },
     { "filter",    required_argument, NULL, 'f' },
     { "genemap",   required_argument, NULL, 'g' },
     { "help",      no_argument,       NULL, 'h' },
@@ -125,6 +128,14 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     {
       case 'd':
         options->debug = 1;
+        break;
+      case 'e':
+        if(options->endmode < 0)
+        {
+          gt_error_set(error, "cannot set 'skipends' and 'endsonly' options"
+                       "simultaneously; stubbornly refusing to proceed");
+        }
+        options->endmode = 1;
         break;
       case 'f':
         gt_hashmap_delete(options->filter);
@@ -187,13 +198,18 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         options->retainids = 1;
         break;
       case 's':
-        options->skipends = 1;
+        if(options->endmode > 0)
+        {
+          gt_error_set(error, "cannot set 'skipends' and 'endsonly' options"
+                       "simultaneously; stubbornly refusing to proceed");
+        }
+        options->endmode = -1;
         break;
       case 't':
         options->retainids = 1;
         options->transstream = fopen(optarg, "w");
         if(options->transstream == NULL)
-          gt_error_set(error, "could not open genemap file '%s'", optarg);
+          gt_error_set(error, "could not open transmap file '%s'", optarg);
         break;
       case 'u':
         options->pseudofix = 1;
@@ -273,7 +289,7 @@ int main(int argc, char **argv)
   if(options.intloci)
   {
     current_stream = agn_interval_locus_stream_new(last_stream, options.delta,
-                                                   options.skipends, logger);
+                                                   options.endmode, logger);
     agn_interval_locus_stream_set_source(
                               (AgnIntervalLocusStream *)current_stream, source);
     gt_queue_add(streams, current_stream);
