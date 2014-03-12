@@ -3,6 +3,10 @@
 #include "genometools.h"
 #include "aegean.h"
 
+//------------------------------------------------------------------------------
+// Data structure definitions
+//------------------------------------------------------------------------------
+
 // Simple data structure for program options
 typedef struct
 {
@@ -13,18 +17,78 @@ typedef struct
   unsigned width;
 } XtractoreOptions;
 
-static void set_option_defaults(XtractoreOptions *options)
+// Simple data structure to group genomic coordinates and strand together
+typedef struct
 {
-  options->idfile = NULL;
-  options->outfile = stdout;
-  options->typeoverride = false;
-  options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
-  char *defaulttype = gt_cstr_dup("gene");
-  gt_hashmap_add(options->typestoextract, defaulttype, defaulttype);
-  options->width = 100;
-}
+  GtRange  r;
+  GtStrand s;
+} XtractRegion;
 
-static void free_option_memory(XtractoreOptions *options)
+
+//------------------------------------------------------------------------------
+// Prototypes for private functions
+//------------------------------------------------------------------------------
+
+/**
+ * @function Release memory held by program options/settings.
+ */
+static void xtract_options_free_memory(XtractoreOptions *options);
+
+/**
+ * @function Parse program settings from command line arugments.
+ */
+static void xtract_options_parse(int argc, char **argv,
+                                 XtractoreOptions *options, GtError *error);
+
+/**
+ * @function Set default values for program options/settings.
+ */
+static void xtract_options_set_defaults(XtractoreOptions *options);
+
+/**
+ * @function Function for comparing genomic ranges, uses ``gt_region_compare``
+ * under the hood.
+ */
+static int xtract_region_compare(XtractRegion *r1, XtractRegion *r2);
+
+/**
+ * @function Retrieve the subsequence of ``sequence`` corresponding to the
+ * genomic feature encoded by ``gn``.
+ */
+static char *xt_extract_subsequence(GtGenomeNode *gn, const GtUchar *sequence,
+                                    GtUword seqlength);
+
+/**
+ * @function Print sequence out to a file, ensuring each line of sequence is no
+ * longer than the specified ``width``.
+ */
+static void xt_format_sequence(FILE *outstream, char *sequence, unsigned width);
+
+/**
+ * @function Given an annotation of a possibly discontinuous genomic feature,
+ * return an array containing each subrange individually.
+ */
+static GtArray *xt_get_regions(GtGenomeNode *gn);
+
+/**
+ * @function Given a feature encoded by ``gn``, print the sequence corresponding
+ * to that feature.
+ */
+static void
+xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
+                          GtUword seqlength, XtractoreOptions *options);
+
+/**
+ * @function Print the program's usage statement.
+ */
+static void xt_print_usage(FILE *outstream);
+
+
+//------------------------------------------------------------------------------
+// Function implementations
+//------------------------------------------------------------------------------
+
+static void xtract_options_free_memory(XtractoreOptions *options)
 {
   if(options->idfile != NULL)
     fclose(options->idfile);
@@ -32,27 +96,8 @@ static void free_option_memory(XtractoreOptions *options)
   gt_hashmap_delete(options->typestoextract);
 }
 
-static void print_usage(FILE *outstream)
-{
-  fprintf(outstream,
-"\nxtractore: extract sequences corresponding to annotated features from the\n"
-"           given sequence file\n\n"
-"Usage: xtractore [options] features.gff3 sequences.fasta\n"
-"  Options:\n"
-"    -h|--help             print this help message and exit\n"
-"    -i|--idfile: FILE     file containing a list of feature IDs (1 per line\n"
-"                          with no spaces); if provided, only features with\n"
-"                          IDs in this file will be extracted\n"
-"    -o|--outfile: FILE    file to which output sequences will be written;\n"
-"                          default is terminal (stdout)\n"
-"    -t|--type: FILE       feature type to extract; can be used multiple\n"
-"                          times to extract features of multiple types\n"
-"    -w|--width: INT       width of each line of sequence in the Fasta\n"
-"                          output; default is 100\n\n");
-}
-
-static void
-parse_options(int argc, char **argv, XtractoreOptions *options, GtError *error)
+static void xtract_options_parse(int argc, char **argv,
+                                 XtractoreOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
@@ -73,7 +118,7 @@ parse_options(int argc, char **argv, XtractoreOptions *options, GtError *error)
     switch(opt)
     {
       case 'h':
-        print_usage(stdout);
+        xt_print_usage(stdout);
         exit(0);
         break;
       case 'i':
@@ -90,7 +135,8 @@ parse_options(int argc, char **argv, XtractoreOptions *options, GtError *error)
         if(options->typeoverride == false)
         {
           gt_hashmap_delete(options->typestoextract);
-          gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
+          options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                                   NULL);
           options->typeoverride = true;
         }
         type = gt_cstr_dup(optarg);
@@ -107,10 +153,178 @@ parse_options(int argc, char **argv, XtractoreOptions *options, GtError *error)
   }
 }
 
-static void print_feature_sequence(GtFeatureNode *fn, const GtUchar *sequence,
-                                   GtUword seqlength, XtractoreOptions *options)
+static void xtract_options_set_defaults(XtractoreOptions *options)
 {
-  
+  options->idfile = NULL;
+  options->outfile = stdout;
+  options->typeoverride = false;
+  options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
+  char *defaulttype = gt_cstr_dup("gene");
+  gt_hashmap_add(options->typestoextract, defaulttype, defaulttype);
+  options->width = 100;
+}
+
+static int xtract_region_compare(XtractRegion *r1, XtractRegion *r2)
+{
+  return gt_range_compare(&r1->r, &r2->r);
+}
+
+static char *xt_extract_subsequence(GtGenomeNode *gn, const GtUchar *sequence,
+                                    GtUword seqlength)
+{
+  char *outseq, *outseqp;
+  GtArray *regions;
+  GtStrand fstrand;
+  GtUword i, nregions, length;
+
+  regions = xt_get_regions(gn);
+  nregions = gt_array_size(regions);
+  length = 0;
+  for(i = 0; i < nregions; i++)
+  {
+    XtractRegion *region = gt_array_get(regions, i);
+    length += gt_range_length(&region->r);
+    if(i == 0)
+    {
+      fstrand = region->s;
+      continue;
+    }
+    if(region->s != fstrand)
+    {
+      GtStr *seqid = gt_genome_node_get_seqid(gn);
+      fprintf(stderr, "[xtractore] error: feature at %s[%lu, %lu] belongs to "
+              "a multifeature with strand inconsistencies\n", gt_str_get(seqid),
+              region->r.start, region->r.end);
+      exit(1);
+    }
+    if(region->r.end > seqlength)
+    {
+      GtStr *seqid = gt_genome_node_get_seqid(gn);
+      fprintf(stderr, "[xtractore] error: feature at %s[%lu, %lu] exceeds "
+              "sequence length of %lu\n", gt_str_get(seqid), region->r.start,
+              region->r.end, seqlength);
+      exit(1);
+    }
+  }
+
+  if(fstrand == GT_STRAND_REVERSE && gt_array_size(regions) > 1)
+    gt_array_reverse(regions);
+
+  outseq = gt_malloc( sizeof(char) * (length + 1) );
+  // Added following line to suppress Valgrind warning about uninitialized
+  // variable. It complains since the subsequent block operates only on
+  // ``outseqp`` and not ``outseq``.
+  outseq[length] = '\0';
+  outseqp = outseq;
+  GtError *error = gt_error_new();
+  for(i = 0; i < nregions; i++)
+  {
+    XtractRegion *region = gt_array_get(regions, i);
+    GtUword rlength = gt_range_length(&region->r);
+    strncpy(outseqp, (char *)(sequence + region->r.start - 1), rlength);
+    if(region->s == GT_STRAND_REVERSE)
+      gt_reverse_complement(outseqp, rlength, error);
+    outseqp += rlength;
+  }
+  gt_error_delete(error);
+
+  gt_array_delete(regions);
+  return outseq;
+}
+
+static void xt_format_sequence(FILE *outstream, char *sequence, unsigned width)
+{
+  GtUword i;
+  GtUword seqlen = strlen(sequence);
+  for(i = 0; i < seqlen; i++)
+  {
+    if(i > 0 && i % width == 0)
+      fputc('\n', outstream);
+    fputc(sequence[i], outstream);
+  }
+  fputc('\n', outstream);
+}
+
+static GtArray *xt_get_regions(GtGenomeNode *gn)
+{
+  GtArray *regions;
+  GtFeatureNode *fn;
+  GtRange r;
+  GtStrand s;
+  XtractRegion region;
+
+  regions = gt_array_new( sizeof(XtractRegion) );
+  fn = gt_feature_node_cast(gn);
+
+  if(gt_feature_node_is_pseudo(fn))
+  {
+    GtFeatureNodeIterator *iter;
+    GtFeatureNode *current;
+
+    iter = gt_feature_node_iterator_new_direct(fn);
+    for(current  = gt_feature_node_iterator_next(iter);
+        current != NULL;
+        current  = gt_feature_node_iterator_next(iter))
+    {
+      r = gt_genome_node_get_range((GtGenomeNode *)current);
+      s = gt_feature_node_get_strand(current);
+      region.r = r;
+      region.s = s;
+      gt_array_add(regions, region);
+    }
+    gt_feature_node_iterator_delete(iter);
+    gt_array_sort(regions, (GtCompare)xtract_region_compare);
+    return regions;
+  }
+
+  r = gt_genome_node_get_range((GtGenomeNode *)fn);
+  s = gt_feature_node_get_strand(fn);
+  region.r = r;
+  region.s = s;
+  gt_array_add(regions, region);
+  return regions;
+}
+
+static void
+xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
+                          GtUword seqlength, XtractoreOptions *options)
+{
+  char subseqid[1024];
+
+  GtFeatureNode *fn = gt_feature_node_cast(gn);
+  GtRange range = gt_genome_node_get_range(gn);
+  GtStr *seqid = gt_genome_node_get_seqid(gn);
+
+  sprintf(subseqid, "%s_%lu-%lu", gt_str_get(seqid), range.start, range.end);
+  const char *featid = gt_feature_node_get_attribute(fn, "ID");
+  if(featid)
+    fprintf(options->outfile, ">%s %s\n", featid, subseqid);
+  else
+    fprintf(options->outfile, ">%s\n", subseqid);
+
+  char *feat_seq = xt_extract_subsequence(gn, sequence, seqlength);
+  xt_format_sequence(options->outfile, feat_seq, options->width);
+  gt_free(feat_seq);
+}
+
+static void xt_print_usage(FILE *outstream)
+{
+  fprintf(outstream,
+"\nxtractore: extract sequences corresponding to annotated features from the\n"
+"           given sequence file\n\n"
+"Usage: xtractore [options] features.gff3 sequences.fasta\n"
+"  Options:\n"
+"    -h|--help             print this help message and exit\n"
+"    -i|--idfile: FILE     file containing a list of feature IDs (1 per line\n"
+"                          with no spaces); if provided, only features with\n"
+"                          IDs in this file will be extracted\n"
+"    -o|--outfile: FILE    file to which output sequences will be written;\n"
+"                          default is terminal (stdout)\n"
+"    -t|--type: FILE       feature type to extract; can be used multiple\n"
+"                          times to extract features of multiple types\n"
+"    -w|--width: INT       width of each line of sequence in the Fasta\n"
+"                          output; default is 100; set to 0 for no\n"
+"                          formatting\n\n");
 }
 
 int main(int argc, char **argv)
@@ -129,9 +343,9 @@ int main(int argc, char **argv)
   gt_lib_init();
 
   XtractoreOptions options;
-  set_option_defaults(&options);
+  xtract_options_set_defaults(&options);
   error = gt_error_new();
-  parse_options(argc, argv, &options, error);
+  xtract_options_parse(argc, argv, &options, error);
   if(gt_error_is_set(error))
   {
     fprintf(stderr, "[xtractore] error: %s", gt_error_get(error));
@@ -142,7 +356,7 @@ int main(int argc, char **argv)
   {
     fprintf(stderr, "[xtractore] error: must provide a feature annotation file "
             "(GFF3 format) and a sequence file (Fasta format)\n");
-    print_usage(stderr);
+    xt_print_usage(stderr);
     return 1;
   }
   featfile = argv[optind + 0];
@@ -195,8 +409,8 @@ int main(int argc, char **argv)
     GtUword i;
     for(i = 0; i < nfeats; i++)
     {
-      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(seqfeatures, i);
-      print_feature_sequence(fn, sequence, seqlength, &options);
+      GtGenomeNode *gn = *(GtGenomeNode **)gt_array_get(seqfeatures, i);
+      xt_print_feature_sequence(gn, sequence, seqlength, &options);
     }
     gt_array_delete(seqfeatures);
   }
@@ -217,7 +431,7 @@ int main(int argc, char **argv)
   gt_queue_delete(streams);
   gt_feature_index_delete(features);
   gt_error_delete(error);
-  free_option_memory(&options);
+  xtract_options_free_memory(&options);
   gt_lib_clean();
   return 0;
 }
