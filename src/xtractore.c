@@ -238,7 +238,7 @@ static void xt_format_sequence(FILE *outstream, char *sequence, unsigned width)
   GtUword seqlen = strlen(sequence);
   for(i = 0; i < seqlen; i++)
   {
-    if(i > 0 && i % width == 0)
+    if(i > 0 && i % width == 0 && width != 0)
       fputc('\n', outstream);
     fputc(sequence[i], outstream);
   }
@@ -296,9 +296,12 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   GtStr *seqid = gt_genome_node_get_seqid(gn);
 
   sprintf(subseqid, "%s_%lu-%lu", gt_str_get(seqid), range.start, range.end);
-  const char *featid = gt_feature_node_get_attribute(fn, "ID");
+  const char *featid   = gt_feature_node_get_attribute(fn, "ID");
+  const char *parentid = gt_feature_node_get_attribute(fn, "Parent");
   if(featid)
     fprintf(options->outfile, ">%s %s\n", featid, subseqid);
+  if(parentid)
+    fprintf(options->outfile, ">%s %s\n", parentid, subseqid);
   else
     fprintf(options->outfile, ">%s\n", subseqid);
 
