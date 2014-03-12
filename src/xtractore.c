@@ -1,4 +1,5 @@
 #include <getopt.h>
+#include <string.h>
 #include "genometools.h"
 #include "aegean.h"
 
@@ -36,7 +37,7 @@ static void print_usage(FILE *outstream)
   fprintf(outstream,
 "\nxtractore: extract sequences corresponding to annotated features from the\n"
 "           given sequence file\n\n"
-"Usage: xtractore [options] features.gff3 sequences.fasta"
+"Usage: xtractore [options] features.gff3 sequences.fasta\n"
 "  Options:\n"
 "    -h|--help             print this help message and exit\n"
 "    -i|--idfile: FILE     file containing a list of feature IDs (1 per line\n"
@@ -106,15 +107,25 @@ parse_options(int argc, char **argv, XtractoreOptions *options, GtError *error)
   }
 }
 
+static void print_feature_sequence(GtFeatureNode *fn, const GtUchar *sequence,
+                                   GtUword seqlength, XtractoreOptions *options)
+{
+  
+}
+
 int main(int argc, char **argv)
 {
   const char *featfile, *seqfile;
-  GtFeatureIndex *features;
+  char *seqdesc;
   GtError *error;
+  GtFeatureIndex *features;
   GtNodeStream *current_stream, *last_stream;
   GtQueue *streams;
   GtSeqIterator *seqiter;
   GtStrArray *seqfastas;
+  const GtUchar *sequence;
+  GtUword seqlength;
+  int result;
   gt_lib_init();
 
   XtractoreOptions options;
@@ -154,16 +165,47 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  int result = gt_node_stream_pull(last_stream, error);
+  result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
   {
-    fprintf(stderr, "[xtractore] error processing GFF3: %s",
+    fprintf(stderr, "[xtractore] error processing GFF3: %s\n",
             gt_error_get(error));
+    return 1;
   }
 
   seqfastas = gt_str_array_new();
   gt_str_array_add_cstr(seqfastas, seqfile);
   seqiter = gt_seq_iterator_sequence_buffer_new(seqfastas, error);
+  while((result = gt_seq_iterator_next(seqiter, &sequence, &seqlength, &seqdesc,
+                                       error)) > 0)
+  {
+    char *seqid = strtok(seqdesc, " \n\t");
+    GtArray *seqfeatures =
+                gt_feature_index_get_features_for_seqid(features, seqid, error);
+    GtUword nfeats = gt_array_size(seqfeatures);
+    if(nfeats == 0)
+    {
+      gt_array_delete(seqfeatures);
+      continue;
+    }
+
+    if(nfeats > 1)
+      gt_array_sort(seqfeatures, (GtCompare)agn_genome_node_compare);
+
+    GtUword i;
+    for(i = 0; i < nfeats; i++)
+    {
+      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(seqfeatures, i);
+      print_feature_sequence(fn, sequence, seqlength, &options);
+    }
+    gt_array_delete(seqfeatures);
+  }
+  if(result == -1)
+  {
+    fprintf(stderr, "[xtractore] errror processing Fasta: %s\n",
+            gt_error_get(error));
+    return 1;
+  }
 
   gt_seq_iterator_delete(seqiter);
   gt_str_array_delete(seqfastas);
