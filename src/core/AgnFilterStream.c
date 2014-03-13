@@ -134,7 +134,9 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
         if(parent == NULL)
         {
           GtGenomeNode *parentgn = gt_feature_node_new_pseudo_template(rep);
+          const char *id = gt_feature_node_get_attribute(rep, "ID");
           parent = gt_feature_node_cast(parentgn);
+          gt_feature_node_set_attribute(parent, "ID", id);
           gt_hashmap_add(multi_parents, rep, parent);
           gt_queue_add(stream->cache, parent);
         }

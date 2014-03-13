@@ -1,0 +1,18 @@
+##gff-version   3
+##sequence-region   mrj 1 4211
+mrj	nano	gene	488	3726	.	+	.	ID=gene1;Name=Mrjp1
+mrj	nano	mRNA	488	3726	.	+	.	ID=mRNA1;Parent=gene1
+mrj	nano	exon	488	528	.	+	.	Parent=mRNA1
+mrj	nano	exon	615	838	.	+	.	Parent=mRNA1
+mrj	nano	exon	952	1115	.	+	.	Parent=mRNA1
+mrj	nano	exon	1198	1419	.	+	.	Parent=mRNA1
+mrj	nano	exon	2067	2350	.	+	.	Parent=mRNA1
+mrj	nano	exon	2662	2794	.	+	.	Parent=mRNA1
+mrj	nano	exon	3365	3726	.	+	.	Parent=mRNA1
+mrj	nano	CDS	619	838	.	+	0	ID=CDS1;Parent=mRNA1
+mrj	nano	CDS	952	1115	.	+	2	ID=CDS1;Parent=mRNA1
+mrj	nano	CDS	1198	1419	.	+	0	ID=CDS1;Parent=mRNA1
+mrj	nano	CDS	2067	2350	.	+	0	ID=CDS1;Parent=mRNA1
+mrj	nano	CDS	2662	2794	.	+	1	ID=CDS1;Parent=mRNA1
+mrj	nano	CDS	3365	3640	.	+	0	ID=CDS1;Parent=mRNA1
+###

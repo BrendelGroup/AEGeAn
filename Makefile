@@ -72,6 +72,7 @@ INCS=-I src/genometools/src -I src/genometools/obj -I /usr/local/include/genomet
 ifeq ($(memcheck),yes)
   MEMCHECK=valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 \
                     --suppressions=data/share/libpixman.supp
+  MEMCHECKFT=memcheck
 endif
 LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 
@@ -162,7 +163,8 @@ agn-test:	agn
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose --retainids data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@- #echo AEGeAn Functional Tests
+		@- echo AEGeAn Functional Tests
+		@- test/xtractore-ft.sh $(MEMCHECKFT)
 		@- #test/AT1G05320.sh
 		@- #test/FBgn0035002.sh
 		@- #test/iLocusParsing.sh

@@ -161,7 +161,7 @@ static void xtract_options_set_defaults(XtractoreOptions *options)
   options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
   char *defaulttype = gt_cstr_dup("gene");
   gt_hashmap_add(options->typestoextract, defaulttype, defaulttype);
-  options->width = 100;
+  options->width = 80;
 }
 
 static int xtract_region_compare(XtractRegion *r1, XtractRegion *r2)
@@ -326,7 +326,7 @@ static void xt_print_usage(FILE *outstream)
 "    -t|--type: FILE       feature type to extract; can be used multiple\n"
 "                          times to extract features of multiple types\n"
 "    -w|--width: INT       width of each line of sequence in the Fasta\n"
-"                          output; default is 100; set to 0 for no\n"
+"                          output; default is 80; set to 0 for no\n"
 "                          formatting\n\n");
 }
 
