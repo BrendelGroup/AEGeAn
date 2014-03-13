@@ -14,6 +14,7 @@ typedef struct
   FILE *outfile;
   bool typeoverride;
   GtHashmap *typestoextract;
+  bool verbose;
   unsigned width;
 } XtractoreOptions;
 
@@ -65,6 +66,12 @@ static char *xt_extract_subsequence(GtGenomeNode *gn, const GtUchar *sequence,
 static void xt_format_sequence(FILE *outstream, char *sequence, unsigned width);
 
 /**
+ * @function Retrieves the feature type, handling pseudonodes by returning the
+ * type of its first child.
+ */
+static const char *xt_get_feature_type(GtFeatureNode *fn);
+
+/**
  * @function Given an annotation of a possibly discontinuous genomic feature,
  * return an array containing each subrange individually.
  */
@@ -101,14 +108,15 @@ static void xtract_options_parse(int argc, char **argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hi:o:t:w:";
+  const char *optstr = "hi:o:t:vw:";
   char *type;
   const struct option xtractore_options[] =
   {
-    { "help",     no_argument,      NULL, 'h' },
+    { "help",    no_argument,       NULL, 'h' },
     { "idfile",  required_argument, NULL, 'i' },
     { "outfile", required_argument, NULL, 'o' },
     { "type",    required_argument, NULL, 't' },
+    { "verbose", no_argument,       NULL, 'v' },
     { "width",   required_argument, NULL, 'w' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
@@ -142,6 +150,9 @@ static void xtract_options_parse(int argc, char **argv,
         type = gt_cstr_dup(optarg);
         gt_hashmap_add(options->typestoextract, type, type);
         break;
+      case 'v':
+        options->verbose = true;
+        break;
       case 'w':
         if(sscanf(optarg, "%u", &options->width) == EOF)
         {
@@ -161,6 +172,7 @@ static void xtract_options_set_defaults(XtractoreOptions *options)
   options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
   char *defaulttype = gt_cstr_dup("gene");
   gt_hashmap_add(options->typestoextract, defaulttype, defaulttype);
+  options->verbose = false;
   options->width = 80;
 }
 
@@ -245,6 +257,19 @@ static void xt_format_sequence(FILE *outstream, char *sequence, unsigned width)
   fputc('\n', outstream);
 }
 
+static const char *xt_get_feature_type(GtFeatureNode *fn)
+{
+  if(gt_feature_node_is_pseudo(fn))
+  {
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+    GtFeatureNode *child = gt_feature_node_iterator_next(iter);
+    const char *type = gt_feature_node_get_type(child);
+    gt_feature_node_iterator_delete(iter);
+    return type;
+  }
+  return gt_feature_node_get_type(fn);
+}
+
 static GtArray *xt_get_regions(GtGenomeNode *gn)
 {
   GtArray *regions;
@@ -294,6 +319,8 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   GtFeatureNode *fn = gt_feature_node_cast(gn);
   GtRange range = gt_genome_node_get_range(gn);
   GtStr *seqid = gt_genome_node_get_seqid(gn);
+  const char *type = xt_get_feature_type(fn);
+  gt_assert(type);
 
   sprintf(subseqid, "%s_%lu-%lu", gt_str_get(seqid), range.start, range.end);
   const char *featid   = gt_feature_node_get_attribute(fn, "ID");
@@ -306,6 +333,13 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
     fprintf(options->outfile, ">%s\n", subseqid);
 
   char *feat_seq = xt_extract_subsequence(gn, sequence, seqlength);
+  if(strcmp(type, "CDS") == 0 &&
+     strncmp(feat_seq, "ATG", 3) != 0 &&
+     options->verbose)
+  {
+    fprintf(stderr, "[xtractore] warning: CDS for '%s' does not begin with "
+            "ATG\n", parentid);
+  }
   xt_format_sequence(options->outfile, feat_seq, options->width);
   gt_free(feat_seq);
 }
@@ -325,6 +359,7 @@ static void xt_print_usage(FILE *outstream)
 "                          default is terminal (stdout)\n"
 "    -t|--type: FILE       feature type to extract; can be used multiple\n"
 "                          times to extract features of multiple types\n"
+"    -v|--verbose          print verbose warning and error messages\n"
 "    -w|--width: INT       width of each line of sequence in the Fasta\n"
 "                          output; default is 80; set to 0 for no\n"
 "                          formatting\n\n");
