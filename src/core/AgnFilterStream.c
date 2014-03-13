@@ -116,23 +116,41 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 
     GtFeatureNode *current;
     GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+    GtHashmap *multi_parents = gt_hashmap_new(GT_HASH_DIRECT, NULL, NULL);
     for(current  = gt_feature_node_iterator_next(iter);
         current != NULL;
         current  = gt_feature_node_iterator_next(iter))
     {
       const char *type = gt_feature_node_get_type(current);
-      bool keepfeature = false;
-      if(gt_hashmap_get(stream->typestokeep, type) != NULL)
-        keepfeature = true;
+      if(gt_hashmap_get(stream->typestokeep, type) == NULL)
+        continue;
 
-      if(keepfeature)
+      gt_genome_node_ref((GtGenomeNode *)current);
+      if(gt_feature_node_is_multi(current))
       {
-        gt_genome_node_ref((GtGenomeNode *)current);
+        GtFeatureNode *rep = gt_feature_node_get_multi_representative(current);
+        GtFeatureNode *parent = gt_hashmap_get(multi_parents, rep);
+        GtRange currentrange = gt_genome_node_get_range((GtGenomeNode*)current);
+        if(parent == NULL)
+        {
+          GtGenomeNode *parentgn = gt_feature_node_new_pseudo_template(rep);
+          parent = gt_feature_node_cast(parentgn);
+          gt_hashmap_add(multi_parents, rep, parent);
+          gt_queue_add(stream->cache, parent);
+        }
+        GtRange parentrange = gt_genome_node_get_range((GtGenomeNode*)parent);
+        GtRange newrange = gt_range_join(&parentrange, &currentrange);
+        gt_genome_node_set_range((GtGenomeNode *)parent, &newrange);
+        gt_feature_node_add_child(parent, current);
+      }
+      else
+      {
         gt_queue_add(stream->cache, current);
       }
     }
     gt_feature_node_iterator_delete(iter);
     gt_genome_node_delete((GtGenomeNode *)fn);
+    gt_hashmap_delete(multi_parents);
     if(gt_queue_size(stream->cache) > 0)
     {
       *gn = gt_queue_get(stream->cache);

@@ -300,7 +300,7 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   const char *parentid = gt_feature_node_get_attribute(fn, "Parent");
   if(featid)
     fprintf(options->outfile, ">%s %s\n", featid, subseqid);
-  if(parentid)
+  else if(parentid)
     fprintf(options->outfile, ">%s %s\n", parentid, subseqid);
   else
     fprintf(options->outfile, ">%s\n", subseqid);
