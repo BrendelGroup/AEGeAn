@@ -71,6 +71,12 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
 const char *agn_transcript_clique_id(AgnTranscriptClique *clique);
 
 /**
+ * @function Retrieve the ID attributes of all transcripts associated with this
+ * clique.
+ */
+GtArray *agn_transcript_clique_ids(AgnTranscriptClique *clique);
+
+/**
  * @function Class constructor. ``locusrange`` should be a pointer to the
  * genomic coordinates of the locus to which this transcript clique belongs.
  */

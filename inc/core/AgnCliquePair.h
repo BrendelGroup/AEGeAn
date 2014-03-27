@@ -60,10 +60,20 @@ AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair);
 AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair);
 
 /**
+ * @function Return a pointer to this clique pairs comparison statistics.
+ */
+AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair);
+
+/**
  * @function Class constructor.
  */
 AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
                                    AgnTranscriptClique *pred);
+
+/**
+ * @function FIXME
+ */
+double agn_clique_pair_tolerance(AgnCliquePair *pair);
 
 /**
  * @function Run unit tests for this class. Returns true if all tests passed.

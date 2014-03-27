@@ -14,12 +14,11 @@
 typedef struct AgnCompareTextReportVisitor AgnCompareTextReportVisitor;
 
 /**
- * @function Constructor for a node stream based on this node visitor.
+ * @function Include GFF3 corresponding to each clique pair in that clique
+ * pair's comparison report.
  */
-GtNodeStream *agn_compare_text_report_stream_new(GtNodeStream *instream,
-                                                 FILE *reports,
-                                                 FILE *summary,
-                                                 GtLogger *logger);
+void
+agn_compare_text_report_visitor_enable_gff3(AgnCompareTextReportVisitor *v);
 
 /**
  * @function Constructor for the node visitor.

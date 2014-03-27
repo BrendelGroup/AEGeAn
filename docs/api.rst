@@ -45,9 +45,17 @@ Class AgnCliquePair
 
   Return a pointer to the reference annotation from this pair.
 
+.. c:function:: AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
+
+  Return a pointer to this clique pairs comparison statistics.
+
 .. c:function:: AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr, AgnTranscriptClique *pred)
 
   Class constructor.
+
+.. c:function:: double agn_clique_pair_tolerance(AgnCliquePair *pair)
+
+  FIXME
 
 .. c:function:: bool agn_clique_pair_unit_test(AgnUnitTest *test)
 
@@ -60,9 +68,9 @@ Class AgnCompareTextReportVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This node visitor will perform comparative analysis on each locus it encounters and write the comparison results to the given text file. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareTextReportVisitor.h>`_.
 
-.. c:function:: GtNodeStream *agn_compare_text_report_stream_new(GtNodeStream *instream, FILE *reports, FILE *summary, GtLogger *logger)
+.. c:function:: void agn_compare_text_report_visitor_enable_gff3(AgnCompareTextReportVisitor *v)
 
-  Constructor for a node stream based on this node visitor.
+  Include GFF3 corresponding to each clique pair in that clique pair's comparison report.
 
 .. c:function:: GtNodeVisitor *agn_compare_text_report_visitor_new(FILE *reports, FILE *summary, GtLogger *logger)
 
@@ -518,6 +526,10 @@ Class AgnTranscriptClique
 .. c:function:: const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
 
   Retrieve the ID attribute of the transcript associated with this clique.
+
+.. c:function:: GtArray *agn_transcript_clique_ids(AgnTranscriptClique *clique)
+
+  Retrieve the ID attributes of all transcripts associated with this clique.
 
 .. c:function:: AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
 

@@ -190,6 +190,25 @@ const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
   return gt_cstr_dup(id);
 }
 
+GtArray *agn_transcript_clique_ids(AgnTranscriptClique *clique)
+{
+  GtArray *ids = gt_array_new( sizeof(const char *) );
+  GtFeatureNode *cliquefn = gt_feature_node_cast(clique);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(cliquefn);
+  GtFeatureNode *current;
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
+  {
+    gt_assert(agn_typecheck_transcript(current));
+    const char *id = gt_feature_node_get_attribute(current, "ID");
+    gt_array_add(ids, id);
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return ids;
+}
+
 AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
 {
   AgnTranscriptClique *clique = gt_feature_node_new_pseudo(region->seqid,

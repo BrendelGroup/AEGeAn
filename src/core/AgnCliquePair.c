@@ -214,6 +214,11 @@ AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair)
   return pair->refr_clique;
 }
 
+AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
+{
+  return &pair->stats;
+}
+
 AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
                                    AgnTranscriptClique *pred)
 {
@@ -235,6 +240,11 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
 
   clique_pair_comparative_analysis(pair);
   return pair;
+}
+
+double agn_clique_pair_tolerance(AgnCliquePair *pair)
+{
+  return pair->tolerance;
 }
 
 bool agn_clique_pair_unit_test(AgnUnitTest *test)
