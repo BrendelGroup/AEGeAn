@@ -53,6 +53,25 @@ Class AgnCliquePair
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnCompareTextReportVisitor
+---------------------------------
+
+.. c:type:: AgnCompareTextReportVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This node visitor will perform comparative analysis on each locus it encounters and write the comparison results to the given text file. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareTextReportVisitor.h>`_.
+
+.. c:function:: GtNodeStream *agn_compare_text_report_stream_new(GtNodeStream *instream, FILE *reports, FILE *summary, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_compare_text_report_visitor_new(FILE *reports, FILE *summary, GtLogger *logger)
+
+  Constructor for the node visitor.
+
+.. c:function:: void agn_compare_text_report_visitor_trans_max(AgnCompareTextReportVisitor *v, GtUword max_locus_transcripts)
+
+  If ``max_locus_transcripts`` > 0, loci containing more than ``max_locus_transcripts`` reference transcripts or prediction transcripts will not be analyzed or reported.
+
 Module AgnComparison
 --------------------
 
@@ -303,6 +322,10 @@ Class AgnLocus
 
   Get a list of all the reference transcript cliques that have no corresponding prediction transcript clique.
 
+.. c:function:: GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the gene IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_gene_ids(locus)`` to retrieve prediction IDs, ``agn_locus_refr_gene_ids(locus)`` to retrieve reference IDs, or ``agn_locus_get_gene_ids(locus)`` if the source of annotation is undesignated or irrelevant.
+
 .. c:function:: GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
 
   Get the mRNAs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_mrnas(locus)`` to retrieve prediction mRNAs, ``agn_locus_refr_mrnas(locus)`` to retrieve reference mRNAs, or ``agn_locus_get_mrnas(locus)`` if the source of annotation is undesignated or irrelevant.
@@ -319,9 +342,9 @@ Class AgnLocus
 
   Class constructor.
 
-.. c:function:: GtUword agn_locus_num_clique_pairs(AgnLocus *locus)
+.. c:function:: GtArray *agn_locus_pairs_to_report(AgnLocus *locus)
 
-  Return the number of clique pairs to be reported for this locus.
+  Return the clique pairs to be reported for this locus.
 
 .. c:function:: void agn_locus_png_track_selector(GtBlock *block, GtStr *track,void *data)
 

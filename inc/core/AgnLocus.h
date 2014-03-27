@@ -148,6 +148,23 @@ GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus);
 GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus);
 
 /**
+ * @function Get the gene IDs associated with this locus. Rather than
+ * calling this function directly, users are encouraged to use one of the
+ * following macros: ``agn_locus_pred_gene_ids(locus)`` to retrieve
+ * prediction IDs, ``agn_locus_refr_gene_ids(locus)`` to retrieve
+ * reference IDs, or ``agn_locus_get_gene_ids(locus)`` if the source of
+ * annotation is undesignated or irrelevant.
+ */
+
+GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src);
+#define agn_locus_pred_gene_ids(LC)\
+        agn_locus_gene_ids(LC, PREDICTIONSOURCE)
+#define agn_locus_refr_gene_ids(LC)\
+        agn_locus_gene_ids(LC, REFERENCESOURCE)
+#define agn_locus_get_gene_ids(LC)\
+        agn_locus_gene_ids(LC, DEFAULTSOURCE)
+
+/**
  * @function Get the mRNAs associated with this locus. Rather than calling
  * this function directly, users are encouraged to use one of the following
  * macros: ``agn_locus_pred_mrnas(locus)`` to retrieve prediction mRNAs,
@@ -201,9 +218,9 @@ GtUword agn_locus_mrna_num(AgnLocus *locus, AgnComparisonSource src);
 AgnLocus* agn_locus_new(GtStr *seqid);
 
 /**
- * @function Return the number of clique pairs to be reported for this locus.
+ * @function Return the clique pairs to be reported for this locus.
  */
-GtUword agn_locus_num_clique_pairs(AgnLocus *locus);
+GtArray *agn_locus_pairs_to_report(AgnLocus *locus);
 
 #ifndef WITHOUT_CAIRO
 /**
