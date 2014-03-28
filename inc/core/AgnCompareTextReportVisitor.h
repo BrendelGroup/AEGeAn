@@ -14,6 +14,19 @@
 typedef struct AgnCompareTextReportVisitor AgnCompareTextReportVisitor;
 
 /**
+ * @function As part of a comparative analysis, all reference transcripts (or
+ * transcript cliques) associated with a locus will be compared to all
+ * prediction transcripts from the locus. If ``max_comparisons`` > 0, loci
+ * containing more than ``max_comparisons`` transcript (clique) pairs will be
+ * ignored. This cutoff is motivated by the observation that some individual
+ * loci require an inordinate amount of runtime and memory for comparative
+ * analysis, and due to the complexity of these loci the comparison statistics
+ * don't provide much insight.
+ */
+void agn_compare_text_report_visitor_compare_max(AgnCompareTextReportVisitor *v,
+                                                 GtUword max_comparisons);
+
+/**
  * @function Include GFF3 corresponding to each clique pair in that clique
  * pair's comparison report.
  */

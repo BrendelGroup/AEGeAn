@@ -15,6 +15,7 @@ struct AgnCompareTextReportVisitor
 {
   const GtNodeVisitor parent_instance;
   GtUword max_locus_transcripts;
+  GtUword max_comparisons;
   bool gff3;
   FILE *fp_reports;
   FILE *fp_summary;
@@ -79,6 +80,12 @@ static void print_locus_report(AgnCompareTextReportVisitor *v, AgnLocus *locus);
 // Method implementations
 //------------------------------------------------------------------------------
 
+void agn_compare_text_report_visitor_compare_max(AgnCompareTextReportVisitor *v,
+                                                 GtUword max_comparisons)
+{
+  v->max_comparisons = max_comparisons;
+}
+
 void
 agn_compare_text_report_visitor_enable_gff3(AgnCompareTextReportVisitor *v)
 {
@@ -93,6 +100,7 @@ GtNodeVisitor *agn_compare_text_report_visitor_new(FILE *reports,
     nv = gt_node_visitor_create(compare_text_report_visitor_class());
   AgnCompareTextReportVisitor *v = compare_text_report_visitor_cast(nv);
   v->max_locus_transcripts = 0;
+  v->max_comparisons = 0;
   v->gff3 = false;
   v->fp_reports = reports;
   v->fp_summary = summary;
@@ -126,7 +134,8 @@ static int ctrv_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
 
   gt_assert(gt_feature_node_has_type(fn, "locus"));
   AgnLocus *locus = (AgnLocus *)fn;
-  agn_locus_comparative_analysis(locus, v->max_locus_transcripts, 0, v->logger);
+  agn_locus_comparative_analysis(locus, v->max_locus_transcripts,
+                                 v->max_comparisons, v->logger);
   print_locus_report(v, locus);
 
   return 0;
