@@ -527,9 +527,9 @@ Class AgnTranscriptClique
 
   Determine whether any of the transcript IDs associated with this clique are keys in the given hash map.
 
-.. c:function:: const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
+.. c:function:: char *agn_transcript_clique_id(AgnTranscriptClique *clique)
 
-  Retrieve the ID attribute of the transcript associated with this clique.
+  Retrieve the ID attribute of the transcript associated with this clique. User is responsible to free the string.
 
 .. c:function:: GtArray *agn_transcript_clique_ids(AgnTranscriptClique *clique)
 

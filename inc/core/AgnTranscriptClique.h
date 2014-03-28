@@ -66,9 +66,9 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
 
 /**
  * @function Retrieve the ID attribute of the transcript associated with this
- * clique.
+ * clique. User is responsible to free the string.
  */
-const char *agn_transcript_clique_id(AgnTranscriptClique *clique);
+char *agn_transcript_clique_id(AgnTranscriptClique *clique);
 
 /**
  * @function Retrieve the ID attributes of all transcripts associated with this

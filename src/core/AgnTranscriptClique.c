@@ -166,9 +166,9 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
   return idfound;
 }
 
-const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
+char *agn_transcript_clique_id(AgnTranscriptClique *clique)
 {
-  char id[1024];
+  char id[32768];
   char *idptr = id;
   unsigned count = 0;
 

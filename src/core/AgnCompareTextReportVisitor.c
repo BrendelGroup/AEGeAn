@@ -291,7 +291,37 @@ static void locus_report_print_pair(AgnCompareTextReportVisitor *v,
 static void locus_report_print_unmatched_cliques(AgnCompareTextReportVisitor *v,
                                                  AgnLocus *locus)
 {
-  
+  GtUword i;
+
+  GtArray *unique_refr_cliques = agn_locus_get_unique_refr_cliques(locus);
+  if(unique_refr_cliques && gt_array_size(unique_refr_cliques) > 0)
+  {
+    fprintf(v->fp_reports, "     |\n");
+    fprintf(v->fp_reports, "     |  reference transcripts (or transcript sets) "
+            "without a prediction match\n");
+  }
+  for(i = 0; i < gt_array_size(unique_refr_cliques); i++)
+  {
+    AgnTranscriptClique **clique = gt_array_get(unique_refr_cliques, i);
+    char *tid = agn_transcript_clique_id(*clique);
+    fprintf(v->fp_reports, "     | [%s]\n", tid);
+    gt_free(tid);
+  }
+
+  GtArray *unique_pred_cliques = agn_locus_get_unique_pred_cliques(locus);
+  if(unique_pred_cliques && gt_array_size(unique_pred_cliques) > 0)
+  {
+    fprintf(v->fp_reports, "     |\n");
+    fprintf(v->fp_reports, "     |  novel prediction transcripts (or transcript"
+            " sets)\n");
+  }
+  for(i = 0; i < gt_array_size(unique_pred_cliques); i++)
+  {
+    AgnTranscriptClique **clique = gt_array_get(unique_pred_cliques, i);
+    char *tid = agn_transcript_clique_id(*clique);
+    fprintf(v->fp_reports, "     | [%s]\n", tid);
+    gt_free(tid);
+  }
 }
 
 static void print_locus_report(AgnCompareTextReportVisitor *v, AgnLocus *locus)
