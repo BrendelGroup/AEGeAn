@@ -19,6 +19,7 @@ AEGeAn Toolkit: integrated genome analysis
    :maxdepth: 1
    
    install
+   loci
    citing
    api
    license

@@ -80,6 +80,10 @@ Class AgnCompareTextReportVisitor
 
   Constructor for the node visitor.
 
+.. c:function:: void agn_compare_text_report_visitor_summary(AgnCompareTextReportVisitor *v)
+
+  FIXME
+
 .. c:function:: void agn_compare_text_report_visitor_trans_max(AgnCompareTextReportVisitor *v, GtUword max_locus_transcripts)
 
   If ``max_locus_transcripts`` > 0, loci containing more than ``max_locus_transcripts`` reference transcripts or prediction transcripts will not be analyzed or reported.
@@ -110,6 +114,24 @@ Data structures and functions related to comparative assessment of gene/transcri
 .. c:type:: AgnCompClassification
 
   This enumerated type refers to all the possible outcomes when annotations from two different sources are compared: ``AGN_COMP_CLASS_UNCLASSIFIED``, ``AGN_COMP_CLASS_PERFECT_MATCH``, ``AGN_COMP_CLASS_MISLABELED``, ``AGN_COMP_CLASS_CDS_MATCH``, ``AGN_COMP_CLASS_EXON_MATCH``, ``AGN_COMP_CLASS_UTR_MATCH``, and ``AGN_COMP_CLASS_NON_MATCH``.
+
+
+
+.. c:type:: AgnCompInfo
+
+  This struct contains various counts to be reported in the summary report.
+
+
+
+.. c:type:: AgnCompClassDesc
+
+  When reporting the results of a comparative analysis, it may be useful to (as is done by ParsEval) show some basic information about clique pairs that fall under each classification category. The counts in this struct are necessary to calculate those summary characteristics.
+
+
+
+.. c:type:: AgnCompClassSummary
+
+  This struct is used to aggregate descriptions for all of the classification categories.
 
 
 
