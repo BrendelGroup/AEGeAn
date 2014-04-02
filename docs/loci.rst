@@ -18,9 +18,11 @@ Given one or more pre-computed sets of gene annotations and parameter δ, iLoci 
 * Create a bin for each gene in the input.
 * If any of the genes in a bin overlap with any of the genes in another bin, merge those bins. Repeat until all possible merges are done.
 * Sort the bins according to genomic position, and then determine the distance between each pair of adjacent bins.
-    * If the distance is greater than 3δ, extend the bins toward each other by δ nucleotides.
-    * If the distance is less than 3δ but greater than δ, extend the bins toward each other until they meet.
-    * If the distance is less than δ, extend the bins toward each other as much as possible without overlapping with each other's genes (the extensions will overlap).
+
+  * If the distance is greater than 3δ, extend the bins toward each other by δ nucleotides.
+  * If the distance is less than 3δ but greater than δ, extend the bins toward each other until they meet.
+  * If the distance is less than δ, extend the bins toward each other as much as possible without overlapping with each other's genes (the extensions will overlap).
+
 * Each bin now corresponds to a single iLocus. If there is empty space between any pair of adjacent iLoci, this also corresponds to an iLocus.
 
 Note that while we define iLoci in terms of genes, the definition extends easily to any annotated genomic feature, and AEGeAn supports calculating iLoci for arbitrary feature types.
