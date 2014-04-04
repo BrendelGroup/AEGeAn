@@ -61,33 +61,6 @@ Class AgnCliquePair
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Class AgnCompareTextReportVisitor
----------------------------------
-
-.. c:type:: AgnCompareTextReportVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This node visitor will perform comparative analysis on each locus it encounters and write the comparison results to the given text file. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareTextReportVisitor.h>`_.
-
-.. c:function:: void agn_compare_text_report_visitor_compare_max(AgnCompareTextReportVisitor *v, GtUword max_comparisons)
-
-  As part of a comparative analysis, all reference transcripts (or transcript cliques) associated with a locus will be compared to all prediction transcripts from the locus. If ``max_comparisons`` > 0, loci containing more than ``max_comparisons`` transcript (clique) pairs will be ignored. This cutoff is motivated by the observation that some individual loci require an inordinate amount of runtime and memory for comparative analysis, and due to the complexity of these loci the comparison statistics don't provide much insight.
-
-.. c:function:: void agn_compare_text_report_visitor_enable_gff3(AgnCompareTextReportVisitor *v)
-
-  Include GFF3 corresponding to each clique pair in that clique pair's comparison report.
-
-.. c:function:: GtNodeVisitor *agn_compare_text_report_visitor_new(FILE *reports, FILE *summary, GtLogger *logger)
-
-  Constructor for the node visitor.
-
-.. c:function:: void agn_compare_text_report_visitor_summary(AgnCompareTextReportVisitor *v)
-
-  FIXME
-
-.. c:function:: void agn_compare_text_report_visitor_trans_max(AgnCompareTextReportVisitor *v, GtUword max_locus_transcripts)
-
-  If ``max_locus_transcripts`` > 0, loci containing more than ``max_locus_transcripts`` reference transcripts or prediction transcripts will not be analyzed or reported.
-
 Module AgnComparison
 --------------------
 
@@ -316,6 +289,18 @@ Class AgnLocus
 
 
 
+.. c:type:: AgnLocusFilterOp
+
+  Comparison operators to use when filtering loci.
+
+
+
+.. c:type:: AgnLocusFilter
+
+  Data by which to filter a locus. If the value returned by ``function`` satisfies the criterion specified by ``testvalue`` and ``operator``, then the locus is to be kept.
+
+
+
 .. c:function:: void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature, AgnComparisonSource source)
 
   Associate the given annotation with this locus. Rather than calling this function directly, users are recommended to use one of the following macros: ``agn_locus_add_pred_feature(locus, gene)`` and ``agn_locus_add_refr_feature(locus, gene)``, to be used when keeping track of an annotation's source is important (i.e. for pairwise comparison); and ``agn_locus_add_feature(locus, gene)`` otherwise.
@@ -347,6 +332,10 @@ Class AgnLocus
 .. c:function:: GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
 
   Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
+
+  Return true if ``locus`` satisfies the given filtering criterion.
 
 .. c:function:: GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
 

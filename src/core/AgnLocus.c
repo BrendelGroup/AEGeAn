@@ -300,6 +300,33 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
   return count;
 }
 
+bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
+{
+  GtUword value = filter->function(locus);
+  switch(filter->operator)
+  {
+    case AGN_LOCUS_FILTER_EQ:
+      if(value == filter->testvalue) return true;
+      break;
+    case AGN_LOCUS_FILTER_NE:
+      if(value != filter->testvalue) return true;
+      break;
+    case AGN_LOCUS_FILTER_GT:
+      if(value > filter->testvalue) return true;
+      break;
+    case AGN_LOCUS_FILTER_GE:
+      if(value >= filter->testvalue) return true;
+      break;
+    case AGN_LOCUS_FILTER_LT:
+      if(value < filter->testvalue) return true;
+      break;
+    case AGN_LOCUS_FILTER_LE:
+      if(value <= filter->testvalue) return true;
+      break;
+  }
+  return false;
+}
+
 GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
 {
   return gt_genome_node_get_user_data(locus, "unique_pred");

@@ -31,10 +31,10 @@ enum AgnComparisonSource
 typedef enum AgnComparisonSource AgnComparisonSource;
 
 /**
-* @type This data structure provides a convenient container for metadata needed
-* to produce a PNG graphic for pairwise comparison
-* loci.
-*/
+ * @type This data structure provides a convenient container for metadata needed
+ * to produce a PNG graphic for pairwise comparison
+ * loci.
+ */
 struct AgnLocusPngMetadata
 {
   char filename[512];
@@ -47,6 +47,33 @@ struct AgnLocusPngMetadata
   int (*track_order_func)(const char *s1, const char *s2, void *data);
 };
 typedef struct AgnLocusPngMetadata AgnLocusPngMetadata;
+
+/**
+ * @type Comparison operators to use when filtering loci.
+ */
+enum AgnLocusFilterOp
+{
+  AGN_LOCUS_FILTER_EQ,
+  AGN_LOCUS_FILTER_NE,
+  AGN_LOCUS_FILTER_GT,
+  AGN_LOCUS_FILTER_GE,
+  AGN_LOCUS_FILTER_LT,
+  AGN_LOCUS_FILTER_LE,
+};
+typedef enum AgnLocusFilterOp AgnLocusFilterOp;
+
+/**
+ * @type Data by which to filter a locus. If the value returned by ``function``
+ * satisfies the criterion specified by ``testvalue`` and ``operator``, then
+ * the locus is to be kept.
+ */
+struct AgnLocusFilter
+{
+  GtUword (*function) (AgnLocus *);
+  GtUword testvalue;
+  AgnLocusFilterOp operator;
+};
+typedef struct AgnLocusFilter AgnLocusFilter;
 
 /**
  * @function Associate the given annotation with this locus. Rather
@@ -134,6 +161,12 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src);
         agn_locus_exon_num(LC, REFERENCESOURCE)
 #define agn_locus_num_exons(LC)\
         agn_locus_exon_num(LC, DEFAULTSOURCE)
+
+/**
+ * @function Return true if ``locus`` satisfies the given filtering
+ * criterion.
+ */
+bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter);
 
 /**
  * @function Get a list of all the prediction transcript cliques that have no
