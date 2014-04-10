@@ -69,9 +69,10 @@ typedef enum AgnLocusFilterOp AgnLocusFilterOp;
  */
 struct AgnLocusFilter
 {
-  GtUword (*function) (AgnLocus *);
+  GtUword (*function) (AgnLocus *, AgnComparisonSource);
   GtUword testvalue;
   AgnLocusFilterOp operator;
+  AgnComparisonSource src;
 };
 typedef struct AgnLocusFilter AgnLocusFilter;
 
@@ -166,7 +167,8 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src);
  * @function Return true if ``locus`` satisfies the given filtering
  * criterion.
  */
-bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter);
+bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter,
+                           AgnComparisonSource src);
 
 /**
  * @function Get a list of all the prediction transcript cliques that have no

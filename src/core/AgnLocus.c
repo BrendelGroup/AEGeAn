@@ -300,9 +300,10 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
   return count;
 }
 
-bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
+bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter,
+                           AgnComparisonSource src)
 {
-  GtUword value = filter->function(locus);
+  GtUword value = filter->function(locus, src);
   switch(filter->operator)
   {
     case AGN_LOCUS_FILTER_EQ:
@@ -647,7 +648,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   locus_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 2);
+  gt_assert(gt_queue_size(queue) == 4);
 
   GtLogger *logger = gt_logger_new(true, "", stderr);
 
@@ -759,6 +760,35 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   bool grapetest2 = agn_comparison_test(&stats, &c);
   agn_unit_test_result(test, "grape test 2", grapetest2);
   agn_locus_delete(locus);
+
+  AgnLocus *locus1 = gt_queue_get(queue);
+  AgnLocus *locus2 = gt_queue_get(queue);
+  AgnLocusFilter filter = { agn_locus_cds_length, 699, AGN_LOCUS_FILTER_LT };
+  bool cdslengthtest = !agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
+                       !agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  filter.testvalue = 750;
+  cdslengthtest = cdslengthtest &&
+                  agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
+                  !agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  filter.testvalue = 813;
+  filter.operator = AGN_LOCUS_FILTER_LE;
+  cdslengthtest = cdslengthtest &&
+                  agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
+                  agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  agn_unit_test_result(test, "filter by CDS length", cdslengthtest);
+
+  filter.function = agn_locus_exon_num;
+  filter.testvalue = 3;
+  filter.operator = AGN_LOCUS_FILTER_NE;
+  bool exonnumtest = !agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
+                      agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  filter.testvalue = 7;
+  exonnumtest = exonnumtest &&
+                agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
+                !agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  agn_unit_test_result(test, "filter by exon number", exonnumtest);
+  agn_locus_delete(locus1);
+  agn_locus_delete(locus2);
 
   gt_logger_delete(logger);
   gt_queue_delete(queue);
@@ -1022,6 +1052,16 @@ static void locus_test_data(GtQueue *queue)
   locus = agn_locus_new(seqid);
   agn_locus_add_refr_feature(locus, refr);
   agn_locus_add_pred_feature(locus, pred);
+  gt_queue_add(queue, locus);
+
+  refr = *(GtFeatureNode **)gt_array_get(refrfeats, 0);
+  locus = agn_locus_new(seqid);
+  agn_locus_add_feature(locus, refr);
+  gt_queue_add(queue, locus);
+
+  refr = *(GtFeatureNode **)gt_array_get(refrfeats, 3);
+  locus = agn_locus_new(seqid);
+  agn_locus_add_feature(locus, refr);
   gt_queue_add(queue, locus);
 
   while(gt_array_size(refrfeats) > 0)
