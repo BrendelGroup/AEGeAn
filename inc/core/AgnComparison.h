@@ -172,7 +172,7 @@ void agn_comparison_data_aggregate(AgnComparisonData *agg_data,
 /**
  * @function FIXME
  */
-void agn_comparidon_data_init(AgnComparisonData *data);
+void agn_comparison_data_init(AgnComparisonData *data);
 
 /**
  * @function Initialize comparison stats to default values.

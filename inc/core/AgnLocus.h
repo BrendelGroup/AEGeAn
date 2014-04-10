@@ -126,8 +126,7 @@ GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src);
  * transcripts. If there are more reference transcript cliques than prediction
  * cliques (or vice versa), these unmatched cliques are reported separately.
  */
-void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
-                                    GtUword maxpairs, GtLogger *logger);
+void agn_locus_comparative_analysis(AgnLocus *locus, GtLogger *logger);
 
 /**
  * @function Analog of ``strcmp`` for sorting AgnLocus objects. Loci are first
@@ -167,8 +166,7 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src);
  * @function Return true if ``locus`` satisfies the given filtering
  * criterion.
  */
-bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter,
-                           AgnComparisonSource src);
+bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter);
 
 /**
  * @function Get a list of all the prediction transcript cliques that have no

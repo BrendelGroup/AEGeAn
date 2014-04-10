@@ -61,6 +61,41 @@ Class AgnCliquePair
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnCompareReport
+----------------------
+
+.. c:type:: AgnCompareReport
+
+  The ``AgnCompareReport`` class implements the ``GtNodeVisitor`` class. It is used to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produce reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReport.h>`_.
+
+.. c:type:: 
+
+  Signature of callback functions used to create locus-level reports, if any.
+
+
+
+.. c:type:: 
+
+  Signature of callback functions used to create sequence-level summary reports, if any.
+
+
+
+.. c:function:: AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt)
+
+  Return a pointer to the statistics collected by the node visitor.
+
+.. c:function:: GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger)
+
+  Constructor for the node visitor.
+
+.. c:function:: void agn_compare_report_set_locus_callback(AgnCompareReport *rpt, AgnCompareReportLocusFunc func, void *data)
+
+  Set the callback function to be used for generating locus reports. The ``data`` pointer is optional but will be available to the callback function. Set ``func`` to NULL to disable locus report generation (default).
+
+.. c:function:: void agn_compare_report_set_sequence_callback(AgnCompareReport *rpt, AgnCompareReportSequenceFunc func, void *data)
+
+  Set the callback function to be used for generating sequence reports. The ``data`` pointer is optional but will be available to the callback function. Set ``func`` to NULL to disable sequence report generation (default).
+
 Module AgnComparison
 --------------------
 
@@ -122,7 +157,7 @@ Data structures and functions related to comparative assessment of gene/transcri
 
   FIXME
 
-.. c:function:: void agn_comparidon_data_init(AgnComparisonData *data)
+.. c:function:: void agn_comparison_data_init(AgnComparisonData *data)
 
   FIXME
 
@@ -355,7 +390,7 @@ Class AgnLocus
 
   The combined length of all coding sequences associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_refr_cds_length(locus)`` for the combined length of all reference CDSs, ``agn_locus_pred_cds_length(locus)`` for the combined length of all prediction CDSs, and ``agn_locus_get_cds_length(locus)`` for the combined length of all CDSs.
 
-.. c:function:: void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts, GtUword maxpairs, GtLogger *logger)
+.. c:function:: void agn_locus_comparative_analysis(AgnLocus *locus, GtLogger *logger)
 
   Compare every reference transcript clique with every prediction transcript clique. For gene loci with multiple transcript cliques, each comparison is not necessarily reported. Instead, we report the set of clique pairs that provides the optimal pairing of reference and prediction transcripts. If there are more reference transcript cliques than prediction cliques (or vice versa), these unmatched cliques are reported separately.
 
@@ -375,7 +410,7 @@ Class AgnLocus
 
   Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
 
-.. c:function:: bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter, AgnComparisonSource src)
+.. c:function:: bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 
   Return true if ``locus`` satisfies the given filtering criterion.
 

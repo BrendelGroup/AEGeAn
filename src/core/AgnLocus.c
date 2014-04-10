@@ -193,26 +193,12 @@ GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src)
   return length;
 }
 
-void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
-                                    GtUword maxpairs, GtLogger *logger)
+void agn_locus_comparative_analysis(AgnLocus *locus, GtLogger *logger)
 {
   GtArray *pairs2report = gt_genome_node_get_user_data(locus, "pairs2report");
   if(pairs2report != NULL)
     return;
 
-  GtUword numrefr = agn_locus_num_refr_mrnas(locus);
-  GtUword numpred = agn_locus_num_pred_mrnas(locus);
-  bool noneedanaly = numrefr > maxtranscripts || numpred > maxtranscripts;
-  if(maxtranscripts > 0 && noneedanaly)
-  {
-    GtStr *seqid = gt_genome_node_get_seqid(locus);
-    GtRange range = gt_genome_node_get_range(locus);
-    gt_logger_log(logger, "warning: locus %s[%lu, %lu] includes %lu reference "
-                  "transcripts and %lu prediction transcripts (maximum is %lu);"
-                  " skipping this locus\n", gt_str_get(seqid), range.start,
-                  range.end, numrefr, numpred, maxtranscripts);
-    return;
-  }
   GtArray *refr_trans = agn_locus_refr_mrnas(locus);
   GtArray *refrcliques = locus_enumerate_cliques(locus, refr_trans);
   gt_array_delete(refr_trans);
@@ -220,21 +206,20 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtUword maxtranscripts,
   GtArray *predcliques = locus_enumerate_cliques(locus, pred_trans);
   gt_array_delete(pred_trans);
 
-  GtUword numpairs = gt_array_size(refrcliques) * gt_array_size(predcliques);
-  if(maxpairs > 0 && numpairs > maxpairs)
-  {
-    GtStr *seqid = gt_genome_node_get_seqid(locus);
-    GtRange range = gt_genome_node_get_range(locus);
-    gt_logger_log(logger, "warning: locus %s[%lu, %lu] includes %lu possible "
-                  "transcript clique pairs (maximum is %lu); skipping this "
-                  "locus", gt_str_get(seqid), range.start, range.end, numpairs,
-                  maxpairs);
-    gt_array_delete(refrcliques);
-    gt_array_delete(predcliques);
-    return;
-  }
+  //GtUword numpairs = gt_array_size(refrcliques) * gt_array_size(predcliques);
+  //if(maxpairs > 0 && numpairs > maxpairs)
+  //{
+  //  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  //  GtRange range = gt_genome_node_get_range(locus);
+  //  gt_logger_log(logger, "warning: locus %s[%lu, %lu] includes %lu possible "
+  //                "transcript clique pairs (maximum is %lu); skipping this "
+  //                "locus", gt_str_get(seqid), range.start, range.end, numpairs,
+  //                maxpairs);
+  //  gt_array_delete(refrcliques);
+  //  gt_array_delete(predcliques);
+  //  return;
+  //}
   GtArray *clique_pairs = locus_enumerate_pairs(locus,refrcliques,predcliques);
-  gt_assert(numpairs == gt_array_size(clique_pairs));
   gt_array_sort(clique_pairs, (GtCompare)agn_clique_pair_compare_reverse);
   locus_select_pairs(locus, refrcliques, predcliques, clique_pairs);
 
@@ -300,10 +285,9 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
   return count;
 }
 
-bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter,
-                           AgnComparisonSource src)
+bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 {
-  GtUword value = filter->function(locus, src);
+  GtUword value = filter->function(locus, filter->src);
   switch(filter->operator)
   {
     case AGN_LOCUS_FILTER_EQ:
@@ -698,7 +682,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   c.overall_length  = 3110;
 
   AgnLocus *locus = gt_queue_get(queue);
-  agn_locus_comparative_analysis(locus, 0, 0, logger);
+  agn_locus_comparative_analysis(locus, logger);
   AgnComparison stats;
   agn_comparison_init(&stats);
   agn_locus_comparison_aggregate(locus, &stats);
@@ -753,7 +737,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
   c.overall_length  = 4226;
 
   locus = gt_queue_get(queue);
-  agn_locus_comparative_analysis(locus, 0, 0, logger);
+  agn_locus_comparative_analysis(locus, logger);
   agn_comparison_init(&stats);
   agn_locus_comparison_aggregate(locus, &stats);
   agn_comparison_resolve(&stats);
@@ -763,29 +747,30 @@ bool agn_locus_unit_test(AgnUnitTest *test)
 
   AgnLocus *locus1 = gt_queue_get(queue);
   AgnLocus *locus2 = gt_queue_get(queue);
-  AgnLocusFilter filter = { agn_locus_cds_length, 699, AGN_LOCUS_FILTER_LT };
-  bool cdslengthtest = !agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
-                       !agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  AgnLocusFilter filter = { agn_locus_cds_length, 699, AGN_LOCUS_FILTER_LT,
+                            DEFAULTSOURCE };
+  bool cdslengthtest = !agn_locus_filter_test(locus1, &filter) &&
+                       !agn_locus_filter_test(locus2, &filter);
   filter.testvalue = 750;
   cdslengthtest = cdslengthtest &&
-                  agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
-                  !agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+                  agn_locus_filter_test(locus1, &filter) &&
+                  !agn_locus_filter_test(locus2, &filter);
   filter.testvalue = 813;
   filter.operator = AGN_LOCUS_FILTER_LE;
   cdslengthtest = cdslengthtest &&
-                  agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
-                  agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+                  agn_locus_filter_test(locus1, &filter) &&
+                  agn_locus_filter_test(locus2, &filter);
   agn_unit_test_result(test, "filter by CDS length", cdslengthtest);
 
   filter.function = agn_locus_exon_num;
   filter.testvalue = 3;
   filter.operator = AGN_LOCUS_FILTER_NE;
-  bool exonnumtest = !agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
-                      agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+  bool exonnumtest = !agn_locus_filter_test(locus1, &filter) &&
+                      agn_locus_filter_test(locus2, &filter);
   filter.testvalue = 7;
   exonnumtest = exonnumtest &&
-                agn_locus_filter_test(locus1, &filter, DEFAULTSOURCE) &&
-                !agn_locus_filter_test(locus2, &filter, DEFAULTSOURCE);
+                agn_locus_filter_test(locus1, &filter) &&
+                !agn_locus_filter_test(locus2, &filter);
   agn_unit_test_result(test, "filter by exon number", exonnumtest);
   agn_locus_delete(locus1);
   agn_locus_delete(locus2);

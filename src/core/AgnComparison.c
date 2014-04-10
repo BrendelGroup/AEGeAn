@@ -13,6 +13,21 @@ void agn_comparison_aggregate(AgnComparison *a, AgnComparison *b)
   a->overall_length  += b->overall_length;
 }
 
+void agn_comparison_data_aggregate(AgnComparisonData *agg_data,
+                                   AgnComparisonData *data)
+{
+  agn_comp_class_summary_aggregate(&agg_data->summary, &data->summary);
+  agn_comp_info_aggregate(&agg_data->info, &data->info);
+  agn_comparison_aggregate(&agg_data->stats, &data->stats);
+}
+
+void agn_comparison_data_init(AgnComparisonData *data)
+{
+  agn_comp_class_summary_init(&data->summary);
+  agn_comp_info_init(&data->info);
+  agn_comparison_init(&data->stats);
+}
+
 void agn_comparison_init(AgnComparison *comparison)
 {
   agn_comp_stats_scaled_init(&comparison->cds_nuc_stats);
