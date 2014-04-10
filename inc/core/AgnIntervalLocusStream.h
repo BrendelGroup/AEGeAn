@@ -28,6 +28,14 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
                                             GtLogger *logger);
 
 /**
+ * @function iLoci created by this stream are assigned an ID with an arbitrary
+ * number. The default format is 'iLocus%lu' (that is, iLocus1, iLocus2, etc).
+ * Use this function to override the default ID format.
+ */
+void agn_interval_locus_stream_set_idformat(AgnIntervalLocusStream *stream,
+                                            const char *format);
+
+/**
  * @function Set the source value to be used for all iLoci created by this
  * stream. Default value is 'AEGeAn::AgnIntervalLocusStream'.
  */

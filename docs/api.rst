@@ -262,6 +262,10 @@ Class AgnIntervalLocusStream
 
   Class constructor. The delta parameter specifies how far beyond each transcript the iLocus boundaries should extend, and the minimum length of an iLocus containing no transcripts. If ``endmode == 0``, all iLoci will be included in the output; if ``endmode < 0``, terminal iLoci will not be included in the output; and if ``endmode > 0``, then only terminal iLoci will be included in the output. See the online docs for a complete description of iLoci.
 
+.. c:function:: void agn_interval_locus_stream_set_idformat(AgnIntervalLocusStream *stream, const char *format)
+
+  iLoci created by this stream are assigned an ID with an arbitrary number. The default format is 'iLocus%lu' (that is, iLocus1, iLocus2, etc). Use this function to override the default ID format.
+
 .. c:function:: void agn_interval_locus_stream_set_source(AgnIntervalLocusStream *stream, GtStr *source)
 
   Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnIntervalLocusStream'.
