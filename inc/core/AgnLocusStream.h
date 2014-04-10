@@ -35,6 +35,13 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
                                             GtLogger *logger);
 
 /**
+ * @function Loci created by this stream are assigned an ID with an arbitrary
+ * number. The default format is 'locus%lu' (that is, locus1, ;ocus2, etc).
+ * Use this function to override the default ID format.
+ */
+void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format);
+
+/**
  * @function Set the source value to be used for all iLoci created by this
  * stream. Default value is 'AEGeAn::AgnLocusStream'.
  */

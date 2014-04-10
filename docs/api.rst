@@ -427,6 +427,10 @@ Class AgnLocusStream
 
   This constructor accepts two :c:type:`AgnTranscriptStream` objects as input. Locus features are created as per the class description, with additional data stored to track the source (reference vs prediction) of each transcript in each locus.
 
+.. c:function:: void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
+
+  Loci created by this stream are assigned an ID with an arbitrary number. The default format is 'locus%lu' (that is, locus1, ;ocus2, etc). Use this function to override the default ID format.
+
 .. c:function:: void agn_locus_stream_set_source(AgnLocusStream *stream, GtStr *source)
 
   Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
