@@ -59,6 +59,74 @@ bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2)
      agn_comp_stats_binary_test(&c1->utr_struc_stats, &c2->utr_struc_stats);
 }
 
+void agn_comp_class_desc_aggregate(AgnCompClassDesc *agg_desc,
+                                   AgnCompClassDesc *desc)
+{
+  agg_desc->comparison_count = desc->comparison_count;
+  agg_desc->total_length = desc->total_length;
+  agg_desc->refr_cds_length = desc->refr_cds_length;
+  agg_desc->pred_cds_length = desc->pred_cds_length;
+  agg_desc->refr_exon_count = desc->refr_exon_count;
+  agg_desc->pred_exon_count = desc->pred_exon_count;
+}
+
+void agn_comp_class_desc_init(AgnCompClassDesc *desc)
+{
+  desc->comparison_count = 0;
+  desc->total_length = 0;
+  desc->refr_cds_length = 0;
+  desc->pred_cds_length = 0;
+  desc->refr_exon_count = 0;
+  desc->pred_exon_count = 0;
+}
+
+void agn_comp_class_summary_aggregate(AgnCompClassSummary *agg_summ,
+                                      AgnCompClassSummary *summ)
+{
+  agn_comp_class_desc_aggregate(&agg_summ->perfect_matches,
+                                &summ->perfect_matches);
+  agn_comp_class_desc_aggregate(&agg_summ->perfect_mislabeled,
+                                &summ->perfect_mislabeled);
+  agn_comp_class_desc_aggregate(&agg_summ->cds_matches, &summ->cds_matches);
+  agn_comp_class_desc_aggregate(&agg_summ->exon_matches, &summ->exon_matches);
+  agn_comp_class_desc_aggregate(&agg_summ->utr_matches, &summ->utr_matches);
+  agn_comp_class_desc_aggregate(&agg_summ->non_matches, &summ->non_matches);
+}
+
+void agn_comp_class_summary_init(AgnCompClassSummary *summ)
+{
+  agn_comp_class_desc_init(&summ->perfect_matches);
+  agn_comp_class_desc_init(&summ->perfect_mislabeled);
+  agn_comp_class_desc_init(&summ->cds_matches);
+  agn_comp_class_desc_init(&summ->exon_matches);
+  agn_comp_class_desc_init(&summ->utr_matches);
+  agn_comp_class_desc_init(&summ->non_matches);
+}
+
+void agn_comp_info_aggregate(AgnCompInfo *agg_info, AgnCompInfo *info)
+{
+  agg_info->num_loci = info->num_loci;
+  agg_info->unique_refr_loci = info->unique_refr_loci;
+  agg_info->unique_pred_loci = info->unique_pred_loci;
+  agg_info->refr_genes = info->refr_genes;
+  agg_info->pred_genes = info->pred_genes;
+  agg_info->refr_transcripts = info->refr_transcripts;
+  agg_info->pred_transcripts = info->pred_transcripts;
+  agg_info->num_comparisons = info->num_comparisons;
+}
+
+void agn_comp_info_init(AgnCompInfo *info)
+{
+  info->num_loci = 0;
+  info->unique_refr_loci = 0;
+  info->unique_pred_loci = 0;
+  info->refr_genes = 0;
+  info->pred_genes = 0;
+  info->refr_transcripts = 0;
+  info->pred_transcripts = 0;
+  info->num_comparisons = 0;
+}
+
 void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *a,
                                      AgnCompStatsBinary *b)
 {

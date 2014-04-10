@@ -98,10 +98,81 @@ enum AgnCompClassification
 typedef enum AgnCompClassification AgnCompClassification;
 
 /**
+ * @type This struct contains various counts to be reported in the summary
+ * report.
+ */
+struct AgnCompInfo
+{
+  GtUword num_loci;
+  GtUword unique_refr_loci;
+  GtUword unique_pred_loci;
+  GtUword refr_genes;
+  GtUword pred_genes;
+  GtUword refr_transcripts;
+  GtUword pred_transcripts;
+  GtUword num_comparisons;
+};
+typedef struct AgnCompInfo AgnCompInfo;
+
+/**
+ * @type When reporting the results of a comparative analysis, it may be useful
+ * to (as is done by ParsEval) show some basic information about clique pairs
+ * that fall under each classification category. The counts in this struct are
+ * necessary to calculate those summary characteristics.
+ */
+struct AgnCompClassDesc
+{
+  GtUword comparison_count;
+  GtUword total_length;
+  GtUword refr_cds_length;
+  GtUword pred_cds_length;
+  GtUword refr_exon_count;
+  GtUword pred_exon_count;
+};
+typedef struct AgnCompClassDesc AgnCompClassDesc;
+
+/**
+ * @type This struct is used to aggregate descriptions for all of the
+ * classification categories.
+ */
+struct AgnCompClassSummary
+{
+  AgnCompClassDesc perfect_matches;
+  AgnCompClassDesc perfect_mislabeled;
+  AgnCompClassDesc cds_matches;
+  AgnCompClassDesc exon_matches;
+  AgnCompClassDesc utr_matches;
+  AgnCompClassDesc non_matches;
+};
+typedef struct AgnCompClassSummary AgnCompClassSummary;
+
+/**
+ * @type Aggregate various data related to comparison of annotations.
+ */
+struct AgnComparisonData
+{
+  AgnCompClassSummary summary;
+  AgnCompInfo info;
+  AgnComparison stats;
+};
+typedef struct AgnComparisonData AgnComparisonData;
+
+/**
  * @function Function used to combine similarity stats from many different
  * comparisons into a single aggregate summary.
  */
 void agn_comparison_aggregate(AgnComparison *agg_cmp, AgnComparison *cmp);
+
+/**
+ * @function FIXME
+ */
+void agn_comparison_data_aggregate(AgnComparisonData *agg_data,
+                                   AgnComparisonData *data);
+
+/**
+ * @function FIXME
+ */
+void agn_comparidon_data_init(AgnComparisonData *data);
 
 /**
  * @function Initialize comparison stats to default values.
@@ -123,6 +194,38 @@ void agn_comparison_resolve(AgnComparison *comparison);
  * otherwise.
  */
 bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2);
+
+/**
+ * @function FIXME
+ */
+void agn_comp_class_desc_aggregate(AgnCompClassDesc *agg_desc,
+                                   AgnCompClassDesc *desc);
+
+/**
+ * @function FIXME
+ */
+void agn_comp_class_desc_init(AgnCompClassDesc *desc);
+
+/**
+ * @function FIXME
+ */
+void agn_comp_class_summary_aggregate(AgnCompClassSummary *agg_summ,
+                                      AgnCompClassSummary *summ);
+
+/**
+ * @function FIXME
+ */
+void agn_comp_class_summary_init(AgnCompClassSummary *summ);
+
+/**
+ * @function FIXME
+ */
+void agn_comp_info_aggregate(AgnCompInfo *agg_info, AgnCompInfo *info);
+
+/**
+ * @function FIXME
+ */
+void agn_comp_info_init(AgnCompInfo *info);
 
 /**
  * @function Function used to combine similarity stats from many different

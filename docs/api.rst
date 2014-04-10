@@ -108,9 +108,23 @@ Data structures and functions related to comparative assessment of gene/transcri
 
 
 
+.. c:type:: AgnComparisonData
+
+  Aggregate various data related to comparison of annotations.
+
+
+
 .. c:function:: void agn_comparison_aggregate(AgnComparison *agg_cmp, AgnComparison *cmp)
 
   Function used to combine similarity stats from many different comparisons into a single aggregate summary.
+
+.. c:function:: void agn_comparison_data_aggregate(AgnComparisonData *agg_data, AgnComparisonData *data)
+
+  FIXME
+
+.. c:function:: void agn_comparidon_data_init(AgnComparisonData *data)
+
+  FIXME
 
 .. c:function:: void agn_comparison_init(AgnComparison *comparison)
 
@@ -127,6 +141,30 @@ Data structures and functions related to comparative assessment of gene/transcri
 .. c:function:: bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2)
 
   Returns true if c1 and c2 contain identical values, false otherwise.
+
+.. c:function:: void agn_comp_class_desc_aggregate(AgnCompClassDesc *agg_desc, AgnCompClassDesc *desc)
+
+  FIXME
+
+.. c:function:: void agn_comp_class_desc_init(AgnCompClassDesc *desc)
+
+  FIXME
+
+.. c:function:: void agn_comp_class_summary_aggregate(AgnCompClassSummary *agg_summ, AgnCompClassSummary *summ)
+
+  FIXME
+
+.. c:function:: void agn_comp_class_summary_init(AgnCompClassSummary *summ)
+
+  FIXME
+
+.. c:function:: void agn_comp_info_aggregate(AgnCompInfo *agg_info, AgnCompInfo *info)
+
+  FIXME
+
+.. c:function:: void agn_comp_info_init(AgnCompInfo *info)
+
+  FIXME
 
 .. c:function:: void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *agg_stats, AgnCompStatsBinary *stats)
 
