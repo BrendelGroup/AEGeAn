@@ -10,11 +10,11 @@ typedef struct
   GtHashmap *filter;
   FILE *genestream;
   bool intloci;
+  char *idformat;
   unsigned long delta;
   GtFile *outstream;
   void (*filefreefunc)(GtFile *);
   GtHashmap *type_parents;
-  bool retainids;
   int endmode;
   FILE *transstream;
   bool pseudofix;
@@ -29,12 +29,12 @@ static void set_option_defaults(LocusPocusOptions *options)
   gt_hashmap_add(options->filter, gt_cstr_dup("gene"), gt_cstr_dup("gene"));
   options->genestream = NULL;
   options->intloci = false;
+  options->idformat = NULL;
   options->delta = 500;
   options->outstream = gt_file_new_from_fileptr(stdout);
   options->filefreefunc = gt_file_delete_without_handle;
   options->type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
                                          gt_free_func);
-  options->retainids = false;
   options->endmode = 0;
   options->transstream = NULL;
   options->pseudofix = false;
@@ -73,12 +73,17 @@ static void print_usage(FILE *outstream)
 "    -e|--endsonly          report only gene-less iLoci at the ends of\n"
 "                           sequences (complement of --skipends)\n\n"
 "  Output options:\n"
+"    -I|--idformat: STR     provide a printf-style format string to override\n"
+"                           the default ID format for newly created loci;\n"
+"                           default is 'locus%%lu' (locus1, locus2, etc) for\n"
+"                           loci and 'iLocus%%lu' (iLocus1, iLocus2, etc) for\n"
+"                           interval loci; note the format string should\n"
+"                           include a single %%lu specifier to be filled in\n"
+"                           with a long unsigned integer value\n"
 "    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
 "                           corresponding locus to the given file\n"
 "    -o|--outfile: FILE     name of file to which results will be written;\n"
 "                           default is terminal (standard output)\n"
-"    -r|--retainids         retain IDs from input data; selecting 'genemap'\n"
-"                           and/or 'transmap' will activate this setting\n"
 "    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
 "                           to its corresponding locus to the given file\n"
 "    -v|--verbose           include all locus subfeatures (genes, RNAs, etc)\n"
@@ -101,7 +106,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "def:g:hil:o:p:rst:uv";
+  const char *optstr = "def:g:hI:il:o:p:st:uv";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
@@ -110,11 +115,11 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "filter",    required_argument, NULL, 'f' },
     { "genemap",   required_argument, NULL, 'g' },
     { "help",      no_argument,       NULL, 'h' },
+    { "idformat",  required_argument, NULL, 'I' },
     { "intloci",   no_argument,       NULL, 'i' },
     { "delta",     required_argument, NULL, 'l' },
     { "outfile",   required_argument, NULL, 'o' },
     { "parent",    required_argument, NULL, 'p' },
-    { "retainids", no_argument,       NULL, 'r' },
     { "skipends",  no_argument,       NULL, 's' },
     { "transmap",  required_argument, NULL, 't' },
     { "pseudo",    no_argument,       NULL, 'u' },
@@ -155,7 +160,6 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         }
         break;
       case 'g':
-        options->retainids = 1;
         options->genestream = fopen(optarg, "w");
         if(options->genestream == NULL)
           gt_error_set(error, "could not open genemap file '%s'", optarg);
@@ -163,6 +167,11 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
       case 'h':
         print_usage(stdout);
         exit(0);
+        break;
+      case 'I':
+        if(options->idformat != NULL)
+          gt_free(options->idformat);
+        options->idformat = gt_cstr_dup(optarg);
         break;
       case 'i':
         options->intloci = 1;
@@ -194,9 +203,6 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
                          gt_cstr_dup(value));
         }
         break;
-      case 'r':
-        options->retainids = 1;
-        break;
       case 's':
         if(options->endmode > 0)
         {
@@ -206,7 +212,6 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         options->endmode = -1;
         break;
       case 't':
-        options->retainids = 1;
         options->transstream = fopen(optarg, "w");
         if(options->transstream == NULL)
           gt_error_set(error, "could not open transmap file '%s'", optarg);
@@ -283,6 +288,11 @@ int main(int argc, char **argv)
   GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
   current_stream = agn_locus_stream_new(last_stream, logger);
   agn_locus_stream_set_source((AgnLocusStream *)current_stream, source);
+  if(options.idformat != NULL)
+  {
+    agn_locus_stream_set_idformat((AgnLocusStream *)current_stream,
+                                  options.idformat);
+  }
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
@@ -292,6 +302,11 @@ int main(int argc, char **argv)
                                                    options.endmode, logger);
     agn_interval_locus_stream_set_source(
                               (AgnIntervalLocusStream *)current_stream, source);
+    if(options.idformat != NULL)
+    {
+      agn_interval_locus_stream_set_idformat(
+                    (AgnIntervalLocusStream *)current_stream, options.idformat);
+    }
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }
@@ -320,8 +335,7 @@ int main(int argc, char **argv)
   }
 
   current_stream = gt_gff3_out_stream_new(last_stream, options.outstream);
-  if(options.retainids)
-    gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)current_stream);
+  gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

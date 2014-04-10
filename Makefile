@@ -162,7 +162,6 @@ agn-test:	agn
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose --retainids data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@- echo AEGeAn Functional Tests
 		@- test/xtractore-ft.sh $(MEMCHECKFT)
 		@- #test/AT1G05320.sh
