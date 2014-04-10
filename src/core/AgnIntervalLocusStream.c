@@ -238,6 +238,64 @@ static int ilocus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     sprintf(locusid, stream->idformat, stream->count);
     gt_feature_node_set_attribute(fn, "ID", locusid);
     gt_feature_node_set_source(fn, stream->source);
+
+    GtArray *types = gt_array_new( sizeof(const char *) );
+    GtHashmap *countsbytype = gt_hashmap_new(GT_HASH_STRING,
+                                             gt_free_func,
+                                             gt_free_func);
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+    GtFeatureNode *child;
+    for(child = gt_feature_node_iterator_next(iter);
+        child != NULL;
+        child = gt_feature_node_iterator_next(iter))
+    {
+      const char *childtype = gt_feature_node_get_type(child);
+      GtUword *num_of_type = gt_hashmap_get(countsbytype, childtype);
+      if(num_of_type == NULL)
+      {
+        char *type = gt_cstr_dup(childtype);
+        gt_array_add(types, type);
+        num_of_type = gt_malloc( sizeof(GtUword) );
+        (*num_of_type) = 0;
+        gt_hashmap_add(countsbytype, type, num_of_type);
+      }
+      (*num_of_type)++;
+
+      GtFeatureNodeIterator*
+          subiter = gt_feature_node_iterator_new_direct(child);
+      GtFeatureNode *subchild;
+      for(subchild = gt_feature_node_iterator_next(subiter);
+          subchild != NULL;
+          subchild = gt_feature_node_iterator_next(subiter))
+      {
+        childtype = gt_feature_node_get_type(subchild);
+        num_of_type = gt_hashmap_get(countsbytype, childtype);
+        if(num_of_type == NULL)
+        {
+          char *type = gt_cstr_dup(childtype);
+          gt_array_add(types, type);
+          num_of_type = gt_malloc( sizeof(GtUword) );
+          (*num_of_type) = 0;
+          gt_hashmap_add(countsbytype, type, num_of_type);
+        }
+        (*num_of_type)++;
+      }
+      gt_feature_node_iterator_delete(subiter);
+    }
+    gt_feature_node_iterator_delete(iter);
+
+    GtUword i;
+    for(i = 0; i < gt_array_size(types); i++)
+    {
+      const char **attrkey = gt_array_get(types, i);
+      GtUword *attrvalue = gt_hashmap_get(countsbytype, *attrkey);
+      char value[32];
+      sprintf(value, "%lu", *attrvalue);
+      gt_feature_node_set_attribute(fn, *attrkey, value);
+    }
+
+    gt_hashmap_delete(countsbytype);
+    gt_array_delete(types);
   }
 
   return result;
