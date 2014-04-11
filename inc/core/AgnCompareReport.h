@@ -18,13 +18,13 @@
 typedef struct AgnCompareReport AgnCompareReport;
 
 /**
- * @type Signature of callback functions used to create locus-level reports, if
+ * @functype Signature of callback functions used to create locus-level reports, if
  * any.
  */
 typedef void (*AgnCompareReportLocusFunc)(AgnLocus *locus, void *data);
 
 /**
- * @type Signature of callback functions used to create sequence-level summary
+ * @functype Signature of callback functions used to create sequence-level summary
  * reports, if any.
  */
 typedef void (*AgnCompareReportSequenceFunc)(const AgnComparisonData *cd,

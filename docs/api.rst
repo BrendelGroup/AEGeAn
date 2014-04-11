@@ -68,17 +68,13 @@ Class AgnCompareReport
 
   The ``AgnCompareReport`` class implements the ``GtNodeVisitor`` class. It is used to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produce reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReport.h>`_.
 
-.. c:type:: 
+.. c:type:: typedef void (*AgnCompareReportLocusFunc)(AgnLocus *locus, void *data)
 
   Signature of callback functions used to create locus-level reports, if any.
 
-
-
-.. c:type:: 
+.. c:type:: typedef void (*AgnCompareReportSequenceFunc)(const AgnComparisonData *cd, const char *seqid, void *data)
 
   Signature of callback functions used to create sequence-level summary reports, if any.
-
-
 
 .. c:function:: AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt)
 
