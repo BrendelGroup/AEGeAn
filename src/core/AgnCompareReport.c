@@ -14,6 +14,7 @@ struct AgnCompareReport
   AgnComparisonData data;
   GtStrArray *seqids;
   GtHashmap *seqdata;
+  const char *last_seqid;
   GtArray *locusfilters;
   GtLogger *logger;
   AgnCompareReportLocusFunc locusfunc;
@@ -73,6 +74,7 @@ GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger)
   AgnCompareReport *rpt = compare_report_visitor_cast(nv);
   agn_comparison_data_init(&rpt->data);
   rpt->seqids = gt_str_array_new();
+  rpt->last_seqid = NULL;
   rpt->seqdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
   rpt->locusfilters = locusfilters;
   rpt->logger = logger;
@@ -231,16 +233,27 @@ static int compare_report_visit_region_node(GtNodeVisitor *nv,
                                             GtRegionNode *rn, GtError *error)
 {
   AgnCompareReport *rpt;
+  AgnComparisonData *data;
+  GtStr *seqidstr;
+  const char *seqid;
 
   gt_error_check(error);
   gt_assert(nv && rn);
 
   rpt = compare_report_visitor_cast(nv);
-  GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)rn);
-  gt_str_array_add(rpt->seqids, seqid);
-  AgnComparisonData *data = gt_malloc( sizeof(AgnComparisonData) );
+  seqidstr = gt_genome_node_get_seqid((GtGenomeNode *)rn);
+  seqid = gt_cstr_dup(gt_str_get(seqidstr));
+  gt_str_array_add(rpt->seqids, seqidstr);
+  data = gt_malloc( sizeof(AgnComparisonData) );
   agn_comparison_data_init(data);
-  gt_hashmap_add(rpt->seqdata, gt_cstr_dup(gt_str_get(seqid)), data);
+  gt_hashmap_add(rpt->seqdata, (char *)seqid, data);
+
+  if(rpt->last_seqid != NULL)
+  {
+    AgnComparisonData *seqdata = gt_hashmap_get(rpt->seqdata, seqid);
+    rpt->sequencefunc(seqdata, seqid, rpt->sequencefuncdata);
+  }
+  rpt->last_seqid = seqid;
 
   return 0;
 }
