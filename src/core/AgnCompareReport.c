@@ -1,4 +1,5 @@
 #include "AgnCompareReport.h"
+#include "AgnTypecheck.h"
 
 #define compare_report_visitor_cast(GV)\
         gt_node_visitor_cast(compare_report_visitor_class(), GV)
@@ -112,22 +113,21 @@ static void compare_report_free(GtNodeVisitor *nv)
 
 void compare_report_record_locus_stats(AgnComparisonData *data, AgnLocus *locus)
 {
-  //GtUword numrefrgenes, numpredgenes;
+  GtUword numrefrgenes, numpredgenes;
   GtUword i;
   gt_assert(data && locus);
 
   data->info.num_loci++;
-  // FIXME implement agn_locus_num_refr_genes function!!!
-  //numrefrgenes = agn_locus_num_refr_genes(locus);
-  //numpredgenes = agn_locus_num_pred_genes(locus);
-  //data->info.refr_genes += numrefrgenes;
-  //data->info.pred_genes += numpredgenes;
+  numrefrgenes = agn_locus_num_refr_genes(locus);
+  numpredgenes = agn_locus_num_pred_genes(locus);
+  data->info.refr_genes += numrefrgenes;
+  data->info.pred_genes += numpredgenes;
   data->info.refr_transcripts += agn_locus_num_refr_mrnas(locus);
   data->info.pred_transcripts += agn_locus_num_pred_mrnas(locus);
-  //if(numrefrgenes > 0 && numpredgenes == 0)
-  //  data->info.unique_refr_loci++;
-  //if(numpredgenes > 0 && numrefrgenes == 0)
-  //  data->info.unique_pred_loci++;
+  if(numrefrgenes > 0 && numpredgenes == 0)
+    data->info.unique_refr_loci++;
+  if(numpredgenes > 0 && numrefrgenes == 0)
+    data->info.unique_pred_loci++;
 
   agn_locus_comparison_aggregate(locus, &data->stats);
   GtRange locusrange = gt_genome_node_get_range(locus);
@@ -164,10 +164,15 @@ void compare_report_record_locus_stats(AgnComparisonData *data, AgnLocus *locus)
     }
     desc->comparison_count++;
     desc->total_length += gt_range_length(&locusrange);
-    //desc->refr_cds_length
-    //desc->pred_cds_length
-    //desc->refr_exon_count
-    //desc->pred_exon_count
+
+    AgnTranscriptClique *rclique = agn_clique_pair_get_refr_clique(*pair);
+    AgnTranscriptClique *pclique = agn_clique_pair_get_pred_clique(*pair);
+    desc->refr_cds_length += agn_transcript_clique_cds_length(rclique);
+    desc->pred_cds_length += agn_transcript_clique_cds_length(pclique);
+    GtFeatureNode *rcliquefn = gt_feature_node_cast(rclique);
+    GtFeatureNode *pcliquefn = gt_feature_node_cast(pclique);
+    desc->refr_exon_count += agn_typecheck_count(rcliquefn, agn_typecheck_exon);
+    desc->pred_exon_count += agn_typecheck_count(pcliquefn, agn_typecheck_exon);
   }
 }
 

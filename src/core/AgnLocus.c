@@ -322,9 +322,29 @@ GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus)
   return gt_genome_node_get_user_data(locus, "unique_refr");
 }
 
+GtArray *agn_locus_genes(AgnLocus *locus, AgnComparisonSource src)
+{
+  GtArray *genes = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNode *fn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    bool isgene = agn_typecheck_gene(feature);
+    bool meets_crit = locus_gene_source_test(locus, feature, src);
+    if(isgene && meets_crit)
+      gt_array_add(genes, feature);
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return genes;
+}
+
 GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src)
 {
-  GtArray *ids = gt_array_new( sizeof(GtFeatureNode *) );
+  GtArray *ids = gt_array_new( sizeof(const char *) );
   GtFeatureNode *fn = gt_feature_node_cast(locus);
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
   GtFeatureNode *feature;
@@ -343,6 +363,26 @@ GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src)
   gt_feature_node_iterator_delete(iter);
 
   return ids;
+}
+
+GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src)
+{
+  GtUword count = 0;
+  GtFeatureNode *fn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    bool isgene = agn_typecheck_gene(feature);
+    bool meets_crit = locus_gene_source_test(locus, feature, src);
+    if(isgene && meets_crit)
+      count++;
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return count;
 }
 
 GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)

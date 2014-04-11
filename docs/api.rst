@@ -422,9 +422,17 @@ Class AgnLocus
 
   Get a list of all the reference transcript cliques that have no corresponding prediction transcript clique.
 
+.. c:function:: GtArray *agn_locus_genes(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the genes associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_genes(locus)`` to retrieve prediction genes, ``agn_locus_refr_genes(locus)`` to retrieve reference genes, or ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+
 .. c:function:: GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src)
 
   Get the gene IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_gene_ids(locus)`` to retrieve prediction IDs, ``agn_locus_refr_gene_ids(locus)`` to retrieve reference IDs, or ``agn_locus_get_gene_ids(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the number of genes for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_genes(locus)`` for the number of prediction genes, ``agn_locus_num_refr_genes(locus)`` for the number of reference genes, or ``agn_locus_num_genes(locus)`` if the source of annotation is undesignated or irrelevant.
 
 .. c:function:: GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
 
@@ -671,6 +679,10 @@ Functions for testing feature types. See the `module header <https://github.com/
 .. c:function:: bool agn_typecheck_cds(GtFeatureNode *fn)
 
   Returns true if the given feature is a CDS; false otherwise.
+
+.. c:function:: GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+
+  Count the number of ``fn``'s children that have the given type.
 
 .. c:function:: bool agn_typecheck_exon(GtFeatureNode *fn)
 

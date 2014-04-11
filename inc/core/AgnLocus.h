@@ -181,6 +181,22 @@ GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus);
 GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus);
 
 /**
+ * @function Get the genes associated with this locus. Rather than calling
+ * this function directly, users are encouraged to use one of the following
+ * macros: ``agn_locus_pred_genes(locus)`` to retrieve prediction genes,
+ * ``agn_locus_refr_genes(locus)`` to retrieve reference genes, or
+ * ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or
+ * irrelevant.
+ */
+GtArray *agn_locus_genes(AgnLocus *locus, AgnComparisonSource src);
+#define agn_locus_pred_genes(LC)\
+        agn_locus_genes(LC, PREDICTIONSOURCE)
+#define agn_locus_refr_genes(LC)\
+        agn_locus_genes(LC, REFERENCESOURCE)
+#define agn_locus_get_genes(LC)\
+        agn_locus_genes(LC, DEFAULTSOURCE)
+
+/**
  * @function Get the gene IDs associated with this locus. Rather than
  * calling this function directly, users are encouraged to use one of the
  * following macros: ``agn_locus_pred_gene_ids(locus)`` to retrieve
@@ -196,6 +212,22 @@ GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src);
         agn_locus_gene_ids(LC, REFERENCESOURCE)
 #define agn_locus_get_gene_ids(LC)\
         agn_locus_gene_ids(LC, DEFAULTSOURCE)
+
+/**
+ * @function Get the number of genes for the locus. Rather than calling
+ * this function directly, users are encouraged to use one of the following
+ * macros: ``agn_locus_num_pred_genes(locus)`` for the number of prediction
+ * genes, ``agn_locus_num_refr_genes(locus)`` for the number of reference
+ * genes, or ``agn_locus_num_genes(locus)`` if the source of annotation is
+ * undesignated or irrelevant.
+ */
+GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src);
+#define agn_locus_num_pred_genes(LC)\
+        agn_locus_gene_num(LC, PREDICTIONSOURCE)
+#define agn_locus_num_refr_genes(LC)\
+        agn_locus_gene_num(LC, REFERENCESOURCE)
+#define agn_locus_num_genes(LC)\
+        agn_locus_gene_num(LC, DEFAULTSOURCE
 
 /**
  * @function Get the mRNAs associated with this locus. Rather than calling

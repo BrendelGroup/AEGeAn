@@ -9,6 +9,23 @@ bool agn_typecheck_cds(GtFeatureNode *fn)
          gt_feature_node_has_type(fn, "coding_sequence");
 }
 
+GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+{
+  GtUword count = 0;
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *feature;
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    if(func(fn))
+      count++;
+  }
+  gt_feature_node_iterator_delete(iter);
+
+  return count;
+}
+
 bool agn_typecheck_exon(GtFeatureNode *fn)
 {
   return gt_feature_node_has_type(fn, "exon");

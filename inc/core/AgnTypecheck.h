@@ -15,6 +15,11 @@
 bool agn_typecheck_cds(GtFeatureNode *fn);
 
 /**
+ * @function Count the number of ``fn``'s children that have the given type.
+ */
+GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *));
+
+/**
  * @function Returns true if the given feature is an exon; false otherwise.
  */
 bool agn_typecheck_exon(GtFeatureNode *fn);
