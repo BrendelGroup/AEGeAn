@@ -1,4 +1,5 @@
 #include "AgnCliquePair.h"
+#include "AgnCompareReportText.h"
 #include "AgnComparison.h"
 #include "AgnFilterStream.h"
 #include "AgnGeneStream.h"

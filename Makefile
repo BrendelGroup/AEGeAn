@@ -26,18 +26,13 @@ AGN_SRCS=$(wildcard src/core/Agn*.c)
 AGN_OBJS=$(patsubst src/core/%.c,obj/%.o,$(AGN_SRCS))
 AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
-# ParsEval class and module files
-PE_SRCS=$(wildcard src/ParsEval/Pe*.c)
-PE_OBJS=$(patsubst src/ParsEval/%.c,obj/%.o,$(PE_SRCS))
-PE_HDRS=$(patsubst src/ParsEval/%.c,inc/ParsEval/%.h,$(PE_SRCS))
-
 # VAnG class and module files
 VN_SRCS=$(wildcard src/VAnG/Vang*.c)
 VN_OBJS=$(patsubst src/VAnG/%.c,obj/%.o,$(VN_SRCS))
 VN_HDRS=$(patsubst src/VAnG/%.c,inc/VAnG/%.h,$(VN_SRCS))
 
 # All class and module files
-CLSS_MDL_OBJS=$(AGN_OBJS) $(PE_OBJS) $(VN_OBJS)
+CLSS_MDL_OBJS=$(AGN_OBJS) $(VN_OBJS)
 
 # Compilation settings
 CC=gcc
@@ -80,7 +75,7 @@ LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 all:		gt agn
 		
 
-agn:		$(LP_EXE) $(XT_EXE) $(UT_EXE) libaegean.a
+agn:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) libaegean.a
 		
 
 install:	all gt-install
@@ -111,17 +106,13 @@ $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
-$(PE_OBJS):	obj/%.o : src/ParsEval/%.c inc/ParsEval/%.h inc/core/AgnVersion.h
-		@- mkdir -p obj
-		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
-
 $(VN_OBJS):	obj/%.o : src/VAnG/%.c inc/VAnG/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 		
-$(PE_EXE):	src/ParsEval/parseval.c $(AGN_OBJS) $(PE_OBJS)
+$(PE_EXE):	src/parseval.c $(AGN_OBJS)
 		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) $(PE_OBJS) src/ParsEval/parseval.c $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/parseval.c $(LDFLAGS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@- mkdir -p bin
