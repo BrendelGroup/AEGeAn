@@ -386,12 +386,12 @@ int main(int argc, char **argv)
   //----- Set up the node processing stream -----//
   //---------------------------------------------//
 
-  refrgff3 = gt_gff3_in_stream_new_unsorted(numfiles, (const char **)argv+optind);
+  refrgff3 = gt_gff3_in_stream_new_unsorted(1, &options.refrfile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)refrgff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)refrgff3);
   gt_queue_add(streams, refrgff3);
 
-  predgff3 = gt_gff3_in_stream_new_unsorted(numfiles, (const char **)argv+optind+1);
+  predgff3 = gt_gff3_in_stream_new_unsorted(1, &options.predfile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)predgff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)predgff3);
   gt_queue_add(streams, predgff3);
@@ -430,8 +430,9 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = agn_compare_report_text_new(last_stream, options.outfile,
-                                               logger);
+  GtNodeVisitor *rpt = agn_compare_report_text_new(options.outfile,
+                                                          logger);
+  current_stream = gt_visitor_stream_new(last_stream, rpt);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
@@ -444,7 +445,7 @@ int main(int argc, char **argv)
   if(result == -1)
     fprintf(stderr, "[ParsEval] error: %s", gt_error_get(error));
 
-  agn_compare_report_text_create_summary((AgnCompareReportText *)last_stream,
+  agn_compare_report_text_create_summary((AgnCompareReportText *)rpt,
                                          options.outfile);
 
   // Free memory and terminate
