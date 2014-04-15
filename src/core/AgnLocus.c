@@ -206,19 +206,15 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtLogger *logger)
   GtArray *predcliques = locus_enumerate_cliques(locus, pred_trans);
   gt_array_delete(pred_trans);
 
-  //GtUword numpairs = gt_array_size(refrcliques) * gt_array_size(predcliques);
-  //if(maxpairs > 0 && numpairs > maxpairs)
-  //{
-  //  GtStr *seqid = gt_genome_node_get_seqid(locus);
-  //  GtRange range = gt_genome_node_get_range(locus);
-  //  gt_logger_log(logger, "warning: locus %s[%lu, %lu] includes %lu possible "
-  //                "transcript clique pairs (maximum is %lu); skipping this "
-  //                "locus", gt_str_get(seqid), range.start, range.end, numpairs,
-  //                maxpairs);
-  //  gt_array_delete(refrcliques);
-  //  gt_array_delete(predcliques);
-  //  return;
-  //}
+  if(refrcliques == NULL || predcliques == NULL)
+  {
+    if(refrcliques)
+      gt_array_delete(refrcliques);
+    if(predcliques)
+      gt_array_delete(predcliques);
+    return;
+  }
+
   GtArray *clique_pairs = locus_enumerate_pairs(locus,refrcliques,predcliques);
   gt_array_sort(clique_pairs, (GtCompare)agn_clique_pair_compare_reverse);
   locus_select_pairs(locus, refrcliques, predcliques, clique_pairs);
@@ -883,6 +879,9 @@ static void locus_clique_array_delete(GtArray *array)
 
 static GtArray *locus_enumerate_cliques(AgnLocus *locus, GtArray *trans)
 {
+  if(gt_array_size(trans) == 0)
+    return NULL;
+
   GtArray *cliques = gt_array_new( sizeof(AgnTranscriptClique *) );
   GtUword numtrans = gt_array_size(trans);
   GtStr *seqid = gt_genome_node_get_seqid(locus);

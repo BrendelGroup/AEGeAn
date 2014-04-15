@@ -83,7 +83,7 @@ static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   fprintf(outstream,
           "|-------------------------------------------------\n"
-          "|---- Locus: %s_%lu-%lu\n"
+          "|---- Locus: seqid=%s range=%lu-%lu\n"
           "|-------------------------------------------------\n"
           "|\n",
           gt_str_get(seqid), range.start, range.end);
@@ -98,7 +98,7 @@ static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
     fprintf(outstream,
             "     |\n"
             "     | No comparisons were performed for this locus.\n"
-            "     |\n");
+            "     |\n\n");
     return;
   }
 
@@ -107,6 +107,7 @@ static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
     compare_report_text_print_pair(pair, outstream);
   }
+  fputs("\n", outstream);
 }
 
 static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
@@ -114,7 +115,7 @@ static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
   GtArray *genes;
 
   genes = agn_locus_refr_gene_ids(locus);
-  fprintf(outstream, "  |  reference genes:\n");
+  fprintf(outstream, "|  reference genes:\n");
   if(gt_array_size(genes) == 0)
     fprintf(outstream, "|    None!\n");
   while(gt_array_size(genes) > 0)
@@ -126,7 +127,7 @@ static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
   gt_array_delete(genes);
 
   genes = agn_locus_pred_gene_ids(locus);
-  fprintf(outstream, "  |  prediction genes:\n");
+  fprintf(outstream, "|  prediction genes:\n");
   if(gt_array_size(genes) == 0)
     fprintf(outstream, "|    None!\n");
   while(gt_array_size(genes) > 0)
@@ -134,7 +135,6 @@ static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
     const char **geneid = gt_array_pop(genes);
     fprintf(outstream, "|    %s\n", *geneid);
   }
-  fprintf(outstream, "|\n");
   gt_array_delete(genes);
 }
 
@@ -149,7 +149,7 @@ static void compare_report_text_pair_nucleotide(FILE *outstream,
     fprintf(outstream, "     |    Gene structures match perfectly!\n");
   else
   {
-    fprintf(outstream, "     |    %-30s %-10s %-10s %-10s\n",
+    fprintf(outstream, "     |  %-30s   %-10s %-10s %-10s\n",
             "Nucleotide-level comparison", "CDS", "UTRs", "Overall" );
     fprintf(outstream, "     |    %-30s %-10s %-10s %.3lf\n",
             "Matching coefficient:", pairstats->cds_nuc_stats.mcs,
@@ -176,7 +176,7 @@ static void compare_report_text_pair_structure(FILE *outstream,
                                                const char *label,
                                                const char *units)
 {
-  fprintf(outstream, " | %s structure comparison\n", label);
+  fprintf(outstream, "     |  %s structure comparison\n", label);
   if(stats->missing == 0 && stats->wrong == 0)
   {
     fprintf(outstream,
@@ -203,9 +203,8 @@ static void compare_report_text_pair_structure(FILE *outstream,
             "     |    %-30s %-10s\n" 
             "     |    %-30s %-10s\n" 
             "     |    %-30s %-10s\n",
-            "Sensitivity:", "Specificity:", "F1 Score:",
-            "Annotation edit distance:", stats->sns, stats->sps, stats->f1s,
-            stats->eds);
+            "Sensitivity:", stats->sns, "Specificity:", stats->sps,
+            "F1 Score:", stats->f1s, "Annotation edit distance:",stats->eds);
   }
   fprintf(outstream, "     |\n");
 }
@@ -262,6 +261,5 @@ static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
           "     |\n"
           "     |--------------------------\n"
           "     |----- End comparison -----\n"
-          "     |--------------------------\n"
-          "     |\n");
+          "     |--------------------------\n");
 }
