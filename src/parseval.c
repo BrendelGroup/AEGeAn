@@ -390,11 +390,29 @@ int main(int argc, char **argv)
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)refrgff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)refrgff3);
   gt_queue_add(streams, refrgff3);
+  if(options.refrlabel != NULL)
+  {
+    GtStr *rlabel = gt_str_new_cstr(options.refrlabel);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(rlabel);
+    GtNodeStream *tempstream = gt_visitor_stream_new(refrgff3, nv);
+    gt_queue_add(streams, tempstream);
+    refrgff3 = tempstream;
+    gt_str_delete(rlabel);
+  }
 
   predgff3 = gt_gff3_in_stream_new_unsorted(1, &options.predfile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)predgff3);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)predgff3);
   gt_queue_add(streams, predgff3);
+  if(options.predlabel != NULL)
+  {
+    GtStr *rlabel = gt_str_new_cstr(options.predlabel);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(rlabel);
+    GtNodeStream *tempstream = gt_visitor_stream_new(predgff3, nv);
+    gt_queue_add(streams, tempstream);
+    predgff3 = tempstream;
+    gt_str_delete(rlabel);
+  }
 
   current_stream = agn_locus_stream_new_pairwise(refrgff3, predgff3, logger);
   gt_queue_add(streams, current_stream);
@@ -415,13 +433,6 @@ int main(int argc, char **argv)
   current_stream = agn_filter_stream_new(last_stream, options.filter);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;*/
-
-  /*GtStr *source = gt_str_new_cstr("AEGeAn::ParsEval");
-  current_stream = agn_locus_stream_new(last_stream, logger);
-  agn_locus_stream_set_source((AgnLocusStream *)current_stream, source);
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-  gt_str_delete(source);*/
 
   /* FIXME I don't understand why this is needed, but without it memory is
    * leaked; if it's not in this precise location, no memory is leaked but
