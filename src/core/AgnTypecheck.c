@@ -18,7 +18,7 @@ GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    if(func(fn))
+    if(func(feature))
       count++;
   }
   gt_feature_node_iterator_delete(iter);

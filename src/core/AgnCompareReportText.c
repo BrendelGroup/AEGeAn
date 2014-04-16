@@ -230,6 +230,121 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
             (double)data->summary.non_matches.comparison_count );
   }
   fputs("\n", outstream);
+
+  fprintf( outstream, "  CDS structure comparison\n" );
+  fprintf( outstream, "    reference CDS segments.................%lu\n",
+           data->stats.cds_struc_stats.correct + data->stats.cds_struc_stats.missing );
+  fprintf( outstream, "      match prediction.....................%lu (%.1f%%)\n",
+           data->stats.cds_struc_stats.correct,
+           ((float)data->stats.cds_struc_stats.correct /(float)
+           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.missing))*100 );
+  fprintf( outstream, "      don't match prediction...............%lu (%.1f%%)\n",
+           data->stats.cds_struc_stats.missing,
+           ((float)data->stats.cds_struc_stats.missing/(float)
+           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.missing))*100 );
+  fprintf( outstream, "    prediction CDS segments................%lu\n",
+           data->stats.cds_struc_stats.correct + data->stats.cds_struc_stats.wrong );
+  fprintf( outstream, "      match reference......................%lu (%.1f%%)\n",
+           data->stats.cds_struc_stats.correct,
+           ((float)data->stats.cds_struc_stats.correct/(float)
+           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.wrong))*100 );
+  fprintf( outstream, "      don't match reference................%lu (%.1f%%)\n",
+           data->stats.cds_struc_stats.wrong,
+           ((float)data->stats.cds_struc_stats.wrong/(float)
+           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.wrong))*100 );
+  fprintf( outstream, "    Sensitivity............................%.3lf\n",
+           data->stats.cds_struc_stats.sn );
+  fprintf( outstream, "    Specificity............................%.3lf\n",
+           data->stats.cds_struc_stats.sp );
+  fprintf( outstream, "    F1 Score...............................%.3lf\n",
+           data->stats.cds_struc_stats.f1 );
+  fprintf( outstream, "    Annotation edit distance...............%.3lf\n\n",
+           data->stats.cds_struc_stats.ed );
+
+  fprintf( outstream, "  Exon structure comparison\n");
+  fprintf( outstream, "    reference exons........................%lu\n",
+           data->stats.exon_struc_stats.correct + data->stats.exon_struc_stats.missing );
+  fprintf( outstream, "      match prediction.....................%lu (%.1f%%)\n",
+           data->stats.exon_struc_stats.correct,
+           ((float)data->stats.exon_struc_stats.correct/(float)
+           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.missing))*100 );
+  fprintf( outstream, "      don't match prediction...............%lu (%.1f%%)\n",
+           data->stats.exon_struc_stats.missing,
+           ((float)data->stats.exon_struc_stats.missing/(float)
+           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.missing))*100 );
+  fprintf( outstream, "    prediction exons.......................%lu\n",
+           data->stats.exon_struc_stats.correct + data->stats.exon_struc_stats.wrong );
+  fprintf( outstream, "      match reference......................%lu (%.1f%%)\n",
+           data->stats.exon_struc_stats.correct,
+           ((float)data->stats.exon_struc_stats.correct/(float)
+           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.wrong))*100 );
+  fprintf( outstream, "      don't match reference................%lu (%.1f%%)\n",
+           data->stats.exon_struc_stats.wrong,
+           ((float)data->stats.exon_struc_stats.wrong/(float)
+           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.wrong))*100 );
+  fprintf( outstream, "    Sensitivity............................%.3lf\n",
+           data->stats.exon_struc_stats.sn );
+  fprintf( outstream, "    Specificity............................%.3lf\n",
+           data->stats.exon_struc_stats.sp );
+  fprintf( outstream, "    F1 Score...............................%.3lf\n",
+           data->stats.exon_struc_stats.f1 );
+  fprintf( outstream, "    Annotation edit distance...............%.3lf\n\n",
+           data->stats.exon_struc_stats.ed );
+
+  fprintf( outstream, "  UTR structure comparison\n");
+  fprintf( outstream, "    reference UTR segments.................%lu\n",
+           data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.missing );
+  if(data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.missing > 0)
+  {
+    fprintf( outstream, "      match prediction.....................%lu (%.1f%%)\n",
+             data->stats.utr_struc_stats.correct,
+             ((float)data->stats.utr_struc_stats.correct/(float)
+             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.missing))*100 );
+    fprintf( outstream, "      don't match prediction...............%lu (%.1f%%)\n",
+             data->stats.utr_struc_stats.missing,
+             ((float)data->stats.utr_struc_stats.missing/(float)
+             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.missing))*100 );
+  }
+  fprintf( outstream, "    prediction UTR segments................%lu\n",
+           data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.wrong );
+  if(data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.wrong > 0)
+  {
+    fprintf( outstream, "      match reference......................%lu (%.1f%%)\n",
+             data->stats.utr_struc_stats.correct,
+             ((float)data->stats.utr_struc_stats.correct/(float)
+             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.wrong))*100 );
+    fprintf( outstream, "      don't match reference................%lu (%.1f%%)\n",
+             data->stats.utr_struc_stats.wrong,
+             ((float)data->stats.utr_struc_stats.wrong/(float)
+             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.wrong))*100 );
+  }
+  fprintf( outstream, "    Sensitivity............................%s\n",
+           data->stats.utr_struc_stats.sns );
+  fprintf( outstream, "    Specificity............................%s\n",
+           data->stats.utr_struc_stats.sps );
+  fprintf( outstream, "    F1 Score...............................%s\n",
+           data->stats.utr_struc_stats.f1s );
+  fprintf( outstream, "    Annotation edit distance...............%s\n\n",
+           data->stats.utr_struc_stats.eds );
+
+  double identity = (double)data->stats.overall_matches /
+                    (double)data->stats.overall_length;
+  fprintf( outstream, "  %-30s   %-10s   %-10s   %-10s\n",
+           "Nucleotide-level comparison", "CDS", "UTRs", "Overall" );
+  fprintf( outstream, "    %-30s %-10s   %-10s   %-.3lf\n",
+           "Matching coefficient:", data->stats.cds_nuc_stats.mcs,
+           data->stats.utr_nuc_stats.mcs, identity);
+  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n",
+           "Correlation coefficient:", data->stats.cds_nuc_stats.ccs,
+           data->stats.utr_nuc_stats.ccs, "--");
+  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "Sensitivity:",
+           data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns, "--");
+  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "Specificity:",
+           data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps, "--");
+  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "F1 Score:",
+           data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s, "--");
+  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "Annotation edit distance:",
+           data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds, "--");
 }
 
 GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
