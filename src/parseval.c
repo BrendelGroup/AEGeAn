@@ -437,7 +437,6 @@ int main(int argc, char **argv)
   last_stream = current_stream;
 
 
-
   //----- Execute the node processing stream -----//
   //----------------------------------------------//
 

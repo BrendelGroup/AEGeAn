@@ -63,6 +63,7 @@ GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
   agn_compare_report_set_locus_callback((AgnCompareReport *)rpt,
                                         compare_report_text_locus_handler,
                                         outstream);
+  gt_array_delete(filters);
   return rpt;
 }
 
