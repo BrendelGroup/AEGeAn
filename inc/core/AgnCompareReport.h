@@ -41,6 +41,11 @@ AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt);
 GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger);
 
 /**
+ * @function FIXME
+ */
+GtStrArray *agn_compare_report_seqids(AgnCompareReport *rpt);
+
+/**
  * @function Set the callback function to be used for generating locus reports.
  * The ``data`` pointer is optional but will be available to the callback
  * function. Set ``func`` to NULL to disable locus report generation (default).

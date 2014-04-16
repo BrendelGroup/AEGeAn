@@ -86,6 +86,11 @@ GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger)
   return nv;
 }
 
+GtStrArray *agn_compare_report_seqids(AgnCompareReport *rpt)
+{
+  return rpt->seqids;
+}
+
 void agn_compare_report_set_locus_callback(AgnCompareReport *rpt,
                                            AgnCompareReportLocusFunc func,
                                            void *data)
@@ -135,6 +140,7 @@ void compare_report_record_locus_stats(AgnComparisonData *data, AgnLocus *locus)
   agn_locus_comparison_aggregate(locus, &data->stats);
   GtRange locusrange = gt_genome_node_get_range(locus);
   GtArray *pairs2report = agn_locus_pairs_to_report(locus);
+  data->info.num_comparisons += gt_array_size(pairs2report);
   for(i = 0; i < gt_array_size(pairs2report); i++)
   {
     AgnCliquePair **pair = gt_array_get(pairs2report, i);

@@ -1,5 +1,6 @@
 #include <getopt.h>
 #include <string.h>
+#include <time.h>
 #include "genometools.h"
 #include "aegean.h"
 
@@ -352,6 +353,46 @@ parse_options(int argc, char **argv, ParsEvalOptions *options, GtError *error)
   return optind;
 }
 
+static char *parseval_get_start_time()
+{
+  time_t start_time;
+  struct tm *start_time_info;
+  time(&start_time);
+  start_time_info = localtime(&start_time);
+
+  char timestr[128];
+  strftime(timestr, 128, "%d %b %Y, %I:%M%p", start_time_info);
+  return gt_cstr_dup(timestr);
+}
+
+static void parseval_summary_header(ParsEvalOptions *options, FILE *outstream,
+                                    char *start_time, int argc, char **argv)
+{
+  fprintf(outstream,
+          "============================================================\n"
+          "========== ParsEval Summary\n"
+          "============================================================\n\n");
+
+  fprintf(outstream, "Started:                %s\n", start_time);
+
+  if(strcmp(options->refrlabel, "") != 0)
+    fprintf(outstream, "Reference annotations:  %s\n", options->refrlabel);
+  else
+    fprintf(outstream, "Reference annotations:  %s\n", options->refrfile);
+  if(strcmp(options->predlabel, "") != 0)
+    fprintf(outstream, "Prediction annotations: %s\n", options->predlabel);
+  else
+    fprintf(outstream, "Prediction annotations: %s\n", options->predfile);
+  fprintf(outstream, "Executing command:      ");
+
+  int x;
+  for(x = 0; x < argc; x++)
+  {
+    fprintf(outstream, "%s ", argv[x]);
+  }
+  fprintf(outstream, "\n\n");
+}
+
 // Main program
 int main(int argc, char **argv)
 {
@@ -359,7 +400,9 @@ int main(int argc, char **argv)
   GtLogger *logger;
   GtQueue *streams;
   GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3;
+  char *start_time;
   gt_lib_init();
+  start_time = parseval_get_start_time();
 
   // Parse command-line options
   ParsEvalOptions options;
@@ -455,10 +498,12 @@ int main(int argc, char **argv)
   if(result == -1)
     fprintf(stderr, "[ParsEval] error: %s", gt_error_get(error));
 
+  parseval_summary_header(&options, options.outfile, start_time, argc, argv);
   agn_compare_report_text_create_summary((AgnCompareReportText *)rpt,
                                          options.outfile);
 
   // Free memory and terminate
+  gt_free(start_time);
   free_option_memory(&options);
   while(gt_queue_size(streams) > 0)
   {
