@@ -209,9 +209,23 @@ void agn_locus_comparative_analysis(AgnLocus *locus, GtLogger *logger)
   if(refrcliques == NULL || predcliques == NULL)
   {
     if(refrcliques)
+    {
+      while(gt_array_size(refrcliques) > 0)
+      {
+        AgnTranscriptClique **clique = gt_array_pop(refrcliques);
+        agn_transcript_clique_delete(*clique);
+      }
       gt_array_delete(refrcliques);
+    }
     if(predcliques)
+    {
+      while(gt_array_size(predcliques) > 0)
+      {
+        AgnTranscriptClique **clique = gt_array_pop(predcliques);
+        agn_transcript_clique_delete(*clique);
+      }
       gt_array_delete(predcliques);
+    }
     return;
   }
 
