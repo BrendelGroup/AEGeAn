@@ -164,13 +164,13 @@ typedef struct AgnComparisonData AgnComparisonData;
 void agn_comparison_aggregate(AgnComparison *agg_cmp, AgnComparison *cmp);
 
 /**
- * @function FIXME
+ * @function Add counts and stats from ``data`` to ``agg_data``.
  */
 void agn_comparison_data_aggregate(AgnComparisonData *agg_data,
                                    AgnComparisonData *data);
 
 /**
- * @function FIXME
+ * @function Initialize counts and stats to default values.
  */
 void agn_comparison_data_init(AgnComparisonData *data);
 
@@ -196,34 +196,34 @@ void agn_comparison_resolve(AgnComparison *comparison);
 bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2);
 
 /**
- * @function FIXME
+ * @function Add values from ``desc`` to ``agg_desc``.
  */
 void agn_comp_class_desc_aggregate(AgnCompClassDesc *agg_desc,
                                    AgnCompClassDesc *desc);
 
 /**
- * @function FIXME
+ * @function Initialize to default values.
  */
 void agn_comp_class_desc_init(AgnCompClassDesc *desc);
 
 /**
- * @function FIXME
+ * @function Add values from ``summ`` to ``agg_summ``.
  */
 void agn_comp_class_summary_aggregate(AgnCompClassSummary *agg_summ,
                                       AgnCompClassSummary *summ);
 
 /**
- * @function FIXME
+ * @function Initialize to default values.
  */
 void agn_comp_class_summary_init(AgnCompClassSummary *summ);
 
 /**
- * @function FIXME
+ * @function Add values from ``info`` to ``agg_info``.
  */
 void agn_comp_info_aggregate(AgnCompInfo *agg_info, AgnCompInfo *info);
 
 /**
- * @function FIXME
+ * @function Initialize to default values.
  */
 void agn_comp_info_init(AgnCompInfo *info);
 

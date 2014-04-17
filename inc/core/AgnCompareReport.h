@@ -41,7 +41,8 @@ AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt);
 GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger);
 
 /**
- * @function FIXME
+ * @function Return a string array containing IDs of all sequences for which the
+ * node stream contained annotations.
  */
 GtStrArray *agn_compare_report_seqids(AgnCompareReport *rpt);
 

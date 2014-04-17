@@ -32,35 +32,12 @@ struct ParsEvalOptions
 };
 typedef struct ParsEvalOptions ParsEvalOptions;
 
-/**
- * @function FIXME
- */
 void pe_free_option_memory(ParsEvalOptions *options);
-
-/**
- * @function FIXME
- */
 char *pe_get_start_time();
-
-/**
- * @function FIXME
- */
 int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
                      GtError *error);
-
-/**
- * @function FIXME
- */
 void pe_print_usage(FILE *outstream);
-
-/**
- * @function FIXME
- */
 void pe_set_option_defaults(ParsEvalOptions *options);
-
-/**
- * @function FIXME
- */
 void pe_summary_header(ParsEvalOptions *options, FILE *outstream,
                        char *start_time, int argc, char **argv);
 

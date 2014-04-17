@@ -1,10 +1,27 @@
 #include <math.h>
+#include <string.h>
 #include "AgnCompareReportText.h"
 
 
 //------------------------------------------------------------------------------
 // Prototypes for private functions
 //------------------------------------------------------------------------------
+
+/**
+ * @function Print an overview of reference and prediction annotations for the
+ * summary report.
+ */
+static void compare_report_text_annot_summary(AgnCompInfo *info,
+                                              FILE *outstream);
+
+/**
+ * @function Print overall comparison statistics for a particular class of
+ * feature comparisons in the summary report.
+ */
+static void compare_report_text_comp_class_summary(AgnCompClassDesc *summ,
+                                                   GtUword num_comparisons,
+                                                   const char *label,
+                                                   FILE *outstream);
 
 /**
  * @function Create a report for each locus.
@@ -22,13 +39,15 @@ static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream);
 static void compare_report_text_locus_gene_ids(AgnLocus *locus,FILE *outstream);
 
 /**
- * @function FIXME
+ * @function Print a report of nucleotide-level structure comparison for the
+ * given clique pair.
  */
 static void compare_report_text_pair_nucleotide(FILE *outstream,
                                                 AgnCliquePair *pair);
 
 /**
- * @function FIXME
+ * @function Print a report of feature-level structure comparison for the
+ * given clique pair.
  */
 static void compare_report_text_pair_structure(FILE *outstream,
                                                AgnCompStatsBinary *stats,
@@ -36,9 +55,18 @@ static void compare_report_text_pair_structure(FILE *outstream,
                                                const char *units);
 
 /**
- * @function FIXME
+ * @function Print a comparison report for the given clique pair.
  */
 static void compare_report_text_print_pair(AgnCliquePair *pair,FILE *outstream);
+
+/**
+ * @function Print a breakdown of characteristics of loci that fall into a
+ * particular comparison class.
+ */
+static void compare_report_text_summary_struc(FILE *outstream,
+                                              AgnCompStatsBinary *stats,
+                                              const char *label,
+                                              const char *units);
 
 //------------------------------------------------------------------------------
 // Method implementations
@@ -47,7 +75,7 @@ static void compare_report_text_print_pair(AgnCliquePair *pair,FILE *outstream);
 void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
                                             FILE *outstream)
 {
-  GT_UNUSED AgnComparisonData *data = agn_compare_report_data(rpt);
+  AgnComparisonData *data = agn_compare_report_data(rpt);
   GtStrArray *seqids = agn_compare_report_seqids(rpt);
   fprintf(outstream, "  Sequences compared\n");
   GtUword i;
@@ -55,277 +83,40 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
   {
     fprintf(outstream, "    %s\n", gt_str_array_get(seqids, i));
   }
+  fputs("\n", outstream);
 
-  GtUword numnotshared = data->info.unique_refr_loci +
-                         data->info.unique_pred_loci;
-  fprintf(outstream, "\n  Gene loci................................%lu\n"
-                     "    shared.................................%lu\n"
-                     "    unique to reference....................%lu\n"
-                     "    unique to prediction...................%lu\n\n",
-           data->info.num_loci, data->info.num_loci - numnotshared,
-           data->info.unique_refr_loci, data->info.unique_pred_loci);
-
-  fprintf(outstream, "  Reference annotations\n"
-                     "    genes..................................%lu\n"
-                     "      average per locus....................%.3f\n"
-                     "    transcripts............................%lu\n"
-                     "      average per locus....................%.3f\n"
-                     "      average per gene.....................%.3f\n\n",
-           data->info.refr_genes,
-           (float)data->info.refr_genes / (float)data->info.num_loci,
-           data->info.refr_transcripts,
-           (float)data->info.refr_transcripts / (float)data->info.num_loci,
-           (float)data->info.refr_transcripts / (float)data->info.refr_genes );
-
-  fprintf(outstream, "  Prediction annotations\n"
-                     "    genes..................................%lu\n"
-                     "      average per locus....................%.3f\n"
-                     "    transcripts............................%lu\n"
-                     "      average per locus....................%.3f\n"
-                     "      average per gene.....................%.3f\n\n",
-           data->info.pred_genes,
-           (float)data->info.pred_genes / (float)data->info.num_loci,
-           data->info.pred_transcripts,
-           (float)data->info.pred_transcripts / (float)data->info.num_loci,
-           (float)data->info.pred_transcripts / (float)data->info.pred_genes );
+  compare_report_text_annot_summary(&data->info, outstream);
 
   fprintf(outstream, "  Total comparisons........................%lu\n",
           data->info.num_comparisons);
 
-  GtUword numperfect = data->summary.perfect_matches.comparison_count;
-  fprintf( outstream, "    perfect matches........................%lu (%.1f%%)\n",
-           numperfect,
-           ((float)numperfect / (float)data->info.num_comparisons)*100.0);
-  if(numperfect > 0)
-  {
-    fprintf(outstream, "      avg. length..........................%.2lf bp\n",
-            (double)data->summary.perfect_matches.total_length /
-            (double)data->summary.perfect_matches.comparison_count );
-    fprintf(outstream, "      avg. # refr exons....................%.2lf\n",
-            (double)data->summary.perfect_matches.refr_exon_count /
-            (double)data->summary.perfect_matches.comparison_count );
-    fprintf(outstream, "      avg. # pred exons....................%.2lf\n",
-            (double)data->summary.perfect_matches.pred_exon_count /
-            (double)data->summary.perfect_matches.comparison_count );
-    fprintf(outstream, "      avg. refr CDS length.................%.2lf aa\n",
-            (double)data->summary.perfect_matches.refr_cds_length / 3 /
-            (double)data->summary.perfect_matches.comparison_count );
-    fprintf(outstream, "      avg. pred CDS length.................%.2lf aa\n",
-            (double)data->summary.perfect_matches.pred_cds_length / 3 /
-            (double)data->summary.perfect_matches.comparison_count );
-  }
-
-  GtUword nummislabeled = data->summary.perfect_mislabeled.comparison_count;
-  fprintf( outstream, "    perfect matches with mislabeled UTRs...%lu (%.1f%%)\n",
-           nummislabeled,
-           ((float)nummislabeled / (float)data->info.num_comparisons)*100.0);
-  if(nummislabeled > 0)
-  {
-    fprintf(outstream, "      avg. length..........................%.2lf bp\n",
-            (double)data->summary.perfect_mislabeled.total_length /
-            (double)data->summary.perfect_mislabeled.comparison_count );
-    fprintf(outstream, "      avg. # refr exons....................%.2lf\n",
-            (double)data->summary.perfect_mislabeled.refr_exon_count /
-            (double)data->summary.perfect_mislabeled.comparison_count );
-    fprintf(outstream, "      avg. # pred exons....................%.2lf\n",
-            (double)data->summary.perfect_mislabeled.pred_exon_count /
-            (double)data->summary.perfect_mislabeled.comparison_count );
-    fprintf(outstream, "      avg. refr CDS length.................%.2lf aa\n",
-            (double)data->summary.perfect_mislabeled.refr_cds_length / 3 /
-            (double)data->summary.perfect_mislabeled.comparison_count );
-    fprintf(outstream, "      avg. pred CDS length.................%.2lf aa\n",
-            (double)data->summary.perfect_mislabeled.pred_cds_length / 3 /
-            (double)data->summary.perfect_mislabeled.comparison_count );
-  }
-
-  GtUword numcdsmatch = data->summary.cds_matches.comparison_count;
-  fprintf( outstream, "    CDS structure matches..................%lu (%.1f%%)\n",
-           numcdsmatch,
-           ((float)numcdsmatch / (float)data->info.num_comparisons)*100.0);
-  if(numcdsmatch > 0)
-  {
-    fprintf(outstream, "      avg. length..........................%.2lf bp\n",
-            (double)data->summary.cds_matches.total_length /
-            (double)data->summary.cds_matches.comparison_count );
-    fprintf(outstream, "      avg. # refr exons....................%.2lf\n",
-            (double)data->summary.cds_matches.refr_exon_count /
-            (double)data->summary.cds_matches.comparison_count );
-    fprintf(outstream, "      avg. # pred exons....................%.2lf\n",
-            (double)data->summary.cds_matches.pred_exon_count /
-            (double)data->summary.cds_matches.comparison_count );
-    fprintf(outstream, "      avg. refr CDS length.................%.2lf aa\n",
-            (double)data->summary.cds_matches.refr_cds_length / 3 /
-            (double)data->summary.cds_matches.comparison_count );
-    fprintf(outstream, "      avg. pred CDS length.................%.2lf aa\n",
-            (double)data->summary.cds_matches.pred_cds_length / 3 /
-            (double)data->summary.cds_matches.comparison_count );
-  }
-
-  GtUword numexonmatch = data->summary.exon_matches.comparison_count;
-  fprintf( outstream, "    Exon structure matches.................%lu (%.1f%%)\n",
-           numexonmatch,
-           ((float)numexonmatch / (float)data->info.num_comparisons)*100.0);
-  if(numexonmatch > 0)
-  {
-    fprintf(outstream, "      avg. length..........................%.2lf bp\n",
-            (double)data->summary.exon_matches.total_length /
-            (double)data->summary.exon_matches.comparison_count );
-    fprintf(outstream, "      avg. # refr exons....................%.2lf\n",
-            (double)data->summary.exon_matches.refr_exon_count /
-            (double)data->summary.exon_matches.comparison_count );
-    fprintf(outstream, "      avg. # pred exons....................%.2lf\n",
-            (double)data->summary.exon_matches.pred_exon_count /
-            (double)data->summary.exon_matches.comparison_count );
-    fprintf(outstream, "      avg. refr CDS length.................%.2lf aa\n",
-            (double)data->summary.exon_matches.refr_cds_length / 3 /
-            (double)data->summary.exon_matches.comparison_count );
-    fprintf(outstream, "      avg. pred CDS length.................%.2lf aa\n",
-            (double)data->summary.exon_matches.pred_cds_length / 3 /
-            (double)data->summary.exon_matches.comparison_count );
-  }
-
-  GtUword numutrmatch = data->summary.utr_matches.comparison_count;
-  fprintf( outstream, "    UTR structure matches..................%lu (%.1f%%)\n",
-           numutrmatch,
-           ((float)numutrmatch / (float)data->info.num_comparisons)*100.0);
-  if(numutrmatch > 0)
-  {
-    fprintf(outstream, "      avg. length..........................%.2lf bp\n",
-            (double)data->summary.utr_matches.total_length /
-            (double)data->summary.utr_matches.comparison_count );
-    fprintf(outstream, "      avg. # refr exons....................%.2lf\n",
-            (double)data->summary.utr_matches.refr_exon_count /
-            (double)data->summary.utr_matches.comparison_count );
-    fprintf(outstream, "      avg. # pred exons....................%.2lf\n",
-            (double)data->summary.utr_matches.pred_exon_count /
-            (double)data->summary.utr_matches.comparison_count );
-    fprintf(outstream, "      avg. refr CDS length.................%.2lf aa\n",
-            (double)data->summary.utr_matches.refr_cds_length / 3 /
-            (double)data->summary.utr_matches.comparison_count );
-    fprintf(outstream, "      avg. pred CDS length.................%.2lf aa\n",
-            (double)data->summary.utr_matches.pred_cds_length / 3 /
-            (double)data->summary.utr_matches.comparison_count );
-  }
-
-  GtUword numnonmatch = data->summary.non_matches.comparison_count;
-  fprintf( outstream, "    non-matches............................%lu (%.1f%%)\n",
-           numnonmatch,
-           ((float)numnonmatch / (float)data->info.num_comparisons)*100.0);
-  if(numnonmatch > 0)
-  {
-    fprintf(outstream, "      avg. length..........................%.2lf bp\n",
-            (double)data->summary.non_matches.total_length /
-            (double)data->summary.non_matches.comparison_count );
-    fprintf(outstream, "      avg. # refr exons....................%.2lf\n",
-            (double)data->summary.non_matches.refr_exon_count /
-            (double)data->summary.non_matches.comparison_count );
-    fprintf(outstream, "      avg. # pred exons....................%.2lf\n",
-            (double)data->summary.non_matches.pred_exon_count /
-            (double)data->summary.non_matches.comparison_count );
-    fprintf(outstream, "      avg. refr CDS length.................%.2lf aa\n",
-            (double)data->summary.non_matches.refr_cds_length / 3 /
-            (double)data->summary.non_matches.comparison_count );
-    fprintf(outstream, "      avg. pred CDS length.................%.2lf aa\n",
-            (double)data->summary.non_matches.pred_cds_length / 3 /
-            (double)data->summary.non_matches.comparison_count );
-  }
+  compare_report_text_comp_class_summary(&data->summary.perfect_matches,
+                                         data->info.num_comparisons,
+                                         "perfect matches", outstream);
+  compare_report_text_comp_class_summary(&data->summary.perfect_mislabeled,
+                                         data->info.num_comparisons,
+                                        "perfect matches with mislabeled UTRs",
+                                         outstream);
+  compare_report_text_comp_class_summary(&data->summary.cds_matches,
+                                         data->info.num_comparisons,
+                                         "CDS structure matches", outstream);
+  compare_report_text_comp_class_summary(&data->summary.exon_matches,
+                                         data->info.num_comparisons,
+                                         "exon structure matches", outstream);
+  compare_report_text_comp_class_summary(&data->summary.utr_matches,
+                                         data->info.num_comparisons,
+                                         "UTR structure matches", outstream);
+  compare_report_text_comp_class_summary(&data->summary.non_matches,
+                                         data->info.num_comparisons,
+                                         "non-matches", outstream);
   fputs("\n", outstream);
 
-  fprintf( outstream, "  CDS structure comparison\n" );
-  fprintf( outstream, "    reference CDS segments.................%lu\n",
-           data->stats.cds_struc_stats.correct + data->stats.cds_struc_stats.missing );
-  fprintf( outstream, "      match prediction.....................%lu (%.1f%%)\n",
-           data->stats.cds_struc_stats.correct,
-           ((float)data->stats.cds_struc_stats.correct /(float)
-           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.missing))*100 );
-  fprintf( outstream, "      don't match prediction...............%lu (%.1f%%)\n",
-           data->stats.cds_struc_stats.missing,
-           ((float)data->stats.cds_struc_stats.missing/(float)
-           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.missing))*100 );
-  fprintf( outstream, "    prediction CDS segments................%lu\n",
-           data->stats.cds_struc_stats.correct + data->stats.cds_struc_stats.wrong );
-  fprintf( outstream, "      match reference......................%lu (%.1f%%)\n",
-           data->stats.cds_struc_stats.correct,
-           ((float)data->stats.cds_struc_stats.correct/(float)
-           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.wrong))*100 );
-  fprintf( outstream, "      don't match reference................%lu (%.1f%%)\n",
-           data->stats.cds_struc_stats.wrong,
-           ((float)data->stats.cds_struc_stats.wrong/(float)
-           (data->stats.cds_struc_stats.correct+data->stats.cds_struc_stats.wrong))*100 );
-  fprintf( outstream, "    Sensitivity............................%.3lf\n",
-           data->stats.cds_struc_stats.sn );
-  fprintf( outstream, "    Specificity............................%.3lf\n",
-           data->stats.cds_struc_stats.sp );
-  fprintf( outstream, "    F1 Score...............................%.3lf\n",
-           data->stats.cds_struc_stats.f1 );
-  fprintf( outstream, "    Annotation edit distance...............%.3lf\n\n",
-           data->stats.cds_struc_stats.ed );
-
-  fprintf( outstream, "  Exon structure comparison\n");
-  fprintf( outstream, "    reference exons........................%lu\n",
-           data->stats.exon_struc_stats.correct + data->stats.exon_struc_stats.missing );
-  fprintf( outstream, "      match prediction.....................%lu (%.1f%%)\n",
-           data->stats.exon_struc_stats.correct,
-           ((float)data->stats.exon_struc_stats.correct/(float)
-           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.missing))*100 );
-  fprintf( outstream, "      don't match prediction...............%lu (%.1f%%)\n",
-           data->stats.exon_struc_stats.missing,
-           ((float)data->stats.exon_struc_stats.missing/(float)
-           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.missing))*100 );
-  fprintf( outstream, "    prediction exons.......................%lu\n",
-           data->stats.exon_struc_stats.correct + data->stats.exon_struc_stats.wrong );
-  fprintf( outstream, "      match reference......................%lu (%.1f%%)\n",
-           data->stats.exon_struc_stats.correct,
-           ((float)data->stats.exon_struc_stats.correct/(float)
-           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.wrong))*100 );
-  fprintf( outstream, "      don't match reference................%lu (%.1f%%)\n",
-           data->stats.exon_struc_stats.wrong,
-           ((float)data->stats.exon_struc_stats.wrong/(float)
-           (data->stats.exon_struc_stats.correct+data->stats.exon_struc_stats.wrong))*100 );
-  fprintf( outstream, "    Sensitivity............................%.3lf\n",
-           data->stats.exon_struc_stats.sn );
-  fprintf( outstream, "    Specificity............................%.3lf\n",
-           data->stats.exon_struc_stats.sp );
-  fprintf( outstream, "    F1 Score...............................%.3lf\n",
-           data->stats.exon_struc_stats.f1 );
-  fprintf( outstream, "    Annotation edit distance...............%.3lf\n\n",
-           data->stats.exon_struc_stats.ed );
-
-  fprintf( outstream, "  UTR structure comparison\n");
-  fprintf( outstream, "    reference UTR segments.................%lu\n",
-           data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.missing );
-  if(data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.missing > 0)
-  {
-    fprintf( outstream, "      match prediction.....................%lu (%.1f%%)\n",
-             data->stats.utr_struc_stats.correct,
-             ((float)data->stats.utr_struc_stats.correct/(float)
-             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.missing))*100 );
-    fprintf( outstream, "      don't match prediction...............%lu (%.1f%%)\n",
-             data->stats.utr_struc_stats.missing,
-             ((float)data->stats.utr_struc_stats.missing/(float)
-             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.missing))*100 );
-  }
-  fprintf( outstream, "    prediction UTR segments................%lu\n",
-           data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.wrong );
-  if(data->stats.utr_struc_stats.correct + data->stats.utr_struc_stats.wrong > 0)
-  {
-    fprintf( outstream, "      match reference......................%lu (%.1f%%)\n",
-             data->stats.utr_struc_stats.correct,
-             ((float)data->stats.utr_struc_stats.correct/(float)
-             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.wrong))*100 );
-    fprintf( outstream, "      don't match reference................%lu (%.1f%%)\n",
-             data->stats.utr_struc_stats.wrong,
-             ((float)data->stats.utr_struc_stats.wrong/(float)
-             (data->stats.utr_struc_stats.correct+data->stats.utr_struc_stats.wrong))*100 );
-  }
-  fprintf( outstream, "    Sensitivity............................%s\n",
-           data->stats.utr_struc_stats.sns );
-  fprintf( outstream, "    Specificity............................%s\n",
-           data->stats.utr_struc_stats.sps );
-  fprintf( outstream, "    F1 Score...............................%s\n",
-           data->stats.utr_struc_stats.f1s );
-  fprintf( outstream, "    Annotation edit distance...............%s\n\n",
-           data->stats.utr_struc_stats.eds );
+  compare_report_text_summary_struc(outstream, &data->stats.cds_struc_stats,
+                                    "CDS", "CDS segments");
+  compare_report_text_summary_struc(outstream, &data->stats.exon_struc_stats,
+                                    "Exon", "exons");
+  compare_report_text_summary_struc(outstream, &data->stats.utr_struc_stats,
+                                    "UTR", "UTR segments");
 
   double identity = (double)data->stats.overall_matches /
                     (double)data->stats.overall_length;
@@ -361,32 +152,84 @@ GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
   return rpt;
 }
 
-static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
+static void compare_report_text_annot_summary(AgnCompInfo *info,
+                                              FILE *outstream)
 {
-  FILE *outstream = data;
-  compare_report_text_locus_header(locus, outstream);
-  /*
-       implement method here
-   */
+  GtUword numnotshared = info->unique_refr_loci +
+                         info->unique_pred_loci;
+  fprintf(outstream, "  Gene loci................................%lu\n"
+                     "    shared.................................%lu\n"
+                     "    unique to reference....................%lu\n"
+                     "    unique to prediction...................%lu\n\n",
+           info->num_loci, info->num_loci - numnotshared,
+           info->unique_refr_loci, info->unique_pred_loci);
+
+  fprintf(outstream, "  Reference annotations\n"
+                     "    genes..................................%lu\n"
+                     "      average per locus....................%.3f\n"
+                     "    transcripts............................%lu\n"
+                     "      average per locus....................%.3f\n"
+                     "      average per gene.....................%.3f\n\n",
+           info->refr_genes, (float)info->refr_genes / (float)info->num_loci,
+           info->refr_transcripts,
+           (float)info->refr_transcripts / (float)info->num_loci,
+           (float)info->refr_transcripts / (float)info->refr_genes );
+
+  fprintf(outstream, "  Prediction annotations\n"
+                     "    genes..................................%lu\n"
+                     "      average per locus....................%.3f\n"
+                     "    transcripts............................%lu\n"
+                     "      average per locus....................%.3f\n"
+                     "      average per gene.....................%.3f\n\n",
+           info->pred_genes, (float)info->pred_genes / (float)info->num_loci,
+           info->pred_transcripts,
+           (float)info->pred_transcripts / (float)info->num_loci,
+           (float)info->pred_transcripts / (float)info->pred_genes );
 }
 
-static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
+static void compare_report_text_comp_class_summary(AgnCompClassDesc *summ,
+                                                   GtUword num_comparisons,
+                                                   const char *label,
+                                                   FILE *outstream)
+{
+  GtUword numclass     = summ->comparison_count;
+  float perc_class     = 100.0 * (float)numclass /
+                         (float)num_comparisons;
+  float mean_len       = (float)summ->total_length /
+                         (float)summ->comparison_count;
+  float mean_refr_exon = (float)summ->refr_exon_count /
+                         (float)summ->comparison_count;
+  float mean_pred_exon = (float)summ->pred_exon_count /
+                         (float)summ->comparison_count;
+  float mean_refr_cds  = (float)summ->refr_cds_length / 3 /
+                         (float)summ->comparison_count;
+  float mean_pred_cds  = (float)summ->pred_cds_length / 3 /
+                         (float)summ->comparison_count;
+
+  char header[128];
+  sprintf(header, "    .......................................%lu (%.1f%%)\n",
+          numclass, perc_class);
+  strncpy(header + 4, label, strlen(label));
+  fputs(header, outstream);
+
+  if(numclass == 0)
+    return;
+
+  fprintf(outstream, "      avg. length..........................%.2f bp\n"
+                     "      avg. # refr exons....................%.2f\n"
+                     "      avg. # pred exons....................%.2f\n"
+                     "      avg. refr CDS length.................%.2f aa\n"
+                     "      avg. pred CDS length.................%.2f aa\n",
+          mean_len,mean_refr_exon,mean_pred_exon,mean_refr_cds,mean_pred_cds);
+}
+
+static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
 {
   GtArray *pairs2report;
   GtUword i;
-  GtRange range = gt_genome_node_get_range(locus);
-  GtStr *seqid = gt_genome_node_get_seqid(locus);
-  fprintf(outstream,
-          "|-------------------------------------------------\n"
-          "|---- Locus: seqid=%s range=%lu-%lu\n"
-          "|-------------------------------------------------\n"
-          "|\n",
-          gt_str_get(seqid), range.start, range.end);
-  compare_report_text_locus_gene_ids(locus, outstream);
-  fprintf(outstream,
-          "|\n"
-          "|----------\n");
+  FILE *outstream = data;
 
+  compare_report_text_locus_header(locus, outstream);
   pairs2report = agn_locus_pairs_to_report(locus);
   if(pairs2report == NULL || gt_array_size(pairs2report) == 0)
   {
@@ -403,6 +246,22 @@ static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
     compare_report_text_print_pair(pair, outstream);
   }
   fputs("\n", outstream);
+}
+
+static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
+{
+  GtRange range = gt_genome_node_get_range(locus);
+  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  fprintf(outstream,
+          "|-------------------------------------------------\n"
+          "|---- Locus: seqid=%s range=%lu-%lu\n"
+          "|-------------------------------------------------\n"
+          "|\n",
+          gt_str_get(seqid), range.start, range.end);
+  compare_report_text_locus_gene_ids(locus, outstream);
+  fprintf(outstream,
+          "|\n"
+          "|----------\n");
 }
 
 static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
@@ -557,4 +416,41 @@ static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
           "     |--------------------------\n"
           "     |----- End comparison -----\n"
           "     |--------------------------\n");
+}
+
+static void compare_report_text_summary_struc(FILE *outstream,
+                                              AgnCompStatsBinary *stats,
+                                              const char *label,
+                                              const char *units)
+{
+  char buffer[128];
+  fprintf(outstream, "  %s structure comparison\n", label);
+
+  GtUword refrcnt = stats->correct + stats->missing;
+  sprintf(buffer, "    reference .............................%lu\n", refrcnt);
+  strncpy(buffer + 14, units, strlen(units));
+  fputs(buffer, outstream);
+  fprintf(outstream,
+          "      match prediction.....................%lu (%.1f%%)\n",
+          stats->correct, (float)stats->correct / (float)refrcnt * 100 );
+  fprintf(outstream,
+          "      don't match prediction...............%lu (%.1f%%)\n",
+          stats->missing, (float)stats->missing / (float)refrcnt * 100 );
+
+  GtUword predcnt = stats->correct + stats->wrong;
+  sprintf(buffer, "    prediction ............................%lu\n", predcnt);
+  strncpy(buffer + 15, units, strlen(units));
+  fputs(buffer, outstream);
+  fprintf(outstream,
+          "      match reference......................%lu (%.1f%%)\n",
+          stats->correct, (float)stats->correct / (float)predcnt * 100 );
+  fprintf(outstream,
+          "      don't match reference................%lu (%.1f%%)\n",
+          stats->wrong, (float)stats->wrong / (float)predcnt * 100 );
+
+  fprintf(outstream, "    Sensitivity............................%.3lf\n"
+                     "    Specificity............................%.3lf\n"
+                     "    F1 Score...............................%.3lf\n"
+                     "    Annotation edit distance...............%.3lf\n\n",
+          stats->sn, stats->sp, stats->f1, stats->ed);
 }

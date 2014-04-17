@@ -55,7 +55,7 @@ Class AgnCliquePair
 
 .. c:function:: double agn_clique_pair_tolerance(AgnCliquePair *pair)
 
-  FIXME
+  The tolerance represents the resolution required to compare 2 floating point numbers. Comparison of floating point numbers is not exact, but if the difference between two floats/doubles is small enough they are considered equal.
 
 .. c:function:: bool agn_clique_pair_unit_test(AgnUnitTest *test)
 
@@ -86,7 +86,7 @@ Class AgnCompareReport
 
 .. c:function:: GtStrArray *agn_compare_report_seqids(AgnCompareReport *rpt)
 
-  FIXME
+  Return a string array containing IDs of all sequences for which the node stream contained annotations.
 
 .. c:function:: void agn_compare_report_set_locus_callback(AgnCompareReport *rpt, AgnCompareReportLocusFunc func, void *data)
 
@@ -170,11 +170,11 @@ Data structures and functions related to comparative assessment of gene/transcri
 
 .. c:function:: void agn_comparison_data_aggregate(AgnComparisonData *agg_data, AgnComparisonData *data)
 
-  FIXME
+  Add counts and stats from ``data`` to ``agg_data``.
 
 .. c:function:: void agn_comparison_data_init(AgnComparisonData *data)
 
-  FIXME
+  Initialize counts and stats to default values.
 
 .. c:function:: void agn_comparison_init(AgnComparison *comparison)
 
@@ -194,27 +194,27 @@ Data structures and functions related to comparative assessment of gene/transcri
 
 .. c:function:: void agn_comp_class_desc_aggregate(AgnCompClassDesc *agg_desc, AgnCompClassDesc *desc)
 
-  FIXME
+  Add values from ``desc`` to ``agg_desc``.
 
 .. c:function:: void agn_comp_class_desc_init(AgnCompClassDesc *desc)
 
-  FIXME
+  Initialize to default values.
 
 .. c:function:: void agn_comp_class_summary_aggregate(AgnCompClassSummary *agg_summ, AgnCompClassSummary *summ)
 
-  FIXME
+  Add values from ``summ`` to ``agg_summ``.
 
 .. c:function:: void agn_comp_class_summary_init(AgnCompClassSummary *summ)
 
-  FIXME
+  Initialize to default values.
 
 .. c:function:: void agn_comp_info_aggregate(AgnCompInfo *agg_info, AgnCompInfo *info)
 
-  FIXME
+  Add values from ``info`` to ``agg_info``.
 
 .. c:function:: void agn_comp_info_init(AgnCompInfo *info)
 
-  FIXME
+  Initialize to default values.
 
 .. c:function:: void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *agg_stats, AgnCompStatsBinary *stats)
 
