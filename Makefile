@@ -110,9 +110,9 @@ $(VN_OBJS):	obj/%.o : src/VAnG/%.c inc/VAnG/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 		
-$(PE_EXE):	src/parseval.c $(AGN_OBJS)
+$(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c $(AGN_OBJS)
 		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/parseval.c $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c $(LDFLAGS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@- mkdir -p bin

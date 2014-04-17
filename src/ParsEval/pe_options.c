@@ -1,30 +1,40 @@
-#include <getopt.h>
-#include <string.h>
-#include "AgnUtils.h"
-#include "PeOptions.h"
+#include "pe_options.h"
 
-void pe_option_print(PeOptions *options, FILE *outstream);
+void pe_free_option_memory(ParsEvalOptions *options)
+{
+  fclose(options->outfile);
+}
 
-int pe_parse_options(int argc, char * const argv[], PeOptions *options)
+char *pe_get_start_time()
+{
+  time_t start_time;
+  struct tm *start_time_info;
+  time(&start_time);
+  start_time_info = localtime(&start_time);
+
+  char timestr[128];
+  strftime(timestr, 128, "%d %b %Y, %I:%M%p", start_time_info);
+  return gt_cstr_dup(timestr);
+}
+
+int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
+                     GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "a:c:df:ghkmn:o:pr:t:svwx:y:";
+  const char *optstr = "a:df:ghko:pr:svwx:y:";
   const struct option parseval_options[] =
   {
     { "datashare",  required_argument, NULL, 'a' },
-    { "complimit",  required_argument, NULL, 'c' },
     { "debug",      no_argument,       NULL, 'd' },
     { "outformat",  required_argument, NULL, 'f' },
     { "printgff3",  no_argument,       NULL, 'g' },
     { "help",       no_argument,       NULL, 'h' },
     { "makefilter", no_argument,       NULL, 'k' },
-    { "vectors",    no_argument,       NULL, 'm' },
     { "outfile",    required_argument, NULL, 'o' },
     { "png",        no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
     { "summary",    no_argument,       NULL, 's' },
-    { "maxtrans",   required_argument, NULL, 't' },
     { "verbose",    no_argument,       NULL, 'v' },
     { "overwrite",  no_argument,       NULL, 'w' },
     { "refrlabel",  required_argument, NULL, 'x' },
@@ -32,10 +42,9 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     { NULL,         no_argument,       NULL,  0  },
   };
 
-  bool makefilter = false;
-  for( opt = getopt_long(argc, argv, optstr, parseval_options, &optindex);
-       opt != -1;
-       opt = getopt_long(argc, argv, optstr, parseval_options, &optindex) )
+  for(opt  = getopt_long(argc, argv, optstr, parseval_options, &optindex);
+      opt != -1;
+      opt  = getopt_long(argc, argv, optstr, parseval_options, &optindex))
   {
     switch(opt)
     {
@@ -43,47 +52,34 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         options->data_path = optarg;
         break;
 
-      case 'c':
-        if( sscanf(optarg, "%d", &options->complimit) == EOF )
-        {
-          fprintf(stderr, "error: could not convert comparison limit '%s' to "
-                  "an integer", optarg);
-          exit(1);
-        }
-        break;
-
       case 'd':
         options->debug = true;
         break;
 
       case 'f':
-        if( strcmp(optarg,  "csv") != 0 &&
-            strcmp(optarg, "text") != 0 &&
-            strcmp(optarg, "html") != 0 )
+        if(strcmp(optarg,  "csv") != 0 &&
+           strcmp(optarg, "text") != 0 &&
+           strcmp(optarg, "html") != 0)
         {
-            fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
-                    "option\n\n", optarg);
-            pe_print_usage();
-            exit(1);
+          fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
+                  "option\n\n", optarg);
+          pe_print_usage(stderr);
+          exit(1);
         }
         options->outfmt = optarg;
         break;
 
       case 'g':
-        options->gff3 = true;
+        options->gff3 = false;
         break;
 
       case 'h':
-        pe_print_usage();
+        pe_print_usage(stdout);
         exit(0);
         break;
 
       case 'k':
-        makefilter = true;
-        break;
-
-      case 'm':
-        options->vectors = true;
+        options->makefilter = true;
         break;
 
       case 'o':
@@ -91,9 +87,9 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
         break;
 
       case 'p':
-        options->locus_graphics = true;
+        options->graphics = true;
 #ifdef WITHOUT_CAIRO
-        fputs("error: ParsEval was compiled without graphics support. Please "
+        fputs("error: AEGeAn was compiled without graphics support. Please "
               "recompile to enable this feature.\n", stderr);
         exit(1);
 #endif
@@ -102,7 +98,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       case 'r':
         options->usefilter = true;
         options->filterfile = optarg;
-        if(options->usefilter)
+        /*if(options->usefilter)
         {
           if(options->debug)
             fprintf(stderr, "debug: opening filter file '%s'\n",
@@ -119,20 +115,11 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
           if(options->debug)
             fprintf(stderr, "debug: closing filter file\n");
           fclose(filterfile);
-        }
+        }*/
         break;
 
       case 's':
         options->summary_only = true;
-        break;
-
-      case 't':
-        if( sscanf(optarg, "%d", &options->trans_per_locus) == EOF )
-        {
-          fprintf(stderr, "error: could not convert transcript limit '%s' to "
-                  "an integer", optarg);
-          exit(1);
-        }
         break;
 
       case 'v':
@@ -159,7 +146,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
   // For debugging
   // pe_option_print(options, stderr);
 
-  if(makefilter)
+  if(options->makefilter)
   {
     char cmd[512];
     sprintf(cmd, "cp %s/pe.filter pe.filter", options->data_path);
@@ -176,47 +163,47 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
   if(argc - optind != 2)
   {
-    fprintf( stderr, "error: must provide 2 (and only 2) input files, you provided %d\n\n",
-             argc - optind );
-    pe_print_usage();
+    fprintf(stderr, "error: must provide 2 (and only 2) input files, you "
+            "provided %d\n\n", argc - optind);
+    pe_print_usage(stderr);
     exit(1);
   }
 
-  if(strcmp(options->outfilename, "STDOUT") != 0)
+  if(options->outfilename)
   {
     if(strcmp(options->outfmt, "html") == 0)
     {
-      char dircmd[256];
+      char dircmd[1024];
       sprintf(dircmd, "test -d %s", options->outfilename);
       if(system(dircmd) == 0)
       {
         if(options->overwrite)
         {
-          char rmcmd[256];
+          char rmcmd[1024];
           sprintf(rmcmd, "rm -r %s", options->outfilename);
           if(system(rmcmd) != 0)
           {
-            fprintf( stderr, "error: could not overwrite output directory '%s'",
-                     options->outfilename );
+            fprintf(stderr, "error: could not overwrite output directory '%s'",
+                    options->outfilename);
             exit(1);
           }
         }
         else
         {
           fprintf(stderr, "error: outfile '%s' exists; use '-w' to force "
-                  "overwrite\n", options->outfilename );
+                  "overwrite\n", options->outfilename);
           exit(1);
         }
       }
     }
     else
     {
-      char filecmd[256];
+      char filecmd[1024];
       sprintf(filecmd, "test -f %s", options->outfilename);
       if(system(filecmd) == 0 && !options->overwrite)
       {
           fprintf(stderr, "error: outfile '%s' exists; use '-w' to force "
-                  "overwrite\n", options->outfilename );
+                  "overwrite\n", options->outfilename);
           exit(1);
       }
     }
@@ -224,14 +211,14 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
 
   if(strcmp(options->outfmt, "html") == 0)
   {
-    if(strcmp(options->outfilename, "STDOUT") == 0)
+    if(options->outfilename == NULL)
     {
       fputs("error: will not print results to terminal in HTML mode; must "
-            "provide outfile\n\n", stderr );
-      pe_print_usage();
+            "provide outfile\n\n", stderr);
+      pe_print_usage(stderr);
       exit(1);
     }
-    char dircmd[256];
+    char dircmd[1024];
     sprintf(dircmd, "mkdir %s", options->outfilename);
     if(system(dircmd) != 0)
     {
@@ -239,7 +226,7 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
               options->outfilename);
       exit(1);
     }
-    char outname[256];
+    char outname[1024];
     sprintf(outname, "%s/index.html", options->outfilename);
     options->outfile = fopen(outname, "w");
     if(!options->outfile)
@@ -258,22 +245,22 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
       exit(1);
     }
 
-    if(options->summary_only && options->locus_graphics)
+    if(options->summary_only && options->graphics)
     {
       fprintf(stderr, "warning: cannot print PNG graphics in summary only "
               "mode; ignoring\n");
-      options->locus_graphics = false;
+      options->graphics = false;
     }
   }
   else
   {
-    if(options->locus_graphics)
+    if(options->graphics)
     {
       fputs("warning: will only generate PNG graphics when outformat='html'; "
             "ignoring\n\n", stderr);
-      options->locus_graphics = false;
+      options->graphics = false;
     }
-    if(strcmp(options->outfilename, "STDOUT") != 0)
+    if(options->outfilename)
     {
       options->outfile = fopen(options->outfilename, "w");
       if(options->outfile == NULL)
@@ -285,102 +272,92 @@ int pe_parse_options(int argc, char * const argv[], PeOptions *options)
     }
   }
 
-  if(options->trans_per_locus > 0)
-  {
-    if(options->filters.MaxReferenceTranscriptModels == 0 ||
-       options->trans_per_locus < options->filters.MaxReferenceTranscriptModels)
-    {
-      options->filters.MaxReferenceTranscriptModels = options->trans_per_locus;
-    }
-    if(options->filters.MaxPredictionTranscriptModels == 0 ||
-      options->trans_per_locus < options->filters.MaxPredictionTranscriptModels)
-    {
-      options->filters.MaxPredictionTranscriptModels = options->trans_per_locus;
-    }
-  }
-
   options->refrfile = argv[optind];
   options->predfile = argv[optind + 1];
   return optind;
 }
 
-void pe_print_usage()
+void pe_print_usage(FILE *outstream)
 {
-  fprintf(stderr, "Usage: parseval [options] reference prediction\n"
-"  Options:\n"
+  fprintf(outstream,
+"\nParsEval: comparative analysis of two alternative sources of annotation\n"
+"Usage: parseval [options] reference.gff3 prediction.gff3\n"
+"  Basic options:\n"
+"    -d|--debug:                 Print debugging messages\n"
+"    -h|--help:                  Print help message and exit\n"
+"    -v|--verbose:               Print verbose warning messages\n\n"
+"  Output options:\n"
 "    -a|--datashare: STRING      Location from which to copy shared data for\n"
 "                                HTML output (if `make install' has not yet\n"
 "                                been run)\n"
-"    -c|--complimit: INT         Maximum number of comparisons per locus; set\n"
-"                                to 0 for no limit (default=512)\n"
-"    -d|--debug:                 Print debugging messages\n"
 "    -f|--outformat: STRING      Indicate desired output format; possible\n"
 "                                options: 'csv', 'text', or 'html'\n"
 "                                (default='text'); in 'text' or 'csv' mode,\n"
 "                                will create a single file; in 'html' mode,\n"
 "                                will create a directory\n"
-"    -g|--printgff3:             Include GFF3 output corresponding to each\n"
+"    -g|--nogff3:                Do no print GFF3 output corresponding to each\n"
 "                                comparison\n"
-"    -h|--help:                  Print help message and exit\n"
-"    -k|--makefilter             Create a default configuration file for\n"
-"                                filtering reported results\n"
-"    -m|--vectors:               Print model vectors in output file\n"
 "    -o|--outfile: FILENAME      File/directory to which output will be\n"
 "                                written; default is the terminal (STDOUT)\n"
 "    -p|--png:                   Generate individual PNG graphics for each\n"
-"                                gene locus\n"
-"    -r|--filterfile: STRING     Use the indicated configuration file to\n"
-"                                filter reported results;\n"
+"                                gene locus (HTML mode only)\n"
 "    -s|--summary:               Only print summary statistics, do not print\n"
 "                                individual comparisons\n"
-"    -t|--maxtrans: INT          The maximum number of transcripts that can\n"
-"                                be annotated at a given gene locus; set to 0\n"
-"                                for no limit (default=32)\n"
-"    -v|--verbose:               Print verbose warning messages\n"
 "    -w|--overwrite:             Force overwrite of any existing output files\n"
 "    -x|--refrlabel: STRING      Optional label for reference annotations\n"
-"    -y|--predlabel: STRING      Optional label for prediction annotations\n");
+"    -y|--predlabel: STRING      Optional label for prediction annotations\n\n"
+"  Filtering options:\n"
+"    -k|--makefilter             Create a default configuration file for\n"
+"                                filtering reported results and quit,\n"
+"                                performing no comparisons\n"
+"    -r|--filterfile: STRING     Use the indicated configuration file to\n"
+"                                filter reported results;\n\n");
 }
 
-void pe_set_option_defaults(PeOptions *options)
+void pe_set_option_defaults(ParsEvalOptions *options)
 {
   options->debug = false;
   options->outfile = stdout;
-  options->outfilename = "STDOUT";
-  options->gff3 = false;
-  options->verbose = false;
-  options->complimit = 512;
+  options->gff3 = true;
   options->summary_only = false;
-  options->vectors = false;
-  options->locus_graphics = false;
+  options->graphics = false;
+  options->refrfile = NULL;
+  options->predfile = NULL;
+  options->refrlabel = NULL;
+  options->predlabel = NULL;
   options->outfmt = "text";
   options->overwrite = false;
   options->data_path = AGN_DATA_PATH;
+  options->makefilter = false;
   options->usefilter = false;
-  options->filterfile = "";
-  agn_compare_filters_init(&options->filters);
-  options->trans_per_locus = 32;
-  options->refrlabel = "";
-  options->predlabel = "";
+  options->filterfile = NULL;
+  options->verbose = false;
 }
 
-void pe_option_print(PeOptions *options, FILE *outstream)
+void pe_summary_header(ParsEvalOptions *options, FILE *outstream,
+                       char *start_time, int argc, char **argv)
 {
-  fprintf(outstream, "debug=%d\n", options->debug);
-  fprintf(outstream, "outfile=%p\n", options->outfile);
-  fprintf(outstream, "outfilename=%s\n", options->outfilename);
-  fprintf(outstream, "gff3=%d\n", options->gff3);
-  fprintf(outstream, "verbose=%d\n", options->verbose);
-  fprintf(outstream, "complimit=%d\n", options->complimit);
-  fprintf(outstream, "summary_only=%d\n", options->summary_only);
-  fprintf(outstream, "vectors=%d\n", options->vectors);
-  fprintf(outstream, "locus_graphics=%d\n", options->locus_graphics);
-  fprintf(outstream, "outfmt=%s\n", options->outfmt);
-  fprintf(outstream, "overwrite=%d\n", options->overwrite);
-  fprintf(outstream, "data_path=%s\n", options->data_path);
-  fprintf(outstream, "makefilter=%d\n", options->makefilter);
-  fprintf(outstream, "usefilter=%d\n", options->usefilter);
-  fprintf(outstream, "trans_per_locus=%d\n", options->trans_per_locus);
-  fprintf(outstream, "refrlabel=%s\n", options->refrlabel);
-  fprintf(outstream, "predlabel=%s\n", options->predlabel);
+  fprintf(outstream,
+          "============================================================\n"
+          "========== ParsEval Summary\n"
+          "============================================================\n\n");
+
+  fprintf(outstream, "Started:                %s\n", start_time);
+
+  if(options->refrlabel != NULL)
+    fprintf(outstream, "Reference annotations:  %s\n", options->refrlabel);
+  else
+    fprintf(outstream, "Reference annotations:  %s\n", options->refrfile);
+  if(options->predlabel != NULL)
+    fprintf(outstream, "Prediction annotations: %s\n", options->predlabel);
+  else
+    fprintf(outstream, "Prediction annotations: %s\n", options->predfile);
+  fprintf(outstream, "Executing command:      ");
+
+  int x;
+  for(x = 0; x < argc; x++)
+  {
+    fprintf(outstream, "%s ", argv[x]);
+  }
+  fprintf(outstream, "\n\n");
 }
