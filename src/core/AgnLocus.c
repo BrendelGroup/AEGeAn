@@ -975,7 +975,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
     AgnCliquePair **pair = gt_array_get(clique_pairs, i);
     AgnTranscriptClique *rclique = agn_clique_pair_get_refr_clique(*pair);
     AgnTranscriptClique *pclique = agn_clique_pair_get_pred_clique(*pair);
-    if(agn_transcript_clique_has_id_in_hash(rclique, refrcliques_acctd) &&
+    if(agn_transcript_clique_has_id_in_hash(rclique, refrcliques_acctd) ||
        agn_transcript_clique_has_id_in_hash(pclique, predcliques_acctd))
     {
       agn_clique_pair_delete(*pair);
