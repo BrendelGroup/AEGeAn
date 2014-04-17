@@ -113,7 +113,14 @@ static void compare_report_free(GtNodeVisitor *nv)
 {
   AgnCompareReport *rpt;
   gt_assert(nv);
+
   rpt = compare_report_visitor_cast(nv);
+  if(rpt->last_seqid && rpt->sequencefunc)
+  {
+    AgnComparisonData *seqdata = gt_hashmap_get(rpt->seqdata, rpt->last_seqid);
+    rpt->sequencefunc(seqdata, rpt->last_seqid, rpt->sequencefuncdata);
+  }
+
   gt_str_array_delete(rpt->seqids);
   gt_hashmap_delete(rpt->seqdata);
   gt_array_delete(rpt->locusfilters);
@@ -257,7 +264,7 @@ static int compare_report_visit_region_node(GtNodeVisitor *nv,
   agn_comparison_data_init(data);
   gt_hashmap_add(rpt->seqdata, (char *)seqid, data);
 
-  if(rpt->last_seqid != NULL)
+  if(rpt->last_seqid && rpt->sequencefunc)
   {
     AgnComparisonData *seqdata = gt_hashmap_get(rpt->seqdata, seqid);
     rpt->sequencefunc(seqdata, seqid, rpt->sequencefuncdata);
