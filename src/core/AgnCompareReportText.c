@@ -298,8 +298,7 @@ static void compare_report_text_pair_nucleotide(FILE *outstream,
   AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
   double identity = (double)pairstats->overall_matches /
                     (double)pairstats->overall_length;
-  double tolerance = agn_clique_pair_tolerance(pair);
-  if(fabs(identity - 1.0) < tolerance)
+  if(pairstats->overall_matches == pairstats->overall_length)
     fprintf(outstream, "     |    Gene structures match perfectly!\n");
   else
   {
@@ -396,9 +395,9 @@ static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
   gt_array_delete(tids);
   fprintf(outstream, "     |\n");
 
-  fprintf(outstream, " | reference GFF3:\n");
+  fprintf(outstream, "     | reference GFF3:\n");
   agn_transcript_clique_to_gff3(refrclique, outstream, " | ");
-  fprintf(outstream, " | prediction GFF3:\n");
+  fprintf(outstream, "     | prediction GFF3:\n");
   agn_transcript_clique_to_gff3(predclique, outstream, " | ");
   fprintf(outstream, " |\n");
 

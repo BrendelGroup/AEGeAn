@@ -71,14 +71,6 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
                                    AgnTranscriptClique *pred);
 
 /**
- * @function The tolerance represents the resolution required to compare 2
- * floating point numbers. Comparison of floating point numbers is not exact,
- * but if the difference between two floats/doubles is small enough they are
- * considered equal.
- */
-double agn_clique_pair_tolerance(AgnCliquePair *pair);
-
-/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_clique_pair_unit_test(AgnUnitTest *test);

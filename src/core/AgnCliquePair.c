@@ -132,8 +132,8 @@ int agn_clique_pair_compare_direct(AgnCliquePair *p1, AgnCliquePair *p2)
                       (double)p1->stats.overall_length;
 
   // First, check if either pair is a perfect match
-  bool p1_perfect = p1identity == 1.0 || fabs(p1identity - 1.0) < p1->tolerance;
-  bool p2_perfect = p2identity == 1.0 || fabs(p2identity - 1.0) < p2->tolerance;
+  bool p1_perfect = p1->stats.overall_matches == p1->stats.overall_length;
+  bool p2_perfect = p2->stats.overall_matches == p2->stats.overall_length;
   if(p1_perfect && p2_perfect)
     return 0;
   else if(p1_perfect)
@@ -240,11 +240,6 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
 
   clique_pair_comparative_analysis(pair);
   return pair;
-}
-
-double agn_clique_pair_tolerance(AgnCliquePair *pair)
-{
-  return pair->tolerance;
 }
 
 bool agn_clique_pair_unit_test(AgnUnitTest *test)

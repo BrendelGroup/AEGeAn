@@ -53,10 +53,6 @@ Class AgnCliquePair
 
   Class constructor.
 
-.. c:function:: double agn_clique_pair_tolerance(AgnCliquePair *pair)
-
-  The tolerance represents the resolution required to compare 2 floating point numbers. Comparison of floating point numbers is not exact, but if the difference between two floats/doubles is small enough they are considered equal.
-
 .. c:function:: bool agn_clique_pair_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
