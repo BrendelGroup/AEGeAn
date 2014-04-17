@@ -5,7 +5,7 @@ int main(int argc, char **argv)
   GtError *error;
   GtLogger *logger;
   GtQueue *streams;
-  GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3;
+  GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3, *tempstream;
   char *start_time;
 
   gt_lib_init();
@@ -44,11 +44,17 @@ int main(int argc, char **argv)
   {
     GtStr *rlabel = gt_str_new_cstr(options.refrlabel);
     GtNodeVisitor *nv = gt_set_source_visitor_new(rlabel);
-    GtNodeStream *tempstream = gt_visitor_stream_new(refrgff3, nv);
+    tempstream = gt_visitor_stream_new(refrgff3, nv);
     gt_queue_add(streams, tempstream);
     refrgff3 = tempstream;
     gt_str_delete(rlabel);
   }
+  tempstream = agn_infer_cds_stream_new(refrgff3, logger);
+  gt_queue_add(streams, tempstream);
+  refrgff3 = tempstream;
+  tempstream = agn_infer_exons_stream_new(refrgff3, logger);
+  gt_queue_add(streams, tempstream);
+  refrgff3 = tempstream;
 
   predgff3 = gt_gff3_in_stream_new_unsorted(1, &options.predfile);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)predgff3);
@@ -58,11 +64,17 @@ int main(int argc, char **argv)
   {
     GtStr *rlabel = gt_str_new_cstr(options.predlabel);
     GtNodeVisitor *nv = gt_set_source_visitor_new(rlabel);
-    GtNodeStream *tempstream = gt_visitor_stream_new(predgff3, nv);
+    tempstream = gt_visitor_stream_new(predgff3, nv);
     gt_queue_add(streams, tempstream);
     predgff3 = tempstream;
     gt_str_delete(rlabel);
   }
+  tempstream = agn_infer_cds_stream_new(predgff3, logger);
+  gt_queue_add(streams, tempstream);
+  predgff3 = tempstream;
+  tempstream = agn_infer_exons_stream_new(predgff3, logger);
+  gt_queue_add(streams, tempstream);
+  predgff3 = tempstream;
 
   current_stream = agn_locus_stream_new_pairwise(refrgff3, predgff3, logger);
   gt_queue_add(streams, current_stream);
