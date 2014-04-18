@@ -199,7 +199,7 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
     {
       if(!agn_typecheck_mrna(current))
         continue;
-      
+
       GtArray *cds     = agn_typecheck_select(current, agn_typecheck_cds);
       GtArray *exons   = agn_typecheck_select(current, agn_typecheck_exon);
       GtArray *introns = agn_typecheck_select(current, agn_typecheck_intron);

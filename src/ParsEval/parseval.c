@@ -49,10 +49,7 @@ int main(int argc, char **argv)
     refrgff3 = tempstream;
     gt_str_delete(rlabel);
   }
-  tempstream = agn_infer_cds_stream_new(refrgff3, logger);
-  gt_queue_add(streams, tempstream);
-  refrgff3 = tempstream;
-  tempstream = agn_infer_exons_stream_new(refrgff3, logger);
+  tempstream = agn_gene_stream_new(refrgff3, logger);
   gt_queue_add(streams, tempstream);
   refrgff3 = tempstream;
 
@@ -69,10 +66,7 @@ int main(int argc, char **argv)
     predgff3 = tempstream;
     gt_str_delete(rlabel);
   }
-  tempstream = agn_infer_cds_stream_new(predgff3, logger);
-  gt_queue_add(streams, tempstream);
-  predgff3 = tempstream;
-  tempstream = agn_infer_exons_stream_new(predgff3, logger);
+  tempstream = agn_gene_stream_new(predgff3, logger);
   gt_queue_add(streams, tempstream);
   predgff3 = tempstream;
 
