@@ -225,7 +225,7 @@ static void compare_report_text_comp_class_summary(AgnCompClassDesc *summ,
 
 static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
 {
-  GtArray *pairs2report;
+  GtArray *pairs2report, *unique;
   GtUword i;
   FILE *outstream = data;
 
@@ -236,7 +236,7 @@ static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
     fprintf(outstream,
             "     |\n"
             "     | No comparisons were performed for this locus.\n"
-            "     |\n\n");
+            "     |\n");
     return;
   }
 
@@ -244,6 +244,52 @@ static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
     compare_report_text_print_pair(pair, outstream);
+  }
+
+  unique = agn_locus_get_unique_refr_cliques(locus);
+  if(gt_array_size(unique) > 0)
+  {
+    fprintf(outstream,
+            "     |\n"
+            "     |--- Unmatched reference transcripts ---\n"
+            "     |---------------------------------------\n"
+            "     |\n");
+    for(i = 0; i < gt_array_size(unique); i++)
+    {
+      GtUword j;
+      AgnTranscriptClique **clique = gt_array_get(unique, i);
+      GtArray *ids = agn_transcript_clique_ids(*clique);
+      for(j = 0; j < gt_array_size(ids); j++)
+      {
+        const char *id = *(const char **)gt_array_get(ids, j);
+        fprintf(outstream, "     |    %s\n", id);
+      }
+      gt_array_delete(ids);
+    }
+    fputs("     |\n", outstream);
+  }
+
+  unique = agn_locus_get_unique_pred_cliques(locus);
+  if(gt_array_size(unique) > 0)
+  {
+    fprintf(outstream,
+            "     |\n"
+            "     |--- Unmatched prediction transcripts ---\n"
+            "     |----------------------------------------\n"
+            "     |\n");
+    for(i = 0; i < gt_array_size(unique); i++)
+    {
+      GtUword j;
+      AgnTranscriptClique **clique = gt_array_get(unique, i);
+      GtArray *ids = agn_transcript_clique_ids(*clique);
+      for(j = 0; j < gt_array_size(ids); j++)
+      {
+        const char *id = *(const char **)gt_array_get(ids, j);
+        fprintf(outstream, "     |    %s\n", id);
+      }
+      gt_array_delete(ids);
+    }
+    fputs("     |\n", outstream);
   }
   fputs("\n", outstream);
 }

@@ -324,12 +324,12 @@ bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 
 GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
 {
-  return gt_genome_node_get_user_data(locus, "unique_pred");
+  return gt_genome_node_get_user_data(locus, "uniqpred");
 }
 
 GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus)
 {
-  return gt_genome_node_get_user_data(locus, "unique_refr");
+  return gt_genome_node_get_user_data(locus, "uniqrefr");
 }
 
 GtArray *agn_locus_genes(AgnLocus *locus, AgnComparisonSource src)
