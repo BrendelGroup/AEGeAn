@@ -1020,8 +1020,8 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
     pred_clique = *(AgnTranscriptClique **)gt_array_get(predcliques, i);
     if(!agn_transcript_clique_has_id_in_hash(pred_clique, predcliques_acctd))
     {
-      gt_array_add_elem(uniqpred, gt_genome_node_ref(pred_clique),
-                        sizeof(GtArray *));
+      gt_genome_node_ref(pred_clique);
+      gt_array_add(uniqpred, pred_clique);
       agn_transcript_clique_put_ids_in_hash(pred_clique, predcliques_acctd);
     }
     agn_transcript_clique_delete(pred_clique);
