@@ -59,6 +59,7 @@ enum AgnLocusFilterOp
   AGN_LOCUS_FILTER_GE,
   AGN_LOCUS_FILTER_LT,
   AGN_LOCUS_FILTER_LE,
+  AGN_LOCUS_FILTER_NO, // no-op
 };
 typedef enum AgnLocusFilterOp AgnLocusFilterOp;
 

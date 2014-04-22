@@ -297,7 +297,12 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
 
 bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 {
-  GtUword value = filter->function(locus, filter->src);
+  GtUword value;
+  gt_assert(locus && filter);
+  if(filter->operator == AGN_LOCUS_FILTER_NO)
+    return true;
+
+  value = filter->function(locus, filter->src);
   switch(filter->operator)
   {
     case AGN_LOCUS_FILTER_EQ:
@@ -317,6 +322,9 @@ bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
       break;
     case AGN_LOCUS_FILTER_LE:
       if(value <= filter->testvalue) return true;
+      break;
+    case AGN_LOCUS_FILTER_NO: // Added this entry to case statement because
+      return true;            // of compiler complaint
       break;
   }
   return false;
