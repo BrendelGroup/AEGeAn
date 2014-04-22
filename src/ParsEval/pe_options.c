@@ -3,6 +3,8 @@
 void pe_free_option_memory(ParsEvalOptions *options)
 {
   fclose(options->outfile);
+  if(options->filters != NULL)
+    gt_array_delete(options->filters);
 }
 
 char *pe_get_start_time()
@@ -96,26 +98,17 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
         break;
 
       case 'r':
-        options->usefilter = true;
-        options->filterfile = optarg;
-        /*if(options->usefilter)
+        if(true)
         {
-          if(options->debug)
-            fprintf(stderr, "debug: opening filter file '%s'\n",
-                    options->filterfile);
-
-          FILE *filterfile = agn_fopen(options->filterfile, "r", stderr);
-          AgnLogger *logger = agn_logger_new();
-          agn_compare_filters_parse(&options->filters, filterfile, logger);
-          bool haderrors = agn_logger_print_all(logger, stderr,
-                                                "[ParsEval] parsing filters");
-          if(haderrors)
-            exit(1);
-          agn_logger_delete(logger);
-          if(options->debug)
-            fprintf(stderr, "debug: closing filter file\n");
+          FILE *filterfile = fopen(optarg, "r");
+          if(filterfile == NULL)
+          {
+            gt_error_set(error, "unable to open filter file '%s'", optarg);
+            return -1;
+          }
+          options->filters = agn_locus_filter_parse(filterfile);
           fclose(filterfile);
-        }*/
+        }
         break;
 
       case 's':
@@ -329,8 +322,7 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->overwrite = false;
   options->data_path = AGN_DATA_PATH;
   options->makefilter = false;
-  options->usefilter = false;
-  options->filterfile = NULL;
+  options->filters = NULL;
   options->verbose = false;
 }
 

@@ -76,7 +76,7 @@ Class AgnCompareReport
 
   Return a pointer to the statistics collected by the node visitor.
 
-.. c:function:: GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger)
+.. c:function:: GtNodeVisitor *agn_compare_report_new(GtLogger *logger)
 
   Constructor for the node visitor.
 
@@ -420,6 +420,10 @@ Class AgnLocus
 .. c:function:: GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
 
   Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_filter_parse(FILE *filterfile)
+
+  FIXME
 
 .. c:function:: bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 

@@ -15,7 +15,6 @@ struct AgnCompareReport
   GtStrArray *seqids;
   GtHashmap *seqdata;
   const char *last_seqid;
-  GtArray *locusfilters;
   GtLogger *logger;
   AgnCompareReportLocusFunc locusfunc;
   void *locusfuncdata;
@@ -68,7 +67,7 @@ AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt)
   return &rpt->data;
 }
 
-GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger)
+GtNodeVisitor *agn_compare_report_new(GtLogger *logger)
 {
   GtNodeVisitor *nv = gt_node_visitor_create(compare_report_visitor_class());
   AgnCompareReport *rpt = compare_report_visitor_cast(nv);
@@ -76,7 +75,6 @@ GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger)
   rpt->seqids = gt_str_array_new();
   rpt->last_seqid = NULL;
   rpt->seqdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
-  rpt->locusfilters = gt_array_ref(locusfilters);
   rpt->logger = logger;
   rpt->locusfunc = NULL;
   rpt->locusfuncdata = NULL;
@@ -123,7 +121,6 @@ static void compare_report_free(GtNodeVisitor *nv)
 
   gt_str_array_delete(rpt->seqids);
   gt_hashmap_delete(rpt->seqdata);
-  gt_array_delete(rpt->locusfilters);
 }
 
 void compare_report_record_locus_stats(AgnComparisonData *data, AgnLocus *locus)
@@ -215,22 +212,12 @@ static int compare_report_visit_feature_node(GtNodeVisitor *nv,
   AgnComparisonData *seqdata;
   AgnLocus *locus;
   GtStr *seqid;
-  GtUword i;
 
   gt_error_check(error);
   gt_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
 
   rpt = compare_report_visitor_cast(nv);
   locus = (AgnLocus *)fn;
-  bool keeplocus = true;
-  for(i = 0; i < gt_array_size(rpt->locusfilters); i++)
-  {
-    AgnLocusFilter *filter = gt_array_get(rpt->locusfilters, i);
-    keeplocus = keeplocus && agn_locus_filter_test(locus, filter);
-  }
-
-  if(!keeplocus)
-    return 0;
 
   agn_locus_comparative_analysis(locus, rpt->logger);
   compare_report_record_locus_stats(&rpt->data, locus);

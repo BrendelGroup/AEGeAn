@@ -112,7 +112,9 @@ static int locus_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
       }
     }
 
-    if(!keeplocus)
+    if(keeplocus)
+      return 0;
+    else
     {
       gt_genome_node_delete(*gn);
       continue;

@@ -38,7 +38,7 @@ AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt);
 /**
  * @function Constructor for the node visitor.
  */
-GtNodeVisitor *agn_compare_report_new(GtArray *locusfilters, GtLogger *logger);
+GtNodeVisitor *agn_compare_report_new(GtLogger *logger);
 
 /**
  * @function Return a string array containing IDs of all sequences for which the

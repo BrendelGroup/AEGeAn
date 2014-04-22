@@ -97,6 +97,13 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
+  if(options.filters != NULL)
+  {
+    current_stream = agn_locus_filter_stream_new(last_stream, options.filters);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+  }
+
   GtNodeVisitor *rpt = agn_compare_report_text_new(options.outfile, logger);
   current_stream = gt_visitor_stream_new(last_stream, rpt);
   gt_queue_add(streams, current_stream);

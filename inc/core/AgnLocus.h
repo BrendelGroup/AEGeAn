@@ -164,6 +164,11 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src);
         agn_locus_exon_num(LC, DEFAULTSOURCE)
 
 /**
+ * @function FIXME
+ */
+GtArray *agn_locus_filter_parse(FILE *filterfile);
+
+/**
  * @function Return true if ``locus`` satisfies the given filtering
  * criterion.
  */

@@ -46,6 +46,12 @@ static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
                                       GtArray *predcliques);
 
 /**
+ * @function Wrapper for gt_genome_node_get_length, for use in locus filtering.
+ */
+static GtUword locus_length(AgnLocus *locus,
+                            GT_UNUSED AgnComparisonSource source);
+
+/**
  * @function Determine which clique pairs will actually be reported.
  */
 static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
@@ -293,6 +299,82 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
   gt_feature_node_iterator_delete(iter);
 
   return count;
+}
+
+GtArray *agn_locus_filter_parse(FILE *filterfile)
+{
+  char buffer[256];
+  GtArray *filters;
+
+  gt_assert(filterfile);
+  filters = gt_array_new( sizeof(AgnLocusFilter) );
+  while(fgets(buffer, 255, filterfile))
+  {
+    if(strlen(buffer) == 0 || buffer[0] == '\n' || buffer[0] == '#')
+      continue;
+
+    char *filterstr = strtok(buffer, " \n");
+    char *opstr = strtok(NULL, " \n");
+    char *valuestr = strtok(NULL, " \n");
+    char *srcstr = strtok(NULL, " \n");
+
+    AgnLocusFilter filter;
+    if(strcmp(filterstr, "LocusLength") == 0)
+      filter.function = locus_length;
+    else if(strcmp(filterstr, "GeneCount") == 0)
+      filter.function = agn_locus_gene_num;
+    else if(strcmp(filterstr, "TranscriptCount") == 0)
+      filter.function = agn_locus_mrna_num;
+    else if(strcmp(filterstr, "ExonCount") == 0)
+      filter.function = agn_locus_exon_num;
+    else if(strcmp(filterstr, "CDSLength") == 0)
+      filter.function = agn_locus_cds_length;
+    else
+    {
+      fprintf(stderr, "[AgnLocus::agn_locus_filter_parse] invalid filter '%s'",
+              filterstr);
+      exit(1);
+    }
+
+    if(strcmp(opstr, ">") == 0)
+      filter.operator = AGN_LOCUS_FILTER_GT;
+    else if(strcmp(opstr, ">=") == 0)
+      filter.operator = AGN_LOCUS_FILTER_GE;
+    else if(strcmp(opstr, "<") == 0)
+      filter.operator = AGN_LOCUS_FILTER_LT;
+    else if(strcmp(opstr, "<=") == 0)
+      filter.operator = AGN_LOCUS_FILTER_LE;
+    else if(strcmp(opstr, "=") == 0)
+      filter.operator = AGN_LOCUS_FILTER_EQ;
+    else if(strcmp(opstr, "<>") == 0)
+      filter.operator = AGN_LOCUS_FILTER_NO;
+    else
+    {
+      fprintf(stderr, "[AgnLocus::agn_locus_filter_parse] invalid operator "
+              "'%s'", opstr);
+      exit(1);
+    }
+
+    filter.testvalue = atol(valuestr);
+    filter.src = DEFAULTSOURCE;
+    if(srcstr)
+    {
+      if(strcmp(srcstr, "R") == 0)
+        filter.src = REFERENCESOURCE;
+      else if(strcmp(srcstr, "P") == 0)
+        filter.src = REFERENCESOURCE;
+      else
+      {
+        fprintf(stderr, "[AgnLocus::agn_locus_filter_parse] invalid source "
+                "'%s'", srcstr);
+        exit(1);
+      }
+    }
+
+    gt_array_add(filters, filter);
+  }
+
+  return filters;
 }
 
 bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
@@ -966,6 +1048,12 @@ static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
   }
 
   return clique_pairs;
+}
+
+static GtUword locus_length(AgnLocus *locus,
+                            GT_UNUSED AgnComparisonSource source)
+{
+  return gt_genome_node_get_length(locus);
 }
 
 static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,

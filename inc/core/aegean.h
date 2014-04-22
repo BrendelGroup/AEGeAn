@@ -8,6 +8,7 @@
 #include "AgnInferParentStream.h"
 #include "AgnIntervalLocusStream.h"
 #include "AgnLocus.h"
+#include "AgnLocusFilterStream.h"
 #include "AgnLocusMapVisitor.h"
 #include "AgnLocusStream.h"
 #include "AgnMrnaRepVisitor.h"

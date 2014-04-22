@@ -26,8 +26,7 @@ struct ParsEvalOptions
   bool overwrite;
   const char *data_path;
   bool makefilter;
-  bool usefilter;
-  const char *filterfile;
+  GtArray *filters;
   bool verbose;
 };
 typedef struct ParsEvalOptions ParsEvalOptions;
