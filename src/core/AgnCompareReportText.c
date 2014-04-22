@@ -140,15 +140,10 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
 
 GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
 {
-  GtNodeVisitor *rpt;
-  GtArray *filters;
-
-  filters = gt_array_new( sizeof(AgnLocusFilter) );
-  rpt = agn_compare_report_new(filters, logger);
+  GtNodeVisitor *rpt = agn_compare_report_new(logger);
   agn_compare_report_set_locus_callback((AgnCompareReport *)rpt,
                                         compare_report_text_locus_handler,
                                         outstream);
-  gt_array_delete(filters);
   return rpt;
 }
 
