@@ -88,7 +88,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
       fprintf(v->genefh, "%s\t%s\n", geneid, lid);
     }
 
-    if(agn_typecheck_gene(current) && v->mrnafh != NULL)
+    if(agn_typecheck_mrna(current) && v->mrnafh != NULL)
     {
       const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
       fprintf(v->mrnafh, "%s\t%s\n", mrnaid, lid);
