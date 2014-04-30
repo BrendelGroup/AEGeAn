@@ -373,12 +373,15 @@ static void ilocus_stream_parse_seq(AgnIntervalLocusStream *stream,
     gt_array_sort(seqloci, (GtCompare)agn_genome_node_compare);
 
   // Handle trivial case
-  if(nloci == 0 && endmode >= 0)
+  if(nloci == 0)
   {
-    AgnLocus *ilocus = agn_locus_new(seqidstr);
-    GtFeatureNode *ilocusfn = gt_feature_node_cast(ilocus);
-    agn_locus_set_range(ilocus, seqrange.start, seqrange.end);
-    gt_feature_index_add_feature_node(stream->out_loci, ilocusfn, error);
+    if(endmode >= 0)
+    {
+      AgnLocus *ilocus = agn_locus_new(seqidstr);
+      GtFeatureNode *ilocusfn = gt_feature_node_cast(ilocus);
+      agn_locus_set_range(ilocus, seqrange.start, seqrange.end);
+      gt_feature_index_add_feature_node(stream->out_loci, ilocusfn, error);
+    }
     gt_array_delete(seqloci);
     gt_str_delete(seqidstr);
     return;
