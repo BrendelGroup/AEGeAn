@@ -421,9 +421,9 @@ Class AgnLocus
 
   Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
 
-.. c:function:: GtArray *agn_locus_filter_parse(FILE *filterfile)
+.. c:function:: void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
 
-  FIXME
+  Parse filters from ``filterfile`` and place ``AgnLocusFilter`` objects in ``filters``.
 
 .. c:function:: bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 

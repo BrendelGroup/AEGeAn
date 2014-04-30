@@ -28,6 +28,7 @@ struct ParsEvalOptions
   bool makefilter;
   GtArray *filters;
   bool verbose;
+  int max_transcripts;
 };
 typedef struct ParsEvalOptions ParsEvalOptions;
 

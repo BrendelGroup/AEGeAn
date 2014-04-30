@@ -301,13 +301,11 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
   return count;
 }
 
-GtArray *agn_locus_filter_parse(FILE *filterfile)
+void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
 {
   char buffer[256];
-  GtArray *filters;
 
-  gt_assert(filterfile);
-  filters = gt_array_new( sizeof(AgnLocusFilter) );
+  gt_assert(filterfile && filters);
   while(fgets(buffer, 255, filterfile))
   {
     if(strlen(buffer) == 0 || buffer[0] == '\n' || buffer[0] == '#')
@@ -373,8 +371,6 @@ GtArray *agn_locus_filter_parse(FILE *filterfile)
 
     gt_array_add(filters, filter);
   }
-
-  return filters;
 }
 
 bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)

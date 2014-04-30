@@ -3,8 +3,7 @@
 void pe_free_option_memory(ParsEvalOptions *options)
 {
   fclose(options->outfile);
-  if(options->filters != NULL)
-    gt_array_delete(options->filters);
+  gt_array_delete(options->filters);
 }
 
 char *pe_get_start_time()
@@ -24,7 +23,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "a:df:ghko:pr:svwx:y:";
+  const char *optstr = "a:df:ghko:pr:st:vwx:y:";
   const struct option parseval_options[] =
   {
     { "datashare",  required_argument, NULL, 'a' },
@@ -37,6 +36,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     { "png",        no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
     { "summary",    no_argument,       NULL, 's' },
+    { "maxtrans",   required_argument, NULL, 't' },
     { "verbose",    no_argument,       NULL, 'v' },
     { "overwrite",  no_argument,       NULL, 'w' },
     { "refrlabel",  required_argument, NULL, 'x' },
@@ -106,13 +106,22 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
             gt_error_set(error, "unable to open filter file '%s'", optarg);
             return -1;
           }
-          options->filters = agn_locus_filter_parse(filterfile);
+          agn_locus_filter_parse(filterfile, options->filters);
           fclose(filterfile);
         }
         break;
 
       case 's':
         options->summary_only = true;
+        break;
+
+      case 't':
+        if(sscanf(optarg, "%d", &options->max_transcripts) == EOF)
+        {
+          fprintf(stderr, "error: could not convert maxtrans '%s' to an "
+                          "integer\n", optarg);
+          exit(1);
+        }
         break;
 
       case 'v':
@@ -152,6 +161,16 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
       exit(1);
     }
     exit(0);
+  }
+
+  if(options->max_transcripts > 0)
+  {
+    AgnLocusFilter filter;
+    filter.testvalue = options->max_transcripts;
+    filter.operator = AGN_LOCUS_FILTER_LE;
+    filter.src = DEFAULTSOURCE;
+    filter.function = agn_locus_mrna_num;
+    gt_array_add(options->filters, filter);
   }
 
   if(argc - optind != 2)
@@ -304,7 +323,9 @@ void pe_print_usage(FILE *outstream)
 "                                filtering reported results and quit,\n"
 "                                performing no comparisons\n"
 "    -r|--filterfile: STRING     Use the indicated configuration file to\n"
-"                                filter reported results;\n\n");
+"                                filter reported results;\n"
+"    -t|--maxtrans: INT          Maximum transcripts allowed per locus; use 0\n"
+"                                to disable limit; default is 32\n\n");
 }
 
 void pe_set_option_defaults(ParsEvalOptions *options)
@@ -322,8 +343,9 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->overwrite = false;
   options->data_path = AGN_DATA_PATH;
   options->makefilter = false;
-  options->filters = NULL;
+  options->filters = gt_array_new( sizeof(AgnLocusFilter) );
   options->verbose = false;
+  options->max_transcripts = 32;
 }
 
 void pe_summary_header(ParsEvalOptions *options, FILE *outstream,
