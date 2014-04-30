@@ -42,12 +42,12 @@ int main(int argc, char **argv)
   gt_queue_add(streams, refrgff3);
   if(options.refrlabel != NULL)
   {
-    GtStr *rlabel = gt_str_new_cstr(options.refrlabel);
-    GtNodeVisitor *nv = gt_set_source_visitor_new(rlabel);
+    GtStr *label = gt_str_new_cstr(options.refrlabel);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(label);
     tempstream = gt_visitor_stream_new(refrgff3, nv);
     gt_queue_add(streams, tempstream);
     refrgff3 = tempstream;
-    gt_str_delete(rlabel);
+    gt_str_delete(label);
   }
   tempstream = agn_gene_stream_new(refrgff3, logger);
   gt_queue_add(streams, tempstream);
@@ -59,12 +59,12 @@ int main(int argc, char **argv)
   gt_queue_add(streams, predgff3);
   if(options.predlabel != NULL)
   {
-    GtStr *rlabel = gt_str_new_cstr(options.predlabel);
-    GtNodeVisitor *nv = gt_set_source_visitor_new(rlabel);
+    GtStr *label = gt_str_new_cstr(options.predlabel);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(label);
     tempstream = gt_visitor_stream_new(predgff3, nv);
     gt_queue_add(streams, tempstream);
     predgff3 = tempstream;
-    gt_str_delete(rlabel);
+    gt_str_delete(label);
   }
   tempstream = agn_gene_stream_new(predgff3, logger);
   gt_queue_add(streams, tempstream);
@@ -73,22 +73,6 @@ int main(int argc, char **argv)
   current_stream = agn_locus_stream_new_pairwise(refrgff3, predgff3, logger);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-
-  /*if(options.pseudofix)
-  {
-    current_stream = agn_pseudogene_fix_stream_new(last_stream);
-    gt_queue_add(streams, current_stream);
-    last_stream = current_stream;
-  }
-
-  current_stream = agn_infer_parent_stream_new(last_stream,
-                                               options.type_parents);
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-
-  current_stream = agn_filter_stream_new(last_stream, options.filter);
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;*/
 
   /* FIXME I don't understand why this is needed, but without it memory is
    * leaked; if it's not in this precise location, no memory is leaked but
