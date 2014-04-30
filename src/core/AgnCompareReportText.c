@@ -223,6 +223,8 @@ static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
   GtArray *pairs2report, *unique;
   GtUword i;
   FILE *outstream = data;
+  if(outstream == NULL)
+    return;
 
   compare_report_text_locus_header(locus, outstream);
   pairs2report = agn_locus_pairs_to_report(locus);

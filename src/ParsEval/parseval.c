@@ -104,7 +104,10 @@ int main(int argc, char **argv)
     last_stream = current_stream;
   }
 
-  GtNodeVisitor *rpt = agn_compare_report_text_new(options.outfile, logger);
+  FILE *locusstream = NULL;
+  if(!options.summary_only)
+    locusstream = options.outfile;
+  GtNodeVisitor *rpt = agn_compare_report_text_new(locusstream, logger);
   current_stream = gt_visitor_stream_new(last_stream, rpt);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
