@@ -92,6 +92,21 @@ Class AgnCompareReport
 
   Set the callback function to be used for generating sequence reports. The ``data`` pointer is optional but will be available to the callback function. Set ``func`` to NULL to disable sequence report generation (default).
 
+Class AgnCompareReportHTML
+--------------------------
+
+.. c:type:: AgnCompareReportHTML
+
+  The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces hyperlinked HTML reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
+
+.. c:function:: void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt, const char *outdir)
+
+  After the node stream has been processed, call this function to write a summary of all locus comparisons to ``outstream``.
+
+.. c:function:: GtNodeVisitor *agn_compare_report_text_new(const char *outdir,GtLogger *logger)
+
+  Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written to ``outdir`` and status messages will be written to the logger. An assertion
+
 Class AgnCompareReportText
 --------------------------
 
