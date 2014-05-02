@@ -57,55 +57,20 @@ Class AgnCliquePair
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Class AgnCompareReport
-----------------------
-
-.. c:type:: AgnCompareReport
-
-  The ``AgnCompareReport`` class implements the ``GtNodeVisitor`` class. It is used to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produce reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReport.h>`_.
-
-.. c:type:: typedef void (*AgnCompareReportLocusFunc)(AgnLocus *locus, void *data)
-
-  Signature of callback functions used to create locus-level reports, if any.
-
-.. c:type:: typedef void (*AgnCompareReportSequenceFunc)(const AgnComparisonData *cd, const char *seqid, void *data)
-
-  Signature of callback functions used to create sequence-level summary reports, if any.
-
-.. c:function:: AgnComparisonData *agn_compare_report_data(AgnCompareReport *rpt)
-
-  Return a pointer to the statistics collected by the node visitor.
-
-.. c:function:: GtNodeVisitor *agn_compare_report_new(GtLogger *logger)
-
-  Constructor for the node visitor.
-
-.. c:function:: GtStrArray *agn_compare_report_seqids(AgnCompareReport *rpt)
-
-  Return a string array containing IDs of all sequences for which the node stream contained annotations.
-
-.. c:function:: void agn_compare_report_set_locus_callback(AgnCompareReport *rpt, AgnCompareReportLocusFunc func, void *data)
-
-  Set the callback function to be used for generating locus reports. The ``data`` pointer is optional but will be available to the callback function. Set ``func`` to NULL to disable locus report generation (default).
-
-.. c:function:: void agn_compare_report_set_sequence_callback(AgnCompareReport *rpt, AgnCompareReportSequenceFunc func, void *data)
-
-  Set the callback function to be used for generating sequence reports. The ``data`` pointer is optional but will be available to the callback function. Set ``func`` to NULL to disable sequence report generation (default).
-
 Class AgnCompareReportHTML
 --------------------------
 
 .. c:type:: AgnCompareReportHTML
 
-  The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces hyperlinked HTML reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
+  The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
 
-.. c:function:: void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt, const char *outdir)
+.. c:function:: void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 
-  After the node stream has been processed, call this function to write a summary of all locus comparisons to ``outstream``.
+  After the node stream has been processed, call this function to write a summary of all locus comparisons to the output directory.
 
 .. c:function:: GtNodeVisitor *agn_compare_report_html_new(const char *outdir,GtLogger *logger)
 
-  Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written to ``outdir`` and status messages will be written to the logger. An assertion
+  Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written in ``outdir`` and status messages will be written to the logger.
 
 Class AgnCompareReportText
 --------------------------
@@ -425,6 +390,10 @@ Class AgnLocus
   Analog of ``strcmp`` for sorting AgnLocus objects. Loci are first sorted lexicographically by sequence ID, and then spatially by genomic coordinates.
 
 .. c:function:: void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp)
+
+  Add this locus' internal comparison stats to a larger set of aggregate stats.
+
+.. c:function:: void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data)
 
   Add this locus' internal comparison stats to a larger set of aggregate stats.
 
