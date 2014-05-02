@@ -59,16 +59,16 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
         break;
 
       case 'f':
-        if(strcmp(optarg,  "csv") != 0 &&
-           strcmp(optarg, "text") != 0 &&
-           strcmp(optarg, "html") != 0)
+        if      (strcmp(optarg, "csv")  == 0) options->outfmt = CSVMODE;
+        else if (strcmp(optarg, "text") == 0) options->outfmt = TEXTMODE;
+        else if (strcmp(optarg, "html") == 0) options->outfmt = HTMLMODE;
+        else
         {
           fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
                   "option\n\n", optarg);
           pe_print_usage(stderr);
           exit(1);
         }
-        options->outfmt = optarg;
         break;
 
       case 'g':
@@ -181,9 +181,16 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     exit(1);
   }
 
+  if(options->outfmt == HTMLMODE && options->summary_only)
+  {
+    fprintf(stderr, "warning: summary-only mode requires text output format; "
+            "ignoring\n");
+    options->summary_only = false;
+  }
+  
   if(options->outfilename)
   {
-    if(strcmp(options->outfmt, "html") == 0)
+    if(options->outfmt == HTMLMODE)
     {
       char dircmd[1024];
       sprintf(dircmd, "test -d %s", options->outfilename);
@@ -221,7 +228,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     }
   }
 
-  if(strcmp(options->outfmt, "html") == 0)
+  if(options->outfmt == HTMLMODE)
   {
     if(options->outfilename == NULL)
     {
@@ -339,7 +346,7 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->predfile = NULL;
   options->refrlabel = NULL;
   options->predlabel = NULL;
-  options->outfmt = "text";
+  options->outfmt = TEXTMODE;
   options->overwrite = false;
   options->data_path = AGN_DATA_PATH;
   options->makefilter = false;

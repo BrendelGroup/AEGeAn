@@ -8,13 +8,24 @@
 #include "aegean.h"
 
 /**
+ * @type FIXME
+ */
+enum PeOutFormat
+{
+  TEXTMODE,
+  HTMLMODE,
+  CSVMODE
+};
+typedef enum PeOutFormat PeOutFormat;
+
+/**
  * @type Simple data structure for program options.
  */
 struct ParsEvalOptions
 {
   bool debug;
   FILE *outfile;
-  const char *outfilename;
+  char *outfilename;
   bool gff3;
   bool summary_only;
   bool graphics;
@@ -22,7 +33,7 @@ struct ParsEvalOptions
   const char *predfile;
   const char *refrlabel;
   const char *predlabel;
-  const char *outfmt;
+  PeOutFormat outfmt;
   bool overwrite;
   const char *data_path;
   bool makefilter;

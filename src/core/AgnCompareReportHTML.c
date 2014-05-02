@@ -215,12 +215,14 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
 GtNodeVisitor *agn_compare_report_html_new(const char *outdir, GtLogger *logger)
 {
   GtNodeVisitor *rpt = agn_compare_report_new(logger);
-  CallbackData cd = { NULL, outdir };
+  CallbackData *cd = gt_malloc( sizeof(CallbackData) );
+  cd->locus_summaries = NULL;
+  cd->outdir = outdir;
   agn_compare_report_set_locus_callback((AgnCompareReport *)rpt,
-                                        compare_report_html_locus_handler, &cd);
+                                        compare_report_html_locus_handler, cd);
   agn_compare_report_set_sequence_callback((AgnCompareReport *)rpt,
                                            compare_report_html_sequence_handler,
-                                           &cd);
+                                           cd);
   return rpt;
 }
 

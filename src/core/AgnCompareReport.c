@@ -253,8 +253,8 @@ static int compare_report_visit_region_node(GtNodeVisitor *nv,
 
   if(rpt->last_seqid && rpt->sequencefunc)
   {
-    AgnComparisonData *seqdata = gt_hashmap_get(rpt->seqdata, seqid);
-    rpt->sequencefunc(seqdata, seqid, rpt->sequencefuncdata);
+    AgnComparisonData *seqdata = gt_hashmap_get(rpt->seqdata, lastseqid);
+    rpt->sequencefunc(seqdata, lastseqid, rpt->sequencefuncdata);
   }
   rpt->last_seqid = seqid;
 

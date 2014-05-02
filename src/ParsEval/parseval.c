@@ -6,6 +6,7 @@ int main(int argc, char **argv)
   GtLogger *logger;
   GtQueue *streams;
   GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3, *tempstream;
+  GtNodeVisitor *rpt;
   char *start_time;
 
   gt_lib_init();
@@ -88,10 +89,27 @@ int main(int argc, char **argv)
     last_stream = current_stream;
   }
 
-  FILE *locusstream = NULL;
-  if(!options.summary_only)
-    locusstream = options.outfile;
-  GtNodeVisitor *rpt = agn_compare_report_text_new(locusstream, logger);
+  switch(options.outfmt)
+  {
+    case TEXTMODE:
+      if(options.summary_only)
+        rpt = agn_compare_report_text_new(NULL, logger);
+      else
+        rpt = agn_compare_report_text_new(options.outfile, logger);
+      break;
+    case HTMLMODE:
+      rpt = agn_compare_report_html_new(options.outfilename, logger);
+      break;
+    case CSVMODE:
+      fprintf(stderr, "error: CSV output mode support temporarily "
+              "unavailable\n");
+      return 1;
+      break;
+    default:
+      fprintf(stderr, "error: unknown output format\n");
+      return 1;
+      break;
+  }
   current_stream = gt_visitor_stream_new(last_stream, rpt);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
@@ -104,9 +122,12 @@ int main(int argc, char **argv)
   if(result == -1)
     fprintf(stderr, "[ParsEval] error: %s", gt_error_get(error));
 
-  pe_summary_header(&options, options.outfile, start_time, argc, argv);
-  agn_compare_report_text_create_summary((AgnCompareReportText *)rpt,
-                                         options.outfile);
+  if(options.outfmt == TEXTMODE)
+  {
+    pe_summary_header(&options, options.outfile, start_time, argc, argv);
+    agn_compare_report_text_create_summary((AgnCompareReportText *)rpt,
+                                           options.outfile);
+  }
 
   // Free memory and terminate
   gt_free(start_time);
