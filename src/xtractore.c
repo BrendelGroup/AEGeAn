@@ -357,7 +357,7 @@ static void xt_print_usage(FILE *outstream)
 "                          IDs in this file will be extracted\n"
 "    -o|--outfile: FILE    file to which output sequences will be written;\n"
 "                          default is terminal (stdout)\n"
-"    -t|--type: FILE       feature type to extract; can be used multiple\n"
+"    -t|--type: STRING     feature type to extract; can be used multiple\n"
 "                          times to extract features of multiple types\n"
 "    -v|--verbose          print verbose warning and error messages\n"
 "    -w|--width: INT       width of each line of sequence in the Fasta\n"
