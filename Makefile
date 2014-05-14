@@ -78,7 +78,7 @@ all:		gt agn
 agn:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) libaegean.a
 		
 
-install:	all gt-install
+install:	all gt-install agn-install
 		
 
 agn-install:	agn
