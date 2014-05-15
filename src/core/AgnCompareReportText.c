@@ -1,7 +1,23 @@
-#include <math.h>
 #include <string.h>
+#include "AgnComparison.h"
 #include "AgnCompareReportText.h"
+#include "AgnLocus.h"
 
+#define compare_report_text_cast(GV)\
+        gt_node_visitor_cast(compare_report_text_class(), GV)
+
+//------------------------------------------------------------------------------
+// Data structure definitions
+//------------------------------------------------------------------------------
+
+struct AgnCompareReportText
+{
+  const GtNodeVisitor parent_instance;
+  AgnComparisonData data;
+  GtStrArray *seqids;
+  FILE *outstream;
+  GtLogger *logger;
+};
 
 //------------------------------------------------------------------------------
 // Prototypes for private functions
@@ -15,6 +31,11 @@ static void compare_report_text_annot_summary(AgnCompInfo *info,
                                               FILE *outstream);
 
 /**
+ * @function Implement the GtNodeVisitor interface.
+ */
+static const GtNodeVisitorClass *compare_report_text_class();
+
+/**
  * @function Print overall comparison statistics for a particular class of
  * feature comparisons in the summary report.
  */
@@ -24,9 +45,15 @@ static void compare_report_text_comp_class_summary(AgnCompClassDesc *summ,
                                                    FILE *outstream);
 
 /**
+ * @function Free memory used by this node visitor.
+ */
+static void compare_report_text_free(GtNodeVisitor *nv);
+
+/**
  * @function Create a report for each locus.
  */
-static void compare_report_text_locus_handler(AgnLocus *locus, void *data);
+static void compare_report_text_locus_handler(AgnCompareReportText *rpt,
+                                              AgnLocus *locus);
 
 /**
  * @function Print locus report header.
@@ -68,6 +95,20 @@ static void compare_report_text_summary_struc(FILE *outstream,
                                               const char *label,
                                               const char *units);
 
+/**
+ * @function Process feature nodes.
+ */
+static int compare_report_text_visit_feature_node(GtNodeVisitor *nv,
+                                                  GtFeatureNode *fn,
+                                                  GtError *error);
+
+/**
+ * @function Process region nodes.
+ */
+static int compare_report_text_visit_region_node(GtNodeVisitor *nv,
+                                                 GtRegionNode *rn,
+                                                 GtError *error);
+
 //------------------------------------------------------------------------------
 // Method implementations
 //------------------------------------------------------------------------------
@@ -75,21 +116,19 @@ static void compare_report_text_summary_struc(FILE *outstream,
 void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
                                             FILE *outstream)
 {
-  AgnComparisonData *data = agn_compare_report_data(rpt);
-  GtStrArray *seqids = agn_compare_report_seqids(rpt);
-  fprintf(outstream, "  Sequences compared\n");
+  AgnComparisonData *data = &rpt->data;
   GtUword i;
-  for(i = 0; i < gt_str_array_size(seqids); i++)
+  
+  fprintf(outstream, "  Sequences compared\n");
+  for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
   {
-    fprintf(outstream, "    %s\n", gt_str_array_get(seqids, i));
+    fprintf(outstream, "    %s\n", gt_str_array_get(rpt->seqids, i));
   }
   fputs("\n", outstream);
-
   compare_report_text_annot_summary(&data->info, outstream);
 
   fprintf(outstream, "  Total comparisons........................%lu\n",
           data->info.num_comparisons);
-
   compare_report_text_comp_class_summary(&data->summary.perfect_matches,
                                          data->info.num_comparisons,
                                          "perfect matches", outstream);
@@ -120,31 +159,35 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
 
   double identity = (double)data->stats.overall_matches /
                     (double)data->stats.overall_length;
-  fprintf( outstream, "  %-30s   %-10s   %-10s   %-10s\n",
-           "Nucleotide-level comparison", "CDS", "UTRs", "Overall" );
-  fprintf( outstream, "    %-30s %-10s   %-10s   %-.3lf\n",
-           "Matching coefficient:", data->stats.cds_nuc_stats.mcs,
-           data->stats.utr_nuc_stats.mcs, identity);
-  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n",
-           "Correlation coefficient:", data->stats.cds_nuc_stats.ccs,
-           data->stats.utr_nuc_stats.ccs, "--");
-  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "Sensitivity:",
-           data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns, "--");
-  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "Specificity:",
-           data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps, "--");
-  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "F1 Score:",
-           data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s, "--");
-  fprintf( outstream, "    %-30s %-10s   %-10s   %-10s\n", "Annotation edit distance:",
-           data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds, "--");
+  fprintf(outstream, "  %-30s   %-10s   %-10s   %-10s\n",
+          "Nucleotide-level comparison", "CDS", "UTRs", "Overall" );
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-.3lf\n",
+          "Matching coefficient:", data->stats.cds_nuc_stats.mcs,
+          data->stats.utr_nuc_stats.mcs, identity);
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n",
+          "Correlation coefficient:", data->stats.cds_nuc_stats.ccs,
+          data->stats.utr_nuc_stats.ccs, "--");
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Sensitivity:",
+          data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns, "--");
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Specificity:",
+          data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps, "--");
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "F1 Score:",
+          data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s, "--");
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n",
+          "Annotation edit distance:", data->stats.cds_nuc_stats.eds,
+          data->stats.utr_nuc_stats.eds, "--");
 }
 
 GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
 {
-  GtNodeVisitor *rpt = agn_compare_report_new(logger);
-  agn_compare_report_set_locus_callback((AgnCompareReport *)rpt,
-                                        compare_report_text_locus_handler,
-                                        outstream);
-  return rpt;
+  GtNodeVisitor *nv = gt_node_visitor_create(compare_report_text_class());
+  AgnCompareReportText *rpt = compare_report_text_cast(nv);
+  agn_comparison_data_init(&rpt->data);
+  rpt->seqids = gt_str_array_new();
+  rpt->outstream = outstream;
+  rpt->logger = logger;
+
+  return nv;
 }
 
 static void compare_report_text_annot_summary(AgnCompInfo *info,
@@ -180,6 +223,20 @@ static void compare_report_text_annot_summary(AgnCompInfo *info,
            info->pred_transcripts,
            (float)info->pred_transcripts / (float)info->num_loci,
            (float)info->pred_transcripts / (float)info->pred_genes );
+}
+
+static const GtNodeVisitorClass *compare_report_text_class()
+{
+  static const GtNodeVisitorClass *nvc = NULL;
+  if(!nvc)
+  {
+    nvc = gt_node_visitor_class_new(sizeof (AgnCompareReportText),
+                                    compare_report_text_free, NULL,
+                                    compare_report_text_visit_feature_node,
+                                    compare_report_text_visit_region_node,
+                                    NULL, NULL);
+  }
+  return nvc;
 }
 
 static void compare_report_text_comp_class_summary(AgnCompClassDesc *summ,
@@ -218,11 +275,49 @@ static void compare_report_text_comp_class_summary(AgnCompClassDesc *summ,
           mean_len,mean_refr_exon,mean_pred_exon,mean_refr_cds,mean_pred_cds);
 }
 
-static void compare_report_text_locus_handler(AgnLocus *locus, void *data)
+static void compare_report_text_free(GtNodeVisitor *nv)
+{
+  AgnCompareReportText *rpt;
+  gt_assert(nv);
+
+  rpt = compare_report_text_cast(nv);
+  gt_str_array_delete(rpt->seqids);
+}
+
+static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
+{
+  GtArray *genes;
+
+  genes = agn_locus_refr_gene_ids(locus);
+  fprintf(outstream, "|  reference genes:\n");
+  if(gt_array_size(genes) == 0)
+    fprintf(outstream, "|    None!\n");
+  while(gt_array_size(genes) > 0)
+  {
+    const char **geneid = gt_array_pop(genes);
+    fprintf(outstream, "|    %s\n", *geneid);
+  }
+  fprintf(outstream, "|\n");
+  gt_array_delete(genes);
+
+  genes = agn_locus_pred_gene_ids(locus);
+  fprintf(outstream, "|  prediction genes:\n");
+  if(gt_array_size(genes) == 0)
+    fprintf(outstream, "|    None!\n");
+  while(gt_array_size(genes) > 0)
+  {
+    const char **geneid = gt_array_pop(genes);
+    fprintf(outstream, "|    %s\n", *geneid);
+  }
+  gt_array_delete(genes);
+}
+
+static void compare_report_text_locus_handler(AgnCompareReportText *rpt,
+                                              AgnLocus *locus)
 {
   GtArray *pairs2report, *unique;
   GtUword i;
-  FILE *outstream = data;
+  FILE *outstream = rpt->outstream;
   if(outstream == NULL)
     return;
 
@@ -307,34 +402,6 @@ static void compare_report_text_locus_header(AgnLocus *locus, FILE *outstream)
           "|----------\n");
 }
 
-static void compare_report_text_locus_gene_ids(AgnLocus *locus, FILE *outstream)
-{
-  GtArray *genes;
-
-  genes = agn_locus_refr_gene_ids(locus);
-  fprintf(outstream, "|  reference genes:\n");
-  if(gt_array_size(genes) == 0)
-    fprintf(outstream, "|    None!\n");
-  while(gt_array_size(genes) > 0)
-  {
-    const char **geneid = gt_array_pop(genes);
-    fprintf(outstream, "|    %s\n", *geneid);
-  }
-  fprintf(outstream, "|\n");
-  gt_array_delete(genes);
-
-  genes = agn_locus_pred_gene_ids(locus);
-  fprintf(outstream, "|  prediction genes:\n");
-  if(gt_array_size(genes) == 0)
-    fprintf(outstream, "|    None!\n");
-  while(gt_array_size(genes) > 0)
-  {
-    const char **geneid = gt_array_pop(genes);
-    fprintf(outstream, "|    %s\n", *geneid);
-  }
-  gt_array_delete(genes);
-}
-
 static void compare_report_text_pair_nucleotide(FILE *outstream,
                                                 AgnCliquePair *pair)
 {
@@ -404,7 +471,6 @@ static void compare_report_text_pair_structure(FILE *outstream,
   }
   fprintf(outstream, "     |\n");
 }
-
 
 static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
 {
@@ -495,4 +561,40 @@ static void compare_report_text_summary_struc(FILE *outstream,
                      "    F1 Score...............................%.3lf\n"
                      "    Annotation edit distance...............%.3lf\n\n",
           stats->sn, stats->sp, stats->f1, stats->ed);
+}
+
+static int compare_report_text_visit_feature_node(GtNodeVisitor *nv,
+                                                  GtFeatureNode *fn,
+                                                  GtError *error)
+{
+  AgnCompareReportText *rpt;
+  AgnLocus *locus;
+
+  gt_error_check(error);
+  gt_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
+
+  rpt = compare_report_text_cast(nv);
+  locus = (AgnLocus *)fn;
+  agn_locus_comparative_analysis(locus, rpt->logger);
+  agn_locus_data_aggregate(locus, &rpt->data);
+  compare_report_text_locus_handler(rpt, locus);
+
+  return 0;
+}
+
+static int compare_report_text_visit_region_node(GtNodeVisitor *nv,
+                                                 GtRegionNode *rn,
+                                                 GtError *error)
+{
+  AgnCompareReportText *rpt;
+  GtStr *seqid;
+
+  gt_error_check(error);
+  gt_assert(nv && rn);
+
+  rpt = compare_report_text_cast(nv);
+  seqid = gt_genome_node_get_seqid((GtGenomeNode *)rn);
+  gt_str_array_add(rpt->seqids, seqid);
+
+  return 0;
 }

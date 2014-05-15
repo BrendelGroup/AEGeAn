@@ -266,6 +266,74 @@ void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp)
   agn_comparison_aggregate(comp, stats);
 }
 
+void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data)
+{
+  GtUword numrefrgenes, numpredgenes;
+  GtUword i;
+  gt_assert(data && locus);
+
+  data->info.num_loci++;
+  numrefrgenes = agn_locus_num_refr_genes(locus);
+  numpredgenes = agn_locus_num_pred_genes(locus);
+  data->info.refr_genes += numrefrgenes;
+  data->info.pred_genes += numpredgenes;
+  data->info.refr_transcripts += agn_locus_num_refr_mrnas(locus);
+  data->info.pred_transcripts += agn_locus_num_pred_mrnas(locus);
+  if(numrefrgenes > 0 && numpredgenes == 0)
+    data->info.unique_refr_loci++;
+  if(numpredgenes > 0 && numrefrgenes == 0)
+    data->info.unique_pred_loci++;
+
+  agn_locus_comparison_aggregate(locus, &data->stats);
+  agn_comparison_resolve(&data->stats);
+
+  GtRange locusrange = gt_genome_node_get_range(locus);
+  GtArray *pairs2report = agn_locus_pairs_to_report(locus);
+  data->info.num_comparisons += gt_array_size(pairs2report);
+  for(i = 0; i < gt_array_size(pairs2report); i++)
+  {
+    AgnCliquePair **pair = gt_array_get(pairs2report, i);
+    AgnCompClassification c = agn_clique_pair_classify(*pair);
+    AgnCompClassDesc *desc;
+    switch(c)
+    {
+      case AGN_COMP_CLASS_PERFECT_MATCH:
+        desc = &data->summary.perfect_matches;
+        break;
+      case AGN_COMP_CLASS_MISLABELED:
+        desc = &data->summary.perfect_mislabeled;
+        break;
+      case AGN_COMP_CLASS_CDS_MATCH:
+        desc = &data->summary.cds_matches;
+        break;
+      case AGN_COMP_CLASS_EXON_MATCH:
+        desc = &data->summary.exon_matches;
+        break;
+      case AGN_COMP_CLASS_UTR_MATCH:
+        desc = &data->summary.utr_matches;
+        break;
+      case AGN_COMP_CLASS_NON_MATCH:
+        desc = &data->summary.non_matches;
+        break;
+      default:
+        desc = NULL;
+        fprintf(stderr, "error: unknow comp classification %d\n", c);
+        break;
+    }
+    desc->comparison_count++;
+    desc->total_length += gt_range_length(&locusrange);
+
+    AgnTranscriptClique *rclique = agn_clique_pair_get_refr_clique(*pair);
+    AgnTranscriptClique *pclique = agn_clique_pair_get_pred_clique(*pair);
+    desc->refr_cds_length += agn_transcript_clique_cds_length(rclique);
+    desc->pred_cds_length += agn_transcript_clique_cds_length(pclique);
+    GtFeatureNode *rcliquefn = gt_feature_node_cast(rclique);
+    GtFeatureNode *pcliquefn = gt_feature_node_cast(pclique);
+    desc->refr_exon_count += agn_typecheck_count(rcliquefn, agn_typecheck_exon);
+    desc->pred_exon_count += agn_typecheck_count(pcliquefn, agn_typecheck_exon);
+  }
+}
+
 void agn_locus_delete(AgnLocus *locus)
 {
   gt_genome_node_delete(locus);

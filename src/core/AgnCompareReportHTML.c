@@ -1,30 +1,26 @@
-#include <math.h>
 #include <string.h>
+#include "core/hashmap_api.h"
+#include "AgnComparison.h"
 #include "AgnCompareReportHTML.h"
+#include "AgnLocus.h"
 #include "AgnVersion.h"
+
+#define compare_report_html_cast(GV)\
+        gt_node_visitor_cast(compare_report_html_class(), GV)
 
 //------------------------------------------------------------------------------
 // Data structure definitions
 //------------------------------------------------------------------------------
-typedef struct
-{
-  GtRange range;
-  GtUword numrefrmrnas;
-  GtUword numpredmrnas;
-  GtUword numperfect;
-  GtUword nummislabeled;
-  GtUword numcdsmatch;
-  GtUword numexonmatch;
-  GtUword numutrmatch;
-  GtUword numnonmatch;
-} LocusSummary;
 
-typedef struct
+struct AgnCompareReportHTML
 {
-  GtArray *locus_summaries;
+  const GtNodeVisitor parent_instance;
+  AgnComparisonData data;
+  GtStrArray *seqids;
   const char *outdir;
-} CallbackData;
-
+  GtHashmap *seqdata;
+  GtLogger *logger;
+};
 
 //------------------------------------------------------------------------------
 // Prototypes for private functions
@@ -38,6 +34,11 @@ static void compare_report_html_annot_summary(AgnCompInfo *info,
                                               FILE *outstream);
 
 /**
+ * @function Implement the GtNodeVisitor interface.
+ */
+static const GtNodeVisitorClass *compare_report_html_class();
+
+/**
  * @function Print overall comparison statistics for a particular class of
  * feature comparisons in the summary report.
  */
@@ -48,14 +49,20 @@ static void compare_report_html_comp_class_summary(AgnCompClassDesc *summ,
                                                    FILE *outstream);
 
 /**
- * @function Write the HTML footer to the given output stream.
+ * @function FIXME
  */
 static void compare_report_html_footer(FILE *outstream);
 
 /**
+ * @function Free memory used by this node visitor.
+ */
+static void compare_report_html_free(GtNodeVisitor *nv);
+
+/**
  * @function Create a report for each locus.
  */
-static void compare_report_html_locus_handler(AgnLocus *locus, void *data);
+static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
+                                              AgnLocus *locus);
 
 /**
  * @function Print locus report header.
@@ -90,12 +97,6 @@ static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                            GtUword k);
 
 /**
- * @function FIXME
- */
-static void compare_report_html_sequence_handler(const AgnComparisonData *cd,
-                                                 const char *seqid, void *data);
-
-/**
  * @function Print a breakdown of characteristics of loci that fall into a
  * particular comparison class.
  */
@@ -104,18 +105,30 @@ static void compare_report_html_summary_struc(FILE *outstream,
                                               const char *label,
                                               const char *units);
 
+/**
+ * @function Process feature nodes.
+ */
+static int compare_report_html_visit_feature_node(GtNodeVisitor *nv,
+                                                  GtFeatureNode *fn,
+                                                  GtError *error);
+
+/**
+ * @function Process region nodes.
+ */
+static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
+                                                 GtRegionNode *rn,
+                                                 GtError *error);
+
 //------------------------------------------------------------------------------
 // Method implementations
 //------------------------------------------------------------------------------
 
-void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
-                                            const char *outdir)
+void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 {
-  AgnComparisonData *data = agn_compare_report_data(rpt);
-  GtStrArray *seqids = agn_compare_report_seqids(rpt);
+  AgnComparisonData *data = &rpt->data;
   
   char filename[1024];
-  sprintf(filename, "%s/index.html", outdir);
+  sprintf(filename, "%s/index.html", rpt->outdir);
   FILE *outstream = fopen(filename, "w");
   if(outstream == NULL)
   {
@@ -138,9 +151,9 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
         "        </thead>\n"
         "        <tbody>\n", outstream);
   GtUword i;
-  for(i = 0; i < gt_str_array_size(seqids); i++)
+  for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
   {
-    const char *seqid = gt_str_array_get(seqids, i);
+    const char *seqid = gt_str_array_get(rpt->seqids, i);
     fprintf(outstream,
             "        <tr><td><a href=\"%s/index.html\">%s</a></td></tr>\n",
             seqid, seqid);
@@ -189,7 +202,7 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
                                     "Exon", "exons");
   compare_report_html_summary_struc(outstream, &data->stats.utr_struc_stats,
                                     "UTR", "UTR segments");
-
+  
   double identity = (double)data->stats.overall_matches /
                     (double)data->stats.overall_length;
   fprintf(outstream, "  %-30s   %-10s   %-10s   %-10s\n",
@@ -208,22 +221,19 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
           data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s, "--");
   fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Annotation edit distance:",
           data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds, "--");
-
-  fclose(outstream);
 }
 
 GtNodeVisitor *agn_compare_report_html_new(const char *outdir, GtLogger *logger)
 {
-  GtNodeVisitor *rpt = agn_compare_report_new(logger);
-  CallbackData *cd = gt_malloc( sizeof(CallbackData) );
-  cd->locus_summaries = NULL;
-  cd->outdir = outdir;
-  agn_compare_report_set_locus_callback((AgnCompareReport *)rpt,
-                                        compare_report_html_locus_handler, cd);
-  agn_compare_report_set_sequence_callback((AgnCompareReport *)rpt,
-                                           compare_report_html_sequence_handler,
-                                           cd);
-  return rpt;
+  GtNodeVisitor *nv = gt_node_visitor_create(compare_report_html_class());
+  AgnCompareReportHTML *rpt = compare_report_html_cast(nv);
+  agn_comparison_data_init(&rpt->data);
+  rpt->seqids = gt_str_array_new();
+  rpt->outdir = outdir;
+  rpt->seqdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
+  rpt->logger = logger;
+
+  return nv;
 }
 
 static void compare_report_html_annot_summary(AgnCompInfo *info,
@@ -273,6 +283,20 @@ static void compare_report_html_annot_summary(AgnCompInfo *info,
           info->pred_transcripts,
           (float)info->pred_transcripts / (float)info->num_loci,
           (float)info->pred_transcripts / (float)info->pred_genes);
+}
+
+static const GtNodeVisitorClass *compare_report_html_class()
+{
+  static const GtNodeVisitorClass *nvc = NULL;
+  if(!nvc)
+  {
+    nvc = gt_node_visitor_class_new(sizeof (AgnCompareReportHTML),
+                                    compare_report_html_free, NULL,
+                                    compare_report_html_visit_feature_node,
+                                    compare_report_html_visit_region_node,
+                                    NULL, NULL);
+  }
+  return nvc;
 }
 
 static void compare_report_html_comp_class_summary(AgnCompClassDesc *summ,
@@ -328,29 +352,68 @@ static void compare_report_html_footer(FILE *outstream)
           "      </p>\n", AEGEAN_LINK, shortversion, AEGEAN_COPY_DATE);
 }
 
-static void compare_report_html_locus_handler(AgnLocus *locus, void *data)
+static void compare_report_html_free(GtNodeVisitor *nv)
+{
+  AgnCompareReportHTML *rpt;
+  gt_assert(nv);
+
+  rpt = compare_report_html_cast(nv);
+  gt_str_array_delete(rpt->seqids);
+}
+
+static void compare_report_html_locus_gene_ids(AgnLocus *locus, FILE *outstream)
+{
+  GtUword i;
+  GtArray *refr_genes = agn_locus_refr_gene_ids(locus);
+  GtArray *pred_genes = agn_locus_pred_gene_ids(locus);
+  
+  fputs("      <h2>Gene annotations</h2>\n"
+        "      <table>\n"
+        "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
+        outstream);
+  for(i = 0; i < gt_array_size(refr_genes) || i < gt_array_size(pred_genes); i++)
+  {
+    fputs("        <tr>", outstream);
+    if(i < gt_array_size(refr_genes))
+    {
+      const char *gid = *(const char **)gt_array_get(refr_genes, i);
+      fprintf(outstream, "<td>%s</td>", gid);
+    }
+    else
+    {
+      if(i == 0) fputs("<td>None</td>", outstream);
+      else       fputs("<td>&nbsp;</td>", outstream);
+    }
+
+    if(i < gt_array_size(pred_genes))
+    {
+      const char *gid = *(const char **)gt_array_get(pred_genes, i);
+      fprintf(outstream, "<td>%s</td>", gid);
+    }
+    else
+    {
+      if(i == 0) fputs("<td>None</td>", outstream);
+      else       fputs("<td>&nbsp;</td>", outstream);
+    }
+    fputs("</tr>\n", outstream);
+  }
+  fputs("      </table>\n\n", outstream);
+  gt_array_delete(refr_genes);
+  gt_array_delete(pred_genes);
+}
+
+
+static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
+                                              AgnLocus *locus)
 {
   GtArray *pairs2report, *unique;
   GtUword i;
-  CallbackData *cdata = data;
-  LocusSummary s;
-
-  if(cdata->locus_summaries == NULL)
-    cdata->locus_summaries = gt_array_new( sizeof(LocusSummary) );
-  s.range = gt_genome_node_get_range(locus);
-  s.numrefrmrnas = agn_locus_num_refr_mrnas(locus);
-  s.numpredmrnas = agn_locus_num_pred_mrnas(locus);
-  s.numperfect = 0;
-  s.nummislabeled = 0;
-  s.numcdsmatch = 0;
-  s.numexonmatch = 0;
-  s.numutrmatch = 0;
-  s.numnonmatch = 0;
   
   GtStr *seqid = gt_genome_node_get_seqid(locus);
+  GtRange rng = gt_genome_node_get_range(locus);
   char filename[1024];
-  sprintf(filename, "%s/%s/%lu-%lu.html", cdata->outdir, gt_str_get(seqid),
-          s.range.start, s.range.end);
+  sprintf(filename, "%s/%s/%lu-%lu.html", rpt->outdir, gt_str_get(seqid),
+          rng.start, rng.end);
   FILE *outstream = fopen(filename, "w");
   if(outstream == NULL)
   {
@@ -371,21 +434,21 @@ static void compare_report_html_locus_handler(AgnLocus *locus, void *data)
   for(i = 0; i < gt_array_size(pairs2report); i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
-    AgnCompClassification cls = agn_clique_pair_classify(pair);
-    switch(cls)
-    {
-      case AGN_COMP_CLASS_PERFECT_MATCH: s.numperfect++;    break;
-      case AGN_COMP_CLASS_MISLABELED:    s.nummislabeled++; break;
-      case AGN_COMP_CLASS_CDS_MATCH:     s.numcdsmatch++;   break;
-      case AGN_COMP_CLASS_EXON_MATCH:    s.numexonmatch++;  break;
-      case AGN_COMP_CLASS_UTR_MATCH:     s.numutrmatch++;   break;
-      case AGN_COMP_CLASS_NON_MATCH:     s.numnonmatch++;   break;
-      case AGN_COMP_CLASS_UNCLASSIFIED:  /* nothing */      break;
-      default:                                              break;
-    }
+    //AgnCompClassification cls = agn_clique_pair_classify(pair);
+    //switch(cls)
+    //{
+    //  case AGN_COMP_CLASS_PERFECT_MATCH: s.numperfect++;    break;
+    //  case AGN_COMP_CLASS_MISLABELED:    s.nummislabeled++; break;
+    //  case AGN_COMP_CLASS_CDS_MATCH:     s.numcdsmatch++;   break;
+    //  case AGN_COMP_CLASS_EXON_MATCH:    s.numexonmatch++;  break;
+    //  case AGN_COMP_CLASS_UTR_MATCH:     s.numutrmatch++;   break;
+    //  case AGN_COMP_CLASS_NON_MATCH:     s.numnonmatch++;   break;
+    //  case AGN_COMP_CLASS_UNCLASSIFIED:  /* nothing */      break;
+    //  default:                                              break;
+    //}
     compare_report_html_print_pair(pair, outstream, i);
   }
-  gt_array_add(cdata->locus_summaries, s);
+  //gt_array_add(cdata->locus_summaries, s);
 
   unique = agn_locus_get_unique_refr_cliques(locus);
   if(gt_array_size(unique) > 0)
@@ -407,7 +470,7 @@ static void compare_report_html_locus_handler(AgnLocus *locus, void *data)
     }
     fputs("      </ul>\n\n", outstream);
   }
-
+  
   unique = agn_locus_get_unique_pred_cliques(locus);
   if(gt_array_size(unique) > 0)
   {
@@ -499,47 +562,6 @@ static void compare_report_html_locus_header(AgnLocus *locus, FILE *outstream)
   compare_report_html_locus_gene_ids(locus, outstream);
 }
 
-static void compare_report_html_locus_gene_ids(AgnLocus *locus, FILE *outstream)
-{
-  GtUword i;
-  GtArray *refr_genes = agn_locus_refr_gene_ids(locus);
-  GtArray *pred_genes = agn_locus_pred_gene_ids(locus);
-  
-  fputs("      <h2>Gene annotations</h2>\n"
-        "      <table>\n"
-        "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
-        outstream);
-  for(i = 0; i < gt_array_size(refr_genes) || i < gt_array_size(pred_genes); i++)
-  {
-    fputs("        <tr>", outstream);
-    if(i < gt_array_size(refr_genes))
-    {
-      const char *gid = *(const char **)gt_array_get(refr_genes, i);
-      fprintf(outstream, "<td>%s</td>", gid);
-    }
-    else
-    {
-      if(i == 0) fputs("<td>None</td>", outstream);
-      else       fputs("<td>&nbsp;</td>", outstream);
-    }
-
-    if(i < gt_array_size(pred_genes))
-    {
-      const char *gid = *(const char **)gt_array_get(pred_genes, i);
-      fprintf(outstream, "<td>%s</td>", gid);
-    }
-    else
-    {
-      if(i == 0) fputs("<td>None</td>", outstream);
-      else       fputs("<td>&nbsp;</td>", outstream);
-    }
-    fputs("</tr>\n", outstream);
-  }
-  fputs("      </table>\n\n", outstream);
-  gt_array_delete(refr_genes);
-  gt_array_delete(pred_genes);
-}
-
 static void compare_report_html_pair_nucleotide(FILE *outstream,
                                                 AgnCliquePair *pair)
 {
@@ -616,7 +638,6 @@ static void compare_report_html_pair_structure(FILE *outstream,
   fputs("        </table>\n\n", outstream);
 }
 
-
 static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                            GtUword k)
 {
@@ -651,13 +672,6 @@ static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
   fputs("      </div>\n\n", outstream);
 }
 
-static void compare_report_html_sequence_handler(const AgnComparisonData *cd,
-                                                 const char *seqid, void *data)
-{
-  CallbackData *cdata = data;
-  // blah blah
-  gt_array_delete(cdata->locus_summaries);
-}
 
 static void compare_report_html_summary_struc(FILE *outstream,
                                               AgnCompStatsBinary *stats,
@@ -688,4 +702,46 @@ static void compare_report_html_summary_struc(FILE *outstream,
           stats->correct, (float)stats->correct / (float)predcnt * 100,
           stats->wrong, (float)stats->wrong / (float)predcnt * 100,
           stats->sn, stats->sp, stats->f1, stats->ed);
+}
+
+static int compare_report_html_visit_feature_node(GtNodeVisitor *nv,
+                                                  GtFeatureNode *fn,
+                                                  GtError *error)
+{
+  AgnCompareReportHTML *rpt;
+  AgnLocus *locus;
+
+  gt_error_check(error);
+  gt_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
+
+  rpt = compare_report_html_cast(nv);
+  locus = (AgnLocus *)fn;
+  agn_locus_comparative_analysis(locus, rpt->logger);
+  agn_locus_data_aggregate(locus, &rpt->data);
+  compare_report_html_locus_handler(rpt, locus);
+
+  return 0;
+}
+
+static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
+                                                 GtRegionNode *rn,
+                                                 GtError *error)
+{
+  AgnCompareReportHTML *rpt;
+  AgnComparisonData *data;
+  GtStr *seqidstr;
+  const char *seqid;
+
+  gt_error_check(error);
+  gt_assert(nv && rn);
+
+  rpt = compare_report_html_cast(nv);
+  seqidstr = gt_genome_node_get_seqid((GtGenomeNode *)rn);
+  seqid = gt_cstr_dup(gt_str_get(seqidstr));
+  gt_str_array_add(rpt->seqids, seqidstr);
+  data = gt_malloc( sizeof(AgnComparisonData) );
+  agn_comparison_data_init(data);
+  gt_hashmap_add(rpt->seqdata, (char *)seqid, data);
+
+  return 0;
 }

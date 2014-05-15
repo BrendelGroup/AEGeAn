@@ -143,6 +143,12 @@ int agn_locus_array_compare(const void *p1, const void *p2);
 void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp);
 
 /**
+ * @function Add this locus' internal comparison stats to a larger set of
+ * aggregate stats.
+ */
+void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data);
+
+/**
  * @function Class destructor.
  */
 void agn_locus_delete(AgnLocus *locus);

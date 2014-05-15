@@ -1,7 +1,8 @@
 #ifndef AEGEAN_COMPARE_REPORT_TEXT
 #define AEGEAN_COMPARE_REPORT_TEXT
 
-#include "AgnCompareReport.h"
+#include "core/logger_api.h"
+#include "extended/node_visitor_api.h"
 
 /**
  * @class AgnCompareReportText
@@ -12,7 +13,7 @@
  * of annotation to be compared) and then produces textual reports of the
  * comparison statistics.
  */
-typedef AgnCompareReport AgnCompareReportText;
+typedef struct AgnCompareReportText AgnCompareReportText;
 
 
 /**
