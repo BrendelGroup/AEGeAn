@@ -83,7 +83,7 @@ install:	all gt-install agn-install
 
 agn-install:	agn
 		@- test -d $(prefix)/bin || mkdir $(prefix)/bin
-		cp $(BINS) $(prefix)/bin/.
+		cp $(PE_EXE) $(XT_EXE) $(LP_EXE) $(prefix)/bin/.
 		cp libaegean.a $(prefix)/lib/.
 		@- test -d $(prefix)/include/aegean || mkdir $(prefix)/include/aegean
 		@- rm -f $(prefix)/include/aegean/*
