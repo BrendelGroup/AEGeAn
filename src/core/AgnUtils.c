@@ -86,10 +86,12 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
     }
     else if(refrhas)
       range_func(refrsrc, &range, seqid, error);
+    else if(predhas)
+      range_func(predsrc, &range, seqid, error);
     else
     {
-      gt_assert(predhas);
-      range_func(predsrc, &range, seqid, error);
+      gt_str_delete(seqidstr);
+      continue;
     }
 
     GtGenomeNode *rn = gt_region_node_new(seqidstr, range.start, range.end);

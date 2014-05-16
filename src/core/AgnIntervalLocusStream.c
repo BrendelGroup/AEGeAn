@@ -132,7 +132,7 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
 
   ilocus_stream_parse(stream, delta, endmode);
   stream->ilocus_stream = gt_feature_in_stream_new(stream->out_loci);
-  gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->out_loci);
+  gt_feature_in_stream_use_orig_ranges((GtFeatureInStream *)stream->ilocus_stream);
 
   return ns;
 }
