@@ -1,4 +1,5 @@
 #include "AgnUnitTest.h"
+#include "AgnUtils.h"
 
 //------------------------------------------------------------------------------
 // Data structure definitions
@@ -74,7 +75,7 @@ void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success)
 
 bool agn_unit_test_success(AgnUnitTest *test)
 {
-  gt_assert(gt_array_size(test->results) > 0);
+  agn_assert(gt_array_size(test->results) > 0);
   GtUword i;
   for(i = 0; i < gt_array_size(test->results); i++)
   {

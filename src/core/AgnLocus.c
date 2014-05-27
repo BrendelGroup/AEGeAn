@@ -160,7 +160,7 @@ AgnLocus *agn_locus_clone(AgnLocus *locus)
   }
 
   AgnComparison *compstats = gt_genome_node_get_user_data(locus, "compstats");
-  gt_assert(compstats != NULL);
+  agn_assert(compstats != NULL);
   AgnComparison *newstats = gt_malloc( sizeof(AgnComparison) );
   agn_comparison_init(newstats);
   agn_comparison_aggregate(newstats, compstats);
@@ -262,7 +262,7 @@ int agn_locus_array_compare(const void *p1, const void *p2)
 void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp)
 {
   AgnComparison *stats = gt_genome_node_get_user_data(locus, "compstats");
-  gt_assert(stats != NULL);
+  agn_assert(stats != NULL);
   agn_comparison_aggregate(comp, stats);
 }
 
@@ -270,7 +270,7 @@ void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data)
 {
   GtUword numrefrgenes, numpredgenes;
   GtUword i;
-  gt_assert(data && locus);
+  agn_assert(data && locus);
 
   data->info.num_loci++;
   numrefrgenes = agn_locus_num_refr_genes(locus);
@@ -349,7 +349,7 @@ GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
       feature != NULL;
       feature  = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_gene(feature));
+    agn_assert(agn_typecheck_gene(feature));
     if(locus_gene_source_test(locus, feature, src) == false)
       continue;
 
@@ -373,7 +373,7 @@ void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
 {
   char buffer[256];
 
-  gt_assert(filterfile && filters);
+  agn_assert(filterfile && filters);
   while(fgets(buffer, 255, filterfile))
   {
     if(strlen(buffer) == 0 || buffer[0] == '\n' || buffer[0] == '#')
@@ -444,7 +444,7 @@ void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
 bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 {
   GtUword value;
-  gt_assert(locus && filter);
+  agn_assert(locus && filter);
   if(filter->operator == AGN_LOCUS_FILTER_NO)
     return true;
 
@@ -836,7 +836,7 @@ bool agn_locus_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   locus_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 4);
+  agn_assert(gt_queue_size(queue) == 4);
 
   GtLogger *logger = gt_logger_new(true, "", stderr);
 
@@ -988,7 +988,7 @@ static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
                                 GtArray *cliques, AgnSequenceRegion *region,
                                 bool skipsimplecliques)
 {
-  gt_assert(R != NULL && P != NULL && X != NULL && cliques != NULL);
+  agn_assert(R != NULL && P != NULL && X != NULL && cliques != NULL);
 
   if(gt_array_size(P) == 0 && gt_array_size(X) == 0)
   {
@@ -1036,7 +1036,7 @@ static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
 
 static void locus_clique_array_delete(GtArray *array)
 {
-  gt_assert(array != NULL);
+  agn_assert(array != NULL);
   while(gt_array_size(array) > 0)
   {
     AgnCliquePair **pair = gt_array_pop(array);
@@ -1095,7 +1095,7 @@ static GtArray *locus_enumerate_cliques(AgnLocus *locus, GtArray *trans)
 static GtArray *locus_enumerate_pairs(AgnLocus *locus, GtArray *refrcliques,
                                       GtArray *predcliques)
 {
-  gt_assert(refrcliques != NULL && predcliques != NULL);
+  agn_assert(refrcliques != NULL && predcliques != NULL);
 
   GtArray *clique_pairs = gt_array_new( sizeof(AgnCliquePair *) );
   GtUword i,j;
@@ -1127,7 +1127,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
   GtHashmap *predcliques_acctd = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
 
   AgnComparison *stats = gt_genome_node_get_user_data(locus, "compstats");
-  gt_assert(stats != NULL);
+  agn_assert(stats != NULL);
   GtArray *pairs2report = gt_array_new( sizeof(AgnCliquePair *) );
   GtUword i;
   for(i = 0; i < gt_array_size(clique_pairs); i++)
@@ -1199,7 +1199,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
 
 static void locus_test_data(GtQueue *queue)
 {
-  gt_assert(queue != NULL);
+  agn_assert(queue != NULL);
   GtArray *refrfeats, *predfeats;
 
   GtError *error = gt_error_new();
@@ -1235,7 +1235,7 @@ static void locus_test_data(GtQueue *queue)
   gt_node_stream_delete(arraystream);
   gt_array_sort(predfeats, (GtCompare)agn_genome_node_compare);
 
-  gt_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
+  agn_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
 
   GtStr *seqid = gt_str_new_cstr("chr8");
   GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);

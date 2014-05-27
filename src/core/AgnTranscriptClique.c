@@ -94,7 +94,7 @@ void agn_transcript_clique_add(AgnTranscriptClique *clique,
 {
   // Make sure ``feature`` is a transcript feature, and that it does not overlap
   // with any other transcripts associated with this clique
-  gt_assert(agn_typecheck_transcript(feature));
+  agn_assert(agn_typecheck_transcript(feature));
   GtRange range = gt_genome_node_get_range((GtGenomeNode *)feature);
   GtFeatureNode *cliquefn = gt_feature_node_cast(clique);
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(cliquefn);
@@ -103,9 +103,9 @@ void agn_transcript_clique_add(AgnTranscriptClique *clique,
       current != NULL;
       current = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_transcript(current));
+    agn_assert(agn_typecheck_transcript(current));
     GtRange currentrange = gt_genome_node_get_range((GtGenomeNode *)current);
-    gt_assert(!gt_range_overlap(&range, &currentrange));
+    agn_assert(!gt_range_overlap(&range, &currentrange));
   }
   gt_feature_node_iterator_delete(iter);
 
@@ -153,7 +153,7 @@ bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique,
       current != NULL;
       current = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_transcript(current));
+    agn_assert(agn_typecheck_transcript(current));
     const char *tid = gt_feature_node_get_attribute(current, "ID");
     if(gt_hashmap_get(map, tid) != NULL)
     {
@@ -179,7 +179,7 @@ char *agn_transcript_clique_id(AgnTranscriptClique *clique)
       current != NULL;
       current = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_transcript(current));
+    agn_assert(agn_typecheck_transcript(current));
     count++;
     if(count > 1)
       idptr += sprintf(idptr, ",");
@@ -200,7 +200,7 @@ GtArray *agn_transcript_clique_ids(AgnTranscriptClique *clique)
       current != NULL;
       current = gt_feature_node_iterator_next(iter))
   {
-    gt_assert(agn_typecheck_transcript(current));
+    agn_assert(agn_typecheck_transcript(current));
     const char *id = gt_feature_node_get_attribute(current, "ID");
     gt_array_add(ids, id);
   }
@@ -353,13 +353,13 @@ static void clique_exon_count(GtFeatureNode *fn, GtWord *count)
 static void clique_ids_put(GtFeatureNode *fn, GtHashmap *map)
 {
   const char *tid = gt_feature_node_get_attribute(fn, "ID");
-  gt_assert(gt_hashmap_get(map, tid) == NULL);
+  agn_assert(gt_hashmap_get(map, tid) == NULL);
   gt_hashmap_add(map, (char *)tid, (char *)tid);
 }
 
 static void clique_size(GtFeatureNode *fn, GtWord *count)
 {
-  gt_assert(agn_typecheck_transcript(fn));
+  agn_assert(agn_typecheck_transcript(fn));
   (*count)++;
 }
 
@@ -464,7 +464,7 @@ static void clique_test_data(GtQueue *queue)
 
 static void clique_to_array(GtFeatureNode *fn, GtArray *transcripts)
 {
-  gt_assert(agn_typecheck_transcript(fn));
+  agn_assert(agn_typecheck_transcript(fn));
   gt_array_add(transcripts, fn);
 }
 
@@ -484,7 +484,7 @@ static void clique_traverse(AgnTranscriptClique *clique,
                             AgnCliqueVisitFunc func,
                             void *funcdata)
 {
-  gt_assert(func);
+  agn_assert(func);
   GtFeatureNode *cliquefn = gt_feature_node_cast(clique);
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(cliquefn);
   GtFeatureNode *current;
@@ -501,7 +501,7 @@ static void clique_traverse_direct(AgnTranscriptClique *clique,
                                    AgnCliqueVisitFunc func,
                                    void *funcdata)
 {
-  gt_assert(func);
+  agn_assert(func);
   GtFeatureNode *cliquefn = gt_feature_node_cast(clique);
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(cliquefn);
   GtFeatureNode *current;
@@ -526,7 +526,7 @@ static void clique_vector_update(AgnTranscriptClique *clique,
   GtRange locusrange = gt_genome_node_get_range(clique);
   GtRange transrange = gt_genome_node_get_range((GtGenomeNode *)transcript);
   char *modelvector = gt_genome_node_get_user_data(clique, "modelvector");
-  gt_assert(gt_range_contains(&locusrange, &transrange) &&
+  agn_assert(gt_range_contains(&locusrange, &transrange) &&
             gt_range_length(&locusrange) == strlen(modelvector));
 
   GtFeatureNode *fn;
@@ -540,7 +540,7 @@ static void clique_vector_update(AgnTranscriptClique *clique,
       c = 'C';
     else if(agn_typecheck_utr(fn))
     {
-      gt_assert(agn_typecheck_utr3p(fn) || agn_typecheck_utr5p(fn));
+      agn_assert(agn_typecheck_utr3p(fn) || agn_typecheck_utr5p(fn));
       if(agn_typecheck_utr5p(fn))
         c = 'F';
       else

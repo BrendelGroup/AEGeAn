@@ -1,5 +1,6 @@
 #include "AgnLocusMapVisitor.h"
 #include "AgnTypecheck.h"
+#include "AgnUtils.h"
 
 #define locus_map_visitor_cast(GV)\
         gt_node_visitor_cast(locus_map_visitor_class(), GV)
@@ -70,7 +71,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
 {
   AgnLocusMapVisitor *v = locus_map_visitor_cast(nv);
   gt_error_check(error);
-  gt_assert(gt_feature_node_has_type(fn, "locus"));
+  agn_assert(gt_feature_node_has_type(fn, "locus"));
   char lid[1024];
   GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)fn);
   GtRange range = gt_genome_node_get_range((GtGenomeNode *)fn);

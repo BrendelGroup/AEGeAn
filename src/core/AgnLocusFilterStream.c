@@ -47,7 +47,7 @@ GtNodeStream* agn_locus_filter_stream_new(GtNodeStream *in_stream,
 {
   GtNodeStream *ns;
   AgnLocusFilterStream *stream;
-  gt_assert(in_stream);
+  agn_assert(in_stream);
   ns = gt_node_stream_create(locus_filter_stream_class(), false);
   stream = locus_filter_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
@@ -101,7 +101,7 @@ static int locus_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     if(!fn)
       return 0;
 
-    gt_assert(gt_feature_node_has_type(fn, "locus"));
+    agn_assert(gt_feature_node_has_type(fn, "locus"));
     for(i = 0; i < gt_array_size(stream->filters); i++)
     {
       AgnLocusFilter *filter = gt_array_get(stream->filters, i);

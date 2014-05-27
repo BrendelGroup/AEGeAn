@@ -224,7 +224,7 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
 {
   GtStr *seqidrefr = gt_genome_node_get_seqid(refr);
   GtStr *seqidpred = gt_genome_node_get_seqid(pred);
-  gt_assert(gt_genome_node_get_start(refr) == gt_genome_node_get_start(pred) &&
+  agn_assert(gt_genome_node_get_start(refr) == gt_genome_node_get_start(pred) &&
             gt_genome_node_get_end(refr) == gt_genome_node_get_end(pred) &&
             gt_str_cmp(seqidrefr, seqidpred) == 0);
 
@@ -246,7 +246,7 @@ bool agn_clique_pair_unit_test(AgnUnitTest *test)
 {
   GtQueue *pairs = gt_queue_new();
   clique_pair_test_data(pairs);
-  gt_assert(gt_queue_size(pairs) == 3);
+  agn_assert(gt_queue_size(pairs) == 3);
 
   AgnCliquePair *pair = gt_queue_get(pairs);
   AgnCompClassification result = agn_clique_pair_classify(pair);
@@ -274,8 +274,8 @@ static void clique_pair_calc_struct_stats(StructuralData *dat)
 {
   GtUword num_refr = gt_array_size(dat->refrstarts);
   GtUword num_pred = gt_array_size(dat->predstarts);
-  gt_assert(num_refr == gt_array_size(dat->refrends));
-  gt_assert(num_pred == gt_array_size(dat->predends));
+  agn_assert(num_refr == gt_array_size(dat->refrends));
+  agn_assert(num_pred == gt_array_size(dat->predends));
   GtUword i, j;
   for(i = 0; i < num_refr; i++)
   {
@@ -325,7 +325,7 @@ static void clique_pair_comparative_analysis(AgnCliquePair *pair)
                                                    "modelvector");
   char *pred_vector = gt_genome_node_get_user_data(pair->pred_clique,
                                                    "modelvector");
-  gt_assert(
+  agn_assert(
       strlen(refr_vector) == gt_genome_node_get_length(pair->refr_clique) &&
       strlen(pred_vector) == gt_genome_node_get_length(pair->refr_clique)
   );
@@ -449,7 +449,7 @@ static void clique_pair_term_struct_dat(StructuralData *dat)
 
 static void clique_pair_test_data(GtQueue *queue)
 {
-  gt_assert(queue != NULL);
+  agn_assert(queue != NULL);
   GtArray *refrfeats, *predfeats;
 
   GtError *error = gt_error_new();
@@ -485,7 +485,7 @@ static void clique_pair_test_data(GtQueue *queue)
   gt_node_stream_delete(arraystream);
   gt_array_sort(predfeats, (GtCompare)agn_genome_node_compare);
 
-  gt_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
+  agn_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
 
   GtRange range = { 26493, 29591 };
   GtStr *seqid = gt_str_new_cstr("chr8");

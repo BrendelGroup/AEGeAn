@@ -105,7 +105,7 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
                                             GtUword delta, int endmode,
                                             GtLogger *logger)
 {
-  gt_assert(locus_stream);
+  agn_assert(locus_stream);
 
   GtNodeStream *ns = gt_node_stream_create(ilocus_stream_class(), false);
   AgnIntervalLocusStream *stream = ilocus_stream_cast(ns);
@@ -121,7 +121,7 @@ GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream,
   int result = gt_node_stream_pull(stream->fstream, error);
   if(result == -1)
   {
-    gt_assert(gt_error_is_set(error));
+    agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnIntervalLocusStream::agn_interval_locus_stream_"
                   "new] error processing input: %s\n", gt_error_get(error));
   }
@@ -498,7 +498,7 @@ static GtNodeStream*
 ilocus_stream_test_data(GtFeatureIndex *iloci,GtNodeStream *s1,GtNodeStream *s2,
                         GtUword delta, bool skipends, GtLogger *logger)
 {
-  gt_assert(s1);
+  agn_assert(s1);
   GtError *error = gt_error_new();
 
   GtNodeStream *locusstream, *ilocusstream;

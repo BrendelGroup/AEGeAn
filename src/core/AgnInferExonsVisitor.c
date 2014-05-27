@@ -94,7 +94,7 @@ bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   infer_exons_visitor_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 4);
+  agn_assert(gt_queue_size(queue) == 4);
 
   GtFeatureNode *fn = gt_queue_get(queue);
   GtArray *exons = agn_typecheck_select(fn, agn_typecheck_exon);

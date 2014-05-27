@@ -58,7 +58,7 @@ GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 {
   GtNodeStream *ns;
   AgnGeneStream *stream;
-  gt_assert(in_stream);
+  agn_assert(in_stream);
 
   ns = gt_node_stream_create(gene_stream_class(), false);
   stream = gene_stream_cast(ns);
@@ -86,7 +86,7 @@ bool agn_gene_stream_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   gene_stream_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 3);
+  agn_assert(gt_queue_size(queue) == 3);
 
   GtFeatureNode *fn = gt_queue_get(queue);
   GtArray *mrnas = agn_typecheck_select(fn, agn_typecheck_mrna);
@@ -187,7 +187,7 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
     if(!fn)
       return 0;
 
-    gt_assert(agn_typecheck_gene(fn));
+    agn_assert(agn_typecheck_gene(fn));
 
     GtUword num_valid_mrnas = 0;
     GtFeatureNode *current;

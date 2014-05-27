@@ -58,7 +58,7 @@ GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream,
 {
   GtNodeStream *ns;
   AgnFilterStream *stream;
-  gt_assert(in_stream && typestokeep);
+  agn_assert(in_stream && typestokeep);
   ns = gt_node_stream_create(filter_stream_class(), false);
   stream = filter_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
@@ -177,7 +177,7 @@ bool agn_filter_stream_unit_test(AgnUnitTest *test)
   GtError *error = gt_error_new();
   GtQueue *queue = gt_queue_new();
   filter_stream_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 4);
+  agn_assert(gt_queue_size(queue) == 4);
 
   source = gt_queue_get(queue);
   sink = gt_array_new( sizeof(GtFeatureNode *) );

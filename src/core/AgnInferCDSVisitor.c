@@ -125,7 +125,7 @@ bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   infer_cds_visitor_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 4);
+  agn_assert(gt_queue_size(queue) == 4);
 
   GtFeatureNode *fn = gt_queue_get(queue);
   GtArray *cds = agn_typecheck_select(fn, agn_typecheck_cds);
@@ -301,7 +301,7 @@ static void infer_cds_visitor_check_start(AgnInferCDSVisitor *v)
                     testrange.start, testrange.end, mrnaid);
     }
   }
-  else // gt_assert(gt_array_size(v->starts) == 0)
+  else // agn_assert(gt_array_size(v->starts) == 0)
   {
     GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)v->mrna);
     GtGenomeNode *codonfeature = gt_feature_node_new(seqid, "start_codon",
@@ -352,7 +352,7 @@ static void infer_cds_visitor_check_stop(AgnInferCDSVisitor *v)
                     testrange.start, testrange.end, mrnaid);
     }
   }
-  else // gt_assert(gt_array_size(v->stops) == 0)
+  else // agn_assert(gt_array_size(v->stops) == 0)
   {
     GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)v->mrna);
     GtGenomeNode *codonfeature = gt_feature_node_new(seqid, "stop_codon",

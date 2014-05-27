@@ -61,7 +61,7 @@ GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream,
 {
   GtNodeStream *ns;
   AgnInferParentStream *stream;
-  gt_assert(in_stream && type_parents);
+  agn_assert(in_stream && type_parents);
   ns = gt_node_stream_create(infer_parent_stream_class(), false);
   stream = infer_parent_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
@@ -209,7 +209,7 @@ bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   infer_parent_stream_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 5);
+  agn_assert(gt_queue_size(queue) == 5);
 
   GtGenomeNode *gn = gt_queue_get(queue);
   GtRange range = gt_genome_node_get_range(gn);
@@ -334,7 +334,7 @@ static void infer_parent_stream_test_data(GtQueue *queue)
             "error processing features: %s\n", gt_error_get(error));
   }
 
-  gt_assert(gt_array_size(features) > 1);
+  agn_assert(gt_array_size(features) > 1);
   gt_array_reverse(features);
   while(gt_array_size(features) > 0)
   {

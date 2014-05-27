@@ -24,6 +24,24 @@ struct AgnSequenceRegion
 };
 typedef struct AgnSequenceRegion AgnSequenceRegion;
 
+#ifndef NDEBUG
+/* Stolen shamelessley from gt_assert() */
+#define agn_assert(expression)                                               \
+        do {                                                                 \
+          if (!(expression)) {                                               \
+            fprintf(stderr, "Assertion failed: (%s), function %s, file %s, " \
+                    "line %d.\nThis is a bug, please report it at "          \
+                    "https://github.com/standage/AEGeAn/issues.\n",          \
+                    #expression, __func__, __FILE__, __LINE__);              \
+            /*@ignore@*/                                                     \
+            exit(1);                                                         \
+            /*@end@*/                                                        \
+          }                                                                  \
+        } while (false)
+#else
+#define agn_assert(expression) ((void) 0)
+#endif
+
 
 /**
  * @function Similar to ``gt_array_copy``, except that array elements are

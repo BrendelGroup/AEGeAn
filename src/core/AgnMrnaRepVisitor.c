@@ -48,7 +48,7 @@ bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   mrna_rep_visitor_test_data(queue);
-  gt_assert(gt_queue_size(queue) == 1);
+  agn_assert(gt_queue_size(queue) == 1);
 
   GtGenomeNode *gene = gt_queue_get(queue);
   GtFeatureNode *genefn = gt_feature_node_cast(gene);

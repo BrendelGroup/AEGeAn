@@ -320,7 +320,7 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   GtRange range = gt_genome_node_get_range(gn);
   GtStr *seqid = gt_genome_node_get_seqid(gn);
   const char *type = xt_get_feature_type(fn);
-  gt_assert(type);
+  agn_assert(type);
 
   sprintf(subseqid, "%s_%lu-%lu", gt_str_get(seqid), range.start, range.end);
   const char *featid   = gt_feature_node_get_attribute(fn, "ID");

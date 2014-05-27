@@ -26,7 +26,7 @@ GtUword
 agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src,
                                bool use_orig, GtError *error)
 {
-  gt_assert(dest && src);
+  agn_assert(dest && src);
   GtStrArray *seqids = gt_feature_index_get_seqids(src, error);
   GtUword i, rncount = 0;
   for(i = 0; i < gt_str_array_size(seqids); i++)
@@ -56,7 +56,7 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
                                         GtFeatureIndex *predsrc,
                                         bool use_orig, GtError *error)
 {
-  gt_assert(dest && refrsrc && predsrc);
+  agn_assert(dest && refrsrc && predsrc);
   GtStrArray *refr_seqids = gt_feature_index_get_seqids(refrsrc, error);
   GtStrArray *pred_seqids = gt_feature_index_get_seqids(predsrc, error);
   GtStrArray *seqids = agn_str_array_union(refr_seqids, pred_seqids);
@@ -107,7 +107,7 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
 
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 {
-  gt_assert(root && fn);
+  agn_assert(root && fn);
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
   GtFeatureNode *child;
   for(child = gt_feature_node_iterator_next(iter);
@@ -135,7 +135,7 @@ GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
       if(cdsid == NULL)
         cdsid = fid;
       else
-        gt_assert(strcmp(cdsid, fid) == 0);
+        agn_assert(strcmp(cdsid, fid) == 0);
     }
     totallength += gt_genome_node_get_length(*segment);
   }

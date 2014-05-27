@@ -355,7 +355,7 @@ static void compare_report_html_footer(FILE *outstream)
 static void compare_report_html_free(GtNodeVisitor *nv)
 {
   AgnCompareReportHTML *rpt;
-  gt_assert(nv);
+  agn_assert(nv);
 
   rpt = compare_report_html_cast(nv);
   gt_str_array_delete(rpt->seqids);
@@ -712,7 +712,7 @@ static int compare_report_html_visit_feature_node(GtNodeVisitor *nv,
   AgnLocus *locus;
 
   gt_error_check(error);
-  gt_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
+  agn_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
 
   rpt = compare_report_html_cast(nv);
   locus = (AgnLocus *)fn;
@@ -733,7 +733,7 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
   const char *seqid;
 
   gt_error_check(error);
-  gt_assert(nv && rn);
+  agn_assert(nv && rn);
 
   rpt = compare_report_html_cast(nv);
   seqidstr = gt_genome_node_get_seqid((GtGenomeNode *)rn);

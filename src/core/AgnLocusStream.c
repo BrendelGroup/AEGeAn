@@ -96,7 +96,7 @@ static GtNodeStream *locus_gstream_init(int numfiles, const char **filenames,
 
 GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 {
-  gt_assert(in_stream);
+  agn_assert(in_stream);
 
   GtNodeStream *ns = gt_node_stream_create(locus_stream_class(), false);
   AgnLocusStream *stream = locus_stream_cast(ns);
@@ -115,7 +115,7 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   int result = gt_node_stream_pull(feat_stream, error);
   if(result == -1)
   {
-    gt_assert(gt_error_is_set(error));
+    agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnLocusStream::agn_locus_stream_new] error "
                   "processing input: %s\n", gt_error_get(error));
   }
@@ -136,7 +136,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
                                             GtNodeStream *pred_stream,
                                             GtLogger *logger)
 {
-  gt_assert(refr_stream && pred_stream);
+  agn_assert(refr_stream && pred_stream);
 
   GtNodeStream *ns = gt_node_stream_create(locus_stream_class(), false);
   AgnLocusStream *stream = locus_stream_cast(ns);
@@ -154,7 +154,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   int result = gt_node_stream_pull(refr_instream, error);
   if(result == -1)
   {
-    gt_assert(gt_error_is_set(error));
+    agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnLocusStream::agn_locus_stream_new_pairwise] "
                  "error processing reference input: %s\n", gt_error_get(error));
   }
@@ -164,7 +164,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   result = gt_node_stream_pull(pred_instream, error);
   if(result == -1)
   {
-    gt_assert(gt_error_is_set(error));
+    agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnLocusStream::agn_locus_stream_new_pairwise] "
                  "error processing prediction input: %s\n",gt_error_get(error));
   }
@@ -532,7 +532,7 @@ static int locus_stream_query_overlap(AgnLocusStream *stream, AgnLocus *locus,
   bool has_seqid;
   gt_feature_index_has_seqid(stream->feats, &has_seqid, gt_str_get(seqid),
                              error);
-  gt_assert(has_seqid);
+  agn_assert(has_seqid);
 
   int new_feat_count = 0;
   GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
@@ -612,7 +612,7 @@ static int locus_stream_query_overlap_pairwise(AgnLocusStream *stream,
 static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
                                    GtNodeStream *s2)
 {
-  gt_assert(s1);
+  agn_assert(s1);
   GtError *error = gt_error_new();
   GtLogger *logger = gt_logger_new(true, "", stderr);
 
@@ -632,7 +632,7 @@ static void locus_stream_test_data(GtQueue *queue, GtNodeStream *s1,
     fprintf(stderr, "[AgnLocusStream::locus_stream_test_data] error processing "
             "node stream: %s\n", gt_error_get(error));
   }
-  gt_assert(gt_array_size(loci) > 0);
+  agn_assert(gt_array_size(loci) > 0);
   gt_array_reverse(loci);
   while(gt_array_size(loci) > 0)
   {
