@@ -71,7 +71,7 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
     GtRange range, refrrange, predrange;
     bool refrhas, predhas;
     gt_feature_index_has_seqid(refrsrc, &refrhas, seqid, error);
-    gt_feature_index_has_seqid(refrsrc, &predhas, seqid, error);
+    gt_feature_index_has_seqid(predsrc, &predhas, seqid, error);
 
     int (*range_func)(GtFeatureIndex *, GtRange *, const char *, GtError *);
     range_func = gt_feature_index_get_range_for_seqid;
