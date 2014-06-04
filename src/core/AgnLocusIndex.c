@@ -595,7 +595,7 @@ GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx,
     bool refrhasseq, predhasseq;
     gt_feature_index_has_seqid(refrfeats, &refrhasseq, seqid, error);
     gt_feature_index_has_seqid(predfeats, &predhasseq, seqid, error);
-    if(refrhasseq && predhasseq)
+    if(refrhasseq)
     {
       gt_feature_index_get_orig_range_for_seqid(refrfeats, &refrrange, seqid,
                                                 error);
