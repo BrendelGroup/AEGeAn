@@ -409,7 +409,7 @@ static void ilocus_stream_parse_terminal(AgnIntervalLocusStream *stream,
   GtUword nloci = gt_array_size(seqloci);
   AgnLocus *locus = *(AgnLocus **)gt_array_get(seqloci, nloci - 1);
   GtRange range = gt_genome_node_get_range(locus);
-  if(range.end <= seqrange->end - (2*delta))
+  if(seqrange->end > (2*delta) && range.end <= seqrange->end - (2*delta))
   {
     agn_locus_set_range(locus, range.start, range.end + delta);
 
