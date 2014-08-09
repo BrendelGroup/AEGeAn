@@ -20,7 +20,11 @@ typedef struct AgnCompareReportHTML AgnCompareReportHTML;
  * @function After the node stream has been processed, call this function to
  * write a summary of all locus comparisons to the output directory.
  */
-void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt);
+void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
+                                            int argc, char **argv,
+                                            const char *refrlabel,
+                                            const char *predlabel,
+                                            const char *start_time);
 
 /**
  * @function Class constructor. Creates a node visitor used to process a stream

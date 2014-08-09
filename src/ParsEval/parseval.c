@@ -128,6 +128,19 @@ int main(int argc, char **argv)
     agn_compare_report_text_create_summary((AgnCompareReportText *)rpt,
                                            options.outfile);
   }
+  else if(options.outfmt == HTMLMODE)
+  {
+    // FIXME Place the next 4-6 lines elsewhere?
+    const char *refrlabel = options.refrfile;
+    if(options.refrlabel)
+      refrlabel = options.refrlabel;
+    const char *predlabel = options.predfile;
+    if(options.predlabel)
+      predlabel = options.predlabel;
+    agn_compare_report_html_create_summary((AgnCompareReportHTML *)rpt, argc,
+                                           argv, refrlabel, predlabel,
+                                           start_time);
+  }
 
   // Free memory and terminate
   gt_free(start_time);

@@ -123,7 +123,11 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
 // Method implementations
 //------------------------------------------------------------------------------
 
-void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
+void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
+                                            int argc, char **argv,
+                                            const char *refrlabel,
+                                            const char *predlabel,
+                                            const char *start_time)
 {
   AgnComparisonData *data = &rpt->data;
   
@@ -135,7 +139,47 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
     fprintf(stderr, "error: unable to open output file '%s'\n", filename);
     exit(1);
   }
-  
+
+  // Print header
+  fputs( "<!doctype html>\n"
+         "<html lang=\"en\">\n"
+         "  <head>\n"
+         "    <meta charset=\"utf-8\" />\n"
+         "    <title>ParsEval Summary</title>\n"
+         "    <link rel=\"stylesheet\" type=\"text/css\" href=\"parseval.css\" />\n"
+         "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.js\"></script>\n"
+         "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.dataTables.js\"></script>\n"
+         "    <script type=\"text/javascript\">\n"
+         "      $(document).ready(function() {\n"
+         "        $('#seqlist').dataTable( {\n"
+         "          \"sScrollY\": \"400px\",\n"
+         "          \"bPaginate\": false,\n"
+         "          \"bScrollCollapse\": true,\n"
+         "          \"bSort\": false,\n"
+         "          \"bFilter\": false,\n"
+         "          \"bInfo\": false\n"
+         "        });\n"
+         "      } );\n"
+         "    </script>\n"
+         "  </head>\n", outstream );
+
+  // Print runtime summary
+  fprintf(outstream,
+          "  <body>\n"
+          "    <div id=\"content\">\n"
+          "      <h1>ParsEval Summary</h1>\n"
+          "      <pre class=\"command\">\n"
+          "Started:                %s\n"
+          "Reference annotations:  %s\n"
+          "Prediction annotations: %s\n"
+          "Executing command:      ",
+          start_time, refrlabel, predlabel);
+  int x;
+  for(x = 0; x < argc; x++)
+  {
+    fprintf(outstream, "%s ", argv[x]);
+  }
+  fprintf(outstream, "</pre>\n\n");
 
   fputs("      <h2>Sequences compared</h2>\n"
         "      <p class=\"indent\">Click on a sequence ID below to see "
@@ -205,22 +249,25 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
   
   double identity = (double)data->stats.overall_matches /
                     (double)data->stats.overall_length;
-  fprintf(outstream, "  %-30s   %-10s   %-10s   %-10s\n",
-          "Nucleotide-level comparison", "CDS", "UTRs", "Overall" );
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-.3lf\n",
-          "Matching coefficient:", data->stats.cds_nuc_stats.mcs,
-          data->stats.utr_nuc_stats.mcs, identity);
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n",
-          "Correlation coefficient:", data->stats.cds_nuc_stats.ccs,
-          data->stats.utr_nuc_stats.ccs, "--");
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Sensitivity:",
-          data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns, "--");
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Specificity:",
-          data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps, "--");
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "F1 Score:",
-          data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s, "--");
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Ann. edit distance:",
-          data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds, "--");
+  fprintf(outstream,
+          "      <h3>Nucleotide-level comparison</h3>\n"
+          "      <table class=\"table_wide table_extra_indent\">\n"
+          "        <tr><th>&nbsp;</th><th>CDS</th><th>UTRs</th><th>Overall</th></tr>\n"
+          "        <tr><th class=\"left-align\">matching coefficient</th><td>%s</td><td>%s</td><td>%.3lf</td></tr>\n"
+          "        <tr><th class=\"left-align\">correlation coefficient</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">sensitivity</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">specificity</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">F1 score</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">annotation edit distance</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "      </table>\n\n",
+          data->stats.cds_nuc_stats.mcs, data->stats.utr_nuc_stats.mcs, identity,
+          data->stats.cds_nuc_stats.ccs, data->stats.utr_nuc_stats.ccs,
+          data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns,
+          data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps,
+          data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s,
+          data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds);
+  
+  compare_report_html_footer(outstream);
 }
 
 GtNodeVisitor *agn_compare_report_html_new(const char *outdir, GtLogger *logger)
