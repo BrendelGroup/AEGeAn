@@ -6,6 +6,8 @@
 #include "extended/feature_index_api.h"
 #include "extended/genome_node_api.h"
 
+#define AGN_MAX_FILENAME_SIZE 4096
+
 /**
  * @module AgnUtils
  *

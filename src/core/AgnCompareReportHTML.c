@@ -219,7 +219,7 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
           data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps, "--");
   fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "F1 Score:",
           data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s, "--");
-  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Annotation edit distance:",
+  fprintf(outstream, "    %-30s %-10s   %-10s   %-10s\n", "Ann. edit distance:",
           data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds, "--");
 }
 
@@ -427,6 +427,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
   {
     fputs("      <p>No comparisons were performed for this locus.</p>\n\n",
           outstream);
+    compare_report_html_footer(outstream);
     return;
   }
 
@@ -742,6 +743,15 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
   data = gt_malloc( sizeof(AgnComparisonData) );
   agn_comparison_data_init(data);
   gt_hashmap_add(rpt->seqdata, (char *)seqid, data);
+
+  char seqdircmd[AGN_MAX_FILENAME_SIZE];
+  sprintf(seqdircmd, "mkdir %s/%s", rpt->outdir, seqid);
+  if(system(seqdircmd))
+  {
+    fprintf(stderr, "error: could not create directory %s/%s\n", rpt->outdir,
+            seqid);
+    exit(1);
+  }
 
   return 0;
 }
