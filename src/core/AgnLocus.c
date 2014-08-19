@@ -63,6 +63,16 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
 static void locus_test_data(GtQueue *queue);
 
 /**
+ * @function Track order function for PNG graphics.
+ */
+static int locus_track_order(const char *s1, const char *s2, void *data)
+{
+  if(strstr(s1, "Reference") == NULL)
+    return 1;
+  return -1;
+}
+
+/**
  * @function For a set of features, we can construct a graph where each node
  * represents a feature and where two nodes are connected if the corresponding
  * features do not overlap. This function returns the intersection of
@@ -671,7 +681,7 @@ void agn_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
 
   if(strcmp(filename, metadata->refrfile) == 0)
   {
-    if(strcmp(metadata->refrlabel, "") == 0)
+    if(metadata->refrlabel == NULL)
     {
       sprintf(trackname, "Reference annotations (%s)", metadata->refrfile);
       gt_str_set(track, trackname);
@@ -685,7 +695,7 @@ void agn_locus_png_track_selector(GtBlock *block, GtStr *track, void *data)
   }
   else if(strcmp(filename, metadata->predfile) == 0)
   {
-    if(strcmp(metadata->predlabel, "") == 0)
+    if(metadata->predlabel == NULL)
     {
       sprintf(trackname, "Prediction annotations (%s)", metadata->predfile);
       gt_str_set(track, trackname);
@@ -708,7 +718,7 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
 {
   GtError *error = gt_error_new();
   GtFeatureIndex *index = gt_feature_index_memory_new();
-  GtUword i;
+  GtUword i, graphic_width;
 
   GtArray *refr_trans = agn_locus_refr_mrnas(locus);
   for(i = 0; i < gt_array_size(refr_trans); i++)
@@ -736,6 +746,12 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
   }
   gt_array_delete(pred_trans);
 
+  // Determine graphic width
+  double scaling_factor = 0.05;
+  graphic_width = gt_genome_node_get_length(locus) * scaling_factor;
+  if(graphic_width < 650)
+    graphic_width = 650;
+
   // Generate the graphic...this is going to get a bit hairy
   GtStyle *style;
   if(!(style = gt_style_new(error)))
@@ -752,22 +768,17 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
   GtRange locusrange = gt_genome_node_get_range(locus);
   GtDiagram *diagram = gt_diagram_new(index, gt_str_get(seqid), &locusrange,
                                       style, error);
-  gt_diagram_set_track_selector_func(
-                              diagram,
-                              (GtTrackSelectorFunc)agn_locus_png_track_selector,
-                              metadata
+  gt_diagram_set_track_selector_func(diagram,
+      (GtTrackSelectorFunc)agn_locus_png_track_selector, metadata
   );
-  GtLayout *layout = gt_layout_new(diagram, metadata->graphic_width, style,
-                                   error);
+  GtLayout *layout = gt_layout_new(diagram, graphic_width, style, error);
   if(!layout)
   {
     fprintf(stderr, "error: %s\n", gt_error_get(error));
     exit(EXIT_FAILURE);
   }
-  gt_layout_set_track_ordering_func(
-                                layout,
-                                (GtTrackOrderingFunc)metadata->track_order_func,
-                                NULL
+  gt_layout_set_track_ordering_func(layout,
+      (GtTrackOrderingFunc)locus_track_order, NULL
   );
   GtUword image_height;
   if(gt_layout_get_height(layout, &image_height, error))
@@ -776,8 +787,8 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
     exit(EXIT_FAILURE);
   }
   GtCanvas *canvas = gt_canvas_cairo_file_new(style, GT_GRAPHICS_PNG,
-                                              metadata->graphic_width,
-                                              image_height, NULL, error);
+                                              graphic_width, image_height, NULL,
+                                              error);
   if(!canvas)
   {
     fprintf(stderr, "error: %s\n", gt_error_get(error));
@@ -788,8 +799,11 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
     fprintf(stderr, "error: %s\n", gt_error_get(error));
     exit(EXIT_FAILURE);
   }
-  if(gt_canvas_cairo_file_to_file((GtCanvasCairoFile*) canvas,
-                                  metadata->filename, error))
+  
+  char pngfile[512];
+  sprintf(pngfile, metadata->filename_template, gt_str_get(seqid),
+          gt_str_get(seqid), locusrange.start, locusrange.end);
+  if(gt_canvas_cairo_file_to_file((GtCanvasCairoFile*) canvas, pngfile, error))
   {
     fprintf(stderr, "error: %s\n", gt_error_get(error));
     exit(EXIT_FAILURE);

@@ -2,6 +2,7 @@
 
 int main(int argc, char **argv)
 {
+  AgnLocusPngMetadata pngdata;
   GtError *error;
   GtLogger *logger;
   GtQueue *streams;
@@ -98,7 +99,20 @@ int main(int argc, char **argv)
         rpt = agn_compare_report_text_new(options.outfile, logger);
       break;
     case HTMLMODE:
-      rpt = agn_compare_report_html_new(options.outfilename, logger);
+      if(options.graphics)
+      {
+        sprintf(pngdata.filename_template, "%s/%%s/%%s_%%lu-%%lu.png",
+                options.outfilename);
+        sprintf(pngdata.stylefile, "%s/pe.style", options.data_path);
+        pngdata.refrfile = options.refrfile;
+        pngdata.predfile = options.predfile;
+        pngdata.refrlabel = options.refrlabel;
+        pngdata.predlabel = options.predlabel;
+        rpt = agn_compare_report_html_new(options.outfilename, &pngdata,
+                                          logger);
+      }
+      else
+        rpt = agn_compare_report_html_new(options.outfilename, NULL, logger);
       break;
     case CSVMODE:
       fprintf(stderr, "error: CSV output mode support temporarily "

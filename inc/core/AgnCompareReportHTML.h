@@ -3,6 +3,7 @@
 
 #include "core/logger_api.h"
 #include "extended/node_visitor_api.h"
+#include "AgnLocus.h"
 
 /**
  * @class AgnCompareReportHTML
@@ -32,6 +33,8 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
  * Reports will be written in ``outdir`` and status messages will be written
  * to the logger.
  */
-GtNodeVisitor *agn_compare_report_html_new(const char *outdir,GtLogger *logger);
+GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
+                                           AgnLocusPngMetadata *pngdata,
+                                           GtLogger *logger);
 
 #endif

@@ -37,14 +37,12 @@ typedef enum AgnComparisonSource AgnComparisonSource;
  */
 struct AgnLocusPngMetadata
 {
-  char filename[512];
+  char filename_template[512];
   char stylefile[512];
   const char *refrfile;
   const char *predfile;
   const char *refrlabel;
   const char *predlabel;
-  GtUword graphic_width;
-  int (*track_order_func)(const char *s1, const char *s2, void *data);
 };
 typedef struct AgnLocusPngMetadata AgnLocusPngMetadata;
 
