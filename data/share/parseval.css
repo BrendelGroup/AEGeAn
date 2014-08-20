@@ -26,7 +26,8 @@ body
 
 div#content
 {
-  background: transparent url(parseval-logo-h100px.png) top left no-repeat;
+  background: transparent url(aegean-logo-v1.0-128.png) 20px 10px no-repeat;
+  background-size: 100px;
   padding: 100px 10px 5px 10px;
 }
 
