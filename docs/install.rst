@@ -14,15 +14,16 @@ For the impatient
     sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
     sudo ldconfig
 
-    # Download the AEGeAn source code
+    # Download, compile, and install the GenomeTools package
+    curl -O http://genometools.org/pub/genometools-1.5.3.tar.gz
+    tar xzf genometools-1.5.3.tar.gz
+    cd genometools-1.5.3
+    make 64bit=yes
+    sudo make 64bit=yes install
+
+    # Download, compile, and install the  AEGeAn Toolkit
     git clone https://github.com/standage/AEGeAn.git
     cd AEGeAn
-
-    # Download the GenomeTools source code
-    git submodule init
-    git submodule update
-
-    # Compile and install GenomeTools and AEGeAn
     make
     sudo make install
 
@@ -56,7 +57,7 @@ the most recent updates) is to clone from Github.
 Alternatively, you can download an archive of the source from
 https://github.com/standage/AEGeAn.
 
-If you would prefer instead to work with a more  thoroughly tested stable
+If you would prefer instead to work with a more thoroughly tested stable
 release, do one of the following.
 
 * If you used git to clone AEGeAn, then run ``git tag`` to list all stable
@@ -82,23 +83,6 @@ If you are using a different operating system, please see "`Appendix:
 system setup`_"  for platform-specific instructions. After running those
 commands, complete the installation by running ``make`` and ``make install``.
 
-If you have already installed GenomeTools system-wide and do not want to
-overwrite that installation, you can replace 
-
-.. code-block:: bash
-
-    git submodule init
-    git submodule update
-    make
-    make install
-
-with
-
-.. code-block:: bash
-
-    make agn
-    make agn-install
-
 See the section labeled `Compilation flags`_ for a complete description of
 configurable settings for compilation and installation.
 
@@ -116,8 +100,7 @@ Compilation settings can be configured using the following flags with the
 * ``optimize=yes``: enable performance optimization for the AEGeAn code
 * ``errorcheck=no``: allow code to compile even if there are warnings
 * ``debug=no``: disable debugging support
-* ``clean``: remove all compiler-generated AEGeAn files
-* ``clean-all``: remove all compiler generated files for AEGeAn and GenomeTools
+* ``clean``: remove all compiler-generated files
 
 For example, if you want to compile the code with performance optimizations
 enabled and graphics support disabled, run ``make optimize=yes cairo=no``
@@ -151,13 +134,6 @@ This will install the programs in ``~/local/bin``, the libraries in
 environmental variable (or ``DYLD_LIBRARY_PATH`` on Mac OS X).
 
 .. _appendix-config:
-
-Note on updating
-----------------
-If you are using git and GitHub to keep up-to-date with AEGeAn's latest
-developments, be sure that whenever you run ``git pull`` to update the code, you
-also run ``git submodule update``. This will make sure that the version of
-GenomeTools on which AEGeAn depends is correct.
 
 Appendix: system setup
 ----------------------

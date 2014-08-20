@@ -72,16 +72,10 @@ endif
 LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 
 # Targets
-all:		gt agn
+all:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) libaegean.a
 		
 
-agn:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) libaegean.a
-		
-
-install:	all gt-install agn-install
-		
-
-agn-install:	agn
+install:	agn
 		@- test -d $(prefix)/bin || mkdir $(prefix)/bin
 		cp $(PE_EXE) $(XT_EXE) $(LP_EXE) $(prefix)/bin/.
 		cp libaegean.a $(prefix)/lib/.
@@ -98,9 +92,6 @@ uninstall:
 
 clean:		
 		rm -f $(BINS) $(UT_EXE) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
-
-all-clean:	clean gt-clean
-		
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
@@ -144,10 +135,10 @@ libaegean.a:	$(AGN_OBJS)
 inc/core/AgnVersion.h:	
 			@- bash -c "if [ -d .git ]; then perl data/scripts/version.pl > inc/core/AgnVersion.h; else perl data/scripts/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
 
-test:		all agn-test
+test:		agn-test
 		
 
-agn-test:	agn
+agn-test:	all
 		@- $(LDPATH) $(MEMCHECK) bin/unittests
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@- $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
@@ -160,11 +151,3 @@ agn-test:	agn
 		@- #test/FBgn0035002.sh
 		@- #test/iLocusParsing.sh
 
-gt:		
-		cd src/genometools; make $(GTFLAGS)
-
-gt-install:	
-		cd src/genometools; make $(GTFLAGS) install
-
-gt-clean:	
-		cd src/genometools; make clean
