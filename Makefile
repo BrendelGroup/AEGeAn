@@ -56,8 +56,7 @@ ifneq ($(debug),no)
   CFLAGS += -g
 endif
 LDFLAGS=-lgenometools -lm \
-        -L$(prefix)/lib \
-        -Lsrc/genometools/lib
+        -L$(prefix)/lib
 ifdef lib
   LDFLAGS += -L$(lib)
 endif
@@ -75,7 +74,7 @@ LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 all:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) libaegean.a
 		
 
-install:	agn
+install:	all
 		@- test -d $(prefix)/bin || mkdir $(prefix)/bin
 		cp $(PE_EXE) $(XT_EXE) $(LP_EXE) $(prefix)/bin/.
 		cp libaegean.a $(prefix)/lib/.
