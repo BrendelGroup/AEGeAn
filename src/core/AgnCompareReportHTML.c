@@ -32,13 +32,6 @@ struct AgnCompareReportHTML
 //------------------------------------------------------------------------------
 
 /**
- * @function Print an overview of reference and prediction annotations for the
- * summary report.
- */
-static void compare_report_html_annot_summary(AgnCompInfo *info,
-                                              FILE *outstream);
-
-/**
  * @function Implement the GtNodeVisitor interface.
  */
 static const GtNodeVisitorClass *compare_report_html_class();
@@ -122,6 +115,25 @@ static void compare_report_html_seqfile_header(AgnCompareReportHTML *rpt,
 static void compare_report_html_seqfile_footer(AgnCompareReportHTML *rpt);
 
 /**
+ * @function Print an overview of reference and prediction annotations for the
+ * summary report.
+ */
+static void compare_report_html_summary_annot(AgnCompInfo *info,
+                                              FILE *outstream);
+
+/**
+ * @function Main body for summary report.
+ */
+static void compare_report_html_summary_body(AgnCompareReportHTML *rpt,
+                                             FILE *outstream);
+
+/**
+ * @function Header material for summary report.
+ */
+static void compare_report_html_summary_headmatter(AgnCompareReportHTML *rpt,
+                                                   FILE *outstream);
+
+/**
  * @function Print a breakdown of characteristics of loci that fall into a
  * particular comparison class.
  */
@@ -150,8 +162,7 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
 
 void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 {
-  AgnComparisonData *data = &rpt->data;
-  
+  // Create the output file
   char filename[1024];
   sprintf(filename, "%s/index.html", rpt->outdir);
   FILE *outstream = fopen(filename, "w");
@@ -161,128 +172,11 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
     exit(1);
   }
 
-  // Print header
-  fprintf(outstream,
-          "<!doctype html>\n"
-          "<html lang=\"en\">\n"
-          "  <head>\n"
-          "    <meta charset=\"utf-8\" />\n"
-          "    <title>%s</title>\n"
-          "    <link rel=\"stylesheet\" type=\"text/css\" href=\"parseval.css\" />\n"
-          "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.js\"></script>\n"
-          "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.dataTables.js\"></script>\n"
-          "    <script type=\"text/javascript\">\n"
-          "      $(document).ready(function() {\n"
-          "        $('#seqlist').dataTable( {\n"
-          "          \"sScrollY\": \"400px\",\n"
-          "          \"bPaginate\": false,\n"
-          "          \"bScrollCollapse\": true,\n"
-          "          \"bSort\": false,\n"
-          "          \"bFilter\": false,\n"
-          "          \"bInfo\": false\n"
-          "        });\n"
-          "      } );\n"
-          "    </script>\n"
-          "  </head>\n"
-          "  <body>\n"
-          "    <div id=\"content\">\n"
-          "      <h1>%s</h1>\n", gt_str_get(rpt->summary_title), gt_str_get(rpt->summary_title));
-
-  // Print runtime overview
-  if(rpt->ofunc != NULL)
-    rpt->ofunc(outstream, rpt->ofuncdata);
-
-  fputs("      <h2>Sequences compared</h2>\n"
-        "      <p class=\"indent\">Click on a sequence ID below to see "
-        "comparison results for individual loci.</p>\n", outstream);
-  fputs("      <table id=\"seqlist\" class=\"indent\">\n"
-        "        <thead>\n"
-        "          <tr>\n"
-        "            <th>Sequence</th>\n"
-        "            <th>Refr genes</th>\n"
-        "            <th>Pred genes</th>\n"
-        "            <th>Loci</th>\n"
-        "          </tr>\n"
-        "        </thead>\n"
-        "        <tbody>\n", outstream);
-  GtUword i;
-  for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
-  {
-    const char *seqid = gt_str_array_get(rpt->seqids, i);
-    AgnComparisonData *seqdat = gt_hashmap_get(rpt->seqdata, seqid);
-    agn_assert(data != NULL);
-    fprintf(outstream,
-            "        <tr><td><a href=\"%s/index.html\">%s</a></td>"
-            "<td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
-            seqid, seqid, seqdat->info.refr_genes, seqdat->info.pred_genes,
-            seqdat->info.num_loci);
-  }
-  fputs("        </tbody>\n\n"
-        "      </table>\n\n", outstream);
-
-  compare_report_html_annot_summary(&data->info, outstream);
-
-  fprintf(outstream, "      <h2>Comparisons</h2>\n"
-                     "      <table class=\"comparisons\">\n"
-                     "        <tr><th>Total comparisons</th><th>%lu</th></tr>\n",
-          data->info.num_comparisons);
-  compare_report_html_comp_class_summary(
-      &data->summary.perfect_matches, data->info.num_comparisons,
-      "perfect matches", "Prediction transcripts (exons, coding sequences, and"
-      "UTRs) line up perfectly with reference transcripts.", outstream);
-  compare_report_html_comp_class_summary(
-      &data->summary.perfect_mislabeled, data->info.num_comparisons,
-      "perfect matches with mislabeled UTRs", "5'/3' orientation of UTRs is "
-      "reversed between reference and prediction, but a perfect match in all "
-      "other aspects.", outstream);
-  compare_report_html_comp_class_summary(
-      &data->summary.cds_matches, data->info.num_comparisons,
-      "CDS structure matches", "Not a perfect match, but prediction coding "
-      "sequence(s) line up perfectly with reference coding sequence(s).",
-      outstream);
-  compare_report_html_comp_class_summary(
-      &data->summary.exon_matches, data->info.num_comparisons,
-      "exon structure matches", "Not a perfect match or CDS match, but "
-      "prediction exon structure is identical to reference exon structure.",
-      outstream);
-  compare_report_html_comp_class_summary(
-      &data->summary.utr_matches, data->info.num_comparisons,
-      "UTR structure matches", "Not a perfect match, CDS match, or exon "
-      "structure match, but prediction UTRs line up perfectly with reference "
-      "UTRs.", outstream);
-  compare_report_html_comp_class_summary(
-      &data->summary.non_matches, data->info.num_comparisons, "non-matches",
-      "Differences in CDS, exon, and UTR structure.", outstream);
-  fputs("      </table>\n\n", outstream);
-
-  compare_report_html_summary_struc(outstream, &data->stats.cds_struc_stats,
-                                    "CDS", "CDS segments");
-  compare_report_html_summary_struc(outstream, &data->stats.exon_struc_stats,
-                                    "Exon", "exons");
-  compare_report_html_summary_struc(outstream, &data->stats.utr_struc_stats,
-                                    "UTR", "UTR segments");
-  
-  double identity = (double)data->stats.overall_matches /
-                    (double)data->stats.overall_length;
-  fprintf(outstream,
-          "      <h3>Nucleotide-level comparison</h3>\n"
-          "      <table class=\"table_wide table_extra_indent\">\n"
-          "        <tr><th>&nbsp;</th><th>CDS</th><th>UTRs</th><th>Overall</th></tr>\n"
-          "        <tr><th class=\"left-align\">matching coefficient</th><td>%s</td><td>%s</td><td>%.3lf</td></tr>\n"
-          "        <tr><th class=\"left-align\">correlation coefficient</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
-          "        <tr><th class=\"left-align\">sensitivity</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
-          "        <tr><th class=\"left-align\">specificity</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
-          "        <tr><th class=\"left-align\">F1 score</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
-          "        <tr><th class=\"left-align\">annotation edit distance</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
-          "      </table>\n\n",
-          data->stats.cds_nuc_stats.mcs, data->stats.utr_nuc_stats.mcs, identity,
-          data->stats.cds_nuc_stats.ccs, data->stats.utr_nuc_stats.ccs,
-          data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns,
-          data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps,
-          data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s,
-          data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds);
-  
+  compare_report_html_summary_headmatter(rpt, outstream);
+  compare_report_html_summary_body(rpt, outstream);
   compare_report_html_footer(outstream);
+
+  fclose(outstream);
 }
 
 GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
@@ -316,55 +210,6 @@ void agn_compare_report_html_set_overview_func(AgnCompareReportHTML *rpt,
 {
   rpt->ofunc = func;
   rpt->ofuncdata = funcdata;
-}
-
-static void compare_report_html_annot_summary(AgnCompInfo *info,
-                                              FILE *outstream)
-{
-  GtUword numnotshared = info->unique_refr_loci +
-                         info->unique_pred_loci;
-  fprintf(outstream,
-          "      <h2>Gene loci <span class=\"tooltip\">[?]<span class=\"tooltip_text\">If a gene "
-          "annotation overlaps with another gene annotation, those annotations are associated "
-          "with the same gene locus. See <a target=\"_blank\" "
-          "href=\"http://aegean.readthedocs.org/en/refactor/loci.html\">"
-          "this page</a> for a formal definition of a locus annotation.</span></span></h2>\n"
-          "      <table class=\"table_normal\">\n"
-          "        <tr><td>shared</td><td>%lu</td></tr>\n"
-          "        <tr><td>unique to reference</td><td>%lu</td></tr>\n"
-          "        <tr><td>unique to prediction</td><td>%lu</td></tr>\n"
-          "        <tr><th class=\"right-align\">Total</th><td>%lu</td></tr>\n"
-          "      </table>\n\n",
-          info->num_loci - numnotshared, info->unique_refr_loci,
-          info->unique_pred_loci, info->num_loci);
-
-  fprintf(outstream,
-          "      <h2>Reference annotations</h2>\n"
-          "      <table class=\"table_normal\">\n"
-          "        <tr><td>genes</td><td>%lu</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
-          "        <tr><td>transcripts</td><td>%lu</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per gene</td><td>%.3f</td></tr>\n"
-          "      </table>\n\n",
-          info->refr_genes, (float)info->refr_genes / (float)info->num_loci,
-          info->refr_transcripts,
-          (float)info->refr_transcripts / (float)info->num_loci,
-          (float)info->refr_transcripts / (float)info->refr_genes);
-
-  fprintf(outstream,
-          "      <h2>Prediction annotations</h2>\n"
-          "      <table class=\"table_normal\">\n"
-          "        <tr><td>genes</td><td>%lu</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
-          "        <tr><td>transcripts</td><td>%lu</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per gene</td><td>%.3f</td></tr>\n"
-          "      </table>\n\n",
-          info->pred_genes, (float)info->pred_genes / (float)info->num_loci,
-          info->pred_transcripts,
-          (float)info->pred_transcripts / (float)info->num_loci,
-          (float)info->pred_transcripts / (float)info->pred_genes);
 }
 
 static const GtNodeVisitorClass *compare_report_html_class()
@@ -453,7 +298,7 @@ static void compare_report_html_locus_gene_ids(AgnLocus *locus, FILE *outstream)
   GtUword i;
   GtArray *refr_genes = agn_locus_refr_gene_ids(locus);
   GtArray *pred_genes = agn_locus_pred_gene_ids(locus);
-  
+
   fputs("      <h2>Gene annotations</h2>\n"
         "      <table>\n"
         "        <tr><th>Reference</th><th>Prediction</th></tr>\n",
@@ -489,13 +334,12 @@ static void compare_report_html_locus_gene_ids(AgnLocus *locus, FILE *outstream)
   gt_array_delete(pred_genes);
 }
 
-
 static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
                                               AgnLocus *locus)
 {
   GtArray *pairs2report, *unique;
   GtUword i;
-  
+
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   GtRange rng = gt_genome_node_get_range(locus);
   compare_report_html_print_locus_to_seqfile(rpt, locus);
@@ -511,7 +355,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
     fprintf(stderr, "error: unable to open output file '%s'\n", filename);
     exit(1);
   }
-  
+
   compare_report_html_locus_header(locus, outstream);
   if(rpt->pngdata != NULL)
   {
@@ -523,7 +367,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
             gt_str_get(seqid), rng.start, rng.end,
             gt_str_get(seqid), rng.start, rng.end);
   }
-  
+
   pairs2report = agn_locus_pairs_to_report(locus);
   if(pairs2report == NULL || gt_array_size(pairs2report) == 0)
   {
@@ -560,7 +404,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
     }
     fputs("      </ul>\n\n", outstream);
   }
-  
+
   unique = agn_locus_get_unique_pred_cliques(locus);
   if(gt_array_size(unique) > 0)
   {
@@ -757,7 +601,7 @@ compare_report_html_print_locus_to_seqfile(AgnCompareReportHTML *rpt,
       default:                                            break;
     }
   }
-  
+
   agn_sprintf_comma(rng.start, sstart);
   agn_sprintf_comma(rng.end, send);
   agn_sprintf_comma(gt_range_length(&rng), slength);
@@ -843,7 +687,7 @@ static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                      "Exon", "exons");
   compare_report_html_pair_structure(outstream, &pairstats->utr_struc_stats,
                                      "UTR", "UTR segments");
-  compare_report_html_pair_nucleotide(outstream, pair);  
+  compare_report_html_pair_nucleotide(outstream, pair);
 
   fputs("      </div>\n\n", outstream);
 }
@@ -906,13 +750,201 @@ static void compare_report_html_seqfile_footer(AgnCompareReportHTML *rpt)
   fputs("</html>\n", rpt->seqfilestream);
 }
 
+static void compare_report_html_summary_annot(AgnCompInfo *info,
+                                              FILE *outstream)
+{
+  GtUword numnotshared = info->unique_refr_loci +
+                         info->unique_pred_loci;
+  fprintf(outstream,
+          "      <h2>Gene loci <span class=\"tooltip\">[?]<span class=\"tooltip_text\">If a gene "
+          "annotation overlaps with another gene annotation, those annotations are associated "
+          "with the same gene locus. See <a target=\"_blank\" "
+          "href=\"http://aegean.readthedocs.org/en/refactor/loci.html\">"
+          "this page</a> for a formal definition of a locus annotation.</span></span></h2>\n"
+          "      <table class=\"table_normal\">\n"
+          "        <tr><td>shared</td><td>%lu</td></tr>\n"
+          "        <tr><td>unique to reference</td><td>%lu</td></tr>\n"
+          "        <tr><td>unique to prediction</td><td>%lu</td></tr>\n"
+          "        <tr><th class=\"right-align\">Total</th><td>%lu</td></tr>\n"
+          "      </table>\n\n",
+          info->num_loci - numnotshared, info->unique_refr_loci,
+          info->unique_pred_loci, info->num_loci);
+
+  fprintf(outstream,
+          "      <h2>Reference annotations</h2>\n"
+          "      <table class=\"table_normal\">\n"
+          "        <tr><td>genes</td><td>%lu</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
+          "        <tr><td>transcripts</td><td>%lu</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per gene</td><td>%.3f</td></tr>\n"
+          "      </table>\n\n",
+          info->refr_genes, (float)info->refr_genes / (float)info->num_loci,
+          info->refr_transcripts,
+          (float)info->refr_transcripts / (float)info->num_loci,
+          (float)info->refr_transcripts / (float)info->refr_genes);
+
+  fprintf(outstream,
+          "      <h2>Prediction annotations</h2>\n"
+          "      <table class=\"table_normal\">\n"
+          "        <tr><td>genes</td><td>%lu</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
+          "        <tr><td>transcripts</td><td>%lu</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per locus</td><td>%.3f</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">average per gene</td><td>%.3f</td></tr>\n"
+          "      </table>\n\n",
+          info->pred_genes, (float)info->pred_genes / (float)info->num_loci,
+          info->pred_transcripts,
+          (float)info->pred_transcripts / (float)info->num_loci,
+          (float)info->pred_transcripts / (float)info->pred_genes);
+}
+
+static void compare_report_html_summary_body(AgnCompareReportHTML *rpt,
+                                             FILE *outstream)
+{
+  AgnComparisonData *data = &rpt->data;
+
+  fprintf(outstream, "      <h2>Comparisons</h2>\n"
+                     "      <table class=\"comparisons\">\n"
+                     "        <tr><th>Total comparisons</th><th>%lu</th></tr>\n",
+          data->info.num_comparisons);
+  compare_report_html_comp_class_summary(
+      &data->summary.perfect_matches, data->info.num_comparisons,
+      "perfect matches", "Prediction transcripts (exons, coding sequences, and"
+      "UTRs) line up perfectly with reference transcripts.", outstream);
+  compare_report_html_comp_class_summary(
+      &data->summary.perfect_mislabeled, data->info.num_comparisons,
+      "perfect matches with mislabeled UTRs", "5'/3' orientation of UTRs is "
+      "reversed between reference and prediction, but a perfect match in all "
+      "other aspects.", outstream);
+  compare_report_html_comp_class_summary(
+      &data->summary.cds_matches, data->info.num_comparisons,
+      "CDS structure matches", "Not a perfect match, but prediction coding "
+      "sequence(s) line up perfectly with reference coding sequence(s).",
+      outstream);
+  compare_report_html_comp_class_summary(
+      &data->summary.exon_matches, data->info.num_comparisons,
+      "exon structure matches", "Not a perfect match or CDS match, but "
+      "prediction exon structure is identical to reference exon structure.",
+      outstream);
+  compare_report_html_comp_class_summary(
+      &data->summary.utr_matches, data->info.num_comparisons,
+      "UTR structure matches", "Not a perfect match, CDS match, or exon "
+      "structure match, but prediction UTRs line up perfectly with reference "
+      "UTRs.", outstream);
+  compare_report_html_comp_class_summary(
+      &data->summary.non_matches, data->info.num_comparisons, "non-matches",
+      "Differences in CDS, exon, and UTR structure.", outstream);
+  fputs("      </table>\n\n", outstream);
+
+  compare_report_html_summary_struc(outstream, &data->stats.cds_struc_stats,
+                                    "CDS", "CDS segments");
+  compare_report_html_summary_struc(outstream, &data->stats.exon_struc_stats,
+                                    "Exon", "exons");
+  compare_report_html_summary_struc(outstream, &data->stats.utr_struc_stats,
+                                    "UTR", "UTR segments");
+
+  double identity = (double)data->stats.overall_matches /
+                    (double)data->stats.overall_length;
+  fprintf(outstream,
+          "      <h3>Nucleotide-level comparison</h3>\n"
+          "      <table class=\"table_wide table_extra_indent\">\n"
+          "        <tr><th>&nbsp;</th><th>CDS</th><th>UTRs</th><th>Overall</th></tr>\n"
+          "        <tr><th class=\"left-align\">matching coefficient</th><td>%s</td><td>%s</td><td>%.3lf</td></tr>\n"
+          "        <tr><th class=\"left-align\">correlation coefficient</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">sensitivity</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">specificity</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">F1 score</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "        <tr><th class=\"left-align\">annotation edit distance</th><td>%s</td><td>%s</td><td>--</td></tr>\n"
+          "      </table>\n\n",
+          data->stats.cds_nuc_stats.mcs, data->stats.utr_nuc_stats.mcs, identity,
+          data->stats.cds_nuc_stats.ccs, data->stats.utr_nuc_stats.ccs,
+          data->stats.cds_nuc_stats.sns, data->stats.utr_nuc_stats.sns,
+          data->stats.cds_nuc_stats.sps, data->stats.utr_nuc_stats.sps,
+          data->stats.cds_nuc_stats.f1s, data->stats.utr_nuc_stats.f1s,
+          data->stats.cds_nuc_stats.eds, data->stats.utr_nuc_stats.eds);
+}
+
+static void compare_report_html_summary_headmatter(AgnCompareReportHTML *rpt,
+                                                   FILE *outstream)
+{
+  GtUword i;
+  AgnComparisonData *data = &rpt->data;
+
+  fprintf(outstream,
+          "<!doctype html>\n"
+          "<html lang=\"en\">\n"
+          "  <head>\n"
+          "    <meta charset=\"utf-8\" />\n"
+          "    <title>%s</title>\n"
+          "    <link rel=\"stylesheet\" type=\"text/css\" "
+          "href=\"parseval.css\" />\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" "
+          "src=\"vendor/jquery.js\"></script>\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" "
+          "src=\"vendor/jquery.dataTables.js\"></script>\n"
+          "    <script type=\"text/javascript\">\n"
+          "      $(document).ready(function() {\n"
+          "        $('#seqlist').dataTable( {\n"
+          "          \"sScrollY\": \"400px\",\n"
+          "          \"bPaginate\": false,\n"
+          "          \"bScrollCollapse\": true,\n"
+          "          \"bSort\": false,\n"
+          "          \"bFilter\": false,\n"
+          "          \"bInfo\": false\n"
+          "        });\n"
+          "      } );\n"
+          "    </script>\n"
+          "  </head>\n"
+          "  <body>\n"
+          "    <div id=\"content\">\n"
+          "      <h1>%s</h1>\n",
+          gt_str_get(rpt->summary_title),
+          gt_str_get(rpt->summary_title));
+
+  // Print runtime overview
+  if(rpt->ofunc != NULL)
+    rpt->ofunc(outstream, rpt->ofuncdata);
+
+  // Print a table with information about each sequence, including a link to
+  // each sequence's detail page.
+  fputs("      <h2>Sequences compared</h2>\n"
+        "      <p class=\"indent\">Click on a sequence ID below to see "
+        "comparison results for individual loci.</p>\n", outstream);
+  fputs("      <table id=\"seqlist\" class=\"indent\">\n"
+        "        <thead>\n"
+        "          <tr>\n"
+        "            <th>Sequence</th>\n"
+        "            <th>Refr genes</th>\n"
+        "            <th>Pred genes</th>\n"
+        "            <th>Loci</th>\n"
+        "          </tr>\n"
+        "        </thead>\n"
+        "        <tbody>\n", outstream);
+  for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(rpt->seqids, i);
+    AgnComparisonData *seqdat = gt_hashmap_get(rpt->seqdata, seqid);
+    agn_assert(data != NULL);
+    fprintf(outstream,
+            "        <tr><td><a href=\"%s/index.html\">%s</a></td>"
+            "<td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
+            seqid, seqid, seqdat->info.refr_genes, seqdat->info.pred_genes,
+            seqdat->info.num_loci);
+  }
+  fputs("        </tbody>\n\n"
+        "      </table>\n\n", outstream);
+
+  compare_report_html_summary_annot(&data->info, outstream);
+}
+
 static void compare_report_html_summary_struc(FILE *outstream,
                                               AgnCompStatsBinary *stats,
                                               const char *label,
                                               const char *units)
 {
   fprintf(outstream, "      <h3>%s structure comparison</h3>\n", label);
-  
+
   GtUword refrcnt = stats->correct + stats->missing;
   GtUword predcnt = stats->correct + stats->wrong;
   fprintf(outstream,
