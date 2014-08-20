@@ -20,6 +20,7 @@ struct AgnCompareReportHTML
   GtStrArray *seqids;
   const char *outdir;
   GtHashmap *seqdata;
+  FILE *seqfilestream;
   GtLogger *logger;
 };
 
@@ -50,7 +51,7 @@ static void compare_report_html_comp_class_summary(AgnCompClassDesc *summ,
                                                    FILE *outstream);
 
 /**
- * @function FIXME
+ * @function HTML footer for comparison reports.
  */
 static void compare_report_html_footer(FILE *outstream);
 
@@ -92,10 +93,28 @@ static void compare_report_html_pair_structure(FILE *outstream,
                                                const char *units);
 
 /**
+ * @function Add the locus' information to the sequence summary page
+ */
+static void
+compare_report_html_print_locus_to_seqfile(AgnCompareReportHTML *rpt,
+                                           AgnLocus *locus);
+
+/**
  * @function Print a comparison report for the given clique pair.
  */
 static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                            GtUword k);
+
+/**
+ * @function FIXME
+ */
+static void compare_report_html_seqfile_header(AgnCompareReportHTML *rpt,
+                                               const char *seqid);
+
+/**
+ * @function FIXME
+ */
+static void compare_report_html_seqfile_footer(AgnCompareReportHTML *rpt);
 
 /**
  * @function Print a breakdown of characteristics of loci that fall into a
@@ -282,6 +301,7 @@ GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
   rpt->seqids = gt_str_array_new();
   rpt->outdir = outdir;
   rpt->seqdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
+  rpt->seqfilestream = NULL;
   rpt->logger = logger;
 
   return nv;
@@ -410,6 +430,10 @@ static void compare_report_html_free(GtNodeVisitor *nv)
 
   rpt = compare_report_html_cast(nv);
   gt_str_array_delete(rpt->seqids);
+  {
+    compare_report_html_seqfile_footer(rpt);
+    fclose(rpt->seqfilestream);
+  }
 }
 
 static void compare_report_html_locus_gene_ids(AgnLocus *locus, FILE *outstream)
@@ -460,6 +484,8 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
   GtArray *pairs2report, *unique;
   GtUword i;
   
+  compare_report_html_print_locus_to_seqfile(rpt, locus);
+  
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   GtRange rng = gt_genome_node_get_range(locus);
   char filename[1024];
@@ -497,21 +523,8 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
   for(i = 0; i < gt_array_size(pairs2report); i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
-    //AgnCompClassification cls = agn_clique_pair_classify(pair);
-    //switch(cls)
-    //{
-    //  case AGN_COMP_CLASS_PERFECT_MATCH: s.numperfect++;    break;
-    //  case AGN_COMP_CLASS_MISLABELED:    s.nummislabeled++; break;
-    //  case AGN_COMP_CLASS_CDS_MATCH:     s.numcdsmatch++;   break;
-    //  case AGN_COMP_CLASS_EXON_MATCH:    s.numexonmatch++;  break;
-    //  case AGN_COMP_CLASS_UTR_MATCH:     s.numutrmatch++;   break;
-    //  case AGN_COMP_CLASS_NON_MATCH:     s.numnonmatch++;   break;
-    //  case AGN_COMP_CLASS_UNCLASSIFIED:  /* nothing */      break;
-    //  default:                                              break;
-    //}
     compare_report_html_print_pair(pair, outstream, i);
   }
-  //gt_array_add(cdata->locus_summaries, s);
 
   unique = agn_locus_get_unique_refr_cliques(locus);
   if(gt_array_size(unique) > 0)
@@ -701,6 +714,92 @@ static void compare_report_html_pair_structure(FILE *outstream,
   fputs("        </table>\n\n", outstream);
 }
 
+static void
+compare_report_html_print_locus_to_seqfile(AgnCompareReportHTML *rpt,
+                                           AgnLocus *locus)
+{
+  GtArray *pairs2report;
+  GtUword i;
+  GtRange rng;
+  unsigned numperfect = 0, nummislabeled = 0, numcdsmatch = 0, numexonmatch = 0,
+           numutrmatch = 0, numnonmatch = 0;
+  char sstart[64], send[64], slength[64];
+
+  rng = gt_genome_node_get_range(locus);
+  pairs2report = agn_locus_pairs_to_report(locus);
+  for(i = 0; i < gt_array_size(pairs2report); i++)
+  {
+    AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
+    AgnCompClassification cls = agn_clique_pair_classify(pair);
+    switch(cls)
+    {
+      case AGN_COMP_CLASS_PERFECT_MATCH: numperfect++;    break;
+      case AGN_COMP_CLASS_MISLABELED:    nummislabeled++; break;
+      case AGN_COMP_CLASS_CDS_MATCH:     numcdsmatch++;   break;
+      case AGN_COMP_CLASS_EXON_MATCH:    numexonmatch++;  break;
+      case AGN_COMP_CLASS_UTR_MATCH:     numutrmatch++;   break;
+      case AGN_COMP_CLASS_NON_MATCH:     numnonmatch++;   break;
+      case AGN_COMP_CLASS_UNCLASSIFIED:  /* nothing */    break;
+      default:                                            break;
+    }
+  }
+  
+  agn_sprintf_comma(rng.start, sstart);
+  agn_sprintf_comma(rng.end, send);
+  agn_sprintf_comma(gt_range_length(&rng), slength);
+  fprintf(rpt->seqfilestream,
+          "        <tr>\n"
+          "          <td><a href=\"%lu-%lu.html\">(+)</a></td>\n"
+          "          <td>%s</td>\n"
+          "          <td>%s</td>\n"
+          "          <td>%s</td>\n"
+          "          <td>%lu / %lu</td>\n"
+          "          <td>\n",
+          rng.start, rng.end, sstart, send, slength,
+          agn_locus_num_refr_mrnas(locus),
+          agn_locus_num_pred_mrnas(locus));
+  if(numperfect > 0)
+  {
+    fprintf(rpt->seqfilestream,
+            "            <a class=\"pointer left20\" title=\"Perfect "
+            "matches at this locus\">[P]</a> %u\n", numperfect);
+  }
+  if(nummislabeled > 0)
+  {
+    fprintf(rpt->seqfilestream,
+            "            <a class=\"pointer left20\" title=\"Perfect "
+            "matches at this locus with mislabeled UTRs\">[M]</a> %u\n",
+            nummislabeled);
+  }
+  if(numcdsmatch > 0)
+  {
+    fprintf(rpt->seqfilestream,
+            "            <a class=\"pointer left20\" title=\"CDS "
+            "matches at this locus\">[C]</a> %u\n", numcdsmatch);
+  }
+  if(numexonmatch > 0)
+  {
+    fprintf(rpt->seqfilestream,
+            "            <a class=\"pointer left20\" title=\"Exon "
+            "structure matches at this locus\">[E]</a> %u\n",
+            numexonmatch);
+  }
+  if(numutrmatch > 0)
+  {
+    fprintf(rpt->seqfilestream,
+            "            <a class=\"pointer left20\" title=\"UTR "
+            "matches at this locus\">[U]</a> %u\n", numutrmatch);
+  }
+  if(numnonmatch > 0)
+  {
+     fprintf(rpt->seqfilestream, "            <a class=\"pointer left20\" "
+             "title=\"Non-matches at this locus\">[N]</a> %u\n",
+             numnonmatch);
+  }
+  fprintf(rpt->seqfilestream, "          </td>\n"
+          "        </tr>\n");
+}
+
 static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                            GtUword k)
 {
@@ -735,6 +834,63 @@ static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
   fputs("      </div>\n\n", outstream);
 }
 
+static void compare_report_html_seqfile_header(AgnCompareReportHTML *rpt,
+                                               const char *seqid)
+{
+  fprintf(rpt->seqfilestream,
+          "<!doctype html>\n"
+          "<html lang=\"en\">\n"
+          "  <head>\n"
+          "    <meta charset=\"utf-8\" />\n"
+          "    <title>ParsEval: Loci for %s</title>\n"
+          "    <link rel=\"stylesheet\" type=\"text/css\" href=\"../parseval.css\" />\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" src=\"../vendor/jquery.js\"></script>\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" src=\"../vendor/jquery.dataTables.js\"></script>\n"
+          "    <script type=\"text/javascript\">\n"
+          "      $(document).ready(function() {\n"
+          "        $('#locus_table').dataTable( {\n"
+          "          \"sScrollY\": \"400px\",\n"
+          "          \"bPaginate\": false,\n"
+          "          \"bScrollCollapse\": true,\n"
+          "          \"bSort\": false,\n"
+          "          \"bFilter\": false,\n"
+          "          \"bInfo\": false\n"
+          "        });\n"
+          "      } );\n"
+          "    </script>\n"
+          "  </head>\n"
+          "  <body>\n"
+          "    <div id=\"content\">\n"
+          "      <h1>Loci for %s</h1>\n"
+          "      <p><a href=\"../index.html\">⇐ Back to summary</a></p>\n\n"
+          "      <p class=\"indent\">\n"
+          "        Below is a list of all loci identified for sequence <strong>%s</strong>.\n"
+          "        Click on the <a>(+)</a> symbol for a report of the complete comparative analysis corresponding to each locus.\n"
+          "      </p>\n\n"
+          "      <table class=\"loci\" id=\"locus_table\">\n"
+          "        <thead>\n"
+          "          <tr>\n"
+          "            <th>&nbsp;</th>\n"
+          "            <th>Start</th>\n"
+          "            <th>End</th>\n"
+          "            <th>Length</th>\n"
+          "            <th>#Trans</th>\n"
+          "            <th>Comparisons</th>\n"
+          "          </tr>\n"
+          "        </thead>\n"
+          "        <tbody>\n",
+          seqid, seqid, seqid);
+}
+
+static void compare_report_html_seqfile_footer(AgnCompareReportHTML *rpt)
+{
+  fputs("        </tbody>\n", rpt->seqfilestream);
+  fputs("      </table>\n\n", rpt->seqfilestream);
+  compare_report_html_footer(rpt->seqfilestream);
+  fputs("    </div>\n", rpt->seqfilestream);
+  fputs("  </body>\n", rpt->seqfilestream);
+  fputs("</html>\n", rpt->seqfilestream);
+}
 
 static void compare_report_html_summary_struc(FILE *outstream,
                                               AgnCompStatsBinary *stats,
@@ -794,6 +950,7 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
   AgnComparisonData *data;
   GtStr *seqidstr;
   const char *seqid;
+  char seqfilename[512];
 
   gt_error_check(error);
   agn_assert(nv && rn);
@@ -814,6 +971,20 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
             seqid);
     exit(1);
   }
+
+  if(rpt->seqfilestream)
+  {
+    compare_report_html_seqfile_footer(rpt);
+    fclose(rpt->seqfilestream);
+  }
+  sprintf(seqfilename, "%s/%s/index.html", rpt->outdir, seqid);
+  rpt->seqfilestream = fopen(seqfilename, "w");
+  if(!rpt->seqfilestream)
+  {
+    fprintf(stderr, "error: unable to open %s\n", seqfilename);
+    exit(1);
+  }
+  compare_report_html_seqfile_header(rpt, seqid);
 
   return 0;
 }

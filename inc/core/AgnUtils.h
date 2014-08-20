@@ -104,6 +104,12 @@ GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep);
 int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b);
 
 /**
+ * @function Format the given non-negative number with commas as the thousands
+ * separator. The resulting string will be written to ``buffer``.
+ */
+int agn_sprintf_comma(GtUword n, char *buffer);
+
+/**
  * @function Dereference the given pointers and compare the resulting strings
  * (*a la* ``strcmp``).
  */

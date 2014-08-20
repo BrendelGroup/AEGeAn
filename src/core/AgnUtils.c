@@ -173,6 +173,20 @@ int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
   return gt_genome_node_cmp(*gn_a, *gn_b);
 }
 
+int agn_sprintf_comma(GtUword n, char *buffer)
+{
+  if(n < 1000)
+  {
+    int spaces = sprintf(buffer, "%lu", n);
+    buffer += spaces;
+    return spaces;
+  }
+  int spaces = agn_sprintf_comma(n / 1000, buffer);
+  buffer += spaces;
+  sprintf(buffer, ",%03lu", n % 1000);
+  return spaces + 4;
+}
+
 int agn_string_compare(const void *p1, const void *p2)
 {
   const char *s1 = *(char **)p1;

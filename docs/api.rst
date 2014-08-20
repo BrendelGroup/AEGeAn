@@ -820,6 +820,10 @@ Collection of assorted functions that are otherwise unrelated. See the `module h
 
   Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
 
+.. c:function:: int agn_sprintf_comma(GtUword n, char *buffer)
+
+  Format the given non-negative number with commas as the thousands separator. The resulting string will be written to ``buffer``.
+
 .. c:function:: int agn_string_compare(const void *p1, const void *p2)
 
   Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
