@@ -109,13 +109,15 @@ static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                            GtUword k);
 
 /**
- * @function FIXME
+ * @function The HTML report includes a summary page for each sequence. This
+ * function prints the header for that file.
  */
 static void compare_report_html_seqfile_header(AgnCompareReportHTML *rpt,
                                                const char *seqid);
 
 /**
- * @function FIXME
+ * @function The HTML report includes a summary page for each sequence. This
+ * function prints the footer for that file.
  */
 static void compare_report_html_seqfile_footer(AgnCompareReportHTML *rpt);
 

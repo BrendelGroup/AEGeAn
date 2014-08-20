@@ -18,7 +18,7 @@ GtArray* agn_array_copy(GtArray *source, size_t size)
 
 double agn_calc_splice_complexity(GtArray *transcripts)
 {
-  // FIXME
+  // FIXME Function not yet (re)implemented
   return -1.0;
 }
 
