@@ -43,7 +43,7 @@ unless($gitlog =~ m/fatal: Not a git repository/)
 {
   ($version) = $gitlog =~ m/commit (\S+)/;
   ($date) = $gitlog =~ m/Date:\s+.+(\d{4}) /;
-  $link = "https://github.com/standage/AEGeAn/commit/$version";
+  $link = "https://github.com/standage/AEGeAn/tree/$version";
 }
 
 GetOptions
