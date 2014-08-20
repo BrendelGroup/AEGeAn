@@ -208,9 +208,9 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
         "        <thead>\n"
         "          <tr>\n"
         "            <th>Sequence</th>\n"
-        //"            <th>Refr genes</th>\n"
-        //"            <th>Pred genes</th>\n"
-        //"            <th>Loci</th>\n"
+        "            <th>Refr genes</th>\n"
+        "            <th>Pred genes</th>\n"
+        "            <th>Loci</th>\n"
         "          </tr>\n"
         "        </thead>\n"
         "        <tbody>\n", outstream);
@@ -218,9 +218,13 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
   for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
   {
     const char *seqid = gt_str_array_get(rpt->seqids, i);
+    AgnComparisonData *seqdat = gt_hashmap_get(rpt->seqdata, seqid);
+    agn_assert(data != NULL);
     fprintf(outstream,
-            "        <tr><td><a href=\"%s/index.html\">%s</a></td></tr>\n",
-            seqid, seqid);
+            "        <tr><td><a href=\"%s/index.html\">%s</a></td>"
+            "<td>%lu</td><td>%lu</td><td>%lu</td></tr>\n",
+            seqid, seqid, seqdat->info.refr_genes, seqdat->info.pred_genes,
+            seqdat->info.num_loci);
   }
   fputs("        </tbody>\n\n"
         "      </table>\n\n", outstream);
@@ -484,10 +488,12 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
   GtArray *pairs2report, *unique;
   GtUword i;
   
-  compare_report_html_print_locus_to_seqfile(rpt, locus);
-  
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   GtRange rng = gt_genome_node_get_range(locus);
+  compare_report_html_print_locus_to_seqfile(rpt, locus);
+  AgnComparisonData *seqdat = gt_hashmap_get(rpt->seqdata, gt_str_get(seqid));
+  agn_locus_data_aggregate(locus, seqdat);
+
   char filename[1024];
   sprintf(filename, "%s/%s/%lu-%lu.html", rpt->outdir, gt_str_get(seqid),
           rng.start, rng.end);
