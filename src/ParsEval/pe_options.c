@@ -264,7 +264,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
       exit(1);
     }
 
-    if(options->summary_only && options->graphics)
+    if(options->graphics && options->summary_only)
     {
       fprintf(stderr, "warning: cannot print PNG graphics in summary only "
               "mode; ignoring\n");
@@ -293,6 +293,16 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 
   options->refrfile = argv[optind];
   options->predfile = argv[optind + 1];
+  if(options->graphics)
+  {
+    sprintf(options->pngdata.filename_template, "%s/%%s/%%s_%%lu-%%lu.png",
+            options->outfilename);
+    sprintf(options->pngdata.stylefile, "%s/pe.style", options->data_path);
+    options->pngdata.refrfile  = options->refrfile;
+    options->pngdata.predfile  = options->predfile;
+    options->pngdata.refrlabel = options->refrlabel;
+    options->pngdata.predlabel = options->predlabel;
+  }
   return optind;
 }
 

@@ -29,6 +29,7 @@ struct ParsEvalOptions
   bool gff3;
   bool summary_only;
   bool graphics;
+  AgnLocusPngMetadata pngdata;
   const char *refrfile;
   const char *predfile;
   const char *refrlabel;

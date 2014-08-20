@@ -2,7 +2,6 @@
 
 int main(int argc, char **argv)
 {
-  AgnLocusPngMetadata pngdata;
   GtError *error;
   GtLogger *logger;
   GtQueue *streams;
@@ -101,14 +100,7 @@ int main(int argc, char **argv)
     case HTMLMODE:
       if(options.graphics)
       {
-        sprintf(pngdata.filename_template, "%s/%%s/%%s_%%lu-%%lu.png",
-                options.outfilename);
-        sprintf(pngdata.stylefile, "%s/pe.style", options.data_path);
-        pngdata.refrfile = options.refrfile;
-        pngdata.predfile = options.predfile;
-        pngdata.refrlabel = options.refrlabel;
-        pngdata.predlabel = options.predlabel;
-        rpt = agn_compare_report_html_new(options.outfilename, &pngdata,
+        rpt = agn_compare_report_html_new(options.outfilename, &options.pngdata,
                                           logger);
       }
       else
