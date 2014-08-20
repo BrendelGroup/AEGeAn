@@ -3,7 +3,6 @@
 
 #include <getopt.h>
 #include <string.h>
-#include <time.h>
 #include "genometools.h"
 #include "aegean.h"
 
@@ -45,12 +44,9 @@ struct ParsEvalOptions
 typedef struct ParsEvalOptions ParsEvalOptions;
 
 void pe_free_option_memory(ParsEvalOptions *options);
-char *pe_get_start_time();
 int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
                      GtError *error);
 void pe_print_usage(FILE *outstream);
 void pe_set_option_defaults(ParsEvalOptions *options);
-void pe_summary_header(ParsEvalOptions *options, FILE *outstream,
-                       char *start_time, int argc, char **argv);
 
 #endif

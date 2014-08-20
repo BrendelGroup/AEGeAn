@@ -1,4 +1,5 @@
 #include "pe_options.h"
+#include "pe_utils.h"
 
 int main(int argc, char **argv)
 {
@@ -7,6 +8,7 @@ int main(int argc, char **argv)
   GtQueue *streams;
   GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3, *tempstream;
   GtNodeVisitor *rpt;
+  PeHtmlOverviewData odata;
   char *start_time;
 
   gt_lib_init();
@@ -136,16 +138,20 @@ int main(int argc, char **argv)
   }
   else if(options.outfmt == HTMLMODE)
   {
-    // FIXME Place the next 4-6 lines elsewhere?
-    const char *refrlabel = options.refrfile;
+    odata.refrlabel = options.refrfile;
     if(options.refrlabel)
-      refrlabel = options.refrlabel;
-    const char *predlabel = options.predfile;
+      odata.refrlabel = options.refrlabel;
+    odata.predlabel = options.predfile;
     if(options.predlabel)
-      predlabel = options.predlabel;
-    agn_compare_report_html_create_summary((AgnCompareReportHTML *)rpt, argc,
-                                           argv, refrlabel, predlabel,
-                                           start_time);
+      odata.predlabel = options.predlabel;
+    odata.start_time = start_time;
+    odata.argc = argc;
+    odata.argv = argv;
+
+    agn_compare_report_html_set_overview_func((AgnCompareReportHTML *)rpt,
+                                              pe_summary_html_overview,
+                                              &odata);
+    agn_compare_report_html_create_summary((AgnCompareReportHTML *)rpt);
   }
 
   // Free memory and terminate

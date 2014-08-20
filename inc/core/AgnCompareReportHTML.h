@@ -16,16 +16,19 @@
  */
 typedef struct AgnCompareReportHTML AgnCompareReportHTML;
 
+/**
+ * @functype By default, the ParsEval summary report includes an overview with
+ * the start time, filenames, and command-line arguments. Users can override
+ * this behavior by specifying a callback function that follows this signature.
+ */
+typedef void (*AgnCompareReportHTMLOverviewFunc)(FILE *outstream, void *data);
+
 
 /**
  * @function After the node stream has been processed, call this function to
  * write a summary of all locus comparisons to the output directory.
  */
-void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
-                                            int argc, char **argv,
-                                            const char *refrlabel,
-                                            const char *predlabel,
-                                            const char *start_time);
+void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt);
 
 /**
  * @function Class constructor. Creates a node visitor used to process a stream
@@ -36,5 +39,20 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
 GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
                                            AgnLocusPngMetadata *pngdata,
                                            GtLogger *logger);
+
+/**
+ * @function By default, the summary report's title will be 'ParsEval Summary'.
+ *  Use this function to replace the title text.
+ */
+void agn_compare_report_html_reset_summary_title(AgnCompareReportHTML *rpt,
+                                                 GtStr *title_string);
+
+/**
+ * @function Specify a callback function to be used when printing an overview
+ * on the summary report.
+ */
+void agn_compare_report_html_set_overview_func(AgnCompareReportHTML *rpt,
+                                         AgnCompareReportHTMLOverviewFunc func,
+                                         void *funcdata);
 
 #endif

@@ -21,7 +21,10 @@ struct AgnCompareReportHTML
   const char *outdir;
   GtHashmap *seqdata;
   FILE *seqfilestream;
+  AgnCompareReportHTMLOverviewFunc ofunc;
+  void *ofuncdata;
   GtLogger *logger;
+  GtStr *summary_title;
 };
 
 //------------------------------------------------------------------------------
@@ -143,11 +146,7 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
 // Method implementations
 //------------------------------------------------------------------------------
 
-void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
-                                            int argc, char **argv,
-                                            const char *refrlabel,
-                                            const char *predlabel,
-                                            const char *start_time)
+void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 {
   AgnComparisonData *data = &rpt->data;
   
@@ -161,45 +160,35 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt,
   }
 
   // Print header
-  fputs( "<!doctype html>\n"
-         "<html lang=\"en\">\n"
-         "  <head>\n"
-         "    <meta charset=\"utf-8\" />\n"
-         "    <title>ParsEval Summary</title>\n"
-         "    <link rel=\"stylesheet\" type=\"text/css\" href=\"parseval.css\" />\n"
-         "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.js\"></script>\n"
-         "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.dataTables.js\"></script>\n"
-         "    <script type=\"text/javascript\">\n"
-         "      $(document).ready(function() {\n"
-         "        $('#seqlist').dataTable( {\n"
-         "          \"sScrollY\": \"400px\",\n"
-         "          \"bPaginate\": false,\n"
-         "          \"bScrollCollapse\": true,\n"
-         "          \"bSort\": false,\n"
-         "          \"bFilter\": false,\n"
-         "          \"bInfo\": false\n"
-         "        });\n"
-         "      } );\n"
-         "    </script>\n"
-         "  </head>\n", outstream );
-
-  // Print runtime summary
   fprintf(outstream,
+          "<!doctype html>\n"
+          "<html lang=\"en\">\n"
+          "  <head>\n"
+          "    <meta charset=\"utf-8\" />\n"
+          "    <title>%s</title>\n"
+          "    <link rel=\"stylesheet\" type=\"text/css\" href=\"parseval.css\" />\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.js\"></script>\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.dataTables.js\"></script>\n"
+          "    <script type=\"text/javascript\">\n"
+          "      $(document).ready(function() {\n"
+          "        $('#seqlist').dataTable( {\n"
+          "          \"sScrollY\": \"400px\",\n"
+          "          \"bPaginate\": false,\n"
+          "          \"bScrollCollapse\": true,\n"
+          "          \"bSort\": false,\n"
+          "          \"bFilter\": false,\n"
+          "          \"bInfo\": false\n"
+          "        });\n"
+          "      } );\n"
+          "    </script>\n"
+          "  </head>\n"
           "  <body>\n"
           "    <div id=\"content\">\n"
-          "      <h1>ParsEval Summary</h1>\n"
-          "      <pre class=\"command\">\n"
-          "Started:                %s\n"
-          "Reference annotations:  %s\n"
-          "Prediction annotations: %s\n"
-          "Executing command:      ",
-          start_time, refrlabel, predlabel);
-  int x;
-  for(x = 0; x < argc; x++)
-  {
-    fprintf(outstream, "%s ", argv[x]);
-  }
-  fprintf(outstream, "</pre>\n\n");
+          "      <h1>%s</h1>\n", gt_str_get(rpt->summary_title), gt_str_get(rpt->summary_title));
+
+  // Print runtime overview
+  if(rpt->ofunc != NULL)
+    rpt->ofunc(outstream, rpt->ofuncdata);
 
   fputs("      <h2>Sequences compared</h2>\n"
         "      <p class=\"indent\">Click on a sequence ID below to see "
@@ -307,8 +296,24 @@ GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
   rpt->seqdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
   rpt->seqfilestream = NULL;
   rpt->logger = logger;
+  rpt->summary_title = gt_str_new_cstr("ParsEval Summary");
 
   return nv;
+}
+
+void agn_compare_report_html_reset_summary_title(AgnCompareReportHTML *rpt,
+                                                 GtStr *title_string)
+{
+  gt_str_delete(rpt->summary_title);
+  rpt->summary_title = gt_str_ref(title_string);
+}
+
+void agn_compare_report_html_set_overview_func(AgnCompareReportHTML *rpt,
+                                         AgnCompareReportHTMLOverviewFunc func,
+                                         void *funcdata)
+{
+  rpt->ofunc = func;
+  rpt->ofuncdata = funcdata;
 }
 
 static void compare_report_html_annot_summary(AgnCompInfo *info,
@@ -438,6 +443,7 @@ static void compare_report_html_free(GtNodeVisitor *nv)
     compare_report_html_seqfile_footer(rpt);
     fclose(rpt->seqfilestream);
   }
+  gt_str_delete(rpt->summary_title);
 }
 
 static void compare_report_html_locus_gene_ids(AgnLocus *locus, FILE *outstream)

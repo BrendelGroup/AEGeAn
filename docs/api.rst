@@ -64,13 +64,25 @@ Class AgnCompareReportHTML
 
   The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
 
-.. c:function:: void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt, int argc, char **argv, const char *refrlabel, const char *predlabel, const char *start_time)
+.. c:type:: typedef void (*AgnCompareReportHTMLOverviewFunc)(FILE *outstream, void *data)
+
+  By default, the ParsEval summary report includes an overview with the start time, filenames, and command-line arguments. Users can override this behavior by specifying a callback function that follows this signature.
+
+.. c:function:: void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 
   After the node stream has been processed, call this function to write a summary of all locus comparisons to the output directory.
 
 .. c:function:: GtNodeVisitor *agn_compare_report_html_new(const char *outdir, AgnLocusPngMetadata *pngdata, GtLogger *logger)
 
   Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written in ``outdir`` and status messages will be written to the logger.
+
+.. c:function:: void agn_compare_report_html_reset_summary_title(AgnCompareReportHTML *rpt, GtStr *title_string)
+
+  By default, the summary report's title will be 'ParsEval Summary'. Use this function to replace the title text.
+
+.. c:function:: void agn_compare_report_html_set_overview_func(AgnCompareReportHTML *rpt, AgnCompareReportHTMLOverviewFunc func, void *funcdata)
+
+  Specify a callback function to be used when printing an overview on the summary report.
 
 Class AgnCompareReportText
 --------------------------
