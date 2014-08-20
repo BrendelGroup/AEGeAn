@@ -8,7 +8,9 @@ env:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
-  - bash data/scripts/gt-install-travis.sh
+  - wget http://genometools.org/pub/genometools-1.5.3.tar.gz
+  - tar xzf genometools-1.5.3.tar.gz
+  - cd genometools-1.5.3 && sudo make 64bit=yes install && cd -
   - sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
   - sudo ldconfig
 install: sudo make install

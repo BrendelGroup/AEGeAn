@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 if [[ $1 == "memcheck" ]]; then
-  memcheck="valgrind --leak-check=full --show-reachable=yes --suppressions=data/share/libpixman.supp --error-exitcode=1"
+  memcheckcmd="valgrind --leak-check=full --show-reachable=yes --suppressions=data/share/libpixman.supp --error-exitcode=1"
 fi
 export LD_LIBRARY_PATH=./src/genometools/lib
 export DYLD_LIBRARY_PATH=./src/genometools/lib
 echo "    AEGeAn::xtractore"
 tempfile="xtract.temp"
 
-$memcheck \
+$memcheckcmd \
 bin/xtractore --type CDS \
               --outfile $tempfile \
               --width 80 \
