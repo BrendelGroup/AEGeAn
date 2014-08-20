@@ -10,6 +10,6 @@ before_install:
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
   - wget http://genometools.org/pub/genometools-1.5.3.tar.gz
   - tar xzf genometools-1.5.3.tar.gz
-  - cd genometools-1.5.3 && sudo make 64bit=yes install
+  - cd genometools-1.5.3 && sudo make 64bit=yes install && cd ..
 install: sudo make install
 script: make test
