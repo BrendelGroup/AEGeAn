@@ -71,7 +71,7 @@ endif
 LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 
 # Targets
-all:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) libaegean.a
+all:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) $(RP_EXE) libaegean.a
 		
 
 install:	all
@@ -90,7 +90,7 @@ uninstall:
 		rm -r $(prefix)/share/parseval
 
 clean:		
-		rm -f $(BINS) $(UT_EXE) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h
+		rm -rf $(BINS) $(UT_EXE) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h bin/*.dSYM
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
