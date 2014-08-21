@@ -158,12 +158,11 @@ administrative/sudo privileges.
       /sbin/ldconfig
       yum install -y git cairo-devel pango-devel
 
-* Mac OS X (tested on Mac OS 10.6)
+* Mac OS X
 
   .. code-block:: bash
   
-      # Download and install Git: http://git-scm.com
-      # Download and install the Fink package manager: http://www.finkproject.org/download
-      # Then install the following packages using Fink
-      apt-get install -y cairo-devel pango1-xft2-ft219-dev
+      # Install Homebrew: http://brew.sh/
+      # Then use the brew command to install GenomeTools
+      brew install genometools
       
