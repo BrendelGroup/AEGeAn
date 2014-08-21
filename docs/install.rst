@@ -10,10 +10,6 @@ For the impatient
     # Install pre-requisite packages with your OS's package manager
     sudo apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
 
-    # Make sure that /usr/local/lib is in your LD path
-    sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
-    sudo ldconfig
-
     # Download, compile, and install the GenomeTools package
     curl -O http://genometools.org/pub/genometools-1.5.3.tar.gz
     tar xzf genometools-1.5.3.tar.gz
@@ -26,6 +22,11 @@ For the impatient
     cd AEGeAn
     make
     sudo make install
+
+    # Make sure that the compiler/linker can find the GenomeTools and AEGeAn
+    # libraries
+    sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
+    sudo ldconfig
 
 
 Prerequisites

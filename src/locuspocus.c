@@ -50,6 +50,8 @@ static void free_option_memory(LocusPocusOptions *options)
     fclose(options->genestream);
   if(options->transstream != NULL)
     fclose(options->transstream);
+  if(options->idformat != NULL)
+    gt_free(options->idformat);
 }
 
 // Usage statement
