@@ -8,3 +8,5 @@ contributed to its code base.
 * Sascha Steinbiss <steinbiss@zbh.uni-hamburg.de> and Gordon Gremme
   <gordon@gremme.org>, integration with GenomeTools, including code examples
   and implementing feature requests
+* James Denton <jfdenton@indiana.edu>, testing compatibility of LocusPocus with
+  NCBI annotations (produced by annotwriter), scripts for tidying GFF3 input
