@@ -5,7 +5,7 @@ prefix=/usr/local
 GT_INSTALL_DIR=$(prefix)
 AGN_LINK=https://github.com/standage/AEGeAn
 AGN_DATE=2014
-AGN_VERSION=0.9.4-rc
+AGN_VERSION=0.9.4
 
 #----End configuration----#
 #----End configuration----#

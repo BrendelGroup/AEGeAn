@@ -1,0 +1,19 @@
+AEGeAn Toolkit Version 0.9
+==========================
+
+v0.9.4
+------
+
+  - Version 0.9.4 is intended to be the final stable release of AEGeAn's initial
+    development effort. Version 0.10 represents a significant effort to rewrite
+    the core modules of the system to be more consistent and efficient. I do not
+    expect to give any more attention to this branch, although I may implement
+    bug fixes if someone can give me a good motivating use case (that can't be
+    accomplished with a newer version).
+
+v0.9.3
+------
+
+  - Git has been used to track AEGeAn development efforts from an early stage.
+    Version 0.9.3 is my first attempt to formally apply Semantic Versioning and
+    Github's release features.
