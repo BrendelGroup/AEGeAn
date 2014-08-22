@@ -1,3 +1,12 @@
+/**
+
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
 #ifndef AEGEAN_NODE_DELETE_VISITOR
 #define AEGEAN_NODE_DELETE_VISITOR
 
