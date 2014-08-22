@@ -513,8 +513,8 @@ ilocus_stream_test_data(GtFeatureIndex *iloci,GtNodeStream *s1,GtNodeStream *s2,
   gt_node_stream_pull(fstream, error);
   if(gt_error_is_set(error))
   {
-    fprintf(stderr, "[AgnLocusStream::interval_locus_stream_test_data] error "
-            "processing node stream: %s\n", gt_error_get(error));
+    fprintf(stderr, "[AgnIntervalLocusStream::interval_locus_stream_test_data] "
+            "error processing node stream: %s\n", gt_error_get(error));
   }
 
   gt_node_stream_delete(locusstream);

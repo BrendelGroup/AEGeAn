@@ -11,7 +11,7 @@ Class AgnCliquePair
 
 .. c:type:: AgnCliquePair
 
-  The AgnCliquePair class facilitates comparison of two alternative sources of annotation for the same sequence. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCliquePair.h>`_.
+  The AgnCliquePair class facilitates comparison of two alternative sources of annotation for the same sequence. See the `AgnCliquePair class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCliquePair.h>`_.
 
 .. c:function:: AgnCompClassification agn_clique_pair_classify(AgnCliquePair *pair)
 
@@ -62,7 +62,7 @@ Class AgnCompareReportHTML
 
 .. c:type:: AgnCompareReportHTML
 
-  The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
+  The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `AgnCompareReportHTML class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
 
 .. c:type:: typedef void (*AgnCompareReportHTMLOverviewFunc)(FILE *outstream, void *data)
 
@@ -89,7 +89,7 @@ Class AgnCompareReportText
 
 .. c:type:: AgnCompareReportText
 
-  The ``AgnCompareReportText`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportText.h>`_.
+  The ``AgnCompareReportText`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `AgnCompareReportText class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportText.h>`_.
 
 .. c:function:: void agn_compare_report_text_create_summary(AgnCompareReportText *rpt, FILE *outstream)
 
@@ -102,7 +102,7 @@ Class AgnCompareReportText
 Module AgnComparison
 --------------------
 
-Data structures and functions related to comparative assessment of gene/transcript annotations. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnComparison.h>`_.
+Data structures and functions related to comparative assessment of gene/transcript annotations. See the `AgnComparison module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnComparison.h>`_.
 
 .. c:type:: AgnCompStatsBinary
 
@@ -249,7 +249,7 @@ Class AgnFilterStream
 
 .. c:type:: AgnFilterStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
 
@@ -264,7 +264,7 @@ Class AgnGeneStream
 
 .. c:type:: AgnGeneStream
 
-  Implements the ``GtNodeStream`` interface. Searches the complete feature graph of each feature node in the input for canonical protein-coding gene features. Some basic sanity checks are performed on the mRNA(s) associated with each gene, and genes are only delivered to the output stream if they include one or more valid mRNA subfeatures. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGeneStream.h>`_.
+  Implements the ``GtNodeStream`` interface. Searches the complete feature graph of each feature node in the input for canonical protein-coding gene features. Some basic sanity checks are performed on the mRNA(s) associated with each gene, and genes are only delivered to the output stream if they include one or more valid mRNA subfeatures. See the `AgnGeneStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGeneStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 
@@ -279,7 +279,7 @@ Class AgnInferCDSVisitor
 
 .. c:type:: AgnInferCDSVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `AgnInferCDSVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtLogger *logger)
 
@@ -298,7 +298,7 @@ Class AgnInferExonsVisitor
 
 .. c:type:: AgnInferExonsVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly.  See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly.  See the `AgnInferExonsVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtLogger *logger)
 
@@ -317,7 +317,7 @@ Class AgnInferParentStream
 
 .. c:type:: AgnInferParentStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This node stream creates new features as parents for the specified types. For example, if ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as the value, this node stream will create a ``gene`` feature for any ``tRNA`` feature that lacks a gene parent. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This node stream creates new features as parents for the specified types. For example, if ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as the value, this node stream will create a ``gene`` feature for any ``tRNA`` feature that lacks a gene parent. See the `AgnInferParentStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream, GtHashmap *type_parents)
 
@@ -332,7 +332,7 @@ Class AgnIntervalLocusStream
 
 .. c:type:: AgnIntervalLocusStream
 
-  Implements the ``GtNodeStream`` interface. Input is a stream of gene/transcript loci and output is a stream of interval loci. See online docs for more information about interval loci (iLoci). See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnIntervalLocusStream.h>`_.
+  Implements the ``GtNodeStream`` interface. Input is a stream of gene/transcript loci and output is a stream of interval loci. See online docs for more information about interval loci (iLoci). See the `AgnIntervalLocusStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnIntervalLocusStream.h>`_.
 
 .. c:function:: GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream, GtUword delta, int endmode, GtLogger *logger)
 
@@ -355,7 +355,7 @@ Class AgnLocus
 
 .. c:type:: AgnLocus
 
-  The AgnLocus class represents gene loci and interval loci in memory and can be used to facilitate comparison of two different sources of annotation. Under the hood, each ``AgnLocus`` object is a feature node with one or more gene features as direct children. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocus.h>`_.
+  The AgnLocus class represents gene loci and interval loci in memory and can be used to facilitate comparison of two different sources of annotation. Under the hood, each ``AgnLocus`` object is a feature node with one or more gene features as direct children. See the `AgnLocus class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocus.h>`_.
 
 .. c:type:: AgnComparisonSource
 
@@ -494,7 +494,7 @@ Class AgnLocusFilterStream
 
 .. c:type:: AgnLocusFilterStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to FIXME. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusFilterStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to FIXME. See the `AgnLocusFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusFilterStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_locus_filter_stream_new(GtNodeStream *in_stream, GtArray *filters)
 
@@ -509,7 +509,7 @@ Class AgnLocusMapVisitor
 
 .. c:type:: AgnLocusMapVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `AgnLocusMapVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
 
@@ -524,7 +524,7 @@ Class AgnLocusStream
 
 .. c:type:: AgnLocusStream
 
-  Implements the ``GtNodeStream`` interface. The only feature nodes delivered by this stream have type ``locus``, and the only direct children of these features are transcript features (of types mRNA, rRNA, or tRNA) present in the input stream. Any overlapping transcripts are children of the same locus feature. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusStream.h>`_.
+  Implements the ``GtNodeStream`` interface. The only feature nodes delivered by this stream have type ``locus``, and the only direct children of these features are transcript features (of types mRNA, rRNA, or tRNA) present in the input stream. Any overlapping transcripts are children of the same locus feature. See the `AgnLocusStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusStream.h>`_.
 
 .. c:function:: GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 
@@ -551,7 +551,7 @@ Class AgnMrnaRepVisitor
 
 .. c:type:: AgnMrnaRepVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in)
 
@@ -570,7 +570,7 @@ Class AgnNodeDeleteVisitor
 
 .. c:type:: AgnNodeDeleteVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used to decrement the reference count to all feature nodes passing through the node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnNodeDeleteVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used to decrement the reference count to all feature nodes passing through the node stream. See the `AgnNodeDeleteVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnNodeDeleteVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_node_delete_stream_new(GtNodeStream *in)
 
@@ -585,7 +585,7 @@ Class AgnPseudogeneFixVisitor
 
 .. c:type:: AgnPseudogeneFixVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting the ``type`` value for pseudogene features erroneously using the ``gene`` type instead of the more appropriate ``pseudogene`` type. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnPseudogeneFixVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting the ``type`` value for pseudogene features erroneously using the ``gene`` type instead of the more appropriate ``pseudogene`` type. See the `AgnPseudogeneFixVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnPseudogeneFixVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
 
@@ -604,7 +604,7 @@ Class AgnRemoveChildrenVisitor
 
 .. c:type:: AgnRemoveChildrenVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting removing all children of each top-level feature. Psuedo-features are not modified. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnRemoveChildrenVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting removing all children of each top-level feature. Psuedo-features are not modified. See the `AgnRemoveChildrenVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnRemoveChildrenVisitor.h>`_.
 
 .. c:function:: GtNodeStream* agn_remove_children_stream_new(GtNodeStream *in)
 
@@ -623,7 +623,7 @@ Class AgnTranscriptClique
 
 .. c:type:: AgnTranscriptClique
 
-  The purpose of the AgnTranscriptClique class is to store data pertaining to an individual maximal transcript clique. This clique may only contain a single transcript, or it may contain many. The only stipulation is that the transcripts do not overlap. Under the hood, each ``AgnTranscriptClique`` instance is a pseudo node (a GtFeatureNode object) with one or more transcript features as direct children. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTranscriptClique.h>`_.
+  The purpose of the AgnTranscriptClique class is to store data pertaining to an individual maximal transcript clique. This clique may only contain a single transcript, or it may contain many. The only stipulation is that the transcripts do not overlap. Under the hood, each ``AgnTranscriptClique`` instance is a pseudo node (a GtFeatureNode object) with one or more transcript features as direct children. See the `AgnTranscriptClique class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTranscriptClique.h>`_.
 
 .. c:type:: typedef void (*AgnCliqueVisitFunc)(GtFeatureNode*, void*)
 
@@ -700,7 +700,7 @@ Class AgnTranscriptClique
 Module AgnTypecheck
 -------------------
 
-Functions for testing feature types. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTypecheck.h>`_.
+Functions for testing feature types. See the `AgnTypecheck module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTypecheck.h>`_.
 
 .. c:function:: bool agn_typecheck_cds(GtFeatureNode *fn)
 
@@ -763,7 +763,7 @@ Class AgnUnitTest
 
 .. c:type:: AgnUnitTest
 
-  Class used for unit testing of classes and modules. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUnitTest.h>`_.
+  Class used for unit testing of classes and modules. See the `AgnUnitTest class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUnitTest.h>`_.
 
 .. c:function:: void agn_unit_test_delete(AgnUnitTest *test)
 
@@ -792,7 +792,7 @@ Class AgnUnitTest
 Module AgnUtils
 ---------------
 
-Collection of assorted functions that are otherwise unrelated. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
+Collection of assorted functions that are otherwise unrelated. See the `AgnUtils module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
 
 .. c:type:: AgnSequenceRegion
 

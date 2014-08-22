@@ -56,8 +56,8 @@ sub process_doc_blocks
     my $title = "Class $class";
     my $url = "https://github.com/standage/AEGeAn/blob/master/$dir/$class.h";
     printf("%s\n%s\n\n", $title, "-" x length($title));
-    printf(".. c:type:: %s\n\n  %s See the `class header <%s>`_.\n\n", $class,
-           $description, $url);
+    printf(".. c:type:: %s\n\n  %s See the `%s class header <%s>`_.\n\n",
+           $class, $description, $class, $url);
 
     foreach my $block(@_)
     {
@@ -71,7 +71,8 @@ sub process_doc_blocks
     my $title = "Module $module";
     my $url = "https://github.com/standage/AEGeAn/blob/master/$dir/$module.h";
     printf("%s\n%s\n\n", $title, "-" x length($title));
-    printf("%s See the `module header <%s>`_.\n\n", $description, $url);
+    printf("%s See the `%s module header <%s>`_.\n\n", $description, $module,
+           $url);
 
     foreach my $block(@_)
     {
