@@ -1,6 +1,6 @@
 # AEGeAn Toolkit
 
-AEGeAn: **a**nalysis and **e**valuation of **ge**nome **an**notations
+AEGeAn: <b>a</b>nalysis and <b>e</b>valuation of <b>ge</b>nome <b>an</b>notations
 
 Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS.
 See LICENSE and for details.
