@@ -71,7 +71,7 @@ endif
 LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 
 # Targets
-all:		$(LP_EXE) $(XT_EXE) $(PE_EXE) $(UT_EXE) $(RP_EXE) libaegean.a
+all:		$(BINS) libaegean.a
 		
 
 install:	all
