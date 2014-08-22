@@ -184,7 +184,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
             "ignoring\n");
     options->summary_only = false;
   }
-  
+
   if(options->outfilename)
   {
     if(options->outfmt == HTMLMODE)
@@ -346,6 +346,7 @@ void pe_set_option_defaults(ParsEvalOptions *options)
 {
   options->debug = false;
   options->outfile = stdout;
+  options->outfilename = NULL;
   options->gff3 = true;
   options->summary_only = false;
   options->graphics = false;
