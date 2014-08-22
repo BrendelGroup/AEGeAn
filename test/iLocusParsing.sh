@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
+if [ "$1" == "memcheck" ]; then
+  memcheckcmd="valgrind --leak-check=full --show-reachable=yes --suppressions=data/share/libpixman.supp --error-exitcode=1"
+fi
+
 echo "    iLocus Parsing"
 
 temp="iLocusParseTest.gff3"
-bin/locuspocus --intloci --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --intloci --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+if [ $? != 0 ]; then
+  exit 1
+fi
 diff ${temp} data/gff3/ilocus.out.noskipends.gff3 > /dev/null 2>&1
 status=$?
 result="FAIL"
@@ -13,7 +20,10 @@ fi
 printf "        | %-36s | %s\n" "default" $result
 rm ${temp}
 
-bin/locuspocus --intloci --delta=200 --outfile=${temp} --skipends --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --intloci --delta=200 --outfile=${temp} --skipends --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+if [ $? != 0 ]; then
+  exit 1
+fi
 diff ${temp} data/gff3/ilocus.out.skipends.gff3 > /dev/null 2>&1
 status=$?
 result="FAIL"
