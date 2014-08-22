@@ -1,399 +1,185 @@
-#include <errno.h>
+/**
+
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
 #include <string.h>
-#include <time.h>
-#include "AgnCanonGeneStream.h"
-#include "AgnFilterStream.h"
-#include "AgnGtExtensions.h"
-#include "AgnGeneLocus.h"
-#include "AgnInferCDSVisitor.h"
-#include "AgnInferExonsVisitor.h"
+#include "core/hashmap_api.h"
+#include "extended/feature_node_iterator_api.h"
+#include "AgnTypecheck.h"
 #include "AgnUtils.h"
 
-void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
-                        bool skipsimplecliques )
+GtArray* agn_array_copy(GtArray *source, size_t size)
 {
-  gt_assert(R != NULL && P != NULL && X != NULL && cliques != NULL);
-
-  if(gt_array_size(P) == 0 && gt_array_size(X) == 0)
+  GtUword i;
+  GtArray *new = gt_array_new(size);
+  for(i = 0; i < gt_array_size(source); i++)
   {
-    if(skipsimplecliques == false || gt_array_size(R) != 1)
-    {
-      GtUword i;
-      AgnTranscriptClique *clique = agn_transcript_clique_new();
-      for(i = 0; i < gt_array_size(R); i++)
-      {
-        GtFeatureNode *transcript = *(GtFeatureNode **)gt_array_get(R, i);
-        agn_transcript_clique_add(clique, transcript);
-      }
-      gt_array_add(cliques, clique);
-    }
+    void *data = *(void **)gt_array_get(source, i);
+    gt_array_add(new, data);
   }
-
-  while(gt_array_size(P) > 0)
-  {
-    GtGenomeNode *v = *(GtGenomeNode **)gt_array_get(P, 0);
-
-    // newR = R \union {v}
-    GtArray *newR = agn_gt_array_copy(R, sizeof(GtGenomeNode *));
-    gt_array_add(newR, v);
-    // newP = P \intersect N(v)
-    GtArray *newP = agn_feature_neighbors(v, P);
-    // newX = X \intersect N(v)
-    GtArray *newX = agn_feature_neighbors(v, X);
-
-    // Recursive call
-    // agn_bron_kerbosch(R \union {v}, P \intersect N(v), X \intersect N(X))
-    agn_bron_kerbosch(newR, newP, newX, cliques, skipsimplecliques);
-
-    // Delete temporary arrays just created
-    gt_array_delete(newR);
-    gt_array_delete(newP);
-    gt_array_delete(newX);
-
-    // P := P \ {v}
-    gt_array_rem(P, 0);
-
-    // X := X \union {v}
-    gt_array_add(X, v);
-  }
-}
-
-double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
-{
-  AgnTranscriptClique *clique1 = agn_transcript_clique_new();
-  agn_transcript_clique_add(clique1, t1);
-  AgnTranscriptClique *clique2 = agn_transcript_clique_new();
-  agn_transcript_clique_add(clique2, t2);
-
-  GtGenomeNode *gn1 = (GtGenomeNode *)t1;
-  GtRange r1 = gt_genome_node_get_range(gn1);
-  GtStr *seqid = gt_genome_node_get_seqid(gn1);
-  GtGenomeNode *gn2 = (GtGenomeNode *)t2;
-  GtRange r2 = gt_genome_node_get_range(gn2);
-  GtRange local_range = r1;
-  if(r2.start < r1.start)
-    local_range.start = r2.start;
-  if(r2.end > r1.end)
-    local_range.end = r2.end;
-
-  AgnCliquePair *pair = agn_clique_pair_new(gt_str_get(seqid), clique1, clique2,
-                                            &local_range);
-  agn_clique_pair_build_model_vectors(pair);
-  agn_clique_pair_comparative_analysis(pair);
-
-  double ed = agn_clique_pair_get_edit_distance(pair);
-
-  agn_transcript_clique_delete(clique1);
-  agn_transcript_clique_delete(clique2);
-  agn_clique_pair_delete(pair);
-
-  return ed;
+  return new;
 }
 
 double agn_calc_splice_complexity(GtArray *transcripts)
 {
-  GtUword n = gt_array_size(transcripts);
-  GtUword i,j;
-  double sc = 0.0;
+  // FIXME Function not yet (re)implemented
+  return -1.0;
+}
 
-  for(i = 0; i < n; i++)
+GtUword
+agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src,
+                               bool use_orig, GtError *error)
+{
+  agn_assert(dest && src);
+  GtStrArray *seqids = gt_feature_index_get_seqids(src, error);
+  GtUword i, rncount = 0;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
   {
-    GtFeatureNode *t_i = *(GtFeatureNode **)gt_array_get(transcripts, i);
-    for(j = 0; j < i; j++)
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtStr *seqidstr = gt_str_new_cstr(seqid);
+    GtRange range;
+    if(use_orig)
+      gt_feature_index_get_orig_range_for_seqid(src, &range, seqid, error);
+    else
+      gt_feature_index_get_range_for_seqid(src, &range, seqid, error);
+
+    GtGenomeNode *rn = gt_region_node_new(seqidstr, range.start, range.end);
+    gt_feature_index_add_region_node(dest, (GtRegionNode *)rn, error);
+    rncount++;
+
+    gt_genome_node_delete(rn);
+    gt_str_delete(seqidstr);
+  }
+  gt_str_array_delete(seqids);
+  return rncount;
+}
+
+GtUword
+agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
+                                        GtFeatureIndex *refrsrc,
+                                        GtFeatureIndex *predsrc,
+                                        bool use_orig, GtError *error)
+{
+  agn_assert(dest && refrsrc && predsrc);
+  GtStrArray *refr_seqids = gt_feature_index_get_seqids(refrsrc, error);
+  GtStrArray *pred_seqids = gt_feature_index_get_seqids(predsrc, error);
+  GtStrArray *seqids = agn_str_array_union(refr_seqids, pred_seqids);
+  gt_str_array_delete(refr_seqids);
+  gt_str_array_delete(pred_seqids);
+
+  GtUword i, rncount = 0;
+  for(i = 0; i < gt_str_array_size(seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(seqids, i);
+    GtStr *seqidstr = gt_str_new_cstr(seqid);
+    GtRange range, refrrange, predrange;
+    bool refrhas, predhas;
+    gt_feature_index_has_seqid(refrsrc, &refrhas, seqid, error);
+    gt_feature_index_has_seqid(predsrc, &predhas, seqid, error);
+
+    int (*range_func)(GtFeatureIndex *, GtRange *, const char *, GtError *);
+    range_func = gt_feature_index_get_range_for_seqid;
+    if(use_orig)
+      range_func = gt_feature_index_get_orig_range_for_seqid;
+
+    if(refrhas && predhas)
     {
-      GtFeatureNode *t_j = *(GtFeatureNode **)gt_array_get(transcripts, j);
-      if(agn_gt_feature_node_overlap(t_i, t_j))
-      {
-        sc += agn_calc_edit_distance(t_i, t_j);
-      }
+      range_func(refrsrc, &refrrange, seqid, error);
+      range_func(predsrc, &predrange, seqid, error);
+      range = gt_range_join(&refrrange, &predrange);
+    }
+    else if(refrhas)
+      range_func(refrsrc, &range, seqid, error);
+    else if(predhas)
+      range_func(predsrc, &range, seqid, error);
+    else
+    {
+      gt_str_delete(seqidstr);
+      continue;
+    }
+
+    GtGenomeNode *rn = gt_region_node_new(seqidstr, range.start, range.end);
+    gt_feature_index_add_region_node(dest, (GtRegionNode *)rn, error);
+    rncount++;
+
+    gt_genome_node_delete(rn);
+    gt_str_delete(seqidstr);
+  }
+  gt_str_array_delete(seqids);
+  return rncount;
+}
+
+void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
+{
+  agn_assert(root && fn);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+  GtFeatureNode *child;
+  for(child = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child = gt_feature_node_iterator_next(iter))
+  {
+    agn_feature_node_remove_tree(fn, child);
+  }
+  gt_feature_node_iterator_delete(iter);
+  gt_feature_node_remove_leaf(root, fn);
+}
+
+GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
+{
+  GtUword totallength = 0;
+  const char *cdsid = NULL;
+  GtArray *cds_segments = agn_typecheck_select(mrna, agn_typecheck_cds);
+  while(gt_array_size(cds_segments) > 0)
+  {
+    GtGenomeNode **segment = gt_array_pop(cds_segments);
+    GtFeatureNode *segmentfn = gt_feature_node_cast(*segment);
+    const char *fid = gt_feature_node_get_attribute(segmentfn, "ID");
+    if(fid)
+    {
+      if(cdsid == NULL)
+        cdsid = fid;
+      else
+        agn_assert(strcmp(cdsid, fid) == 0);
+    }
+    totallength += gt_genome_node_get_length(*segment);
+  }
+  gt_array_delete(cds_segments);
+  return totallength;
+}
+
+GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
+{
+  GtRange range = {0, 0};
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(top);
+  GtFeatureNode *child;
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
+  {
+    if(!gt_feature_node_is_multi(child))
+      continue;
+
+    if(gt_feature_node_get_multi_representative(child) == rep)
+    {
+      GtRange fnrange = gt_genome_node_get_range((GtGenomeNode *)child);
+      if(range.start == 0 && range.end == 0)
+        range = fnrange;
+      else
+        range = gt_range_join(&range, &fnrange);
     }
   }
-
-  return sc;
+  gt_feature_node_iterator_delete(iter);
+  return range;
 }
 
-GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
+int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 {
-  GtArray *cliques = gt_array_new( sizeof(GtArray *) );
-
-  if(gt_array_size(feature_set) == 1)
-  {
-    GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(feature_set, 0);
-    AgnTranscriptClique *clique = agn_transcript_clique_new();
-    agn_transcript_clique_add(clique, fn);
-    gt_array_add(cliques, clique);
-  }
-  else
-  {
-    // First add each transcript as a clique, even if it is not a maximal clique
-    GtUword i;
-    for(i = 0; i < gt_array_size(feature_set); i++)
-    {
-      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(feature_set, i);
-      AgnTranscriptClique *clique = agn_transcript_clique_new();
-      agn_transcript_clique_add(clique, fn);
-      gt_array_add(cliques, clique);
-    }
-
-    // Then use the Bron-Kerbosch algorithm to find all maximal cliques
-    // containing >1 transcript
-    GtArray *R = gt_array_new( sizeof(GtGenomeNode *) );
-    GtArray *P = agn_gt_array_copy(feature_set, sizeof(GtGenomeNode *));
-    GtArray *X = gt_array_new( sizeof(GtGenomeNode *) );
-
-    // Initial call: agn_bron_kerbosch(\emptyset, vertex_set, \emptyset )
-    agn_bron_kerbosch(R, P, X, cliques, true);
-
-    gt_array_delete(R);
-    gt_array_delete(P);
-    gt_array_delete(X);
-  }
-
-  return cliques;
-}
-
-GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set)
-{
-  GtArray *neighbors = gt_array_new( sizeof(GtGenomeNode *) );
-  GtUword i;
-  for(i = 0; i < gt_array_size(feature_set); i++)
-  {
-    GtGenomeNode *other = *(GtGenomeNode **)gt_array_get(feature_set, i);
-    if(other != feature)
-    {
-      GtRange feature_range = gt_genome_node_get_range(feature);
-      GtRange other_range = gt_genome_node_get_range(other);
-      if(gt_range_overlap(&feature_range, &other_range) == false)
-        gt_array_add(neighbors, other);
-    }
-  }
-  return neighbors;
-}
-
-FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream)
-{
-  FILE *fp = fopen(filename, mode);
-  if(fp == NULL)
-  {
-    fprintf(errstream, "error: could not open '%s' (%s)\n", filename,
-            strerror(errno));
-    exit(1);
-  }
-  return fp;
-}
-
-GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
-                                     AgnLogger *logger)
-{
-  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-
-  GtFeatureIndex *features = gt_feature_index_memory_new();
-  GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3, logger);
-  GtNodeStream *featstream = gt_feature_out_stream_new(cgstream, features);
-
-  GtError *error = gt_error_new();
-  int result = gt_node_stream_pull(featstream, error);
-  if(result == -1)
-  {
-    agn_logger_log_error(logger, "error processing node stream: %s",
-                         gt_error_get(error));
-  }
-  gt_error_delete(error);
-
-  if(agn_logger_has_error(logger))
-  {
-    gt_feature_index_delete(features);
-    features = NULL;
-  }
-  gt_node_stream_delete(gff3);
-  gt_node_stream_delete(cgstream);
-  gt_node_stream_delete(featstream);
-  return features;
-}
-
-GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
-                                  char *type, AgnLogger *logger)
-{
-  GtFeatureIndex *features = gt_feature_index_memory_new();
-
-  GtNodeStream *gff3 = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3);
-
-  GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
-  gt_hashmap_add(typestokeep, type, type);
-  GtNodeStream *filterstream = agn_filter_stream_new(gff3, typestokeep);
-
-  GtNodeStream *featstream = gt_feature_out_stream_new(filterstream, features);
-
-  GtError *error = gt_error_new();
-  int result = gt_node_stream_pull(featstream, error);
-  if(result == -1)
-  {
-    agn_logger_log_error(logger, "error processing node stream: %s",
-                         gt_error_get(error));
-  }
-  gt_error_delete(error);
-
-  if(agn_logger_has_error(logger))
-  {
-    gt_feature_index_delete(features);
-    features = NULL;
-  }
-  gt_node_stream_delete(gff3);
-  gt_node_stream_delete(filterstream);
-  gt_node_stream_delete(featstream);
-  return features;
-}
-
-bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range,
-                                              GtRange *leftcodon_range,
-                                              GtRange *rightcodon_range,
-                                              GtRange *cds_range)
-{
-  cds_range->start = 0;
-  cds_range->end   = 0;
-
-  // UTR
-  if(exon_range->end < leftcodon_range->start ||
-     exon_range->start > rightcodon_range->end)
-    return false;
-
-  bool overlap_left  = gt_range_overlap(exon_range, leftcodon_range);
-  bool overlap_right = gt_range_overlap(exon_range, rightcodon_range);
-  if(overlap_left && overlap_right)
-  {
-    cds_range->start = leftcodon_range->start;
-    cds_range->end   = rightcodon_range->end;
-  }
-  else if(overlap_left)
-  {
-    cds_range->start = leftcodon_range->start;
-    cds_range->end   = exon_range->end;
-  }
-  else if(overlap_right)
-  {
-    cds_range->start = exon_range->start;
-    cds_range->end   = rightcodon_range->end;
-  }
-  else
-  {
-    cds_range->start = exon_range->start;
-    cds_range->end   = exon_range->end;
-  }
-
-  return true;
-}
-
-GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
-                                 GtFeatureIndex *predfeats, AgnLogger *logger)
-{
-  // Fetch seqids from reference and prediction annotations
-  GtError *e = gt_error_new();
-  GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, e);
-  if(gt_error_is_set(e))
-  {
-    agn_logger_log_error(logger, "error fetching seqids for reference: %s",
-                         gt_error_get(e));
-    gt_error_unset(e);
-  }
-  GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, e);
-  if(gt_error_is_set(e))
-  {
-    agn_logger_log_error(logger, "error fetching seqids for prediction: %s",
-                         gt_error_get(e));
-    gt_error_unset(e);
-  }
-  gt_error_delete(e);
-  if(agn_logger_has_error(logger))
-  {
-    gt_str_array_delete(refrseqids);
-    gt_str_array_delete(predseqids);
-    return NULL;
-  }
-  GtStrArray *seqids = agn_gt_str_array_intersection(refrseqids, predseqids);
-
-  // Print reference sequences with no prediction annotations
-  GtUword i, j;
-  for(i = 0; i < gt_str_array_size(refrseqids); i++)
-  {
-    const char *refrseq = gt_str_array_get(refrseqids, i);
-    int matches = 0;
-    for(j = 0; j < gt_str_array_size(seqids); j++)
-    {
-      const char *seq = gt_str_array_get(seqids, j);
-      if(strcmp(refrseq, seq) == 0)
-        matches++;
-    }
-    if(matches == 0)
-    {
-      agn_logger_log_warning(logger, "no prediction annotations found for "
-                             "sequence '%s'", refrseq);
-    }
-  }
-
-  // Print prediction sequences with no reference annotations
-  for(i = 0; i < gt_str_array_size(predseqids); i++)
-  {
-    const char *predseq = gt_str_array_get(predseqids, i);
-    int matches = 0;
-    for(j = 0; j < gt_str_array_size(seqids); j++)
-    {
-      const char *seq = gt_str_array_get(seqids, j);
-      if(strcmp(predseq, seq) == 0)
-        matches++;
-    }
-    if(matches == 0)
-    {
-      agn_logger_log_warning(logger, "no reference annotations found for "
-                             "sequence '%s'", predseq);
-    }
-  }
-
-  if(gt_str_array_size(seqids) == 0)
-  {
-    agn_logger_log_error(logger, "no sequences in common between reference and "
-                         "prediction");
-  }
-
-  gt_str_array_delete(refrseqids);
-  gt_str_array_delete(predseqids);
-  return seqids;
-}
-
-GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
-                          AgnLogger *logger)
-{
-  // Fetch seqids from reference and prediction annotations
-  GtError *e = gt_error_new();
-  GtStrArray *refrseqids = gt_feature_index_get_seqids(refrfeats, e);
-  if(gt_error_is_set(e))
-  {
-    agn_logger_log_error(logger, "error fetching seqids for reference: %s",
-                         gt_error_get(e));
-    gt_error_unset(e);
-  }
-  GtStrArray *predseqids = gt_feature_index_get_seqids(predfeats, e);
-  if(gt_error_is_set(e))
-  {
-    agn_logger_log_error(logger, "error fetching seqids for prediction: %s",
-                         gt_error_get(e));
-    gt_error_unset(e);
-  }
-  gt_error_delete(e);
-  if(agn_logger_has_error(logger))
-  {
-    gt_str_array_delete(refrseqids);
-    gt_str_array_delete(predseqids);
-    return NULL;
-  }
-  GtStrArray *seqids = agn_gt_str_array_union(refrseqids, predseqids);
-
-  gt_str_array_delete(refrseqids);
-  gt_str_array_delete(predseqids);
-  return seqids;
+  return gt_genome_node_cmp(*gn_a, *gn_b);
 }
 
 int agn_sprintf_comma(GtUword n, char *buffer)
@@ -417,91 +203,40 @@ int agn_string_compare(const void *p1, const void *p2)
   return strcmp(s1, s2);
 }
 
-GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
+GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2)
 {
-  gt_assert(transcript);
-  GtRange trange;
-  trange.start = 0;
-  trange.end = 0;
-
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(transcript);
-  GtFeatureNode *current;
-  for
-  (
-    current = gt_feature_node_iterator_next(iter);
-    current != NULL;
-    current = gt_feature_node_iterator_next(iter)
-  )
+  GtArray *strings = gt_array_new( sizeof(char *) );
+  GtHashmap *added = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  GtUword i;
+  for(i = 0; i < gt_str_array_size(a1); i++)
   {
-    if(agn_gt_feature_node_is_cds_feature(current))
+    char *str = (char *)gt_str_array_get(a1, i);
+    if(gt_hashmap_get(added, str) == NULL)
     {
-      GtRange crange = gt_genome_node_get_range((GtGenomeNode *)current);
-      if(trange.start == 0 || crange.start < trange.start)
-        trange.start = crange.start;
-      if(trange.end == 0 || crange.end > trange.end)
-        trange.end = crange.end;
+      gt_hashmap_add(added, str, str);
+      gt_array_add(strings, str);
     }
   }
-
-  if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
+  for(i = 0; i < gt_str_array_size(a2); i++)
   {
-    GtUword temp = trange.start;
-    trange.start = trange.end;
-    trange.end = temp;
-  }
-  return trange;
-}
-
-void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
-{
-  gt_assert(transcript && outstream);
-
-  GtArray *exons = gt_array_new( sizeof(GtFeatureNode *) );
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(transcript);
-  GtFeatureNode *child;
-  for
-  (
-    child = gt_feature_node_iterator_next(iter);
-    child != NULL;
-    child = gt_feature_node_iterator_next(iter)
-  )
-  {
-    if(agn_gt_feature_node_is_exon_feature(child))
-      gt_array_add(exons, child);
-  }
-  gt_feature_node_iterator_delete(iter);
-
-  gt_assert(gt_array_size(exons) > 0);
-  gt_array_sort(exons, (GtCompare)agn_gt_genome_node_compare);
-
-  if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
-    fputs("complement(", outstream);
-
-  if(gt_array_size(exons) == 1)
-  {
-    GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, 0);
-    GtRange exonrange = gt_genome_node_get_range(exon);
-    fprintf(outstream, "<%lu..>%lu", exonrange.start, exonrange.end);
-  }
-  else
-  {
-    fputs("join(", outstream);
-    GtUword i;
-    for(i = 0; i < gt_array_size(exons); i++)
+    char *str = (char *)gt_str_array_get(a2, i);
+    if(gt_hashmap_get(added, str) == NULL)
     {
-      GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, i);
-      GtRange exonrange = gt_genome_node_get_range(exon);
-
-      if(i == 0)
-        fprintf(outstream, "<%lu..%lu", exonrange.start, exonrange.end);
-      else if(i+1 == gt_array_size(exons))
-        fprintf(outstream, ",%lu..>%lu", exonrange.start, exonrange.end);
-      else
-        fprintf(outstream, ",%lu..%lu", exonrange.start, exonrange.end);
+      gt_hashmap_add(added, str, str);
+      gt_array_add(strings, str);
     }
-    fputs(")", outstream);
   }
+  gt_hashmap_delete(added);
+  // The whole reason I'm going through this mess--GtStrArray class has no sort
+  // function.
+  gt_array_sort(strings, (GtCompare)agn_string_compare);
 
-  if(gt_feature_node_get_strand(transcript) == GT_STRAND_REVERSE)
-    fputs(")", outstream);
+  GtStrArray *uniona = gt_str_array_new();
+  for(i = 0; i < gt_array_size(strings); i++)
+  {
+    const char *str = *(const char **)gt_array_get(strings, i);
+    gt_str_array_add_cstr(uniona, str);
+  }
+  gt_array_delete(strings);
+  return uniona;
 }

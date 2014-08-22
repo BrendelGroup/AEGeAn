@@ -22,7 +22,7 @@ Usage: perl $0 [options] > inc/core/AgnVersion.h
     -l|--link: STRING       URL providing additional information regarding this
                             version; default is
 
-                                https://github.com/standage/AEGeAn/commit/\$hash
+                                https://github.com/standage/AEGeAn/tree/\$hash
 
                             where \$hash is the SHA1 hash of the latest commit
                             in the git repository; if the git repository has been
@@ -43,7 +43,7 @@ unless($gitlog =~ m/fatal: Not a git repository/)
 {
   ($version) = $gitlog =~ m/commit (\S+)/;
   ($date) = $gitlog =~ m/Date:\s+.+(\d{4}) /;
-  $link = "https://github.com/standage/AEGeAn/commit/$version";
+  $link = "https://github.com/standage/AEGeAn/tree/$version";
 }
 
 GetOptions

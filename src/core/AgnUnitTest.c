@@ -1,4 +1,14 @@
+/**
+
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
 #include "AgnUnitTest.h"
+#include "AgnUtils.h"
 
 //------------------------------------------------------------------------------
 // Data structure definitions
@@ -67,9 +77,23 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
 void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success)
 {
   UnitTestResult result;
+  agn_assert(test);
   result.label = gt_cstr_dup(label);
   result.success = success;
   gt_array_add(test->results, result);
+}
+
+bool agn_unit_test_success(AgnUnitTest *test)
+{
+  agn_assert(gt_array_size(test->results) > 0);
+  GtUword i;
+  for(i = 0; i < gt_array_size(test->results); i++)
+  {
+    UnitTestResult *result = gt_array_get(test->results, i);
+    if(!result->success)
+      return false;
+  }
+  return true;
 }
 
 void agn_unit_test_run(AgnUnitTest *test)

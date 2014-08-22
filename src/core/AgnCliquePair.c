@@ -1,29 +1,35 @@
-#include <string.h>
+/**
+
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
 #include <math.h>
-#include "AgnCanonGeneStream.h"
+#include <string.h>
+#include "core/queue_api.h"
 #include "AgnCliquePair.h"
-#include "AgnGtExtensions.h"
-#include "AgnTestData.h"
 #include "AgnUtils.h"
 
-//----------------------------------------------------------------------------//
+#define char_is_exonic(C) (C == 'F' || C == 'T' || C == 'C')
+#define char_is_utric(C)  (C == 'F' || C == 'T')
+#define clique_pair_has_utrs(CP) \
+        (agn_transcript_clique_num_utrs(CP->refr_clique) + \
+         agn_transcript_clique_num_utrs(CP->pred_clique) > 0)
+
+//------------------------------------------------------------------------------
 // Data structure definitions
-//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+
 struct AgnCliquePair
 {
-  AgnSequenceRegion region;
   AgnTranscriptClique *refr_clique;
   AgnTranscriptClique *pred_clique;
-  char *refr_vector;
-  char *pred_vector;
   AgnComparison stats;
+  double tolerance;
 };
-
-typedef struct
-{
-  char *modelvector;
-  GtRange *locusrange;
-} ModelVectorData;
 
 typedef struct
 {
@@ -35,188 +41,53 @@ typedef struct
 } StructuralData;
 
 
-//----------------------------------------------------------------------------//
-// Prototypes for private method(s)
-//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+// Prototypes for private functions
+//------------------------------------------------------------------------------
 
 /**
- * Add a transcript and all its features to a model vector.
- *
- * @param[in]  transcript     a transcript in the clique
- * @param[out] modelvector    ModelVectorData for the vector being built
- */
-static void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
-                                                 void *data);
-
-/**
- * Given a set of of start and end coordinates for reference and prediction
- * structures (exons, CDS segments, or UTR segments), determine the number of
- * congruent and incongruent structures.
- *
- * @param[in] dat    the data
+ * @function Given a set of of start and end coordinates for reference and
+ * prediction structures (exons, CDS segments, or UTR segments), determine the
+ * number of congruent and incongruent structures.
  */
 static void clique_pair_calc_struct_stats(StructuralData *dat);
 
 /**
- * Initialize the data structure used to store start and end coordinates for
- * reference and prediction structures (exons, CDS segments, or UTR segments)
- * and associated statistics.
- *
- * @param[out] dat      the data structure
- * @param[in]  stats    stats to be stored in the structure
+ * @function Compare this pair of annotations at the nucleotide level and at the
+ * structural level, recording relevant similarity statistics.
+ */
+static void clique_pair_comparative_analysis(AgnCliquePair *pair);
+
+/**
+ * @function Initialize the data structure used to store start and end
+ * coordinates for reference and prediction structures (exons, CDS segments, or
+ * UTR segments) and associated statistics.
  */
 static void clique_pair_init_struct_dat(StructuralData *dat,
                                         AgnCompStatsBinary *stats);
 
 /**
- * Free the memory previously occupied by the data structure.
- *
- * @param[out] dat      the data structure
+ * @function Free the memory previously occupied by the data structure.
  */
 static void clique_pair_term_struct_dat(StructuralData *dat);
 
-// Macros for convenience when checking how a given nucleotide is annotated
-#define char_is_exonic(C) (C == 'F' || C == 'T' || C == 'C')
-#define char_is_utric(C)  (C == 'F' || C == 'T')
+/**
+ * @function Generate data for unit testing.
+ */
+static void clique_pair_test_data(GtQueue *queue);
 
 
-//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 // Method implementations
-//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 
-void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
+AgnCompClassification agn_clique_pair_classify(AgnCliquePair *pair)
 {
-  int vector_length = agn_clique_pair_length(pair) + 1;
-  pair->refr_vector = (char *)gt_malloc(sizeof(char) * (vector_length));
-  pair->pred_vector = (char *)gt_malloc(sizeof(char) * (vector_length));
-
-  int i;
-  pair->refr_vector[vector_length - 1] = '\0';
-  pair->pred_vector[vector_length - 1] = '\0';
-  for(i = 0; i < vector_length - 1; i++)
+  double identity = (double)pair->stats.overall_matches /
+                    (double)pair->stats.overall_length;
+  if(identity == 1.0 || fabs(identity - 1.0) < pair->tolerance)
   {
-    pair->refr_vector[i] = 'G';
-    pair->pred_vector[i] = 'G';
-  }
-
-  ModelVectorData data = { pair->refr_vector, &pair->region.range };
-  agn_transcript_clique_traverse(pair->refr_clique,
-      (AgnCliqueVisitFunc)clique_pair_add_transcript_to_vector, &data);
-  data.modelvector = pair->pred_vector;
-  agn_transcript_clique_traverse(pair->pred_clique,
-      (AgnCliqueVisitFunc)clique_pair_add_transcript_to_vector, &data);
-}
-
-void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
-{
-  GtUword locus_length = agn_clique_pair_length(pair);
-
-  StructuralData cdsstruct;
-  clique_pair_init_struct_dat(&cdsstruct, &pair->stats.cds_struc_stats);
-  StructuralData exonstruct;
-  clique_pair_init_struct_dat(&exonstruct, &pair->stats.exon_struc_stats);
-  StructuralData utrstruct;
-  clique_pair_init_struct_dat(&utrstruct, &pair->stats.utr_struc_stats);
-
-  // Collect counts
-  GtUword i;
-  for(i = 0; i < locus_length; i++)
-  {
-    // Coding nucleotide counts
-    if(pair->refr_vector[i] == 'C' && pair->pred_vector[i] == 'C')
-      pair->stats.cds_nuc_stats.tp++;
-    else if(pair->refr_vector[i] == 'C' && pair->pred_vector[i] != 'C')
-      pair->stats.cds_nuc_stats.fn++;
-    else if(pair->refr_vector[i] != 'C' && pair->pred_vector[i] == 'C')
-      pair->stats.cds_nuc_stats.fp++;
-    else if(pair->refr_vector[i] != 'C' && pair->pred_vector[i] != 'C')
-      pair->stats.cds_nuc_stats.tn++;
-
-    // UTR nucleotide counts
-    bool refr_utr = char_is_utric(pair->refr_vector[i]);
-    bool pred_utr = char_is_utric(pair->pred_vector[i]);
-    if(refr_utr && pred_utr)        pair->stats.utr_nuc_stats.tp++;
-    else if(refr_utr && !pred_utr)  pair->stats.utr_nuc_stats.fn++;
-    else if(!refr_utr && pred_utr)  pair->stats.utr_nuc_stats.fp++;
-    else if(!refr_utr && !pred_utr) pair->stats.utr_nuc_stats.tn++;
-
-    // Overall matches
-    if(pair->refr_vector[i] == pair->pred_vector[i])
-      pair->stats.overall_matches++;
-
-    // CDS structure counts
-    if(pair->refr_vector[i] == 'C')
-    {
-      if(i == 0 || pair->refr_vector[i-1] != 'C')
-        gt_array_add(cdsstruct.refrstarts, i);
-
-      if(i == locus_length - 1 || pair->refr_vector[i+1] != 'C')
-        gt_array_add(cdsstruct.refrends, i);
-    }
-    if(pair->pred_vector[i] == 'C')
-    {
-      if(i == 0 || pair->pred_vector[i-1] != 'C')
-        gt_array_add(cdsstruct.predstarts, i);
-
-      if(i == locus_length - 1 || pair->pred_vector[i+1] != 'C')
-        gt_array_add(cdsstruct.predends, i);
-    }
-
-    // Exon structure counts
-    if(char_is_exonic(pair->refr_vector[i]))
-    {
-      if(i == 0 || !char_is_exonic(pair->refr_vector[i-1]))
-        gt_array_add(exonstruct.refrstarts, i);
-
-      if(i == locus_length - 1 || !char_is_exonic(pair->refr_vector[i+1]))
-        gt_array_add(exonstruct.refrends, i);
-    }
-    if(char_is_exonic(pair->pred_vector[i]))
-    {
-      if(i == 0 || !char_is_exonic(pair->pred_vector[i-1]))
-        gt_array_add(exonstruct.predstarts, i);
-
-      if(i == locus_length - 1 || !char_is_exonic(pair->pred_vector[i+1]))
-        gt_array_add(exonstruct.predends, i);
-    }
-
-    // UTR structure counts
-    if(char_is_utric(pair->refr_vector[i]))
-    {
-      if(i == 0 || !char_is_utric(pair->refr_vector[i-1]))
-        gt_array_add(utrstruct.refrstarts, i);
-
-      if(i == locus_length - 1 || !char_is_utric(pair->refr_vector[i+1]))
-        gt_array_add(utrstruct.refrends, i);
-    }
-    if(char_is_utric(pair->pred_vector[i]))
-    {
-      if(i == 0 || !char_is_utric(pair->pred_vector[i-1]))
-        gt_array_add(utrstruct.predstarts, i);
-
-      if(i == locus_length - 1 || !char_is_utric(pair->pred_vector[i+1]))
-        gt_array_add(utrstruct.predends, i);
-    }
-  }
-
-  // Calculate nucleotide-level statistics from counts
-  agn_comp_stats_scaled_resolve(&pair->stats.cds_nuc_stats);
-  agn_comp_stats_scaled_resolve(&pair->stats.utr_nuc_stats);
-  pair->stats.overall_identity = pair->stats.overall_matches /
-                                 (double)locus_length;
-
-  // Calculate statistics for structure from counts
-  clique_pair_calc_struct_stats(&cdsstruct);
-  clique_pair_calc_struct_stats(&exonstruct);
-  clique_pair_calc_struct_stats(&utrstruct);
-}
-
-AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair)
-{
-  if(pair->stats.overall_identity == 1.0 ||
-     fabs(pair->stats.overall_identity - 1.0) < pair->stats.tolerance)
-  {
-    return AGN_CLIQUE_PAIR_PERFECT_MATCH;
+    return AGN_COMP_CLASS_PERFECT_MATCH;
   }
   else if(pair->stats.cds_struc_stats.missing == 0 &&
           pair->stats.cds_struc_stats.wrong   == 0)
@@ -224,11 +95,11 @@ AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair)
     if(pair->stats.exon_struc_stats.missing == 0 &&
        pair->stats.exon_struc_stats.wrong   == 0)
     {
-      return AGN_CLIQUE_PAIR_MISLABELED;
+      return AGN_COMP_CLASS_MISLABELED;
     }
     else
     {
-      return AGN_CLIQUE_PAIR_CDS_MATCH;
+      return AGN_COMP_CLASS_CDS_MATCH;
     }
   }
   else
@@ -236,17 +107,23 @@ AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair)
     if(pair->stats.exon_struc_stats.missing == 0 &&
        pair->stats.exon_struc_stats.wrong   == 0)
     {
-      return AGN_CLIQUE_PAIR_EXON_MATCH;
+      return AGN_COMP_CLASS_EXON_MATCH;
     }
     else if(pair->stats.utr_struc_stats.missing == 0 &&
             pair->stats.utr_struc_stats.wrong   == 0 &&
-            agn_clique_pair_has_utrs(pair))
+            clique_pair_has_utrs(pair))
     {
-      return AGN_CLIQUE_PAIR_UTR_MATCH;
+      return AGN_COMP_CLASS_UTR_MATCH;
     }
   }
 
-  return AGN_CLIQUE_PAIR_NON_MATCH;
+  return AGN_COMP_CLASS_NON_MATCH;
+}
+
+void agn_clique_pair_comparison_aggregate(AgnCliquePair *pair,
+                                          AgnComparison *comp)
+{
+  agn_comparison_aggregate(comp, &pair->stats);
 }
 
 int agn_clique_pair_compare(void *p1, void *p2)
@@ -258,11 +135,14 @@ int agn_clique_pair_compare(void *p1, void *p2)
 
 int agn_clique_pair_compare_direct(AgnCliquePair *p1, AgnCliquePair *p2)
 {
+  double p1identity = (double)p1->stats.overall_matches /
+                      (double)p1->stats.overall_length;
+  double p2identity = (double)p1->stats.overall_matches /
+                      (double)p1->stats.overall_length;
+
   // First, check if either pair is a perfect match
-  bool p1_perfect = p1->stats.overall_identity == 1.0 ||
-                    fabs(p1->stats.overall_identity - 1.0) < p1->stats.tolerance;
-  bool p2_perfect = p2->stats.overall_identity == 1.0 ||
-                    fabs(p2->stats.overall_identity - 1.0) < p2->stats.tolerance;
+  bool p1_perfect = p1->stats.overall_matches == p1->stats.overall_length;
+  bool p2_perfect = p2->stats.overall_matches == p2->stats.overall_length;
   if(p1_perfect && p2_perfect)
     return 0;
   else if(p1_perfect)
@@ -292,13 +172,15 @@ int agn_clique_pair_compare_direct(AgnCliquePair *p1, AgnCliquePair *p2)
 
   // At this point, the coding nucleotide correlation coefficient is probably
   // the best measure of similarity
-  if(fabs(p1->stats.cds_nuc_stats.cc - p2->stats.cds_nuc_stats.cc) < p1->stats.tolerance)
+  double cdiff = fabs(p1->stats.cds_nuc_stats.cc - p2->stats.cds_nuc_stats.cc);
+  double udiff = fabs(p1->stats.utr_nuc_stats.cc - p2->stats.utr_nuc_stats.cc);
+  if(cdiff < p1->tolerance)
   {
-    if(fabs(p1->stats.utr_nuc_stats.cc - p2->stats.utr_nuc_stats.cc) < p1->stats.tolerance)
+    if(udiff < p1->tolerance)
     {
-      if(p1->stats.overall_identity > p2->stats.overall_identity)
+      if(p1identity > p2identity)
         return 1;
-      else if(p1->stats.overall_identity < p2->stats.overall_identity)
+      else if(p1identity < p2identity)
         return -1;
       else
         return 0;
@@ -321,23 +203,14 @@ int agn_clique_pair_compare_reverse(void *p1, void *p2)
     return -1;
   else if(result == -1)
     return 1;
-
   return 0;
 }
 
 void agn_clique_pair_delete(AgnCliquePair *pair)
 {
-  if(pair->refr_vector != NULL)
-    gt_free(pair->refr_vector);
-  if(pair->pred_vector != NULL)
-    gt_free(pair->pred_vector);
+  agn_transcript_clique_delete(pair->refr_clique);
+  agn_transcript_clique_delete(pair->pred_clique);
   gt_free(pair);
-  pair = NULL;
-}
-
-double agn_clique_pair_get_edit_distance(AgnCliquePair *pair)
-{
-  return pair->stats.exon_struc_stats.ed;
 }
 
 AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair)
@@ -345,19 +218,9 @@ AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair)
   return pair->pred_clique;
 }
 
-const char *agn_clique_pair_get_pred_vector(AgnCliquePair *pair)
-{
-  return pair->pred_vector;
-}
-
 AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair)
 {
   return pair->refr_clique;
-}
-
-const char *agn_clique_pair_get_refr_vector(AgnCliquePair *pair)
-{
-  return pair->refr_vector;
 }
 
 AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
@@ -365,271 +228,63 @@ AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
   return &pair->stats;
 }
 
-bool agn_clique_pair_has_utrs(AgnCliquePair *pair)
+AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
+                                   AgnTranscriptClique *pred)
 {
-  GtUword refr_utrs = agn_transcript_clique_num_utrs(pair->refr_clique);
-  GtUword pred_utrs = agn_transcript_clique_num_utrs(pair->pred_clique);
-  return(refr_utrs + pred_utrs > 0);
-}
+  GtStr *seqidrefr = gt_genome_node_get_seqid(refr);
+  GtStr *seqidpred = gt_genome_node_get_seqid(pred);
+  agn_assert(gt_genome_node_get_start(refr) == gt_genome_node_get_start(pred) &&
+            gt_genome_node_get_end(refr) == gt_genome_node_get_end(pred) &&
+            gt_str_cmp(seqidrefr, seqidpred) == 0);
 
-bool agn_clique_pair_is_simple(AgnCliquePair *pair)
-{
-  return( agn_transcript_clique_size(pair->refr_clique) == 1 &&
-          agn_transcript_clique_size(pair->pred_clique) == 1 );
-}
-
-bool agn_clique_pair_needs_comparison(AgnCliquePair *pair)
-{
-  return ( agn_transcript_clique_size(pair->refr_clique) > 0 &&
-           agn_transcript_clique_size(pair->pred_clique) > 0 );
-}
-
-GtUword agn_clique_pair_length(AgnCliquePair *pair)
-{
-  return gt_range_length(&pair->region.range);
-}
-
-AgnCliquePair* agn_clique_pair_new(const char *seqid,
-                                   AgnTranscriptClique *refr_clique,
-                                   AgnTranscriptClique *pred_clique,
-                                   GtRange *locus_range)
-{
-  gt_assert(refr_clique != NULL && pred_clique != NULL);
-
-  AgnCliquePair *pair = (AgnCliquePair *)gt_malloc(sizeof(AgnCliquePair));
-  pair->region.seqid = (char *)seqid;
-  pair->region.range = *locus_range;
-  pair->refr_clique = refr_clique;
-  pair->pred_clique = pred_clique;
+  AgnCliquePair *pair = (AgnCliquePair *)gt_malloc( sizeof(AgnCliquePair) );
+  pair->refr_clique = gt_genome_node_ref(refr);
+  pair->pred_clique = gt_genome_node_ref(pred);
 
   agn_comparison_init(&pair->stats);
-  double perc = 1.0 / (double)gt_range_length(locus_range);
-  pair->stats.tolerance = 1.0;
-  while(pair->stats.tolerance > perc)
-    pair->stats.tolerance /= 10;
+  double perc = 1.0 / (double)gt_genome_node_get_length(refr);
+  pair->tolerance = 1.0;
+  while(pair->tolerance > perc)
+    pair->tolerance /= 10;
 
-  pair->refr_vector = NULL;
-  pair->pred_vector = NULL;
-
+  clique_pair_comparative_analysis(pair);
   return pair;
-}
-
-void agn_clique_pair_record_characteristics(AgnCliquePair *pair,
-                                            AgnCompResultDesc *desc)
-{
-  AgnTranscriptClique *refr = agn_clique_pair_get_refr_clique(pair);
-  AgnTranscriptClique *pred = agn_clique_pair_get_pred_clique(pair);
-
-  desc->transcript_count += 1;
-  desc->total_length += agn_clique_pair_length(pair);
-  desc->refr_cds_length += agn_transcript_clique_cds_length(refr);
-  desc->pred_cds_length += agn_transcript_clique_cds_length(pred);
-  desc->refr_exon_count += agn_transcript_clique_num_exons(refr);
-  desc->pred_exon_count += agn_transcript_clique_num_exons(pred);
 }
 
 bool agn_clique_pair_unit_test(AgnUnitTest *test)
 {
-  GtError *error = gt_error_new();
-  AgnLogger *logger = agn_logger_new();
-  int pullresult;
+  GtQueue *pairs = gt_queue_new();
+  clique_pair_test_data(pairs);
+  agn_assert(gt_queue_size(pairs) == 3);
 
-  const char *refrfile = "data/gff3/grape-refr.gff3";
-  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &refrfile);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
-  GtNodeStream *cgstream = agn_canon_gene_stream_new(gff3in, logger);
-  GtArray *refrfeats = gt_array_new( sizeof(GtFeatureNode *) );
-  GtNodeStream *arraystream = gt_array_out_stream_new(cgstream,refrfeats,error);
-  pullresult = gt_node_stream_pull(arraystream, error);
-  if(pullresult == -1)
-  {
-    agn_logger_log_error(logger, "error processing refr node stream: %s",
-                         gt_error_get(error));
-  }
-  gt_node_stream_delete(gff3in);
-  gt_node_stream_delete(cgstream);
-  gt_node_stream_delete(arraystream);
-  gt_array_sort(refrfeats, (GtCompare)agn_gt_genome_node_compare);
+  AgnCliquePair *pair = gt_queue_get(pairs);
+  AgnCompClassification result = agn_clique_pair_classify(pair);
+  bool simplecheck = (result == AGN_COMP_CLASS_PERFECT_MATCH);
+  agn_unit_test_result(test, "perfect match vs. self", simplecheck);
+  agn_clique_pair_delete(pair);
 
-  const char *predfile = "data/gff3/grape-pred.gff3";
-  gff3in = gt_gff3_in_stream_new_unsorted(1, &predfile);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
-  cgstream = agn_canon_gene_stream_new(gff3in, logger);
-  GtArray *predfeats = gt_array_new( sizeof(GtFeatureNode *) );
-  arraystream = gt_array_out_stream_new(cgstream, predfeats, error);
-  pullresult = gt_node_stream_pull(arraystream, error);
-  if(pullresult == -1)
-  {
-    agn_logger_log_error(logger, "error processing refr node stream: %s",
-                         gt_error_get(error));
-  }
-  gt_node_stream_delete(gff3in);
-  gt_node_stream_delete(cgstream);
-  gt_node_stream_delete(arraystream);
-  gt_array_sort(predfeats, (GtCompare)agn_gt_genome_node_compare);
+  pair = gt_queue_get(pairs);
+  result = agn_clique_pair_classify(pair);
+  bool cdscheck = result == (AGN_COMP_CLASS_CDS_MATCH);
+  agn_unit_test_result(test, "CDS match", cdscheck);
+  agn_clique_pair_delete(pair);
 
-  bool genenumpass = (gt_array_size(refrfeats) == 12 &&
-                      gt_array_size(predfeats) == 13);
-  agn_unit_test_result(test, "parse grape example", genenumpass);
+  pair = gt_queue_get(pairs);
+  result = agn_clique_pair_classify(pair);
+  bool nomatchcheck = result == (AGN_COMP_CLASS_NON_MATCH);
+  agn_unit_test_result(test, "non-match", nomatchcheck);
+  agn_clique_pair_delete(pair);
 
-  GtFeatureNode **r2 = gt_array_get(refrfeats, 0);
-  GtFeatureNode **p1 = gt_array_get(predfeats, 0);
-  GtFeatureNode **p2 = gt_array_get(predfeats, 1);
-  AgnTranscriptClique *tcr1 = agn_transcript_clique_new();
-  AgnTranscriptClique *tcr2 = agn_transcript_clique_new();
-  AgnTranscriptClique *tcp1 = agn_transcript_clique_new();
-  AgnTranscriptClique *tcp2 = agn_transcript_clique_new();
-  agn_transcript_clique_add(tcr2, *r2);
-  agn_transcript_clique_add(tcp1, *p1);
-  agn_transcript_clique_add(tcp2, *p2);
-  GtRange lr1 = {72, 5081};
-  GtRange lr2 = {10503, 11678};
-  AgnCliquePair *pair1 = agn_clique_pair_new("chr8", tcr1, tcp1, &lr1);
-  AgnCliquePair *pair2 = agn_clique_pair_new("chr8", tcr2, tcp2, &lr2);
-
-  bool issimplepass = (!agn_clique_pair_is_simple(pair1) &&
-                       agn_clique_pair_is_simple(pair2));
-  agn_unit_test_result(test, "simple clique pair", issimplepass);
-  bool needscomppass = (!agn_clique_pair_needs_comparison(pair1) &&
-                        agn_clique_pair_needs_comparison(pair2));
-  agn_unit_test_result(test, "comparison test", needscomppass);
-  bool hasutrspass = (!agn_clique_pair_has_utrs(pair1) &&
-                      agn_clique_pair_has_utrs(pair2));
-  agn_unit_test_result(test, "UTR test", hasutrspass);
-
-  agn_clique_pair_build_model_vectors(pair1);
-  agn_clique_pair_build_model_vectors(pair2);
-  const char *v1 = "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTTTTTT"
-"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-"FFFFFFFFFFFFFFFFFFFFFFFFF";
-  const char *v2 = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-"IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-"IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-"IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-"IIIIIIIIIIIIIIIIIIIIIIIIIIICCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIII"
-"IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIICCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-"CCGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
-"GGGGGGGGGGGGGGGGGGGGGGGGG";
-  const char *mv1test = agn_clique_pair_get_pred_vector(pair2);
-  const char *mv2test = agn_clique_pair_get_refr_vector(pair2);
-  bool modelvectorpass = strcmp(v1, mv1test) == 0 && strcmp(v2, mv2test) == 0;
-  agn_unit_test_result(test, "model vectors", modelvectorpass);
-
-  agn_clique_pair_delete(pair1);
-  agn_clique_pair_delete(pair2);
-  agn_transcript_clique_delete(tcr1);
-  agn_transcript_clique_delete(tcr2);
-  agn_transcript_clique_delete(tcp1);
-  agn_transcript_clique_delete(tcp2);
-
-  GtFeatureNode **r3 = gt_array_get(refrfeats, 2);
-  GtFeatureNode **p3 = gt_array_get(predfeats, 3);
-  AgnTranscriptClique *tcr3 = agn_transcript_clique_new();
-  AgnTranscriptClique *tcp3 = agn_transcript_clique_new();
-  agn_transcript_clique_add(tcr3, *r3);
-  agn_transcript_clique_add(tcp3, *p3);
-  GtRange lr3 = {26493, 29602};
-  AgnCliquePair *pair3 = agn_clique_pair_new("chr8", tcr3, tcp3, &lr3);
-  agn_clique_pair_build_model_vectors(pair3);
-  agn_clique_pair_comparative_analysis(pair3);
-  bool companalypass = agn_clique_pair_classify(pair3) ==
-                       AGN_CLIQUE_PAIR_CDS_MATCH;
-  agn_unit_test_result(test, "analysis and classification", companalypass);
-  agn_clique_pair_delete(pair3);
-  agn_transcript_clique_delete(tcr3);
-  agn_transcript_clique_delete(tcp3);
-
-  while(gt_array_size(refrfeats) > 0)
-  {
-    GtGenomeNode **gn = gt_array_pop(refrfeats);
-    gt_genome_node_delete(*gn);
-  }
-  gt_array_delete(refrfeats);
-  while(gt_array_size(predfeats) > 0)
-  {
-    GtGenomeNode **gn = gt_array_pop(predfeats);
-    gt_genome_node_delete(*gn);
-  }
-  gt_array_delete(predfeats);
-
-  gt_error_delete(error);
-  agn_logger_delete(logger);
-  return true;
-}
-
-static void clique_pair_add_transcript_to_vector(GtFeatureNode *transcript,
-                                                 void *data)
-{
-  ModelVectorData *mvd = data;
-  GtFeatureNode *fn;
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);
-  for(fn = gt_feature_node_iterator_next(iter);
-      fn != NULL;
-      fn = gt_feature_node_iterator_next(iter))
-  {
-    char c;
-    if(agn_gt_feature_node_is_cds_feature(fn))
-      c = 'C';
-    else if(agn_gt_feature_node_is_utr_feature(fn))
-    {
-      gt_assert(gt_feature_node_has_type(fn, "five_prime_UTR") ||
-                gt_feature_node_has_type(fn, "three_prime_UTR"));
-      if(gt_feature_node_has_type(fn, "five_prime_UTR"))
-        c = 'F';
-      else
-        c = 'T';
-    }
-    else if(agn_gt_feature_node_is_intron_feature(fn))
-      c = 'I';
-    else
-      c = 'G';
-
-    if(c != 'G')
-    {
-      GtUword fn_start = gt_genome_node_get_start((GtGenomeNode *)fn);
-      GtUword fn_end = gt_genome_node_get_end((GtGenomeNode *)fn);
-      GtUword i;
-
-      for(i = fn_start - mvd->locusrange->start;
-          i < fn_end - mvd->locusrange->start + 1;
-          i++)
-      {
-        mvd->modelvector[i] = c;
-      }
-    }
-  }
-  gt_feature_node_iterator_delete(iter);
+  gt_queue_delete(pairs);
+  return agn_unit_test_success(test);
 }
 
 static void clique_pair_calc_struct_stats(StructuralData *dat)
 {
   GtUword num_refr = gt_array_size(dat->refrstarts);
   GtUword num_pred = gt_array_size(dat->predstarts);
-  gt_assert(num_refr == gt_array_size(dat->refrends));
-  gt_assert(num_pred == gt_array_size(dat->predends));
+  agn_assert(num_refr == gt_array_size(dat->refrends));
+  agn_assert(num_pred == gt_array_size(dat->predends));
   GtUword i, j;
   for(i = 0; i < num_refr; i++)
   {
@@ -672,6 +327,117 @@ static void clique_pair_calc_struct_stats(StructuralData *dat)
   clique_pair_term_struct_dat(dat);
 }
 
+static void clique_pair_comparative_analysis(AgnCliquePair *pair)
+{
+  GtUword locus_length = gt_genome_node_get_length(pair->refr_clique);
+  char *refr_vector = gt_genome_node_get_user_data(pair->refr_clique,
+                                                   "modelvector");
+  char *pred_vector = gt_genome_node_get_user_data(pair->pred_clique,
+                                                   "modelvector");
+  agn_assert(
+      strlen(refr_vector) == gt_genome_node_get_length(pair->refr_clique) &&
+      strlen(pred_vector) == gt_genome_node_get_length(pair->refr_clique)
+  );
+  pair->stats.overall_length = locus_length;
+
+  StructuralData cdsstruct;
+  clique_pair_init_struct_dat(&cdsstruct, &pair->stats.cds_struc_stats);
+  StructuralData exonstruct;
+  clique_pair_init_struct_dat(&exonstruct, &pair->stats.exon_struc_stats);
+  StructuralData utrstruct;
+  clique_pair_init_struct_dat(&utrstruct, &pair->stats.utr_struc_stats);
+
+  // Collect counts
+  GtUword i;
+  for(i = 0; i < locus_length; i++)
+  {
+    // Coding nucleotide counts
+    if(refr_vector[i] == 'C' && pred_vector[i] == 'C')
+      pair->stats.cds_nuc_stats.tp++;
+    else if(refr_vector[i] == 'C' && pred_vector[i] != 'C')
+      pair->stats.cds_nuc_stats.fn++;
+    else if(refr_vector[i] != 'C' && pred_vector[i] == 'C')
+      pair->stats.cds_nuc_stats.fp++;
+    else if(refr_vector[i] != 'C' && pred_vector[i] != 'C')
+      pair->stats.cds_nuc_stats.tn++;
+
+    // UTR nucleotide counts
+    bool refr_utr = char_is_utric(refr_vector[i]);
+    bool pred_utr = char_is_utric(pred_vector[i]);
+    if(refr_utr && pred_utr)        pair->stats.utr_nuc_stats.tp++;
+    else if(refr_utr && !pred_utr)  pair->stats.utr_nuc_stats.fn++;
+    else if(!refr_utr && pred_utr)  pair->stats.utr_nuc_stats.fp++;
+    else if(!refr_utr && !pred_utr) pair->stats.utr_nuc_stats.tn++;
+
+    // Overall matches
+    if(refr_vector[i] == pred_vector[i])
+      pair->stats.overall_matches++;
+
+    // CDS structure counts
+    if(refr_vector[i] == 'C')
+    {
+      if(i == 0 || refr_vector[i-1] != 'C')
+        gt_array_add(cdsstruct.refrstarts, i);
+
+      if(i == locus_length - 1 || refr_vector[i+1] != 'C')
+        gt_array_add(cdsstruct.refrends, i);
+    }
+    if(pred_vector[i] == 'C')
+    {
+      if(i == 0 || pred_vector[i-1] != 'C')
+        gt_array_add(cdsstruct.predstarts, i);
+
+      if(i == locus_length - 1 || pred_vector[i+1] != 'C')
+        gt_array_add(cdsstruct.predends, i);
+    }
+
+    // Exon structure counts
+    if(char_is_exonic(refr_vector[i]))
+    {
+      if(i == 0 || !char_is_exonic(refr_vector[i-1]))
+        gt_array_add(exonstruct.refrstarts, i);
+
+      if(i == locus_length - 1 || !char_is_exonic(refr_vector[i+1]))
+        gt_array_add(exonstruct.refrends, i);
+    }
+    if(char_is_exonic(pred_vector[i]))
+    {
+      if(i == 0 || !char_is_exonic(pred_vector[i-1]))
+        gt_array_add(exonstruct.predstarts, i);
+
+      if(i == locus_length - 1 || !char_is_exonic(pred_vector[i+1]))
+        gt_array_add(exonstruct.predends, i);
+    }
+
+    // UTR structure counts
+    if(char_is_utric(refr_vector[i]))
+    {
+      if(i == 0 || !char_is_utric(refr_vector[i-1]))
+        gt_array_add(utrstruct.refrstarts, i);
+
+      if(i == locus_length - 1 || !char_is_utric(refr_vector[i+1]))
+        gt_array_add(utrstruct.refrends, i);
+    }
+    if(char_is_utric(pred_vector[i]))
+    {
+      if(i == 0 || !char_is_utric(pred_vector[i-1]))
+        gt_array_add(utrstruct.predstarts, i);
+
+      if(i == locus_length - 1 || !char_is_utric(pred_vector[i+1]))
+        gt_array_add(utrstruct.predends, i);
+    }
+  }
+
+  // Calculate nucleotide-level statistics from counts
+  agn_comp_stats_scaled_resolve(&pair->stats.cds_nuc_stats);
+  agn_comp_stats_scaled_resolve(&pair->stats.utr_nuc_stats);
+
+  // Calculate statistics for structure from counts
+  clique_pair_calc_struct_stats(&cdsstruct);
+  clique_pair_calc_struct_stats(&exonstruct);
+  clique_pair_calc_struct_stats(&utrstruct);
+}
+
 static void clique_pair_init_struct_dat(StructuralData *dat,
                                         AgnCompStatsBinary *stats)
 {
@@ -688,4 +454,97 @@ static void clique_pair_term_struct_dat(StructuralData *dat)
   gt_array_delete(dat->refrends);
   gt_array_delete(dat->predstarts);
   gt_array_delete(dat->predends);
+}
+
+static void clique_pair_test_data(GtQueue *queue)
+{
+  agn_assert(queue != NULL);
+  GtArray *refrfeats, *predfeats;
+
+  GtError *error = gt_error_new();
+  const char *refrfile = "data/gff3/grape-refr-mrnas.gff3";
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &refrfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  refrfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *arraystream = gt_array_out_stream_new(gff3in, refrfeats, error);
+  int pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
+            "reference features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(refrfeats, (GtCompare)agn_genome_node_compare);
+
+  const char *predfile = "data/gff3/grape-pred-mrnas.gff3";
+  gff3in = gt_gff3_in_stream_new_unsorted(1, &predfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
+  predfeats = gt_array_new( sizeof(GtFeatureNode *) );
+  arraystream = gt_array_out_stream_new(gff3in, predfeats, error);
+  pullresult = gt_node_stream_pull(arraystream, error);
+  if(pullresult == -1)
+  {
+    fprintf(stderr, "[AgnCliquePair::clique_pair_test_data] error processing "
+            "prediction features: %s\n", gt_error_get(error));
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(arraystream);
+  gt_array_sort(predfeats, (GtCompare)agn_genome_node_compare);
+
+  agn_assert(gt_array_size(refrfeats) == 12 && gt_array_size(predfeats) == 13);
+
+  GtRange range = { 26493, 29591 };
+  GtStr *seqid = gt_str_new_cstr("chr8");
+  AgnSequenceRegion region = { seqid, range };
+  GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
+  AgnTranscriptClique *refrclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(refrclique, pred);
+  AgnTranscriptClique *predclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(predclique, pred);
+  AgnCliquePair *pair = agn_clique_pair_new(refrclique, predclique);
+  gt_queue_add(queue, pair);
+  gt_genome_node_delete((GtGenomeNode *)refrclique);
+  gt_genome_node_delete((GtGenomeNode *)predclique);
+
+  region.range.end = 29602;
+  GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
+  refrclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(refrclique, refr);
+  predclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(predclique, pred);
+  pair = agn_clique_pair_new(refrclique, predclique);
+  gt_queue_add(queue, pair);
+  gt_genome_node_delete((GtGenomeNode *)refrclique);
+  gt_genome_node_delete((GtGenomeNode *)predclique);
+
+  region.range.start = 55535;
+  region.range.end = 61916;
+  refr = *(GtFeatureNode **)gt_array_get(refrfeats, 7);
+  refrclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(refrclique, refr);
+  pred = *(GtFeatureNode **)gt_array_get(predfeats, 9);
+  predclique = agn_transcript_clique_new(&region);
+  agn_transcript_clique_add(predclique, pred);
+  pair = agn_clique_pair_new(refrclique, predclique);
+  gt_queue_add(queue, pair);
+  gt_genome_node_delete((GtGenomeNode *)refrclique);
+  gt_genome_node_delete((GtGenomeNode *)predclique);
+
+  gt_str_delete(seqid);
+  while(gt_array_size(refrfeats) > 0)
+  {
+    GtGenomeNode **gn = gt_array_pop(refrfeats);
+    gt_genome_node_delete(*gn);
+  }
+  gt_array_delete(refrfeats);
+  while(gt_array_size(predfeats) > 0)
+  {
+    GtGenomeNode **gn = gt_array_pop(predfeats);
+    gt_genome_node_delete(*gn);
+  }
+  gt_array_delete(predfeats);
+  gt_error_delete(error);
 }

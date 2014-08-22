@@ -6,41 +6,20 @@ types implemented by the GenomeTools library. For data types beginning with
 ``Gt``, see the GenomeTools API documentation at
 http://genometools.org/libgenometools.html.
 
-Class AgnCanonGeneStream
-------------------------
-
-.. c:type:: AgnCanonGeneStream
-
-  Implements the GenomeTools ``GtNodeStream`` interfact. This is a node stream that returns only canonical protein-coding genes that pass stringent validation. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCanonGeneStream.h>`_.
-
-.. c:function:: GtNodeStream* agn_canon_gene_stream_new(GtNodeStream *in_stream, AgnLogger *logger)
-
-  Class constructor.
-
 Class AgnCliquePair
 -------------------
 
 .. c:type:: AgnCliquePair
 
-  The purpose of the AgnCliquePair class is to associate all of the data needed to compare transcripts from two alternative sources of annotation for the same sequence. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCliquePair.h>`_.
+  The AgnCliquePair class facilitates comparison of two alternative sources of annotation for the same sequence. See the `AgnCliquePair class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCliquePair.h>`_.
 
-.. c:type:: AgnCliquePairClassification
+.. c:function:: AgnCompClassification agn_clique_pair_classify(AgnCliquePair *pair)
 
-  This enumerated type refers to all the possible outcomes when transcript cliques from two different sources are compared: ``AGN_CLIQUE_PAIR_UNCLASSIFIED``, ``AGN_CLIQUE_PAIR_PERFECT_MATCH``, ``AGN_CLIQUE_PAIR_MISLABELED``, ``AGN_CLIQUE_PAIR_CDS_MATCH``, ``AGN_CLIQUE_PAIR_EXON_MATCH``, ``AGN_CLIQUE_PAIR_UTR_MATCH``, and ``AGN_CLIQUE_PAIR_NON_MATCH``.
+  Based on the already-computed comparison statistics, classify this clique pair as a perfect match, a CDS match, etc. See :c:type:`AgnCompClassification`.
 
+.. c:function:: void agn_clique_pair_comparison_aggregate(AgnCliquePair *pair, AgnComparison *comp)
 
-
-.. c:function:: void agn_clique_pair_build_model_vectors(AgnCliquePair *pair)
-
-  Build a pair of model vectors to represent this pair of maximal transcripts or transcript cliques.
-
-.. c:function:: AgnCliquePairClassification agn_clique_pair_classify(AgnCliquePair *pair)
-
-  Based on the already-computed comparison statistics, classify this clique pair as a perfect match, a CDS match, etc. See :c:type:`AgnCliquePairClassification`.
-
-.. c:function:: void agn_clique_pair_comparative_analysis(AgnCliquePair *pair)
-
-  Compare the annotations for this pair, reference vs prediction.
+  Add this clique pair's internal comparison stats to a larger set of aggregate stats.
 
 .. c:function:: int agn_clique_pair_compare(void *p1, void *p2)
 
@@ -58,192 +37,325 @@ Class AgnCliquePair
 
   Class destructor.
 
-.. c:function:: double agn_clique_pair_get_edit_distance(AgnCliquePair *pair)
-
-  Return the calculated annotation edit distance between this pair of transcripts or transcript cliques.
-
 .. c:function:: AgnTranscriptClique *agn_clique_pair_get_pred_clique(AgnCliquePair *pair)
 
-  Return a pointer to this pair's prediction transcript or transcript clique.
-
-.. c:function:: const char *agn_clique_pair_get_pred_vector(AgnCliquePair *pair)
-
-  Get the model vector associated with this pair's prediction transcript clique.
+  Return a pointer to the prediction annotation from this pair.
 
 .. c:function:: AgnTranscriptClique *agn_clique_pair_get_refr_clique(AgnCliquePair *pair)
 
-  Return a pointer to this pair's reference transcript or transcript clique.
-
-.. c:function:: const char *agn_clique_pair_get_refr_vector(AgnCliquePair *pair)
-
-  Get the model vector associated with this pair's reference transcript clique.
+  Return a pointer to the reference annotation from this pair.
 
 .. c:function:: AgnComparison *agn_clique_pair_get_stats(AgnCliquePair *pair)
 
-  Return a pointer to this clique pair's comparison statistics.
+  Return a pointer to this clique pairs comparison statistics.
 
-.. c:function:: bool agn_clique_pair_has_utrs(AgnCliquePair *pair)
-
-  Determine whether there are UTRs in this clique pair
-
-.. c:function:: bool agn_clique_pair_is_simple(AgnCliquePair *pair)
-
-  Does this clique pair contain a single reference transcript and a single prediction transcript?
-
-.. c:function:: GtUword agn_clique_pair_length(AgnCliquePair *pair)
-
-  Get the length of the locus to which this clique pair belongs.
-
-.. c:function:: bool agn_clique_pair_needs_comparison(AgnCliquePair *pair)
-
-  Determine whether this clique pair needs comparison (i.e., whether there are both reference and prediction transcripts).
-
-.. c:function:: AgnCliquePair* agn_clique_pair_new(const char *seqid, AgnTranscriptClique *refr_clique, AgnTranscriptClique *pred_clique, GtRange *locus_range)
+.. c:function:: AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr, AgnTranscriptClique *pred)
 
   Class constructor.
-
-.. c:function:: void agn_clique_pair_record_characteristics(AgnCliquePair *pair, AgnCompResultDesc *desc)
-
-  Add information about a clique pair to a set of aggregate characteristics.
 
 .. c:function:: bool agn_clique_pair_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Module AgnComparEval
+Class AgnCompareReportHTML
+--------------------------
+
+.. c:type:: AgnCompareReportHTML
+
+  The ``AgnCompareReportHTML`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `AgnCompareReportHTML class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportHTML.h>`_.
+
+.. c:type:: typedef void (*AgnCompareReportHTMLOverviewFunc)(FILE *outstream, void *data)
+
+  By default, the ParsEval summary report includes an overview with the start time, filenames, and command-line arguments. Users can override this behavior by specifying a callback function that follows this signature.
+
+.. c:function:: void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
+
+  After the node stream has been processed, call this function to write a summary of all locus comparisons to the output directory.
+
+.. c:function:: GtNodeVisitor *agn_compare_report_html_new(const char *outdir, AgnLocusPngMetadata *pngdata, GtLogger *logger)
+
+  Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written in ``outdir`` and status messages will be written to the logger.
+
+.. c:function:: void agn_compare_report_html_reset_summary_title(AgnCompareReportHTML *rpt, GtStr *title_string)
+
+  By default, the summary report's title will be 'ParsEval Summary'. Use this function to replace the title text.
+
+.. c:function:: void agn_compare_report_html_set_overview_func(AgnCompareReportHTML *rpt, AgnCompareReportHTMLOverviewFunc func, void *funcdata)
+
+  Specify a callback function to be used when printing an overview on the summary report.
+
+Class AgnCompareReportText
+--------------------------
+
+.. c:type:: AgnCompareReportText
+
+  The ``AgnCompareReportText`` class is an extension of the ``AgnCompareReport`` class. This node visitor relies on its parent class to process a stream of ``AgnLocus`` objects (containing two alternative sources of annotation to be compared) and then produces textual reports of the comparison statistics. See the `AgnCompareReportText class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnCompareReportText.h>`_.
+
+.. c:function:: void agn_compare_report_text_create_summary(AgnCompareReportText *rpt, FILE *outstream)
+
+  After the node stream has been processed, call this function to write a summary of all locus comparisons to ``outstream``.
+
+.. c:function:: GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
+
+  Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written to ``outstream`` and status messages will be written to the logger.
+
+Module AgnComparison
 --------------------
 
-A collection of data structures and functions for comparative evaluation of annotations. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnComparEval.h>`_.
-
-.. c:type:: AgnCompStatsScaled
-
-  This struct is used to aggregate counts and statistics regarding the nucleotide-level comparison and analysis of gene structure.
-
-
+Data structures and functions related to comparative assessment of gene/transcript annotations. See the `AgnComparison module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnComparison.h>`_.
 
 .. c:type:: AgnCompStatsBinary
 
-  This struct is used to aggregate counts and statistics regarding the structural-level comparison (i.e., at the level of whole CDS segments, whole exons, and whole UTRs) and analysis of gene structure.
+  This struct is used to aggregate counts and statistics regarding the structural-level comparison (i.e., at the level of whole CDS segments, whole exons, and whole UTRs) and analysis of gene structure. See header file for details.
 
 
 
-.. c:type:: AgnCompSummary
+.. c:type:: AgnCompStatsScaled
 
-  This struct contains various counts to be reported in the summary report.
+  This struct is used to aggregate counts and statistics regarding the nucleotide-level comparison and analysis of gene structure. See header file for details.
 
 
 
 .. c:type:: AgnComparison
 
-  This struct aggregates all the counts and stats that go into a comparison, including structural-level and nucleotide-level counts and stats.
+  This struct aggregates all the counts and stats that go into a comparison, including structural-level and nucleotide-level counts and stats. See header file for details.
 
 
 
-.. c:type:: AgnCompResultDesc
+.. c:type:: AgnCompClassification
 
-  Each transcript clique pair that is compared is classified as one of the following: perfect match; perfect match with mislabeled UTRs; CDS match; exon structure match; UTR structure match; non-match. When reporting the results of a comparative analysis, it may be useful to (as is done by ParsEval) show some basic information about clique pairs that fall under each classification category. The counts in this struct are necessary to calculate those summary characteristics.
-
-
-
-.. c:type:: AgnCompResultSummary
-
-  This struct is used to aggregate characteristics for all of the classification categories.
+  This enumerated type refers to all the possible outcomes when annotations from two different sources are compared: ``AGN_COMP_CLASS_UNCLASSIFIED``, ``AGN_COMP_CLASS_PERFECT_MATCH``, ``AGN_COMP_CLASS_MISLABELED``, ``AGN_COMP_CLASS_CDS_MATCH``, ``AGN_COMP_CLASS_EXON_MATCH``, ``AGN_COMP_CLASS_UTR_MATCH``, and ``AGN_COMP_CLASS_NON_MATCH``.
 
 
 
-.. c:type:: AgnCompEvaluation
+.. c:type:: AgnCompInfo
 
-  This struct provides a convenient way to manage the counts, stats, and results corresponding to one or more comparisons.
-
-
-
-.. c:type:: AgnCompareFilters
-
-  This struct contains a list of filters to be used in determining which loci should be included/excluded in a comparative analysis.
+  This struct contains various counts to be reported in the summary report.
 
 
 
-.. c:function:: void agn_comp_evaluation_combine(AgnCompEvaluation *data, AgnCompEvaluation *data_to_add)
+.. c:type:: AgnCompClassDesc
 
-  Take values from one data set and add them to the other.
+  When reporting the results of a comparative analysis, it may be useful to (as is done by ParsEval) show some basic information about clique pairs that fall under each classification category. The counts in this struct are necessary to calculate those summary characteristics.
 
-.. c:function:: void agn_comp_evaluation_init(AgnCompEvaluation *data)
 
-  Initialize to default values.
 
-.. c:function:: void agn_comp_result_summary_combine(AgnCompResultSummary *desc, AgnCompResultSummary *desc_to_add)
+.. c:type:: AgnCompClassSummary
 
-  Take values from one description and add them to the other.
+  This struct is used to aggregate descriptions for all of the classification categories.
 
-.. c:function:: void agn_comp_result_summary_init(AgnCompResultSummary *desc)
 
-  Initialize to default values.
 
-.. c:function:: void agn_comp_result_desc_combine(AgnCompResultDesc *desc, AgnCompResultDesc *desc_to_add)
+.. c:type:: AgnComparisonData
 
-  Take the counts from one description and add them to a larger aggregate set of counts.
+  Aggregate various data related to comparison of annotations.
 
-.. c:function:: void agn_comp_result_desc_init(AgnCompResultDesc *desc)
 
-  Initialize characteristics to default values.
 
-.. c:function:: void agn_comp_summary_combine(AgnCompSummary *s1, AgnCompSummary *s2)
+.. c:function:: void agn_comparison_aggregate(AgnComparison *agg_cmp, AgnComparison *cmp)
 
-  Take one set of values and add them to the other.
+  Function used to combine similarity stats from many different comparisons into a single aggregate summary.
 
-.. c:function:: void agn_comp_summary_init(AgnCompSummary *summary)
+.. c:function:: void agn_comparison_data_aggregate(AgnComparisonData *agg_data, AgnComparisonData *data)
 
-  Initialize to default values.
+  Add counts and stats from ``data`` to ``agg_data``.
 
-.. c:function:: void agn_comparison_combine(AgnComparison *c1, AgnComparison *c2)
+.. c:function:: void agn_comparison_data_init(AgnComparisonData *data)
 
-  Take stats from one comparison and add them to the other.
+  Initialize counts and stats to default values.
 
 .. c:function:: void agn_comparison_init(AgnComparison *comparison)
 
   Initialize comparison stats to default values.
 
-.. c:function:: void agn_compare_filters_init(AgnCompareFilters *filters)
+.. c:function:: void agn_comparison_print(AgnComparison *stats, FILE *outstream)
 
-  Initialize filters to default values.
+  Print the comparison stats to the given file.
 
-.. c:function:: void agn_compare_filters_parse(AgnCompareFilters *filters, FILE *instream, AgnLogger *logger)
+.. c:function:: void agn_comparison_resolve(AgnComparison *comparison)
 
-  Parse the filter configuration file (from ``instream``) to set the filters appropriately.
+  Calculate stats from the given counts.
+
+.. c:function:: bool agn_comparison_test(AgnComparison *c1, AgnComparison *c2)
+
+  Returns true if c1 and c2 contain identical values, false otherwise.
+
+.. c:function:: void agn_comp_class_desc_aggregate(AgnCompClassDesc *agg_desc, AgnCompClassDesc *desc)
+
+  Add values from ``desc`` to ``agg_desc``.
+
+.. c:function:: void agn_comp_class_desc_init(AgnCompClassDesc *desc)
+
+  Initialize to default values.
+
+.. c:function:: void agn_comp_class_summary_aggregate(AgnCompClassSummary *agg_summ, AgnCompClassSummary *summ)
+
+  Add values from ``summ`` to ``agg_summ``.
+
+.. c:function:: void agn_comp_class_summary_init(AgnCompClassSummary *summ)
+
+  Initialize to default values.
+
+.. c:function:: void agn_comp_info_aggregate(AgnCompInfo *agg_info, AgnCompInfo *info)
+
+  Add values from ``info`` to ``agg_info``.
+
+.. c:function:: void agn_comp_info_init(AgnCompInfo *info)
+
+  Initialize to default values.
+
+.. c:function:: void agn_comp_stats_binary_aggregate(AgnCompStatsBinary *agg_stats, AgnCompStatsBinary *stats)
+
+  Function used to combine similarity stats from many different comparisons into a single aggregate summary.
 
 .. c:function:: void agn_comp_stats_binary_init(AgnCompStatsBinary *stats)
 
   Initialize comparison counts/stats to default values.
 
+.. c:function:: void agn_comp_stats_binary_print(AgnCompStatsBinary *stats, FILE *outstream)
+
+  Print the comparison stats to the given file.
+
 .. c:function:: void agn_comp_stats_binary_resolve(AgnCompStatsBinary *stats)
 
   Calculate stats from the given counts.
+
+.. c:function:: bool agn_comp_stats_binary_test(AgnCompStatsBinary *s1, AgnCompStatsBinary *s2)
+
+  Returns true if s1 and s2 contain identical values, false otherwise.
+
+.. c:function:: void agn_comp_stats_scaled_aggregate(AgnCompStatsScaled *agg_stats, AgnCompStatsScaled *stats)
+
+  Function used to combine similarity stats from many different comparisons into a single aggregate summary.
 
 .. c:function:: void agn_comp_stats_scaled_init(AgnCompStatsScaled *stats)
 
   Initialize comparison counts/stats to default values.
 
+.. c:function:: void agn_comp_stats_scaled_print(AgnCompStatsScaled *stats, FILE *outstream)
+
+  Print the comparison stats to the given file.
+
 .. c:function:: void agn_comp_stats_scaled_resolve(AgnCompStatsScaled *stats)
 
   Calculate stats from the given counts.
+
+.. c:function:: bool agn_comp_stats_scaled_test(AgnCompStatsScaled *s1, AgnCompStatsScaled *s2)
+
+  Returns true if s1 and s2 contain identical values, false otherwise.
 
 Class AgnFilterStream
 ---------------------
 
 .. c:type:: AgnFilterStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
 
   Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
 
-Class AgnGeneLocus
-------------------
+.. c:function:: bool agn_filter_stream_unit_test(AgnUnitTest *test)
 
-.. c:type:: AgnGeneLocus
+  Run unit tests for this class. Returns true if all tests passed.
 
-  The purpose of the AgnGeneLocus class is to store all of the data associated with a distinct locus, in many cases to facilitate the comparison of two sets of gene structure annotations for that locus. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGeneLocus.h>`_.
+Class AgnGeneStream
+-------------------
+
+.. c:type:: AgnGeneStream
+
+  Implements the ``GtNodeStream`` interface. Searches the complete feature graph of each feature node in the input for canonical protein-coding gene features. Some basic sanity checks are performed on the mRNA(s) associated with each gene, and genes are only delivered to the output stream if they include one or more valid mRNA subfeatures. See the `AgnGeneStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGeneStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
+
+  Class constructor.
+
+.. c:function:: bool agn_gene_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnInferCDSVisitor
+------------------------
+
+.. c:type:: AgnInferCDSVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `AgnInferCDSVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_infer_cds_visitor_new(GtLogger *logger)
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnInferExonsVisitor
+--------------------------
+
+.. c:type:: AgnInferExonsVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly.  See the `AgnInferExonsVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor* agn_infer_exons_visitor_new(GtLogger *logger)
+
+  Class constructor for the node visitor.
+
+.. c:function:: bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class.
+
+Class AgnInferParentStream
+--------------------------
+
+.. c:type:: AgnInferParentStream
+
+  Implements the GenomeTools ``GtNodeStream`` interface. This node stream creates new features as parents for the specified types. For example, if ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as the value, this node stream will create a ``gene`` feature for any ``tRNA`` feature that lacks a gene parent. See the `AgnInferParentStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream, GtHashmap *type_parents)
+
+  Class constructor. The hashmap contains a list of key-value pairs, both strings. Any time the stream encounters a top-level (parentless) feature whose type is a key in the hashmap, a parent will be created for this feature of the type associated with the key.
+
+.. c:function:: bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnIntervalLocusStream
+----------------------------
+
+.. c:type:: AgnIntervalLocusStream
+
+  Implements the ``GtNodeStream`` interface. Input is a stream of gene/transcript loci and output is a stream of interval loci. See online docs for more information about interval loci (iLoci). See the `AgnIntervalLocusStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnIntervalLocusStream.h>`_.
+
+.. c:function:: GtNodeStream *agn_interval_locus_stream_new(GtNodeStream *locus_stream, GtUword delta, int endmode, GtLogger *logger)
+
+  Class constructor. The delta parameter specifies how far beyond each transcript the iLocus boundaries should extend, and the minimum length of an iLocus containing no transcripts. If ``endmode == 0``, all iLoci will be included in the output; if ``endmode < 0``, terminal iLoci will not be included in the output; and if ``endmode > 0``, then only terminal iLoci will be included in the output. See the online docs for a complete description of iLoci.
+
+.. c:function:: void agn_interval_locus_stream_set_idformat(AgnIntervalLocusStream *stream, const char *format)
+
+  iLoci created by this stream are assigned an ID with an arbitrary number. The default format is 'iLocus%lu' (that is, iLocus1, iLocus2, etc). Use this function to override the default ID format.
+
+.. c:function:: void agn_interval_locus_stream_set_source(AgnIntervalLocusStream *stream, GtStr *source)
+
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnIntervalLocusStream'.
+
+.. c:function:: bool agn_interval_locus_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnLocus
+--------------
+
+.. c:type:: AgnLocus
+
+  The AgnLocus class represents gene loci and interval loci in memory and can be used to facilitate comparison of two different sources of annotation. Under the hood, each ``AgnLocus`` object is a feature node with one or more gene features as direct children. See the `AgnLocus class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocus.h>`_.
 
 .. c:type:: AgnComparisonSource
 
@@ -251,442 +363,267 @@ Class AgnGeneLocus
 
 
 
-.. c:type:: AgnGeneLocusPngMetadata
+.. c:type:: AgnLocusPngMetadata
 
   This data structure provides a convenient container for metadata needed to produce a PNG graphic for pairwise comparison loci.
 
 
 
-.. c:type:: AgnGeneLocusSummary
+.. c:type:: AgnLocusFilterOp
 
-  This data structure provides a summary of the data and comparisons associated with a given locus.
+  Comparison operators to use when filtering loci.
 
 
 
-.. c:function:: void agn_gene_locus_add(AgnGeneLocus *locus, GtFeatureNode *gene, AgnComparisonSource source)
+.. c:type:: AgnLocusFilter
 
-  Associate the given gene annotation with this gene locus. Rather than calling this function directly, users are recommended to use one of the following macros: ``agn_gene_locus_add_pred_gene(locus, gene)`` and ``agn_gene_locus_add_refr_gene(locus, gene)``, to be used when keeping track of an annotation's source is important (i.e. for pairwise comparison); and ``agn_gene_locus_add_gene(locus, gene)`` otherwise.
+  Data by which to filter a locus. If the value returned by ``function`` satisfies the criterion specified by ``testvalue`` and ``operator``, then the locus is to be kept.
 
-.. c:function:: void agn_gene_locus_aggregate_results(AgnGeneLocus *locus, AgnCompEvaluation *eval)
 
-  Add the locus' comparison statistics to a set of aggregate statistics.
 
-.. c:function:: AgnGeneLocus *agn_gene_locus_clone(AgnGeneLocus *locus)
+.. c:function:: void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature, AgnComparisonSource source)
+
+  Associate the given annotation with this locus. Rather than calling this function directly, users are recommended to use one of the following macros: ``agn_locus_add_pred_feature(locus, gene)`` and ``agn_locus_add_refr_feature(locus, gene)``, to be used when keeping track of an annotation's source is important (i.e. for pairwise comparison); and ``agn_locus_add_feature(locus, gene)`` otherwise.
+
+.. c:function:: AgnLocus *agn_locus_clone(AgnLocus *locus)
 
   Do a semi-shallow copy of this data structure--for members whose data types support reference counting, the same pointer is used and the reference is incremented. For the other members a new object is created and populated with the same content.
 
-.. c:function:: int agn_gene_locus_array_compare(const void *p1, const void *p2)
+.. c:function:: GtUword agn_locus_cds_length(AgnLocus *locus, AgnComparisonSource src)
 
-  Analog of ``strcmp`` for comparing AgnGeneLocus objects, used for sorting GtArray objects containing AgnGeneLocus objects.
+  The combined length of all coding sequences associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_refr_cds_length(locus)`` for the combined length of all reference CDSs, ``agn_locus_pred_cds_length(locus)`` for the combined length of all prediction CDSs, and ``agn_locus_get_cds_length(locus)`` for the combined length of all CDSs.
 
-.. c:function:: GtUword agn_gene_locus_cds_length(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  The combined length of all coding sequences associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_refr_cds_length(locus)`` for the combined length of all reference CDSs, ``agn_gene_locus_pred_cds_length(locus)`` for the combined length of all prediction CDSs, and ``agn_gene_locus_get_cds_length(locus)`` for the combined length of all CDSs.
-
-.. c:function:: GtArray *agn_gene_locus_comparative_analysis(AgnGeneLocus *locus)
+.. c:function:: void agn_locus_comparative_analysis(AgnLocus *locus, GtLogger *logger)
 
   Compare every reference transcript clique with every prediction transcript clique. For gene loci with multiple transcript cliques, each comparison is not necessarily reported. Instead, we report the set of clique pairs that provides the optimal pairing of reference and prediction transcripts. If there are more reference transcript cliques than prediction cliques (or vice versa), these unmatched cliques are reported separately.
 
-.. c:function:: void agn_gene_locus_delete(AgnGeneLocus *locus)
+.. c:function:: int agn_locus_array_compare(const void *p1, const void *p2)
+
+  Analog of ``strcmp`` for sorting AgnLocus objects. Loci are first sorted lexicographically by sequence ID, and then spatially by genomic coordinates.
+
+.. c:function:: void agn_locus_comparison_aggregate(AgnLocus *locus, AgnComparison *comp)
+
+  Add this locus' internal comparison stats to a larger set of aggregate stats.
+
+.. c:function:: void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data)
+
+  Add this locus' internal comparison stats to a larger set of aggregate stats.
+
+.. c:function:: void agn_locus_delete(AgnLocus *locus)
 
   Class destructor.
 
-.. c:function:: GtUword agn_gene_locus_exon_num(AgnGeneLocus *locus, AgnComparisonSource src)
+.. c:function:: GtUword agn_locus_exon_num(AgnLocus *locus, AgnComparisonSource src)
 
-  Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_gene_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_gene_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
+  Get the number of exons for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_exons(locus)`` for the number of prediction exons, ``agn_locus_num_refr_exons(locus)`` for the number of reference exons, or ``agn_locus_num_exons(locus)`` if the source of annotation is undesignated or irrelevant.
 
-.. c:function:: bool agn_gene_locus_filter(AgnGeneLocus *locus, AgnCompareFilters *filters)
+.. c:function:: void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
 
-  Given a set of filtering criteria, determine whether a locus meets those criteria. Returns true if the locus should be filtered (if it does not meet the criteria), false otherwise.
+  Parse filters from ``filterfile`` and place ``AgnLocusFilter`` objects in ``filters``.
 
-.. c:function:: GtArray *agn_gene_locus_genes(AgnGeneLocus *locus, AgnComparisonSource src)
+.. c:function:: bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
 
-  Get the genes associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_pred_genes(locus)`` to retrieve prediction genes, ``agn_gene_locus_refr_genes(locus)`` to retrieve reference genes, or ``agn_gene_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+  Return true if ``locus`` satisfies the given filtering criterion.
 
-.. c:function:: GtArray *agn_gene_locus_gene_ids(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  Get IDs of the genes associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_pred_gene_ids(locus)`` to retrieve prediction genes IDs, ``agn_gene_locus_refr_gene_ids(locus)`` to retrieve reference genes IDs, or ``agn_gene_locus_get_gene_ids(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: GtUword agn_gene_locus_gene_num(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  Get the number of genes for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_num_pred_genes(locus)`` for the number of prediction genes, ``agn_gene_locus_num_refr_genes(locus)`` for the number of reference genes, or ``agn_gene_locus_num_genes(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: GtUword agn_gene_locus_get_end(AgnGeneLocus *locus)
-
-  Get this locus' end coordinate.
-
-.. c:function:: GtUword agn_gene_locus_get_length(AgnGeneLocus *locus)
-
-  Get this locus' length.
-
-.. c:function:: const char* agn_gene_locus_get_seqid(AgnGeneLocus *locus)
-
-  Get this locus' sequence ID.
-
-.. c:function:: GtUword agn_gene_locus_get_start(AgnGeneLocus *locus)
-
-  Get this locus' start coordinate.
-
-.. c:function:: GtArray *agn_gene_locus_get_unique_pred_cliques(AgnGeneLocus *locus)
+.. c:function:: GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
 
   Get a list of all the prediction transcript cliques that have no corresponding reference transcript clique.
 
-.. c:function:: GtArray *agn_gene_locus_get_unique_refr_cliques(AgnGeneLocus *locus)
+.. c:function:: GtArray *agn_locus_get_unique_refr_cliques(AgnLocus *locus)
 
   Get a list of all the reference transcript cliques that have no corresponding prediction transcript clique.
 
-.. c:function:: AgnGeneLocus* agn_gene_locus_new(const char *seqid)
+.. c:function:: GtArray *agn_locus_genes(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the genes associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_genes(locus)`` to retrieve prediction genes, ``agn_locus_refr_genes(locus)`` to retrieve reference genes, or ``agn_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_gene_ids(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the gene IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_gene_ids(locus)`` to retrieve prediction IDs, ``agn_locus_refr_gene_ids(locus)`` to retrieve reference IDs, or ``agn_locus_get_gene_ids(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the number of genes for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_genes(locus)`` for the number of prediction genes, ``agn_locus_num_refr_genes(locus)`` for the number of reference genes, or ``agn_locus_num_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the mRNAs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_mrnas(locus)`` to retrieve prediction mRNAs, ``agn_locus_refr_mrnas(locus)`` to retrieve reference mRNAs, or ``agn_locus_get_mrnas(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtArray *agn_locus_mrna_ids(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the mRNA IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_pred_mrna_ids(locus)`` to retrieve prediction IDs, ``agn_locus_refr_mrna_ids(locus)`` to retrieve reference IDs, or ``agn_locus_get_mrna_ids(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: GtUword agn_locus_mrna_num(AgnLocus *locus, AgnComparisonSource src)
+
+  Get the number of mRNAs for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_mrnas(locus)`` for the number of prediction mRNAs, ``agn_locus_num_refr_mrnas(locus)`` for the number of reference mRNAs, or ``agn_locus_num_mrnas(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: AgnLocus* agn_locus_new(GtStr *seqid)
 
   Class constructor.
 
-.. c:function:: GtUword agn_gene_locus_num_clique_pairs(AgnGeneLocus *locus)
+.. c:function:: GtArray *agn_locus_pairs_to_report(AgnLocus *locus)
 
-  Report the number of clique pairs to be reported for this locus.
+  Return the clique pairs to be reported for this locus.
 
-.. c:function:: void agn_gene_locus_png_track_selector(GtBlock *block, GtStr *track,void *data)
+.. c:function:: void agn_locus_png_track_selector(GtBlock *block, GtStr *track,void *data)
 
   Track selector function for generating PNG graphics of pairwise comparison loci. The track name to will be written to ``track``.
 
-.. c:function:: void agn_gene_locus_print_gene_mapping(AgnGeneLocus *locus, FILE *outstream)
-
-  Print a mapping of the gene(s) associated with this locus in a two- column tab-delimited format: ``geneId<tab>locusId``.
-
-.. c:function:: void agn_gene_locus_print_png(AgnGeneLocus *locus, AgnGeneLocusPngMetadata *metadata)
+.. c:function:: void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
 
   Print a PNG graphic for this locus.
 
-.. c:function:: void agn_gene_locus_print_transcript_mapping(AgnGeneLocus *locus, FILE *outstream)
+.. c:function:: void agn_locus_print_transcript_mapping(AgnLocus *locus, FILE *outstream)
 
   Print a mapping of the transcript(s) associated with this locus in a two-column tab-delimited format: ``transcriptId<tab>locusId``.
 
-.. c:function:: GtRange agn_gene_locus_range(AgnGeneLocus *locus)
+.. c:function:: void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end)
 
-  Return the coordinates of this locus.
+  Set the start and end coordinates for this locus.
 
-.. c:function:: void agn_gene_locus_set_range(AgnGeneLocus *locus, GtUword start, GtUword end)
+.. c:function:: double agn_locus_splice_complexity(AgnLocus *locus, AgnComparisonSource src)
 
-  Set the range of this locus, no questions asked.
+  Calculate the splice complexity of this gene locus. Rather than calling this method directly, users are recommended to use one of the following macros: ``agn_locus_prep_splice_complexity(locus)`` to calculate the splice complexity of just the prediction transcripts, ``agn_locus_refr_splice_complexity(locus)`` to calculate the splice complexity of just the reference transcripts, and ``agn_locus_calc_splice_complexity(locus)`` to calculate the splice complexity taking into account all transcripts.
 
-.. c:function:: double agn_gene_locus_splice_complexity(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  Calculate the splice complexity of this gene locus. Rather than calling this method directly, users are recommended to use one of the following macros: ``agn_gene_locus_prep_splice_complexity(locus)`` to calculate the splice complexity of just the prediction transcripts, ``agn_gene_locus_refr_splice_complexity(locus)`` to calculate the splice complexity of just the reference transcripts, and ``agn_gene_locus_calc_splice_complexity(locus)`` to calculate the splice complexity taking into account all transcripts.
-
-.. c:function:: void agn_gene_locus_summary_init(AgnGeneLocusSummary *summary)
-
-  Class constructor.
-
-.. c:function:: void agn_gene_locus_to_gff3(AgnGeneLocus *locus, FILE *outstream, const char *source)
-
-  Print the locus in GFF3 format. If ``source`` is NULL, the string "AEGeAn" will be used.
-
-.. c:function:: GtArray *agn_gene_locus_transcripts(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  Get the transcripts associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_pred_transcripts(locus)`` to retrieve prediction transcripts, ``agn_gene_locus_refr_transcripts(locus)`` to retrieve reference transcripts, or ``agn_gene_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: GtArray *agn_gene_locus_transcript_ids(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  Get the transcript IDs associated with this locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_gene_locus_pred_transcripts(locus)`` to retrieve prediction IDs, ``agn_gene_locus_refr_transcripts(locus)`` to retrieve reference IDs, or ``agn_gene_locus_get_genes(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: GtUword agn_gene_locus_transcript_num(AgnGeneLocus *locus, AgnComparisonSource src)
-
-  Get the number of transcripts for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_transcript_locus_num_pred_transcripts(locus)`` for the number of prediction transcripts, ``agn_transcript_locus_num_refr_transcripts(locus)`` for the number of reference transcripts, or ``agn_transcript_locus_num_transcripts(locus)`` if the source of annotation is undesignated or irrelevant.
-
-.. c:function:: bool agn_gene_locus_unit_test(AgnUnitTest *test)
+.. c:function:: bool agn_locus_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Module AgnGtExtensions
-----------------------
-
-A collection of extensions to core GenomeTools classes. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGtExtensions.h>`_.
-
-.. c:function:: GtArray* agn_gt_array_copy(GtArray *source, size_t size)
-
-  This function makes a copy of an array.
-
-.. c:function:: void agn_gt_feature_index_to_gff3(GtFeatureIndex *index, FILE *outstream)
-
-  Write the given feature index to GFF3 format.
-
-.. c:function:: GtUword agn_gt_feature_node_cds_length(GtFeatureNode *transcript)
-
-  Calculate the length of the given transcript's coding sequence in amino acids.
-
-.. c:function:: GtArray *agn_gt_feature_node_children_of_type(GtFeatureNode *fn, bool (*typetestfunc)(GtFeatureNode *))
-
-  Gather the children of a given feature that have a certain type. Type is tested by ``typetestfunc``, which accepts a single ``GtFeatureNode`` object.
-
-.. c:function:: bool agn_gt_feature_node_fix_parent_attribute(GtFeatureNode *feature, GtFeatureNode *parent)
-
-  When a feature has multiple parents but only one of them is valid, this function will fix the ``Parent`` attribute so that it only points to the valid parent.
-
-.. c:function:: bool agn_gt_feature_node_is_cds_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature belongs to a CDS.
-
-.. c:function:: bool agn_gt_feature_node_is_exon_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is an exon.
-
-.. c:function:: bool agn_gt_feature_node_is_gene_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is a gene.
-
-.. c:function:: bool agn_gt_feature_node_is_intron_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is an intron.
-
-.. c:function:: bool agn_gt_feature_node_is_mrna_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is an mRNA.
-
-.. c:function:: bool agn_gt_feature_node_is_start_codon_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is a start codon.
-
-.. c:function:: bool agn_gt_feature_node_is_stop_codon_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is a stop codon.
-
-.. c:function:: bool agn_gt_feature_node_is_utr_feature(GtFeatureNode *fn)
-
-  Determine whether the given feature is part of a UTR.
-
-.. c:function:: GtUword agn_gt_feature_node_num_transcripts(GtFeatureNode *gene)
-
-  Determine the number of transcripts for the given gene feature.
-
-.. c:function:: bool agn_gt_feature_node_overlap(GtFeatureNode *first, GtFeatureNode *second)
-
-  Determine whether the given features overlap.
-
-.. c:function:: bool agn_gt_feature_node_range_contains(GtFeatureNode *n1, GtFeatureNode *n2)
-
-  Determine whether the range of n2 falls within the range of n1.
-
-.. c:function:: void agn_gt_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
-
-  The ``gt_feature_node_remove_leaf`` function only allows removal of a leaf node. This function will remove all of a node's children so that it is a leaf node, which can then be removed.
-
-.. c:function:: void agn_gt_feature_node_set_source_recursive(GtFeatureNode *feature, GtStr *source)
-
-  Reset the source of the feature and all its children to the given value.
-
-.. c:function:: void agn_gt_feature_node_to_gff3(GtFeatureNode *feature, FILE *outstream, bool printchildren, char *prefix, GtHashmap *filtered_types)
-
-  Print the given feature in GFF3 format. Use ``filtered_types`` to provide a list of feature types to exclude when printing. If ``filtered_types`` is NULL, a default exclusion list will be used.
-
-.. c:function:: int agn_gt_genome_node_compare(const void *n1, const void *n2)
-
-  Comparison function to be used for sorting GtGenomeNode objects stored in a GtArray (for GtDlist, use gt_genome_node_cmp).
-
-.. c:function:: char agn_gt_phase_to_char(GtPhase phase)
-
-  Convert a GtPhase object into its corresponding character representation.
-
-.. c:function:: char agn_gt_strand_to_char(GtStrand strand)
-
-  Convert a GtStrand object into its corresponding character representation.
-
-.. c:function:: GtStrArray* agn_gt_str_array_intersection(GtStrArray *a1, GtStrArray *a2)
-
-  Find the strings that are common to both string arrays.
-
-.. c:function:: GtStrArray* agn_gt_str_array_union(GtStrArray *a1, GtStrArray *a2)
-
-  Find the strings that are present in either (or both) of the string arrays.
-
-Class AgnInferCDSVisitor
-------------------------
-
-.. c:type:: AgnInferCDSVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
-
-.. c:function:: GtNodeVisitor* agn_infer_cds_visitor_new(AgnLogger *logger)
-
-  Class constructor.
-
-.. c:function:: bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class.
-
-Class AgnInferExonsVisitor
+Class AgnLocusFilterStream
 --------------------------
 
-.. c:type:: AgnInferExonsVisitor
+.. c:type:: AgnLocusFilterStream
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly.  See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to FIXME. See the `AgnLocusFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusFilterStream.h>`_.
 
-.. c:function:: GtNodeVisitor* agn_infer_exons_visitor_new(AgnLogger *logger)
+.. c:function:: GtNodeStream* agn_locus_filter_stream_new(GtNodeStream *in_stream, GtArray *filters)
 
-  Class constructor.
+  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
 
-.. c:function:: bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class.
-
-Class AgnLocusIndex
--------------------
-
-.. c:type:: AgnLocusIndex
-
-  FIXME See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusIndex.h>`_.
-
-.. c:type:: typedef void (*AgnLocusIndexVisitFunc)(AgnGeneLocus *, void *)
-
-  Signature functions must match to be applied to each locus in the index. The function will be called once for each locus, which will be passed as the first argument to the function. a second argument is available for an optional pointer to supplementary data (if needed). See :c:func:`agn_locus_index_comparative_analysis`.
-
-.. c:function:: void agn_locus_index_comparative_analysis(AgnLocusIndex *idx, const char *seqid, AgnLocusIndexVisitFunc preanalyfunc, AgnLocusIndexVisitFunc postanalyfunc, void *analyfuncdata, AgnLogger *logger)
-
-  Perform a comparative analysis of each locus associated with ``seqid`` in this index. If ``preanalyfunc`` is not NULL, it will be applied to each locus immediately before comparative analysis. If ``postanalyfunc`` is not NULL, it will be applied to each locus immediately following comparative analysis. ``analyfuncdata`` will be passed as supplementary data to both functions.
-
-.. c:function:: void agn_locus_index_delete(AgnLocusIndex *idx)
-
-  Class destructor.
-
-.. c:type:: void agn_locus_index_find(AgnLocusIndex *idx, const char *seqid, GtRange *range, GtArray *loci)
-
-  Find all overlapping features in the given range stored in this locus index and store them in ``loci``.
-
-.. c:function:: GtArray *agn_locus_index_get(AgnLocusIndex *idx, const char *seqid)
-
-  Retrieve all loci corresponding to the specified sequence ID.
-
-.. c:type:: GtArray *agn_locus_index_interval_loci(AgnLocusIndex *idx, const char *seqid, GtUword delta, bool skipterminal)
-
-  Compute interval loci with the given ``delta``. If running on incomplete (contig/scaffold) genomic sequences, consider setting ``skipterminal`` to true to ignore the ends of the sequence.
-
-.. c:function:: AgnLocusIndex *agn_locus_index_new(bool freeondelete)
-
-  Class constructor
-
-.. c:function:: GtUword agn_locus_index_parse_pairwise_memory(AgnLocusIndex *idx, GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, AgnCompareFilters *filters, AgnLogger *logger)
-
-  Given a pair of annotation feature sets in memory, identify loci while keeping the two sources of annotation separate (to enable comparison).
-
-.. c:function:: GtUword agn_locus_index_parse_pairwise_disk(AgnLocusIndex *idx, const char *refrfile, const char *predfile, AgnCompareFilters *filters, AgnLogger *logger)
-
-  Given a pair of annotation feature sets in memory, identify loci while keeping the two sources of annotation separate (to enable comparison).
-
-.. c:function:: GtUword agn_locus_index_parse_memory(AgnLocusIndex *idx, GtFeatureIndex *features, AgnLogger *logger)
-
-  Identify loci given an index of annotation features.
-
-.. c:function:: GtUword agn_locus_index_parse_disk(AgnLocusIndex *idx, int numfiles, const char **filenames, AgnLogger *logger)
-
-  Identify loci from the given set of annotation files.
-
-.. c:function:: GtStrArray *agn_locus_index_seqids(AgnLocusIndex *idx)
-
-  Get a list of the seqids stored in this locus index.
-
-.. c:function:: bool agn_locus_index_unit_test(AgnUnitTest *test)
+.. c:function:: bool agn_locus_filter_stream_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Class AgnLogger
----------------
+Class AgnLocusMapVisitor
+------------------------
 
-.. c:type:: AgnLogger
+.. c:type:: AgnLocusMapVisitor
 
-  The AgnLogger class is desiged to store error, warning, and status messages. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLogger.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `AgnLocusMapVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
 
-.. c:function:: void agn_logger_delete(AgnLogger *logger)
+.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
 
-  Class destructor.
+  Constructor for a node stream based on this node visitor. See :c:func:`agn_locus_map_visitor_new` for a description of the function arguments.
 
-.. c:function:: GtArray *agn_logger_get_error_messages(AgnLogger *logger)
+.. c:function:: GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
 
-  Return an array containing all the error messages associated with this logger. The user is responsible for freeing this array, but not its contents.
+  Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
 
-.. c:function:: GtArray *agn_logger_get_status_messages(AgnLogger *logger)
+Class AgnLocusStream
+--------------------
 
-  Return an array containing all the status messages associated with this logger. The user is responsible for freeing this array, but not its contents.
+.. c:type:: AgnLocusStream
 
-.. c:function:: GtArray *agn_logger_get_warning_messages(AgnLogger *logger)
+  Implements the ``GtNodeStream`` interface. The only feature nodes delivered by this stream have type ``locus``, and the only direct children of these features are transcript features (of types mRNA, rRNA, or tRNA) present in the input stream. Any overlapping transcripts are children of the same locus feature. See the `AgnLocusStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusStream.h>`_.
 
-  Return an array containing all the warning messages associated with this logger. The user is responsible for freeing this array, but not its contents.
+.. c:function:: GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 
-.. c:function:: bool agn_logger_has_error(AgnLogger *logger)
+  This constructor searches the complete feature graph of each feature node in the input stream for transcript features.
 
-  Have any errors been logged?
+.. c:function:: GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream, GtNodeStream *pred_stream, GtLogger *logger)
 
-.. c:function:: bool agn_logger_has_status(AgnLogger *logger)
+  This constructor accepts two :c:type:`AgnTranscriptStream` objects as input. Locus features are created as per the class description, with additional data stored to track the source (reference vs prediction) of each transcript in each locus.
 
-  Have any status messages been logged?
+.. c:function:: void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
 
-.. c:function:: bool agn_logger_has_warning(AgnLogger *logger)
+  Loci created by this stream are assigned an ID with an arbitrary number. The default format is 'locus%lu' (that is, locus1, ;ocus2, etc). Use this function to override the default ID format.
 
-  Have any warnings been logged?
+.. c:function:: void agn_locus_stream_set_source(AgnLocusStream *stream, GtStr *source)
 
-.. c:function:: void agn_logger_log_error(AgnLogger *logger, const char *format, ...)
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
 
-  Add an error message to the logger using ``printf``-style string formatting.
+.. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
 
-.. c:function:: void agn_logger_log_status(AgnLogger *logger, const char *format, ...)
+  Run unit tests for this class. Returns true if all tests passed.
 
-  Add a status message/update to the logger using ``printf``-style string formatting.
+Class AgnMrnaRepVisitor
+-----------------------
 
-.. c:function:: void agn_logger_log_warning(AgnLogger *logger, const char *format, ...)
+.. c:type:: AgnMrnaRepVisitor
 
-  Add a warning message to the logger using ``print``-style string formatting.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
 
-.. c:function:: AgnLogger *agn_logger_new()
+.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in)
 
-  Class constructor.
+  Constructor for a node stream based on this node visitor.
 
-.. c:function:: bool agn_logger_print_all(AgnLogger *logger, FILE *outstream, const char *format, ...)
+.. c:function:: GtNodeVisitor *agn_mrna_rep_visitor_new()
 
-  Print the status messages, warnings, and errors that have been logged to the given file stream, ``printf``-style. Returns true if any errors were printed, false otherwise.
+  Constructor for the node visitor.
 
-.. c:function:: bool agn_logger_print_error(AgnLogger *logger, FILE *outstream, const char *format, ...)
+.. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
-  Print the error messages associated with this logger to the given file stream. Returns true if errors were printed.
+  Run unit tests for this class. Returns true if all tests passed.
 
-.. c:function:: bool agn_logger_print_status(AgnLogger *logger, FILE *outstream, const char *format, ...)
+Class AgnNodeDeleteVisitor
+--------------------------
 
-  Print the status messages associated with this logger to the given file stream. Returns true if any messages were printed, false otherwise.
+.. c:type:: AgnNodeDeleteVisitor
 
-.. c:function:: bool agn_logger_print_warning(AgnLogger *logger, FILE *outstream, const char *format, ...)
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used to decrement the reference count to all feature nodes passing through the node stream. See the `AgnNodeDeleteVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnNodeDeleteVisitor.h>`_.
 
-  Print the warning messages associated with this logger to the given file stream. Returns true if any warnings were printed, false otherwise.
+.. c:function:: GtNodeStream* agn_node_delete_stream_new(GtNodeStream *in)
 
-.. c:function:: void agn_logger_unset(AgnLogger *logger)
+  Constructor for a node stream based on this node visitor.
 
-  Reset this logger object.
+.. c:function:: GtNodeVisitor *agn_node_delete_visitor_new()
 
-Module AgnTestData
-------------------
+  Constructor for the node visitor.
 
-A collection of functions facilitating unit testing of various AEGeAn classes and modules. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTestData.h>`_.
+Class AgnPseudogeneFixVisitor
+-----------------------------
 
-.. c:function:: GtArray *agn_test_data_grape()
+.. c:type:: AgnPseudogeneFixVisitor
 
-  Example from grape.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting the ``type`` value for pseudogene features erroneously using the ``gene`` type instead of the more appropriate ``pseudogene`` type. See the `AgnPseudogeneFixVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnPseudogeneFixVisitor.h>`_.
 
-.. c:function:: GtArray *agn_test_data_grape_codons()
+.. c:function:: GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
 
-  Example from grape: gene structure annotated with exon and start / stop codon features--CDS is implicitly defined by these features.
+  Constructor for a node stream based on this node visitor.
 
-.. c:function:: GtArray *agn_test_data_grape_sansexons()
+.. c:function:: GtNodeVisitor *agn_pseudogene_fix_visitor_new()
 
-  Example from grape: gene structure annotated with CDS and UTR features--exons are implicitly defined by these features.
+  Constructor for the node visitor.
 
-.. c:function:: GtFeatureIndex *agn_test_data_ilocus_data()
+.. c:function:: bool agn_pseudogene_fix_visitor_unit_test(AgnUnitTest *test)
 
-  Bogus data used for testing iLocus parsing.
+  Run unit tests for this class. Returns true if all tests passed.
 
-.. c:function:: GtFeatureNode *agn_test_data_eden()
+Class AgnRemoveChildrenVisitor
+------------------------------
 
-  Create the canonical gene structure (from the GFF3 specification) in memory.
+.. c:type:: AgnRemoveChildrenVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting removing all children of each top-level feature. Psuedo-features are not modified. See the `AgnRemoveChildrenVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnRemoveChildrenVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_remove_children_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_remove_children_visitor_new()
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_remove_children_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
 
 Class AgnTranscriptClique
 -------------------------
 
 .. c:type:: AgnTranscriptClique
 
-  The purpose of the AgnTranscriptClique class is to store data pertaining to an individual maximal transcript clique. This clique may only contain a single transcript, or it may contain many. The only stipulation is that the transcripts do not overlap. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTranscriptClique.h>`_.
+  The purpose of the AgnTranscriptClique class is to store data pertaining to an individual maximal transcript clique. This clique may only contain a single transcript, or it may contain many. The only stipulation is that the transcripts do not overlap. Under the hood, each ``AgnTranscriptClique`` instance is a pseudo node (a GtFeatureNode object) with one or more transcript features as direct children. See the `AgnTranscriptClique class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTranscriptClique.h>`_.
 
 .. c:type:: typedef void (*AgnCliqueVisitFunc)(GtFeatureNode*, void*)
 
@@ -698,7 +635,7 @@ Class AgnTranscriptClique
 
 .. c:function:: GtUword agn_transcript_clique_cds_length(AgnTranscriptClique *clique)
 
-  Get the CDS length (in amino acids) for this transcript clique.
+  Get the combined CDS length (in base pairs) for all transcripts in this clique.
 
 .. c:function:: AgnTranscriptClique* agn_transcript_clique_copy(AgnTranscriptClique *clique)
 
@@ -708,17 +645,25 @@ Class AgnTranscriptClique
 
   Class destructor.
 
+.. c:function:: const char *agn_transcript_clique_get_model_vector(AgnTranscriptClique *clique)
+
+  Get a pointer to the string representing this clique's transcript structure.
+
 .. c:function:: bool agn_transcript_clique_has_id_in_hash(AgnTranscriptClique *clique, GtHashmap *map)
 
   Determine whether any of the transcript IDs associated with this clique are keys in the given hash map.
 
-.. c:function:: const char *agn_transcript_clique_id(AgnTranscriptClique *clique)
+.. c:function:: char *agn_transcript_clique_id(AgnTranscriptClique *clique)
 
-  Retrieve the ID attribute of the transcript associated with this clique. Will cause an assertion error if there is more than one trancript associated with the clique.
+  Retrieve the ID attribute of the transcript associated with this clique. User is responsible to free the string.
 
-.. c:function:: AgnTranscriptClique* agn_transcript_clique_new()
+.. c:function:: GtArray *agn_transcript_clique_ids(AgnTranscriptClique *clique)
 
-  Class constructor.
+  Retrieve the ID attributes of all transcripts associated with this clique.
+
+.. c:function:: AgnTranscriptClique *agn_transcript_clique_new(AgnSequenceRegion *region)
+
+  Class constructor. ``locusrange`` should be a pointer to the genomic coordinates of the locus to which this transcript clique belongs.
 
 .. c:function:: GtUword agn_transcript_clique_num_exons(AgnTranscriptClique *clique)
 
@@ -727,10 +672,6 @@ Class AgnTranscriptClique
 .. c:function:: GtUword agn_transcript_clique_num_utrs(AgnTranscriptClique *clique)
 
   Get the number of UTR segments in this clique.
-
-.. c:function:: void agn_transcript_clique_print_ids(AgnTranscriptClique *clique, FILE *outstream)
-
-  Print the IDs of this clique's transcripts to the given output stream.
 
 .. c:function:: void agn_transcript_clique_put_ids_in_hash(AgnTranscriptClique *clique, GtHashmap *map)
 
@@ -756,12 +697,73 @@ Class AgnTranscriptClique
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Module AgnTypecheck
+-------------------
+
+Functions for testing feature types. See the `AgnTypecheck module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTypecheck.h>`_.
+
+.. c:function:: bool agn_typecheck_cds(GtFeatureNode *fn)
+
+  Returns true if the given feature is a CDS; false otherwise.
+
+.. c:function:: GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+
+  Count the number of ``fn``'s children that have the given type.
+
+.. c:function:: bool agn_typecheck_exon(GtFeatureNode *fn)
+
+  Returns true if the given feature is an exon; false otherwise.
+
+.. c:function:: bool agn_typecheck_gene(GtFeatureNode *fn)
+
+  Returns true if the given feature is a gene; false otherwise.
+
+.. c:function:: bool agn_typecheck_intron(GtFeatureNode *fn)
+
+  Returns true if the given feature is an intron; false otherwise.
+
+.. c:function:: bool agn_typecheck_mrna(GtFeatureNode *fn)
+
+  Returns true if the given feature is an mRNA; false otherwise.
+
+.. c:function:: bool agn_typecheck_pseudogene(GtFeatureNode *fn)
+
+  Returns true if the given feature is declared as a pseudogene; false otherwise.
+
+.. c:function:: GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+
+  Gather the children of a given feature that have a certain type. Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
+
+.. c:function:: bool agn_typecheck_start_codon(GtFeatureNode *fn)
+
+  Returns true if the given feature is a start codon; false otherwise.
+
+.. c:function:: bool agn_typecheck_stop_codon(GtFeatureNode *fn)
+
+  Returns true if the given feature is a stop codon; false otherwise.
+
+.. c:function:: bool agn_typecheck_transcript(GtFeatureNode *fn)
+
+  Returns true if the given feature is an mRNA, tRNA, or rRNA; false otherwise.
+
+.. c:function:: bool agn_typecheck_utr(GtFeatureNode *fn)
+
+  Returns true if the given feature is a UTR; false otherwise.
+
+.. c:function:: bool agn_typecheck_utr3p(GtFeatureNode *fn)
+
+  Returns true if the given feature is a 3' UTR; false otherwise.
+
+.. c:function:: bool agn_typecheck_utr5p(GtFeatureNode *fn)
+
+  Returns true if the given feature is a 5' UTR; false otherwise.
+
 Class AgnUnitTest
 -----------------
 
 .. c:type:: AgnUnitTest
 
-  Class used for unit testing of classes and modules. See the `class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUnitTest.h>`_.
+  Class used for unit testing of classes and modules. See the `AgnUnitTest class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUnitTest.h>`_.
 
 .. c:function:: void agn_unit_test_delete(AgnUnitTest *test)
 
@@ -779,6 +781,10 @@ Class AgnUnitTest
 
   Add a result to this unit test.
 
+.. c:function:: bool agn_unit_test_success(AgnUnitTest *test)
+
+  Returns true if all the results checked with this unit test passed, false otherwise.
+
 .. c:function:: void agn_unit_test_run(AgnUnitTest *test)
 
   Run the unit test.
@@ -786,57 +792,45 @@ Class AgnUnitTest
 Module AgnUtils
 ---------------
 
-A collection of assorted core utility functions. See the `module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
+Collection of assorted functions that are otherwise unrelated. See the `AgnUtils module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
 
 .. c:type:: AgnSequenceRegion
 
-  Simple data structure for referencing genomic locations.
+  This data structure combines sequence coordinates with a sequence ID to facilitate their usage together.
 
 
 
-.. c:function:: void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques, bool skipsimplecliques )
+.. c:function:: GtArray* agn_array_copy(GtArray *source, size_t size)
 
-  The Bron-Kerbosch algorithm is an algorithm for enumerating all maximal cliques in an undirected graph. See the `algorithm's Wikipedia entry <http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm>`_ for a description of ``R``, ``P``, and ``X``. All maximal cliques will be stored in ``cliques``. If ``skipsimplecliques`` is true, cliques containing a single item will not be stored.
-
-.. c:function:: double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2)
-
-  A paper by Eilbeck `et al` (http://dx.doi.org/10.1186/1471-2105-10-67) described the annotation edit distance as a measure for comparative evaluation of annotations. This function calculates the AED between the two given annotations.
+  Similar to ``gt_array_copy``, except that array elements are treated as pointers and dereferenced before being added to the new array.
 
 .. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
 
   Determine the splice complexity of the given set of transcripts.
 
-.. c:function:: GtArray* agn_enumerate_feature_cliques(GtArray *feature_set)
+.. c:function:: GtUword agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src, bool use_orig, GtError *error)
 
-  If reference transcripts belonging to the same locus overlap, they must be separated before comparison with prediction transcript models (and vice versa). This is an instance of the maximal clique enumeration problem (NP-complete), for which the Bron-Kerbosch algorithm provides a solution.
+  Copy the sequence regions from ``src`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
 
-.. c:function:: GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set)
+.. c:function:: GtUword agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest, GtFeatureIndex *refrsrc, GtFeatureIndex *predsrc, bool use_orig, GtError *error)
 
-  For a set of features, we can construct a graph where each node represents a feature and where two nodes are connected if the corresponding features do not overlap. This function returns the intersection of feature_set with the neighbors of feature (where a "neighbor" refers to an adjacent node).
+  Copy the sequence regions from ``refrsrc`` and ``predsrc`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
 
-.. c:function:: FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream)
+.. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 
-  Wrapper around the stdio.h function that will exit in case of an IO error.
+  Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
 
-.. c:function:: GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames, AgnLogger *logger)
+.. c:function:: GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
 
-  Load canonical protein-coding genes from the given GFF3 files into memory.
+  Determine the length of an mRNA's coding sequence.
 
-.. c:function:: GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames, char *type, AgnLogger *logger)
+.. c:function:: GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
 
-  Load features whose type is equal to ``type`` into memory from the given GFF3 files.
+  If a top-level feature ``top`` contains a multifeature child (with multi representative ``rep``), use this function to get the complete range of the multifeature.
 
-.. c:function:: bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range, GtRange *leftcodon_range, GtRange *rightcodon_range, GtRange *cds_range)
+.. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 
-  Given an exon and the start/stop codons associated with its corresponding mRNA, determine which parts of the exon (if any) correspond to coding sequence. If the exon contains coding sequence, the range of that coding sequence will be stored in ``cds_range`` and the function will return true. Otherwise, the function will return false. If the mRNA is on the forward strand, ``left_codon_range`` should contain the coordinates for the start codon and ``right_codon_range`` should contain coordinates for the stop codon. If the mRNA is on the reverse strand, these should be swapped.
-
-.. c:function:: GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, AgnLogger *logger)
-
-  Given two feature indices, determine which sequences are common between them and return those sequences' IDs as a string array.
-
-.. c:function:: GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats, AgnLogger *logger)
-
-  Given two feature indices, determine all of the sequences that are annotated by either of them and return those sequences' IDs as a string array.
+  Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
 
 .. c:function:: int agn_sprintf_comma(GtUword n, char *buffer)
 
@@ -846,11 +840,7 @@ A collection of assorted core utility functions. See the `module header <https:/
 
   Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
 
-.. c:function:: GtRange agn_transcript_cds_range(GtFeatureNode *transcript)
+.. c:function:: GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2)
 
-  Determine the start and end coordinates of the given transcript's CDS.
-
-.. c:function:: void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream)
-
-  Write the structure of a gene transcript in GenBank format to ``outstream``.
+  Find the strings that are present in either (or both) of the string arrays.
 

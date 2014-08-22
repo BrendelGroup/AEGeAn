@@ -1,42 +1,64 @@
-#ifndef AEGEAN_UTILS
-#define AEGEAN_UTILS
+/**
+
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
+#ifndef AGN_UTILS
+#define AGN_UTILS
+
+#include "core/array_api.h"
+#include "core/str_api.h"
+#include "extended/feature_index_api.h"
+#include "extended/genome_node_api.h"
+
+#define AGN_MAX_FILENAME_SIZE 4096
 
 /**
  * @module AgnUtils
- * A collection of assorted core utility functions.
+ *
+ * Collection of assorted functions that are otherwise unrelated.
  */ //;
 
-#include "genometools.h"
-#include "AgnLogger.h"
 
 /**
- * @type Simple data structure for referencing genomic locations.
+ * @type This data structure combines sequence coordinates with a sequence ID to
+ * facilitate their usage together.
  */
 struct AgnSequenceRegion
 {
-  char *seqid;
+  GtStr *seqid;
   GtRange range;
 };
 typedef struct AgnSequenceRegion AgnSequenceRegion;
 
-/**
- * @function The Bron-Kerbosch algorithm is an algorithm for enumerating all
- * maximal cliques in an undirected graph. See the `algorithm's Wikipedia entry
- * <http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm>`_
- * for a description of ``R``, ``P``, and ``X``. All maximal cliques will be
- * stored in ``cliques``. If ``skipsimplecliques`` is true, cliques containing a
- * single item will not be stored.
- */
-void agn_bron_kerbosch( GtArray *R, GtArray *P, GtArray *X, GtArray *cliques,
-                        bool skipsimplecliques );
+#ifndef NDEBUG
+/* Stolen shamelessley from gt_assert() */
+#define agn_assert(expression)                                               \
+        do {                                                                 \
+          if (!(expression)) {                                               \
+            fprintf(stderr, "Assertion failed: (%s), function %s, file %s, " \
+                    "line %d.\nThis is a bug, please report it at "          \
+                    "https://github.com/standage/AEGeAn/issues.\n",          \
+                    #expression, __func__, __FILE__, __LINE__);              \
+            /*@ignore@*/                                                     \
+            exit(1);                                                         \
+            /*@end@*/                                                        \
+          }                                                                  \
+        } while (false)
+#else
+#define agn_assert(expression) ((void) 0)
+#endif
+
 
 /**
- * @function A paper by Eilbeck `et al`
- * (http://dx.doi.org/10.1186/1471-2105-10-67) described the annotation edit
- * distance as a measure for comparative evaluation of annotations. This
- * function calculates the AED between the two given annotations.
+ * @function Similar to ``gt_array_copy``, except that array elements are
+ * treated as pointers and dereferenced before being added to the new array.
  */
-double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2);
+GtArray* agn_array_copy(GtArray *source, size_t size);
 
 /**
  * @function Determine the splice complexity of the given set of transcripts.
@@ -44,71 +66,51 @@ double agn_calc_edit_distance(GtFeatureNode *t1, GtFeatureNode *t2);
 double agn_calc_splice_complexity(GtArray *transcripts);
 
 /**
- * @function If reference transcripts belonging to the same locus overlap, they
- * must be separated before comparison with prediction transcript models (and
- * vice versa). This is an instance of the maximal clique enumeration problem
- * (NP-complete), for which the Bron-Kerbosch algorithm provides a solution.
+ * @function Copy the sequence regions from ``src`` to ``dest``. If ``use_orig``
+ * is true, regions specified by input region nodes (such as those parsed from
+ * ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred
+ * directly from the feature nodes are used.
  */
-GtArray* agn_enumerate_feature_cliques(GtArray *feature_set);
+GtUword
+agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src,
+                               bool use_orig, GtError *error);
 
 /**
- * @function For a set of features, we can construct a graph where each node
- * represents a feature and where two nodes are connected if the corresponding
- * features do not overlap. This function returns the intersection of
- * feature_set with the neighbors of feature (where a "neighbor" refers to an
- * adjacent node).
+ * @function Copy the sequence regions from ``refrsrc`` and ``predsrc`` to
+ * ``dest``. If ``use_orig`` is true, regions specified by input region nodes
+ * (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used.
+ * Otherwise, regions inferred directly from the feature nodes are used.
  */
-GtArray* agn_feature_neighbors(GtGenomeNode *feature, GtArray *feature_set);
+GtUword
+agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
+                                        GtFeatureIndex *refrsrc,
+                                        GtFeatureIndex *predsrc,
+                                        bool use_orig, GtError *error);
 
 /**
- * @function Wrapper around the stdio.h function that will exit in case of an IO
- * error.
+ * @function Remove feature ``fn`` and all its subfeatures from ``root``.
+ * Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn``
+ * need not be a leaf feature.
  */
-FILE *agn_fopen(const char *filename, const char *mode, FILE *errstream);
+void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
 
 /**
- * @function Load canonical protein-coding genes from the given GFF3 files into
- * memory.
+ * @function Determine the length of an mRNA's coding sequence.
  */
-GtFeatureIndex *agn_import_canonical(int numfiles, const char **filenames,
-                                     AgnLogger *logger);
+GtUword agn_mrna_cds_length(GtFeatureNode *mrna);
 
 /**
- * @function Load features whose type is equal to ``type`` into memory from the
- * given GFF3 files.
+ * @function If a top-level feature ``top`` contains a multifeature child (with
+ * multi representative ``rep``), use this function to get the complete range of
+ * the multifeature.
  */
-GtFeatureIndex *agn_import_simple(int numfiles, const char **filenames,
-                                  char *type, AgnLogger *logger);
+GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep);
 
 /**
- * @function Given an exon and the start/stop codons associated with its
- * corresponding mRNA, determine which parts of the exon (if any) correspond to
- * coding sequence. If the exon contains coding sequence, the range of that
- * coding sequence will be stored in ``cds_range`` and the function will return
- * true. Otherwise, the function will return false. If the mRNA is on the
- * forward strand, ``left_codon_range`` should contain the coordinates for the
- * start codon and ``right_codon_range`` should contain coordinates for the stop
- * codon. If the mRNA is on the reverse strand, these should be swapped.
+ * @function Compare function for data type ``GtGenomeNode **``, needed for
+ * sorting ``GtGenomeNode *`` stored in ``GtArray`` objects.
  */
-bool agn_infer_cds_range_from_exon_and_codons(GtRange *exon_range,
-                                              GtRange *leftcodon_range,
-                                              GtRange *rightcodon_range,
-                                              GtRange *cds_range);
-
-/**
- * @function Given two feature indices, determine which sequences are common
- * between them and return those sequences' IDs as a string array.
- */
-GtStrArray* agn_seq_intersection(GtFeatureIndex *refrfeats,
-                                 GtFeatureIndex *predfeats, AgnLogger *logger);
-
-/**
- * @function Given two feature indices, determine all of the sequences that are
- * annotated by either of them and return those sequences' IDs as a string
- * array.
- */
-GtStrArray* agn_seq_union(GtFeatureIndex *refrfeats, GtFeatureIndex *predfeats,
-                          AgnLogger *logger);
+int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b);
 
 /**
  * @function Format the given non-negative number with commas as the thousands
@@ -123,15 +125,9 @@ int agn_sprintf_comma(GtUword n, char *buffer);
 int agn_string_compare(const void *p1, const void *p2);
 
 /**
- * @function Determine the start and end coordinates of the given transcript's
- * CDS.
+ * @function Find the strings that are present in either (or both) of the string
+ * arrays.
  */
-GtRange agn_transcript_cds_range(GtFeatureNode *transcript);
-
-/**
- * @function Write the structure of a gene transcript in GenBank format to
- * ``outstream``.
- */
-void agn_transcript_structure_gbk(GtFeatureNode *transcript, FILE *outstream);
+GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2);
 
 #endif

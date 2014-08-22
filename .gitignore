@@ -5,3 +5,4 @@ libaegean.a
 scratch
 docs/_*
 cov-int
+.DS_Store

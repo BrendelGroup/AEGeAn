@@ -1,3 +1,12 @@
+/**
+
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
 #ifndef AEGEAN_UNIT_TEST
 #define AEGEAN_UNIT_TEST
 
@@ -30,6 +39,12 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream);
  * @function Add a result to this unit test.
  */
 void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success);
+
+/**
+ * @function Returns true if all the results checked with this unit test passed,
+ * false otherwise.
+ */
+bool agn_unit_test_success(AgnUnitTest *test);
 
 /**
  * @function Run the unit test.

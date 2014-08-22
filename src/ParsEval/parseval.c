@@ -1,83 +1,179 @@
-#include <string.h>
-#include "AgnLocusIndex.h"
-#include "AgnGeneLocus.h"
-#include "AgnUtils.h"
-#include "PeProcedure.h"
-#include "PeReports.h"
+/**
 
-// Main method
-int main(int argc, char * const argv[])
+Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+
+The AEGeAn Toolkit is distributed under the ISC License. See
+the 'LICENSE' file in the AEGeAn source code distribution or
+online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+
+**/
+#include "pe_options.h"
+#include "pe_utils.h"
+
+int main(int argc, char **argv)
 {
-  // Initialize ParsEval
+  GtError *error;
+  GtLogger *logger;
+  GtQueue *streams;
+  GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3, *tempstream;
+  GtNodeVisitor *rpt;
+  PeHtmlOverviewData odata;
+  char *start_time;
+
   gt_lib_init();
-  char *start_time_str = pe_get_start_time();
-  GtTimer *timer = gt_timer_new();
-  gt_timer_start(timer);
-  fputs("[ParsEval] Begin ParsEval\n", stderr);
+  start_time = pe_get_start_time();
 
-  PeOptions options;
+  // Parse command-line options
+  ParsEvalOptions options;
   pe_set_option_defaults(&options);
-  pe_parse_options(argc, argv, &options);
-  if(options.refrfile == NULL || options.predfile == NULL)
+  error = gt_error_new();
+  pe_parse_options(argc, argv, &options, error);
+  if(gt_error_is_set(error))
   {
-    fprintf(stderr, "[ParsEval] error: could not parse input filenames\n");
-    return EXIT_FAILURE;
+    fprintf(stderr, "[ParsEval] error: %s", gt_error_get(error));
+    return 1;
+  }
+  int numfiles = argc - optind;
+  if(numfiles != 2)
+  {
+    fprintf(stderr, "[ParsEval] error: must provide two GFF3 files as input");
+    pe_print_usage(stderr);
+    return 1;
   }
 
-  // Load data into memory
-  AgnLogger *logger = agn_logger_new();
-  AgnLocusIndex *locusindex;
-  GtArray *loci;
-  GtStrArray *seqids;
-  GtUword totalloci = pe_load_and_parse_loci(&locusindex, &loci, &seqids,
-                                             &options, logger);
-  bool haderror = agn_logger_print_all(logger, stderr, NULL);
-  if(haderror) return EXIT_FAILURE;
+  logger = gt_logger_new(true, "", stderr);
+  streams = gt_queue_new();
 
-  // Main comparison procedure
-  if(totalloci == 0)
+
+  //----- Set up the node processing stream -----//
+  //---------------------------------------------//
+
+  refrgff3 = gt_gff3_in_stream_new_unsorted(1, &options.refrfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)refrgff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)refrgff3);
+  gt_queue_add(streams, refrgff3);
+  if(options.refrlabel != NULL)
   {
-    fprintf(stderr, "[ParsEval] Warning: found no loci to analyze\n");
-    fclose(options.outfile);
+    GtStr *label = gt_str_new_cstr(options.refrlabel);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(label);
+    tempstream = gt_visitor_stream_new(refrgff3, nv);
+    gt_queue_add(streams, tempstream);
+    refrgff3 = tempstream;
+    gt_str_delete(label);
   }
-  else
+  tempstream = agn_gene_stream_new(refrgff3, logger);
+  gt_queue_add(streams, tempstream);
+  refrgff3 = tempstream;
+
+  predgff3 = gt_gff3_in_stream_new_unsorted(1, &options.predfile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)predgff3);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)predgff3);
+  gt_queue_add(streams, predgff3);
+  if(options.predlabel != NULL)
   {
-    GtHashmap *       comp_evals;
-    GtHashmap *       locus_summaries;
-    AgnCompEvaluation overall_eval;
-    GtArray *         seqlevel_evals;
-
-    GtArray *seqfiles = pe_prep_output(seqids, &options);
-    pe_comparative_analysis(locusindex, &comp_evals, &locus_summaries, seqids,
-                            seqfiles,loci, &options);
-    pe_aggregate_results(&overall_eval, &seqlevel_evals, loci, seqfiles,
-                         comp_evals, locus_summaries, &options);
-    pe_print_summary(start_time_str, argc, argv, seqids, &overall_eval,
-                     seqlevel_evals, options.outfile, &options);
-    pe_print_combine_output(seqids, seqfiles, &options);
-
-    gt_array_delete(seqfiles);
-    gt_hashmap_delete(comp_evals);
-    gt_hashmap_delete(locus_summaries);
-    gt_array_delete(seqlevel_evals);
+    GtStr *label = gt_str_new_cstr(options.predlabel);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(label);
+    tempstream = gt_visitor_stream_new(predgff3, nv);
+    gt_queue_add(streams, tempstream);
+    predgff3 = tempstream;
+    gt_str_delete(label);
   }
+  tempstream = agn_gene_stream_new(predgff3, logger);
+  gt_queue_add(streams, tempstream);
+  predgff3 = tempstream;
 
-  // All done!
-  gt_timer_stop(timer);
-  gt_timer_show_formatted(timer, "[ParsEval] ParsEval complete! (total runtime:"
-                          " %ld.%06ld seconds)\n\n", stderr );
+  current_stream = agn_locus_stream_new_pairwise(refrgff3, predgff3, logger);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
 
-  // Free up memory
-  gt_array_delete(loci);
-  gt_free(start_time_str);
-  agn_logger_delete(logger);
-  agn_locus_index_delete(locusindex);
-  gt_timer_delete(timer);
-  if(gt_lib_clean() != 0)
+  /* FIXME I don't understand why this is needed, but without it memory is
+   * leaked; if it's not in this precise location, no memory is leaked but
+   * segfaults result */
+  current_stream = agn_node_delete_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  if(options.filters != NULL)
   {
-    fputs("error: issue cleaning GenomeTools library\n", stderr);
-    return EXIT_FAILURE;
+    current_stream = agn_locus_filter_stream_new(last_stream, options.filters);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
   }
 
-  return EXIT_SUCCESS;
+  switch(options.outfmt)
+  {
+    case TEXTMODE:
+      if(options.summary_only)
+        rpt = agn_compare_report_text_new(NULL, logger);
+      else
+        rpt = agn_compare_report_text_new(options.outfile, logger);
+      break;
+    case HTMLMODE:
+      if(options.graphics)
+      {
+        rpt = agn_compare_report_html_new(options.outfilename, &options.pngdata,
+                                          logger);
+      }
+      else
+        rpt = agn_compare_report_html_new(options.outfilename, NULL, logger);
+      break;
+    case CSVMODE:
+      fprintf(stderr, "error: CSV output mode support temporarily "
+              "unavailable\n");
+      return 1;
+      break;
+    default:
+      fprintf(stderr, "error: unknown output format\n");
+      return 1;
+      break;
+  }
+  current_stream = gt_visitor_stream_new(last_stream, rpt);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+
+  //----- Execute the node processing stream -----//
+  //----------------------------------------------//
+
+  int result = gt_node_stream_pull(last_stream, error);
+  if(result == -1)
+    fprintf(stderr, "[ParsEval] error: %s", gt_error_get(error));
+
+  if(options.outfmt == TEXTMODE)
+  {
+    pe_summary_header(&options, options.outfile, start_time, argc, argv);
+    agn_compare_report_text_create_summary((AgnCompareReportText *)rpt,
+                                           options.outfile);
+  }
+  else if(options.outfmt == HTMLMODE)
+  {
+    odata.refrlabel = options.refrfile;
+    if(options.refrlabel)
+      odata.refrlabel = options.refrlabel;
+    odata.predlabel = options.predfile;
+    if(options.predlabel)
+      odata.predlabel = options.predlabel;
+    odata.start_time = start_time;
+    odata.argc = argc;
+    odata.argv = argv;
+
+    agn_compare_report_html_set_overview_func((AgnCompareReportHTML *)rpt,
+                                              pe_summary_html_overview,
+                                              &odata);
+    agn_compare_report_html_create_summary((AgnCompareReportHTML *)rpt);
+  }
+
+  // Free memory and terminate
+  gt_free(start_time);
+  pe_free_option_memory(&options);
+  while(gt_queue_size(streams) > 0)
+  {
+    current_stream = gt_queue_get(streams);
+    gt_node_stream_delete(current_stream);
+  }
+  gt_queue_delete(streams);
+  gt_logger_delete(logger);
+  gt_error_delete(error);
+  gt_lib_clean();
+  return 0;
 }

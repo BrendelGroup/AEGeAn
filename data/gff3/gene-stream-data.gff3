@@ -1,0 +1,46 @@
+##gff-version 3
+##sequence-region   chr1 1 100000
+chr1	nano	mRNA	600	3035	.	+	.	ID=mRNA1;Name=bogus
+chr1	nano	CDS	600	850	.	+	1	ID=CDS1;Parent=mRNA1
+chr1	nano	CDS	1004	1222	.	+	2	ID=CDS1;Parent=mRNA1
+chr1	nano	CDS	2157	2288	.	+	2	ID=CDS1;Parent=mRNA1
+chr1	nano	CDS	2802	2925	.	+	2	ID=CDS1;Parent=mRNA1
+chr1	nano	exon	600	850	.	+	.	Parent=mRNA1
+chr1	nano	exon	1004	1222	.	+	.	Parent=mRNA1
+chr1	nano	exon	2157	2288	.	+	.	Parent=mRNA1
+chr1	nano	exon	2802	3035	.	+	.	Parent=mRNA1
+###
+chr1	nano	gene	5000	9000	.	-	.	ID=gene1;Name=fake
+chr1	nano	mRNA	5000	9000	.	-	.	ID=mRNA2;Parent=gene1
+chr1	nano	mRNA	6000	9000	.	-	.	ID=mRNA3;Parent=gene1
+chr1	nano	CDS	5200	5500	.	-	1	ID=CDS2;Parent=mRNA2
+chr1	nano	CDS	6100	6400	.	-	2	ID=CDS2;Parent=mRNA2
+chr1	nano	CDS	7000	7750	.	-	0	ID=CDS2;Parent=mRNA2
+chr1	nano	CDS	6100	6400	.	-	2	ID=CDS3;Parent=mRNA3
+chr1	nano	CDS	7000	7750	.	-	0	ID=CDS3;Parent=mRNA3
+chr1	nano	exon	5000	5500	.	-	.	Parent=mRNA2
+chr1	nano	exon	6000	6400	.	-	.	Parent=mRNA3
+chr1	nano	exon	6100	6400	.	-	.	Parent=mRNA2
+chr1	nano	exon	7000	9000	.	-	.	Parent=mRNA2,mRNA3
+###
+chr1	nano	gene	15000	19000	.	-	.	ID=gene2;Name=unreal
+chr1	nano	mRNA	15000	19000	.	-	.	ID=mRNA4;Parent=gene2
+chr1	nano	mRNA	16000	19000	.	-	.	ID=mRNA5;Parent=gene2
+chr1	nano	CDS	15200	15500	.	-	0	ID=CDS4;Parent=mRNA4
+chr1	nano	CDS	16100	16400	.	-	1	ID=CDS4;Parent=mRNA4
+chr1	nano	CDS	17000	17750	.	-	2	ID=CDS4;Parent=mRNA4
+chr1	nano	exon	15000	15500	.	-	.	Parent=mRNA4
+chr1	nano	exon	16000	16400	.	-	.	Parent=mRNA5
+chr1	nano	exon	16100	16400	.	-	.	Parent=mRNA4
+chr1	nano	exon	17000	19000	.	-	.	Parent=mRNA4,mRNA5
+###
+chr1	nano	gene	30600	33035	.	+	.	ID=gene3;Name=wacko
+chr1	nano	mRNA	30600	33035	.	+	.	ID=mRNA6;Parent=gene3
+chr1	nano	CDS	30600	30850	.	+	1	ID=CDS5;Parent=mRNA6
+chr1	nano	CDS	31004	31222	.	+	2	ID=CDS5;Parent=mRNA6
+chr1	nano	CDS	32157	32288	.	+	2	ID=CDS5;Parent=mRNA6
+chr1	nano	CDS	32802	32925	.	+	2	ID=CDS5;Parent=mRNA6
+chr1	nano	exon	30600	30850	.	+	.	Parent=mRNA6
+chr1	nano	exon	31004	31222	.	+	.	Parent=mRNA6
+chr1	nano	exon	32157	32288	.	+	.	Parent=mRNA6
+chr1	nano	exon	32802	33035	.	+	.	Parent=mRNA6

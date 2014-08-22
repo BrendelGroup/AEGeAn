@@ -19,6 +19,8 @@ AEGeAn Toolkit: integrated genome analysis
    :maxdepth: 1
    
    install
+   parseval
+   loci
    citing
    api
    license
@@ -31,7 +33,7 @@ impatient <install>`.
 The AEGeAn Toolkit started as several distinct but related efforts to build
 tools for managing and analyzing whole-genome gene structure annotations. AEGeAn
 has brought these efforts together into a single library that includes
-executable programs as well as several data structures and modules available via
+executable programs as well as several data structures and modules callable via
 a C API. The AEGeAn Toolkit leverages a variety of parsers, data structures, and
 graphics capabilities available from the GenomeTools library
 (http://genometools.org).
@@ -51,8 +53,8 @@ graphics capabilities available from the GenomeTools library
   with any other genes in that region. This definition can be useful when
   comparing two sets of gene predictions.
 
-* **VAnG** (Validation of Annotated Genomes) is a program for validating GFF3
-  files against a schema.
+* **VAnG** (Validation of Annotated Genomes) is a prototype program for
+  validating GFF3 files against a schema.
 
 * Additional tools are under development and will be released once they are a
   bit more stable.
