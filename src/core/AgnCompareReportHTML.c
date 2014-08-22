@@ -383,6 +383,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
     fputs("      <p>No comparisons were performed for this locus.</p>\n\n",
           outstream);
     compare_report_html_footer(outstream);
+    fclose(outstream);
     return;
   }
 

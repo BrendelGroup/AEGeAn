@@ -77,6 +77,7 @@ void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
 void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success)
 {
   UnitTestResult result;
+  agn_assert(test);
   result.label = gt_cstr_dup(label);
   result.success = success;
   gt_array_add(test->results, result);
