@@ -17,7 +17,7 @@ LP_EXE=bin/locuspocus
 XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE)
+BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
 
 #----- Source, header, and object files -----#
 
