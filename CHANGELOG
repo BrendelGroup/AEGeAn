@@ -1,0 +1,30 @@
+AEGeAn Toolkit Version 0.10
+===========================
+
+v0.10.0
+-------
+
+The core of the AEGeAn Toolkit has been under heavy re-development for several
+months. The primary focus of this development has been:
+
+  - implementating analysis components as feature visitors and feature streams
+    to facilitate efficient online streaming processing of annotations, as is
+    the canonical GenomeTools approach
+
+  - generalizing the comparative analysis code originally implemented in
+    ParsEval so that it can be called by other programs via the AEGeAn C API
+
+  - implementation of better software development practices; continuous
+    integration and testing (via Travis CI), static code analysis (by Coverity
+    Scan), better unit testing, better functional testing, and early correction
+    of memory leaks before additional features are implemented
+
+In the refactoring process, several features have been excluded. Most should be
+re-introduced when I have time, but some minor features many not make it back in
+unless there is a really good motivation to do so.
+
+As a final note, I have only just in the last few months understood how to use
+Semantic Versioning and git/Github's tag/release features correctly. AEGeAn is
+still pre-1.0, so any changes to the code or API are still on the table, but
+moving forward I will be adhering to semantic versioning prescriptions much more
+ faithfully.
