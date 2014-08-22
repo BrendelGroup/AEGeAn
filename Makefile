@@ -146,7 +146,7 @@ agn-test:	all
 		@ $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ echo AEGeAn Functional Tests
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
-		@ #test/AT1G05320.sh
-		@ #test/FBgn0035002.sh
-		@ #test/iLocusParsing.sh
+		@ test/AT1G05320.sh
+		@ test/FBgn0035002.sh
+		@ test/iLocusParsing.sh
 
