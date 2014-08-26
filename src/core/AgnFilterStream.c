@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include "core/queue_api.h"
 #include "extended/array_in_stream_api.h"
 #include "extended/array_out_stream_api.h"
@@ -186,7 +187,7 @@ bool agn_filter_stream_unit_test(AgnUnitTest *test)
   GtError *error = gt_error_new();
   GtQueue *queue = gt_queue_new();
   filter_stream_test_data(queue);
-  agn_assert(gt_queue_size(queue) == 4);
+  agn_assert(gt_queue_size(queue) == 6);
 
   source = gt_queue_get(queue);
   sink = gt_array_new( sizeof(GtFeatureNode *) );
@@ -289,6 +290,70 @@ bool agn_filter_stream_unit_test(AgnUnitTest *test)
   gt_node_stream_delete(fs);
   gt_node_stream_delete(aos);
 
+  source = gt_queue_get(queue);
+  sink = gt_array_new( sizeof(GtFeatureNode *) );
+  types = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(types, "exon", "exon");
+  gt_hashmap_add(types, "intron", "intron");
+  ais = gt_array_in_stream_new(source, &progress, error);
+  fs = agn_filter_stream_new(ais, types);
+  aos = gt_array_out_stream_new(fs, sink, error);
+  gt_node_stream_pull(aos, error);
+  bool test5 = gt_array_size(sink) == 13;
+  if(test5)
+  {
+    unsigned ecount = 0, icount = 0;
+    while(gt_array_size(sink) > 0)
+    {
+      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(sink);
+      if(agn_typecheck_exon(fn))
+        ecount++;
+      else if(agn_typecheck_intron(fn))
+        icount++;
+      gt_genome_node_delete((GtGenomeNode *)fn);
+    }
+    test5 = ecount == 7 && icount == 6;
+  }
+  agn_unit_test_result(test, "exon+intron", test5);
+  gt_array_delete(source);
+  gt_array_delete(sink);
+  gt_hashmap_delete(types);
+  gt_node_stream_delete(ais);
+  gt_node_stream_delete(fs);
+  gt_node_stream_delete(aos);
+
+  source = gt_queue_get(queue);
+  sink = gt_array_new( sizeof(GtFeatureNode *) );
+  types = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(types, "CDS", "CDS");
+  gt_hashmap_add(types, "intron", "intron");
+  ais = gt_array_in_stream_new(source, &progress, error);
+  fs = agn_filter_stream_new(ais, types);
+  aos = gt_array_out_stream_new(fs, sink, error);
+  gt_node_stream_pull(aos, error);
+  bool test6 = gt_array_size(sink) == 5;
+  if(test6)
+  {
+    unsigned ccount = 0, icount = 0;
+    while(gt_array_size(sink) > 0)
+    {
+      GtFeatureNode *fn = *(GtFeatureNode **)gt_array_pop(sink);
+      if(agn_typecheck_cds(fn))
+        ccount++;
+      else if(agn_typecheck_intron(fn))
+        icount++;
+      gt_genome_node_delete((GtGenomeNode *)fn);
+    }
+    test6 = ccount == 3 && icount == 2;
+  }
+  agn_unit_test_result(test, "CDS+intron", test6);
+  gt_array_delete(source);
+  gt_array_delete(sink);
+  gt_hashmap_delete(types);
+  gt_node_stream_delete(ais);
+  gt_node_stream_delete(fs);
+  gt_node_stream_delete(aos);
+
   gt_error_delete(error);
   gt_queue_delete(queue);
   return agn_unit_test_success(test);
@@ -317,7 +382,7 @@ static void filter_stream_test_data(GtQueue *queue)
   for(i = 0; i < gt_array_size(feats); i++)
   {
     GtFeatureNode *fn = *(GtFeatureNode **)gt_array_get(feats, i);
-    if(i >= 4)
+    if(i >= 6)
     {
       gt_genome_node_delete((GtGenomeNode *)fn);
       continue;
