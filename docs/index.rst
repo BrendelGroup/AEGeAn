@@ -20,6 +20,8 @@ AEGeAn Toolkit: integrated genome analysis
    
    install
    parseval
+   canon
+   locuspocus
    loci
    citing
    api
