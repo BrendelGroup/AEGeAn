@@ -3,3 +3,5 @@ obj
 inc/core/AgnVersion.h
 libaegean.a
 TAIR*.gff
+cov-int
+scratch
