@@ -30,7 +30,7 @@ comparisons are possible.
 
 * Any features not directly related to protein-coding genes are ignored.
 
-* ParsEval will infer feature implicitly encoded in the data. For example, if a
+* ParsEval will infer features implicitly encoded in the data. For example, if a
   gene annotation declares 6 exon features but no intron features, ParsEval will
   infer the 5 corresponding intron features from the exon boundaries. However,
   if ParsEval sees any intron features in a gene model it will assume all
