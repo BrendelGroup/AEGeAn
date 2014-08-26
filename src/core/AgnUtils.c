@@ -114,6 +114,24 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
   return rncount;
 }
 
+bool agn_feature_overlap_check(GtArray *feats)
+{
+  GtUword i,j;
+  for(i = 0; i < gt_array_size(feats); i++)
+  {
+    GtFeatureNode *fn1 = *(GtFeatureNode **)gt_array_get(feats, i);
+    GtRange range1 = gt_genome_node_get_range((GtGenomeNode *)fn1);
+    for(j = i+1; j < gt_array_size(feats); j++)
+    {
+      GtFeatureNode *fn2 = *(GtFeatureNode **)gt_array_get(feats, j);
+      GtRange range2 = gt_genome_node_get_range((GtGenomeNode *)fn2);
+      if(gt_range_overlap(&range1, &range2))
+        return true;
+    }
+  }
+  return false;
+}
+
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 {
   agn_assert(root && fn);

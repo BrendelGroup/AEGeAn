@@ -820,6 +820,10 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 
   Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
 
+.. c:function:: bool agn_feature_overlap_check(GtArray *feats)
+
+  Returns true if any of the features in ``feats`` overlaps, false otherwise.
+
 .. c:function:: GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
 
   Determine the length of an mRNA's coding sequence.

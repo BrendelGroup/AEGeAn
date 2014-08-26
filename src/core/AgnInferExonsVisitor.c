@@ -245,6 +245,21 @@ infer_exons_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
     if(gt_array_size(v->exons) == 0)
       infer_exons_visitor_visit_gene_infer_exons(v);
 
+    GtArray *mrnas = agn_typecheck_select(current, agn_typecheck_mrna);
+    while(gt_array_size(mrnas) > 0)
+    {
+      GtFeatureNode *mrna = *(GtFeatureNode **)gt_array_pop(mrnas);
+      GtArray *exons = agn_typecheck_select(mrna, agn_typecheck_exon);
+      if(agn_feature_overlap_check(exons))
+      {
+        const char *rnaid = gt_feature_node_get_attribute(mrna, "ID");
+        gt_error_set(error, "mRNA '%s' contains overlapping exons", rnaid);
+        return -1;
+      }
+      gt_array_delete(exons);
+    }
+    gt_array_delete(mrnas);
+
     v->intronsbyrange = gt_interval_tree_new(NULL);
     v->introns = agn_typecheck_select(current, agn_typecheck_intron);
     if(gt_array_size(v->introns) == 0 && gt_array_size(v->exons) > 1)

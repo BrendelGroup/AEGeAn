@@ -95,6 +95,12 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
 
 /**
+ * @function Returns true if any of the features in ``feats`` overlaps, false
+ * otherwise.
+ */
+bool agn_feature_overlap_check(GtArray *feats);
+
+/**
  * @function Determine the length of an mRNA's coding sequence.
  */
 GtUword agn_mrna_cds_length(GtFeatureNode *mrna);
