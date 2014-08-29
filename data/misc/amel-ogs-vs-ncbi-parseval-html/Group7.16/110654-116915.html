@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ParsEval: Locus at Group7.16[110654, 116915]</title>
+    <link rel="stylesheet" type="text/css" href="../parseval.css" />
+    <script type="text/javascript" src="../vendor/mootools-core-1.3.2-full-nocompat-yc.js"></script>
+    <script type="text/javascript" src="../vendor/mootools-more-1.3.2.1.js"></script>
+    <script type="text/javascript">
+window.addEvent('domready', function() {
+  var status =
+  {
+    'true': "(hide details)",
+    'false': "(show details)",
+  }
+  var compareWrapper0 = new Fx.Slide('compare_wrapper_0');
+  compareWrapper0.hide();
+  $('toggle_compare_0').addEvent('click', function(event){
+    event.stop();
+    compareWrapper0.toggle();
+  });
+  compareWrapper0.addEvent('complete', function() {
+    $('toggle_compare_0').set('text', status[compareWrapper0.open]);
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Locus at Group7.16[110654, 116915]</h1>
+      <p><a href="index.html">⇐ Back to Group7.16 loci</a></p>
+
+      <h2>Gene annotations</h2>
+      <table>
+        <tr><th>Reference</th><th>Prediction</th></tr>
+        <tr><td>gene7</td><td>gene6</td></tr>
+      </table>
+
+      <div class='graphic'>
+        <a href='Group7.16_110654-116915.png'><img src='Group7.16_110654-116915.png' /></a>
+      </div>
+
+      <h2 class="bottomspace">Comparisons</h2>
+      <h3 class="compare-header">Comparison<a id="toggle_compare_0" href="#">(show details)</a></h3>
+      <div id="compare_wrapper_0"class="compare-wrapper">
+        <h3>Reference GFF3</h3>
+        <pre class="gff3 refr">
+##gff-version   3
+Group7.16	OGS	mRNA	110657	116915	1	+	.	ID=mRNA7
+Group7.16	OGS	five_prime_UTR	110657	110831	1	+	.	Parent=mRNA7
+Group7.16	OGS	exon	110657	110891	1	+	.	Parent=mRNA7
+Group7.16	OGS	start_codon	110832	110834	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	110832	110891	.	+	0	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	intron	110892	111894	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	111895	112028	.	+	0	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	111895	112028	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	112029	114290	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	114291	114550	.	+	1	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	114291	114550	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	114551	114742	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	114743	114848	.	+	2	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	114743	114848	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	114849	114936	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	114937	115088	.	+	1	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	114937	115088	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	115089	116328	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	116329	116435	.	+	2	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	116329	116915	1	+	.	Parent=mRNA7
+Group7.16	OGS	stop_codon	116433	116435	.	+	.	Parent=mRNA7
+Group7.16	OGS	three_prime_UTR	116436	116915	1	+	.	Parent=mRNA7
+###
+</pre>
+        <h3>Prediction GFF3</h3>
+        <pre class="gff3 pred">
+##gff-version   3
+Group7.16	NCBI	mRNA	110654	116906	.	+	.	ID=mRNA7;Name=XM_393191.5;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	five_prime_UTR	110654	110831	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	110654	110891	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	start_codon	110832	110834	.	+	.	Parent=mRNA7
+Group7.16	NCBI	CDS	110832	110891	.	+	0	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	110892	111894	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	111895	112028	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	111895	112028	.	+	0	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	112029	114290	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	114291	114550	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	114291	114550	.	+	1	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	114551	114742	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	114743	114848	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	114743	114848	.	+	2	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	114849	114936	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	114937	115088	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	114937	115088	.	+	1	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	115089	116328	.	+	.	Parent=mRNA7
+Group7.16	NCBI	CDS	116329	116435	.	+	2	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	exon	116329	116906	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	stop_codon	116433	116435	.	+	.	Parent=mRNA7
+Group7.16	NCBI	three_prime_UTR	116436	116906	.	+	.	Parent=mRNA7
+###
+</pre>
+        <h3>CDS structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference CDS segments</td><td>6</td></tr>
+          <tr><td>prediction CDS segments</td><td>6</td></tr>
+          <tr><th class="left-align" colspan="2">CDS segments structures match perfectly!</th></tr>
+        </table>
+
+        <h3>Exon structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference exons</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>4</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>2</td></tr>
+          <tr><td>prediction exons</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>4</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>2</td></tr>
+          <tr><td>Sensitivity</td><td>0.667     </td></tr>
+          <tr><td>Specificity</td><td>0.667     </td></tr>
+          <tr><td>F1 score</td><td>0.667     </td></tr>
+          <tr><td>Annotation edit distance</td><td>0.333     </td></tr>
+        </table>
+
+        <h3>UTR structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference UTR segments</td><td>2</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>2</td></tr>
+          <tr><td>prediction UTR segments</td><td>2</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>2</td></tr>
+          <tr><td>Sensitivity</td><td>0.000     </td></tr>
+          <tr><td>Specificity</td><td>0.000     </td></tr>
+          <tr><td>F1 score</td><td>--        </td></tr>
+          <tr><td>Annotation edit distance</td><td>1.000     </td></tr>
+        </table>
+
+        <h3>Nucleotide-level comparison</h3>
+        <table class="table_wide table_extra_indent">
+          <tr><td>&nbsp;</td><th>CDS</th><th>UTRs</th><th>Overall</th></tr>
+          <tr><th class="left-align">matching coefficient</th><td>1.000     </td><td>0.998     </td><td>0.998</td></tr>
+          <tr><th class="left-align">correlation coefficient</th><td>1.000     </td><td>0.990     </td><td>--</td></tr>
+          <tr><th class="left-align">sensitivity</th><td>1.000     </td><td>0.986     </td><td>--</td></tr>
+          <tr><th class="left-align">specificity</th><td>1.000     </td><td>0.995     </td><td>--</td></tr>
+          <tr><th class="left-align">F1 Score</th><td>1.000     </td><td>0.991     </td><td>--</td></tr>
+          <tr><th class="left-align">Annotation edit distance</th><td>0.000     </td><td>0.009     </td><td>--</td></tr>
+        </table>
+      </div>
+
+
+      <p class="footer">
+        Generated by <a href="https://github.com/standage/AEGeAn/tree/e2149222bba33614471e40206e906f4d45395e7a">AEGeAn version e2149222bb</a>.<br />
+        Copyright © 2014 <a href="http://aegean.readthedocs.org/en/latest/contrib.html">AEGeAn authors</a>.<br />
+        See <a href="LICENSE">LICENSE</a> for details.      </p>
+    </div>
+  </body>
+</html>

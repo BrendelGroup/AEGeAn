@@ -1,0 +1,1054 @@
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=613-12837
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene1
+|
+|  prediction genes:
+|    gene1
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA1
+     |  prediction transcripts:
+     |    mRNA1
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	613	12833	1	+	.	ID=mRNA1
+Group7.16	OGS	start_codon	613	615	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	613	740	.	+	0	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	613	740	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	741	963	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	964	1048	.	+	1	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	964	1048	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	1049	1968	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	1969	2241	.	+	0	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	1969	2241	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	2242	7743	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	7744	7922	.	+	0	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	7744	7922	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	7923	9593	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	9594	9766	.	+	1	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	9594	9766	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	9767	12449	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	12450	12691	.	+	2	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	12450	12833	1	+	.	Parent=mRNA1
+Group7.16	OGS	stop_codon	12689	12691	.	+	.	Parent=mRNA1
+Group7.16	OGS	three_prime_UTR	12692	12833	1	+	.	Parent=mRNA1
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	613	12837	.	+	.	ID=mRNA1;Name=XM_006562493.1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	start_codon	613	615	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	613	740	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	613	740	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	741	963	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	964	1048	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	964	1048	.	+	1	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	1049	1968	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	1969	2241	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	1969	2241	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	2242	7743	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	7744	7922	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	7744	7922	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	7923	9275	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	9276	9308	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	9276	9308	.	+	1	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	9309	9593	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	9594	9766	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	9594	9766	.	+	1	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	9767	12449	.	+	.	Parent=mRNA1
+Group7.16	NCBI	CDS	12450	12691	.	+	2	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	exon	12450	12837	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	stop_codon	12689	12691	.	+	.	Parent=mRNA1
+Group7.16	NCBI	three_prime_UTR	12692	12837	.	+	.	Parent=mRNA1
+###
+ |
+     |  CDS structure comparison
+     |    6 reference CDS segments
+     |        6 match prediction
+     |        0 don't match prediction
+     |    7 prediction CDS segments
+     |        6 match reference
+     |        1 don't match reference
+     |    Sensitivity:                   1.000     
+     |    Specificity:                   0.857     
+     |    F1 Score:                      0.923     
+     |    Annotation edit distance:      0.071     
+     |
+     |  Exon structure comparison
+     |    6 reference exons
+     |        5 match prediction
+     |        1 don't match prediction
+     |    7 prediction exons
+     |        5 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.833     
+     |    Specificity:                   0.714     
+     |    F1 Score:                      0.769     
+     |    Annotation edit distance:      0.226     
+     |
+     |  UTR structure comparison
+     |    1 reference UTR segments
+     |        0 match prediction
+     |        1 don't match prediction
+     |    1 prediction UTR segments
+     |        0 match reference
+     |        1 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          0.997      1.000      0.997
+     |    Correlation coefficient:       0.984      0.986      --        
+     |    Sensitivity:                   1.000      1.000      --        
+     |    Specificity:                   0.970      0.973      --        
+     |    F1 Score:                      0.985      0.986      --        
+     |    Annotation edit distance:      0.015      0.014      --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=35004-53221
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene2
+|
+|  prediction genes:
+|    None!
+|
+|----------
+     |
+     | No comparisons were performed for this locus.
+     |
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=54607-73036
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene3
+|
+|  prediction genes:
+|    gene2
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA3
+     |  prediction transcripts:
+     |    mRNA2
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	54738	72910	1	+	.	ID=mRNA3
+Group7.16	OGS	start_codon	54738	54740	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	54738	54767	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	54738	54767	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	54768	54872	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	54873	55007	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	54873	55007	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	55008	58320	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	58321	58528	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	58321	58528	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	58529	61485	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	61486	61964	.	+	2	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	61486	61964	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	61965	70078	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	70079	70256	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	70079	70256	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	70257	70375	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	70376	70597	.	+	2	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	70376	70597	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	70598	70756	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	70757	70986	.	+	2	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	70757	70986	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	70987	72748	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	72749	72910	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	72749	72910	.	+	.	Parent=mRNA3
+Group7.16	OGS	stop_codon	72908	72910	.	+	.	Parent=mRNA3
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	54607	73036	.	+	.	ID=mRNA2;Name=XM_001122105.3;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	five_prime_UTR	54607	54608	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	54607	54767	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	start_codon	54609	54611	.	+	.	Parent=mRNA2
+Group7.16	NCBI	CDS	54609	54767	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	54768	54872	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	54873	55007	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	54873	55007	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	55008	58320	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	58321	58528	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	58321	58528	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	58529	61485	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	61486	61964	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	61486	61964	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	61965	70078	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	70079	70256	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	70079	70256	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	70257	70375	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	70376	70597	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	70376	70597	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	70598	70756	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	70757	70986	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	70757	70986	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	70987	72748	.	+	.	Parent=mRNA2
+Group7.16	NCBI	CDS	72749	72910	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	exon	72749	73036	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	stop_codon	72908	72910	.	+	.	Parent=mRNA2
+Group7.16	NCBI	three_prime_UTR	72911	73036	.	+	.	Parent=mRNA2
+###
+ |
+     |  CDS structure comparison
+     |    8 reference CDS segments
+     |        7 match prediction
+     |        1 don't match prediction
+     |    8 prediction CDS segments
+     |        7 match reference
+     |        1 don't match reference
+     |    Sensitivity:                   0.875     
+     |    Specificity:                   0.875     
+     |    F1 Score:                      0.875     
+     |    Annotation edit distance:      0.125     
+     |
+     |  Exon structure comparison
+     |    8 reference exons
+     |        6 match prediction
+     |        2 don't match prediction
+     |    8 prediction exons
+     |        6 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.750     
+     |    Specificity:                   0.750     
+     |    F1 Score:                      0.750     
+     |    Annotation edit distance:      0.250     
+     |
+     |  UTR structure comparison
+     |    0 reference UTR segments
+     |        0 match prediction
+     |        0 don't match prediction
+     |    2 prediction UTR segments
+     |        0 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   --        
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      --        
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          0.993      0.993      0.986
+     |    Correlation coefficient:       0.959      --         --        
+     |    Sensitivity:                   1.000      --         --        
+     |    Specificity:                   0.927      0.000      --        
+     |    F1 Score:                      0.962      --         --        
+     |    Annotation edit distance:      0.036      --         --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=75713-79494
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene4
+|
+|  prediction genes:
+|    gene3
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA4
+     |  prediction transcripts:
+     |    mRNA4
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	75757	79210	1	-	.	ID=mRNA4
+Group7.16	OGS	three_prime_UTR	75757	75834	1	-	.	Parent=mRNA4
+Group7.16	OGS	exon	75757	76028	1	-	.	Parent=mRNA4
+Group7.16	OGS	stop_codon	75835	75837	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	75835	76028	.	-	0	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	intron	76029	76285	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	76286	76370	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	76286	76370	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	76371	77075	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	77076	77278	.	-	0	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	77076	77278	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	77279	77348	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	77349	77436	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	77349	77436	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	77437	78118	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	78119	78631	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	78119	78631	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	78632	78903	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	78904	79047	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	78904	79210	1	-	.	Parent=mRNA4
+Group7.16	OGS	start_codon	79045	79047	.	-	.	Parent=mRNA4
+Group7.16	OGS	five_prime_UTR	79048	79210	1	-	.	Parent=mRNA4
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	75713	79494	.	-	.	ID=mRNA4;Name=XM_623919.3;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	three_prime_UTR	75713	75834	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	75713	76028	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	stop_codon	75835	75837	.	-	.	Parent=mRNA4
+Group7.16	NCBI	CDS	75835	76028	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	76029	76285	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	76286	76370	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	76286	76370	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	76371	77075	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	77076	77278	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	77076	77278	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	77279	77348	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	77349	77436	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	77349	77436	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	77437	78118	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	78119	78631	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	78119	78631	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	78632	78903	.	-	.	Parent=mRNA4
+Group7.16	NCBI	CDS	78904	79047	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	exon	78904	79055	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	start_codon	79045	79047	.	-	.	Parent=mRNA4
+Group7.16	NCBI	five_prime_UTR	79048	79055	.	-	.	Parent=mRNA4
+Group7.16	NCBI	intron	79056	79460	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	79461	79494	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	five_prime_UTR	79461	79494	.	-	.	Parent=mRNA4
+###
+ |
+     |  CDS structure comparison
+     |    6 reference  CDS segments
+     |    6 prediction CDS segments
+     |    CDS structures match perfectly!
+     |
+     |  Exon structure comparison
+     |    6 reference exons
+     |        4 match prediction
+     |        2 don't match prediction
+     |    7 prediction exons
+     |        4 match reference
+     |        3 don't match reference
+     |    Sensitivity:                   0.667     
+     |    Specificity:                   0.571     
+     |    F1 Score:                      0.615     
+     |    Annotation edit distance:      0.381     
+     |
+     |  UTR structure comparison
+     |    2 reference UTR segments
+     |        0 match prediction
+     |        2 don't match prediction
+     |    3 prediction UTR segments
+     |        0 match reference
+     |        3 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          1.000      0.938      0.872
+     |    Correlation coefficient:       1.000      0.402      --        
+     |    Sensitivity:                   1.000      0.357      --        
+     |    Specificity:                   1.000      0.524      --        
+     |    F1 Score:                      1.000      0.425      --        
+     |    Annotation edit distance:      0.000      0.559      --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+     |
+     |--- Unmatched prediction transcripts ---
+     |----------------------------------------
+     |
+     |    mRNA3
+     |
+
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=88301-109742
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene6
+|    gene5
+|
+|  prediction genes:
+|    gene5
+|    gene4
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA6
+     |  prediction transcripts:
+     |    mRNA6
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	104797	107359	1	-	.	ID=mRNA6
+Group7.16	OGS	three_prime_UTR	104797	105353	1	-	.	Parent=mRNA6
+Group7.16	OGS	exon	104797	105898	1	-	.	Parent=mRNA6
+Group7.16	OGS	stop_codon	105354	105356	.	-	.	Parent=mRNA6
+Group7.16	OGS	CDS	105354	105898	.	-	0	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	intron	105899	106079	.	-	.	Parent=mRNA6
+Group7.16	OGS	CDS	106080	106328	.	-	0	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	exon	106080	106328	1	-	.	Parent=mRNA6
+Group7.16	OGS	intron	106329	106539	.	-	.	Parent=mRNA6
+Group7.16	OGS	CDS	106540	106664	.	-	2	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	exon	106540	106664	1	-	.	Parent=mRNA6
+Group7.16	OGS	intron	106665	106765	.	-	.	Parent=mRNA6
+Group7.16	OGS	CDS	106766	107160	.	-	1	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	exon	106766	107359	1	-	.	Parent=mRNA6
+Group7.16	OGS	start_codon	107158	107160	.	-	.	Parent=mRNA6
+Group7.16	OGS	five_prime_UTR	107161	107359	1	-	.	Parent=mRNA6
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	105315	107360	.	-	.	ID=mRNA6;Name=XM_006562491.1;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
+Group7.16	NCBI	three_prime_UTR	105315	105353	.	-	.	Parent=mRNA6
+Group7.16	NCBI	exon	105315	105898	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
+Group7.16	NCBI	stop_codon	105354	105356	.	-	.	Parent=mRNA6
+Group7.16	NCBI	CDS	105354	105898	.	-	0	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	intron	105899	106079	.	-	.	Parent=mRNA6
+Group7.16	NCBI	exon	106080	106328	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
+Group7.16	NCBI	CDS	106080	106328	.	-	0	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	intron	106329	106539	.	-	.	Parent=mRNA6
+Group7.16	NCBI	exon	106540	106664	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
+Group7.16	NCBI	CDS	106540	106664	.	-	2	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	intron	106665	106765	.	-	.	Parent=mRNA6
+Group7.16	NCBI	CDS	106766	107160	.	-	1	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	exon	106766	107360	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
+Group7.16	NCBI	start_codon	107158	107160	.	-	.	Parent=mRNA6
+Group7.16	NCBI	five_prime_UTR	107161	107360	.	-	.	Parent=mRNA6
+###
+ |
+     |  CDS structure comparison
+     |    4 reference  CDS segments
+     |    4 prediction CDS segments
+     |    CDS structures match perfectly!
+     |
+     |  Exon structure comparison
+     |    4 reference exons
+     |        2 match prediction
+     |        2 don't match prediction
+     |    4 prediction exons
+     |        2 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.500     
+     |    Specificity:                   0.500     
+     |    F1 Score:                      0.500     
+     |    Annotation edit distance:      0.500     
+     |
+     |  UTR structure comparison
+     |    2 reference UTR segments
+     |        0 match prediction
+     |        2 don't match prediction
+     |    2 prediction UTR segments
+     |        0 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          1.000      0.976      0.976
+     |    Correlation coefficient:       1.000      0.553      --        
+     |    Sensitivity:                   1.000      0.315      --        
+     |    Specificity:                   1.000      0.996      --        
+     |    F1 Score:                      1.000      0.478      --        
+     |    Annotation edit distance:      0.000      0.345      --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA5
+     |  prediction transcripts:
+     |    mRNA5
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	88301	109742	1	+	.	ID=mRNA5
+Group7.16	OGS	start_codon	88301	88303	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	88301	88389	.	+	0	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	88301	88389	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	88390	102373	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	102374	102569	.	+	1	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	102374	102569	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	102570	103098	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	103099	103330	.	+	0	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	103099	103330	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	103331	103589	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	103590	103761	.	+	2	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	103590	103761	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	103762	104323	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	104324	104516	.	+	1	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	104324	104516	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	104517	104603	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	104604	104759	.	+	0	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	104604	104759	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	104760	104871	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	104872	105039	.	+	0	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	104872	105039	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	105040	105118	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	105119	105308	.	+	0	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	105119	105308	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	105309	107586	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	107587	107832	.	+	2	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	107587	107832	1	+	.	Parent=mRNA5
+Group7.16	OGS	intron	107833	108074	.	+	.	Parent=mRNA5
+Group7.16	OGS	CDS	108075	108271	.	+	2	ID=CDS5;Parent=mRNA5
+Group7.16	OGS	exon	108075	109742	1	+	.	Parent=mRNA5
+Group7.16	OGS	stop_codon	108269	108271	.	+	.	Parent=mRNA5
+Group7.16	OGS	three_prime_UTR	108272	109742	1	+	.	Parent=mRNA5
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	102349	108280	.	+	.	ID=mRNA5;Name=XM_006562492.1;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	five_prime_UTR	102349	102497	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	102349	102569	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	start_codon	102498	102500	.	+	.	Parent=mRNA5
+Group7.16	NCBI	CDS	102498	102569	.	+	0	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	102570	103098	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	103099	103330	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	103099	103330	.	+	0	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	103331	103589	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	103590	103761	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	103590	103761	.	+	2	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	103762	104323	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	104324	104516	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	104324	104516	.	+	1	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	104517	104603	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	104604	104759	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	104604	104759	.	+	0	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	104760	104871	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	104872	105039	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	104872	105039	.	+	0	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	105040	105118	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	105119	105308	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	105119	105308	.	+	0	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	105309	107586	.	+	.	Parent=mRNA5
+Group7.16	NCBI	exon	107587	107832	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	CDS	107587	107832	.	+	2	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	intron	107833	108074	.	+	.	Parent=mRNA5
+Group7.16	NCBI	CDS	108075	108271	.	+	2	ID=CDS5;Parent=mRNA5;Name=XP_006562555.1;Dbxref=GeneID:409624,Genbank:XP_006562555.1,BEEBASE:GB46290;gbkey=CDS;gene=LOC409624;product=acetyl-coenzyme A synthetase-like;protein_id=XP_006562555.1
+Group7.16	NCBI	exon	108075	108280	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
+Group7.16	NCBI	stop_codon	108269	108271	.	+	.	Parent=mRNA5
+Group7.16	NCBI	three_prime_UTR	108272	108280	.	+	.	Parent=mRNA5
+###
+ |
+     |  CDS structure comparison
+     |    10 reference CDS segments
+     |        8 match prediction
+     |        2 don't match prediction
+     |    9 prediction CDS segments
+     |        8 match reference
+     |        1 don't match reference
+     |    Sensitivity:                   0.800     
+     |    Specificity:                   0.889     
+     |    F1 Score:                      0.842     
+     |    Annotation edit distance:      0.156     
+     |
+     |  Exon structure comparison
+     |    10 reference exons
+     |        7 match prediction
+     |        3 don't match prediction
+     |    9 prediction exons
+     |        7 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.700     
+     |    Specificity:                   0.778     
+     |    F1 Score:                      0.737     
+     |    Annotation edit distance:      0.261     
+     |
+     |  UTR structure comparison
+     |    1 reference UTR segments
+     |        0 match prediction
+     |        1 don't match prediction
+     |    2 prediction UTR segments
+     |        0 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          0.990      0.925      0.270
+     |    Correlation coefficient:       0.935      -0.004     --        
+     |    Sensitivity:                   0.884      0.006      --        
+     |    Specificity:                   1.000      0.057      --        
+     |    F1 Score:                      0.939      0.011      --        
+     |    Annotation edit distance:      0.058      0.968      --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=110654-116915
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene7
+|
+|  prediction genes:
+|    gene6
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA7
+     |  prediction transcripts:
+     |    mRNA7
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	110657	116915	1	+	.	ID=mRNA7
+Group7.16	OGS	five_prime_UTR	110657	110831	1	+	.	Parent=mRNA7
+Group7.16	OGS	exon	110657	110891	1	+	.	Parent=mRNA7
+Group7.16	OGS	start_codon	110832	110834	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	110832	110891	.	+	0	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	intron	110892	111894	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	111895	112028	.	+	0	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	111895	112028	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	112029	114290	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	114291	114550	.	+	1	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	114291	114550	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	114551	114742	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	114743	114848	.	+	2	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	114743	114848	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	114849	114936	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	114937	115088	.	+	1	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	114937	115088	1	+	.	Parent=mRNA7
+Group7.16	OGS	intron	115089	116328	.	+	.	Parent=mRNA7
+Group7.16	OGS	CDS	116329	116435	.	+	2	ID=CDS7;Parent=mRNA7
+Group7.16	OGS	exon	116329	116915	1	+	.	Parent=mRNA7
+Group7.16	OGS	stop_codon	116433	116435	.	+	.	Parent=mRNA7
+Group7.16	OGS	three_prime_UTR	116436	116915	1	+	.	Parent=mRNA7
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	110654	116906	.	+	.	ID=mRNA7;Name=XM_393191.5;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	five_prime_UTR	110654	110831	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	110654	110891	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	start_codon	110832	110834	.	+	.	Parent=mRNA7
+Group7.16	NCBI	CDS	110832	110891	.	+	0	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	110892	111894	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	111895	112028	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	111895	112028	.	+	0	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	112029	114290	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	114291	114550	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	114291	114550	.	+	1	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	114551	114742	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	114743	114848	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	114743	114848	.	+	2	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	114849	114936	.	+	.	Parent=mRNA7
+Group7.16	NCBI	exon	114937	115088	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	CDS	114937	115088	.	+	1	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	intron	115089	116328	.	+	.	Parent=mRNA7
+Group7.16	NCBI	CDS	116329	116435	.	+	2	ID=CDS7;Parent=mRNA7;Name=XP_393191.2;Dbxref=GeneID:409693,Genbank:XP_393191.2,BEEBASE:GB46291;gbkey=CDS;gene=LOC409693;product=inositol monophosphatase 1-like;protein_id=XP_393191.2
+Group7.16	NCBI	exon	116329	116906	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
+Group7.16	NCBI	stop_codon	116433	116435	.	+	.	Parent=mRNA7
+Group7.16	NCBI	three_prime_UTR	116436	116906	.	+	.	Parent=mRNA7
+###
+ |
+     |  CDS structure comparison
+     |    6 reference  CDS segments
+     |    6 prediction CDS segments
+     |    CDS structures match perfectly!
+     |
+     |  Exon structure comparison
+     |    6 reference exons
+     |        4 match prediction
+     |        2 don't match prediction
+     |    6 prediction exons
+     |        4 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.667     
+     |    Specificity:                   0.667     
+     |    F1 Score:                      0.667     
+     |    Annotation edit distance:      0.333     
+     |
+     |  UTR structure comparison
+     |    2 reference UTR segments
+     |        0 match prediction
+     |        2 don't match prediction
+     |    2 prediction UTR segments
+     |        0 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          1.000      0.998      0.998
+     |    Correlation coefficient:       1.000      0.990      --        
+     |    Sensitivity:                   1.000      0.986      --        
+     |    Specificity:                   1.000      0.995      --        
+     |    F1 Score:                      1.000      0.991      --        
+     |    Annotation edit distance:      0.000      0.009      --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=117229-119778
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene9
+|    gene8
+|
+|  prediction genes:
+|    gene7
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA9
+     |  prediction transcripts:
+     |    mRNA8
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	119475	119769	1	-	.	ID=mRNA9
+Group7.16	OGS	stop_codon	119475	119477	.	-	.	Parent=mRNA9
+Group7.16	OGS	CDS	119475	119675	.	-	0	ID=CDS9;Parent=mRNA9
+Group7.16	OGS	exon	119475	119675	.	-	.	Parent=mRNA9
+Group7.16	OGS	intron	119676	119754	.	-	.	Parent=mRNA9
+Group7.16	OGS	CDS	119755	119769	.	-	0	ID=CDS9;Parent=mRNA9
+Group7.16	OGS	exon	119755	119769	.	-	.	Parent=mRNA9
+Group7.16	OGS	start_codon	119767	119769	.	-	.	Parent=mRNA9
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	118880	119778	.	-	.	ID=mRNA8;Name=XM_006562490.1;Dbxref=GeneID:102655672,Genbank:XM_006562490.1;gbkey=mRNA;gene=LOC102655672;product=serine%2Fthreonine-protein kinase PRP4 homolog;transcript_id=XM_006562490.1
+Group7.16	NCBI	three_prime_UTR	118880	119474	.	-	.	Parent=mRNA8
+Group7.16	NCBI	exon	118880	119778	.	-	.	Parent=mRNA8;Dbxref=GeneID:102655672,Genbank:XM_006562490.1;gbkey=mRNA;gene=LOC102655672;product=serine%2Fthreonine-protein kinase PRP4 homolog;transcript_id=XM_006562490.1
+Group7.16	NCBI	stop_codon	119475	119477	.	-	.	Parent=mRNA8
+Group7.16	NCBI	CDS	119475	119660	.	-	0	Parent=mRNA8;Name=XP_006562553.1;Dbxref=GeneID:102655672,Genbank:XP_006562553.1;gbkey=CDS;gene=LOC102655672;product=serine%2Fthreonine-protein kinase PRP4 homolog;protein_id=XP_006562553.1
+Group7.16	NCBI	start_codon	119658	119660	.	-	.	Parent=mRNA8
+Group7.16	NCBI	five_prime_UTR	119661	119778	.	-	.	Parent=mRNA8
+###
+ |
+     |  CDS structure comparison
+     |    2 reference CDS segments
+     |        0 match prediction
+     |        2 don't match prediction
+     |    1 prediction CDS segments
+     |        0 match reference
+     |        1 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Exon structure comparison
+     |    2 reference exons
+     |        0 match prediction
+     |        2 don't match prediction
+     |    1 prediction exons
+     |        0 match reference
+     |        1 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  UTR structure comparison
+     |    0 reference UTR segments
+     |        0 match prediction
+     |        0 don't match prediction
+     |    2 prediction UTR segments
+     |        0 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   --        
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      --        
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          0.988      0.720      0.720
+     |    Correlation coefficient:       0.922      --         --        
+     |    Sensitivity:                   0.861      --         --        
+     |    Specificity:                   1.000      0.000      --        
+     |    F1 Score:                      0.925      --         --        
+     |    Annotation edit distance:      0.069      --         --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+     |
+     |--- Unmatched reference transcripts ---
+     |---------------------------------------
+     |
+     |    mRNA8
+     |
+
+|-------------------------------------------------
+|---- Locus: seqid=Group7.16 range=120837-124114
+|-------------------------------------------------
+|
+|  reference genes:
+|    gene10
+|
+|  prediction genes:
+|    gene8
+|
+|----------
+     |
+     |--------------------------
+     |---- Begin comparison ----
+     |--------------------------
+     |
+     |  reference transcripts:
+     |    mRNA10
+     |  prediction transcripts:
+     |    mRNA9
+     |
+     | reference GFF3:
+##gff-version   3
+Group7.16	OGS	mRNA	120837	124094	1	-	.	ID=mRNA10
+Group7.16	OGS	three_prime_UTR	120837	120883	1	-	.	Parent=mRNA10
+Group7.16	OGS	exon	120837	120973	1	-	.	Parent=mRNA10
+Group7.16	OGS	stop_codon	120884	120886	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	120884	120973	.	-	0	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	intron	120974	121085	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	121086	121433	.	-	0	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	exon	121086	121433	1	-	.	Parent=mRNA10
+Group7.16	OGS	intron	121434	121527	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	121528	122287	.	-	1	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	exon	121528	122287	1	-	.	Parent=mRNA10
+Group7.16	OGS	intron	122288	122345	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	122346	122827	.	-	0	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	exon	122346	122827	1	-	.	Parent=mRNA10
+Group7.16	OGS	intron	122828	122909	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	122910	123156	.	-	1	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	exon	122910	123156	1	-	.	Parent=mRNA10
+Group7.16	OGS	intron	123157	123222	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	123223	123393	.	-	1	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	exon	123223	123393	1	-	.	Parent=mRNA10
+Group7.16	OGS	intron	123394	123946	.	-	.	Parent=mRNA10
+Group7.16	OGS	CDS	123947	123951	.	-	0	ID=CDS10;Parent=mRNA10
+Group7.16	OGS	exon	123947	124094	1	-	.	Parent=mRNA10
+Group7.16	OGS	start_codon	123949	123951	.	-	.	Parent=mRNA10
+Group7.16	OGS	five_prime_UTR	123952	124094	1	-	.	Parent=mRNA10
+###
+     | prediction GFF3:
+##gff-version   3
+Group7.16	NCBI	mRNA	120866	124108	.	-	.	ID=mRNA9;Name=XM_006562488.1;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	three_prime_UTR	120866	120883	.	-	.	Parent=mRNA9
+Group7.16	NCBI	exon	120866	120973	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	stop_codon	120884	120886	.	-	.	Parent=mRNA9
+Group7.16	NCBI	CDS	120884	120973	.	-	0	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	intron	120974	121085	.	-	.	Parent=mRNA9
+Group7.16	NCBI	exon	121086	121433	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	CDS	121086	121433	.	-	0	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	intron	121434	121527	.	-	.	Parent=mRNA9
+Group7.16	NCBI	exon	121528	122287	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	CDS	121528	122287	.	-	1	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	intron	122288	122345	.	-	.	Parent=mRNA9
+Group7.16	NCBI	exon	122346	122827	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	CDS	122346	122827	.	-	0	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	intron	122828	122909	.	-	.	Parent=mRNA9
+Group7.16	NCBI	exon	122910	123156	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	CDS	122910	123156	.	-	1	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	intron	123157	123222	.	-	.	Parent=mRNA9
+Group7.16	NCBI	exon	123223	123393	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	CDS	123223	123393	.	-	1	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	intron	123394	123946	.	-	.	Parent=mRNA9
+Group7.16	NCBI	CDS	123947	123951	.	-	0	ID=CDS8;Parent=mRNA9;Name=XP_006562551.1;Dbxref=GeneID:725406,Genbank:XP_006562551.1,BEEBASE:GB46282;gbkey=CDS;gene=LOC725406;product=serine%2Fthreonine-protein kinase PRP4 homolog isoform X1;protein_id=XP_006562551.1
+Group7.16	NCBI	exon	123947	124108	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
+Group7.16	NCBI	start_codon	123949	123951	.	-	.	Parent=mRNA9
+Group7.16	NCBI	five_prime_UTR	123952	124108	.	-	.	Parent=mRNA9
+###
+ |
+     |  CDS structure comparison
+     |    7 reference  CDS segments
+     |    7 prediction CDS segments
+     |    CDS structures match perfectly!
+     |
+     |  Exon structure comparison
+     |    7 reference exons
+     |        5 match prediction
+     |        2 don't match prediction
+     |    7 prediction exons
+     |        5 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.714     
+     |    Specificity:                   0.714     
+     |    F1 Score:                      0.714     
+     |    Annotation edit distance:      0.286     
+     |
+     |  UTR structure comparison
+     |    2 reference UTR segments
+     |        0 match prediction
+     |        2 don't match prediction
+     |    2 prediction UTR segments
+     |        0 match reference
+     |        2 don't match reference
+     |    Sensitivity:                   0.000     
+     |    Specificity:                   0.000     
+     |    F1 Score:                      --        
+     |    Annotation edit distance:      1.000     
+     |
+     |  Nucleotide-level comparison      CDS        UTRs       Overall   
+     |    Matching coefficient:          1.000      0.987      0.987
+     |    Correlation coefficient:       1.000      0.876      --        
+     |    Sensitivity:                   1.000      0.847      --        
+     |    Specificity:                   1.000      0.920      --        
+     |    F1 Score:                      1.000      0.882      --        
+     |    Annotation edit distance:      0.000      0.116      --        
+     |
+     |
+     |--------------------------
+     |----- End comparison -----
+     |--------------------------
+     |
+     |--- Unmatched prediction transcripts ---
+     |----------------------------------------
+     |
+     |    mRNA10
+     |
+
+============================================================
+========== ParsEval Summary
+============================================================
+
+Started:                28 Aug 2014, 11:09PM
+Reference annotations:  OGS
+Prediction annotations: NCBI
+Executing command:      bin/parseval --refrlabel=OGS --predlabel=NCBI data/gff3/amel-ogs-g716.gff3 data/gff3/amel-ncbi-g716.gff3 
+
+  Sequences compared
+    Group7.16
+
+  Gene loci................................8
+    shared.................................7
+    unique to reference....................1
+    unique to prediction...................0
+
+  Reference annotations
+    genes..................................10
+      average per locus....................1.250
+    transcripts............................10
+      average per locus....................1.250
+      average per gene.....................1.000
+
+  Prediction annotations
+    genes..................................8
+      average per locus....................1.000
+    transcripts............................10
+      average per locus....................1.250
+      average per gene.....................1.250
+
+  Total comparisons........................8
+    perfect matches........................0 (0.0%)
+    perfect matches with mislabeled UTRs...0 (0.0%)
+    CDS structure matches..................4 (50.0%)
+      avg. length..........................8691.00 bp
+      avg. # refr exons....................5.75
+      avg. # pred exons....................6.00
+      avg. refr CDS length.................455.25 aa
+      avg. pred CDS length.................455.25 aa
+    exon structure matches.................0 (0.0%)
+    UTR structure matches..................0 (0.0%)
+    non-matches............................4 (50.0%)
+      avg. length..........................13661.75 bp
+      avg. # refr exons....................6.50
+      avg. # pred exons....................6.25
+      avg. refr CDS length.................398.25 aa
+      avg. pred CDS length.................391.50 aa
+
+  CDS structure comparison
+    reference CDS segments.................49
+      match prediction.....................44 (89.8%)
+      don't match prediction...............5 (10.2%)
+    prediction CDS segments................48
+      match reference......................44 (91.7%)
+      don't match reference................4 (8.3%)
+    Sensitivity............................0.898
+    Specificity............................0.917
+    F1 Score...............................0.907
+    Annotation edit distance...............0.093
+
+  Exon structure comparison
+    reference exons........................49
+      match prediction.....................33 (67.3%)
+      don't match prediction...............16 (32.7%)
+    prediction exons.......................49
+      match reference......................33 (67.3%)
+      don't match reference................16 (32.7%)
+    Sensitivity............................0.673
+    Specificity............................0.673
+    F1 Score...............................0.673
+    Annotation edit distance...............0.327
+
+  UTR structure comparison
+    reference UTR segments.................10
+      match prediction.....................0 (0.0%)
+      don't match prediction...............10 (100.0%)
+    prediction UTR segments................16
+      match reference......................0 (0.0%)
+      don't match reference................16 (100.0%)
+    Sensitivity............................0.000
+    Specificity............................0.000
+    F1 Score...............................nan
+    Annotation edit distance...............1.000
+
+  Nucleotide-level comparison      CDS          UTRs         Overall   
+    Matching coefficient:          0.995        0.964        0.802
+    Correlation coefficient:       0.978        0.430        --        
+    Sensitivity:                   0.976        0.371        --        
+    Specificity:                   0.984        0.540        --        
+    F1 Score:                      0.980        0.440        --        
+    Annotation edit distance:      0.020        0.544        --        

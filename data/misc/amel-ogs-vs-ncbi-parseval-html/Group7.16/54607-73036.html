@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ParsEval: Locus at Group7.16[54607, 73036]</title>
+    <link rel="stylesheet" type="text/css" href="../parseval.css" />
+    <script type="text/javascript" src="../vendor/mootools-core-1.3.2-full-nocompat-yc.js"></script>
+    <script type="text/javascript" src="../vendor/mootools-more-1.3.2.1.js"></script>
+    <script type="text/javascript">
+window.addEvent('domready', function() {
+  var status =
+  {
+    'true': "(hide details)",
+    'false': "(show details)",
+  }
+  var compareWrapper0 = new Fx.Slide('compare_wrapper_0');
+  compareWrapper0.hide();
+  $('toggle_compare_0').addEvent('click', function(event){
+    event.stop();
+    compareWrapper0.toggle();
+  });
+  compareWrapper0.addEvent('complete', function() {
+    $('toggle_compare_0').set('text', status[compareWrapper0.open]);
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Locus at Group7.16[54607, 73036]</h1>
+      <p><a href="index.html">⇐ Back to Group7.16 loci</a></p>
+
+      <h2>Gene annotations</h2>
+      <table>
+        <tr><th>Reference</th><th>Prediction</th></tr>
+        <tr><td>gene3</td><td>gene2</td></tr>
+      </table>
+
+      <div class='graphic'>
+        <a href='Group7.16_54607-73036.png'><img src='Group7.16_54607-73036.png' /></a>
+      </div>
+
+      <h2 class="bottomspace">Comparisons</h2>
+      <h3 class="compare-header">Comparison<a id="toggle_compare_0" href="#">(show details)</a></h3>
+      <div id="compare_wrapper_0"class="compare-wrapper">
+        <h3>Reference GFF3</h3>
+        <pre class="gff3 refr">
+##gff-version   3
+Group7.16	OGS	mRNA	54738	72910	1	+	.	ID=mRNA3
+Group7.16	OGS	start_codon	54738	54740	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	54738	54767	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	54738	54767	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	54768	54872	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	54873	55007	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	54873	55007	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	55008	58320	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	58321	58528	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	58321	58528	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	58529	61485	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	61486	61964	.	+	2	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	61486	61964	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	61965	70078	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	70079	70256	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	70079	70256	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	70257	70375	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	70376	70597	.	+	2	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	70376	70597	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	70598	70756	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	70757	70986	.	+	2	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	70757	70986	.	+	.	Parent=mRNA3
+Group7.16	OGS	intron	70987	72748	.	+	.	Parent=mRNA3
+Group7.16	OGS	CDS	72749	72910	.	+	0	ID=CDS3;Parent=mRNA3
+Group7.16	OGS	exon	72749	72910	.	+	.	Parent=mRNA3
+Group7.16	OGS	stop_codon	72908	72910	.	+	.	Parent=mRNA3
+###
+</pre>
+        <h3>Prediction GFF3</h3>
+        <pre class="gff3 pred">
+##gff-version   3
+Group7.16	NCBI	mRNA	54607	73036	.	+	.	ID=mRNA2;Name=XM_001122105.3;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	five_prime_UTR	54607	54608	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	54607	54767	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	start_codon	54609	54611	.	+	.	Parent=mRNA2
+Group7.16	NCBI	CDS	54609	54767	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	54768	54872	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	54873	55007	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	54873	55007	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	55008	58320	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	58321	58528	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	58321	58528	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	58529	61485	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	61486	61964	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	61486	61964	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	61965	70078	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	70079	70256	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	70079	70256	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	70257	70375	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	70376	70597	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	70376	70597	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	70598	70756	.	+	.	Parent=mRNA2
+Group7.16	NCBI	exon	70757	70986	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	CDS	70757	70986	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	intron	70987	72748	.	+	.	Parent=mRNA2
+Group7.16	NCBI	CDS	72749	72910	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_001122105.3;Dbxref=GeneID:726362,Genbank:XP_001122105.3,BEEBASE:GB46289;gbkey=CDS;gene=LOC726362;product=luciferin 4-monooxygenase;protein_id=XP_001122105.3
+Group7.16	NCBI	exon	72749	73036	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
+Group7.16	NCBI	stop_codon	72908	72910	.	+	.	Parent=mRNA2
+Group7.16	NCBI	three_prime_UTR	72911	73036	.	+	.	Parent=mRNA2
+###
+</pre>
+        <h3>CDS structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference CDS segments</td><td>8</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>7</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>1</td></tr>
+          <tr><td>prediction CDS segments</td><td>8</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>7</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>1</td></tr>
+          <tr><td>Sensitivity</td><td>0.875     </td></tr>
+          <tr><td>Specificity</td><td>0.875     </td></tr>
+          <tr><td>F1 score</td><td>0.875     </td></tr>
+          <tr><td>Annotation edit distance</td><td>0.125     </td></tr>
+        </table>
+
+        <h3>Exon structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference exons</td><td>8</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>2</td></tr>
+          <tr><td>prediction exons</td><td>8</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>2</td></tr>
+          <tr><td>Sensitivity</td><td>0.750     </td></tr>
+          <tr><td>Specificity</td><td>0.750     </td></tr>
+          <tr><td>F1 score</td><td>0.750     </td></tr>
+          <tr><td>Annotation edit distance</td><td>0.250     </td></tr>
+        </table>
+
+        <h3>UTR structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference UTR segments</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>0</td></tr>
+          <tr><td>prediction UTR segments</td><td>2</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>2</td></tr>
+          <tr><td>Sensitivity</td><td>--        </td></tr>
+          <tr><td>Specificity</td><td>0.000     </td></tr>
+          <tr><td>F1 score</td><td>--        </td></tr>
+          <tr><td>Annotation edit distance</td><td>--        </td></tr>
+        </table>
+
+        <h3>Nucleotide-level comparison</h3>
+        <table class="table_wide table_extra_indent">
+          <tr><td>&nbsp;</td><th>CDS</th><th>UTRs</th><th>Overall</th></tr>
+          <tr><th class="left-align">matching coefficient</th><td>0.993     </td><td>0.993     </td><td>0.986</td></tr>
+          <tr><th class="left-align">correlation coefficient</th><td>0.959     </td><td>--        </td><td>--</td></tr>
+          <tr><th class="left-align">sensitivity</th><td>1.000     </td><td>--        </td><td>--</td></tr>
+          <tr><th class="left-align">specificity</th><td>0.927     </td><td>0.000     </td><td>--</td></tr>
+          <tr><th class="left-align">F1 Score</th><td>0.962     </td><td>--        </td><td>--</td></tr>
+          <tr><th class="left-align">Annotation edit distance</th><td>0.036     </td><td>--        </td><td>--</td></tr>
+        </table>
+      </div>
+
+
+      <p class="footer">
+        Generated by <a href="https://github.com/standage/AEGeAn/tree/e2149222bba33614471e40206e906f4d45395e7a">AEGeAn version e2149222bb</a>.<br />
+        Copyright © 2014 <a href="http://aegean.readthedocs.org/en/latest/contrib.html">AEGeAn authors</a>.<br />
+        See <a href="LICENSE">LICENSE</a> for details.      </p>
+    </div>
+  </body>
+</html>

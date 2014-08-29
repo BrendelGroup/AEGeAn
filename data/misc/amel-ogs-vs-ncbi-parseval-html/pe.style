@@ -1,0 +1,139 @@
+style =
+{
+--------------------------------------
+  gene = {
+    max_show_width     = 0,
+  },
+  exon = {
+    max_show_width     = 0,
+  },
+  intron = {
+    max_show_width     = 0,
+  },
+  start_codon = {
+    max_show_width     = 0,
+  },
+  stop_codon = {
+    max_show_width     = 0,
+  },
+--------------------------------------
+  mRNA = {
+    stroke             = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.0, blue=0.0, alpha = 1.0}
+                           else
+                             return {red=0.0, green=0.0, blue=1.0, alpha = 1.0}
+                           end
+                         end,
+    stroke_marked      = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.0, blue=0.0}
+                           else
+                             return {red=0.0, green=0.0, blue=1.0}
+                           end
+                         end,
+    fill               = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.8, blue=0.8}
+                           else
+                             return {red=0.8, green=0.8, blue=1.0}
+                           end
+                         end,
+    style              = "box",
+    collapse_to_parent = false,
+    split_lines        = true,
+    max_capt_show_width= nil,
+    max_show_width     = nil,
+  },
+--------------------------------------
+  CDS = {
+    stroke             = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=0.0, green=0.0, blue=0.0, alpha = 0.0}
+                           else
+                             return {red=0.0, green=0.0, blue=0.0, alpha = 0.0}
+                           end
+                         end,
+    stroke_marked      = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=0.0, green=0.0, blue=0.0, alpha = 0.0}
+                           else
+                             return {red=0.0, green=0.0, blue=0.0, alpha = 0.0}
+                           end
+                         end,
+    fill               = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.2, blue=0.2}
+                           else
+                             return {red=0.2, green=0.2, blue=1.0}
+                           end
+                         end,
+    style              = "box",
+    collapse_to_parent = true,
+    split_lines        = true,
+    max_capt_show_width= nil,
+    max_show_width     = nil,
+  },
+--------------------------------------
+  five_prime_UTR = {
+    collapse_to_parent = true,
+    fill               = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.0, blue=0.5, alpha = 0.25}
+                           else
+                             return {red=0.5, green=0.0, blue=1.0, alpha = 0.25}
+                           end
+                         end,
+  },
+--------------------------------------
+  three_prime_UTR = {
+    collapse_to_parent = true,
+    fill               = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.0, blue=0.5, alpha = 0.25}
+                           else
+                             return {red=0.5, green=0.0, blue=1.0, alpha = 0.25}
+                           end
+                         end,
+  },
+--------------------------------------
+  UTR = {
+    collapse_to_parent = true,
+    fill               = function(gn, track)
+                           if string.find(track, "Reference") ~= nil then
+                             return {red=1.0, green=0.0, blue=0.5, alpha = 0.25}
+                           else
+                             return {red=0.5, green=0.0, blue=1.0, alpha = 0.25}
+                           end
+                         end,
+  },
+--------------------------------------
+  -- Defines various format options for drawing.
+  format =
+  {
+    split_lines = true,           -- generally enable splitting
+    show_block_captions = true,   -- generally show captions
+    show_track_captions = true,   -- generally show track captions
+    margins = 30,                 -- space left and right of diagram, in pixels
+    bar_height = 16,              -- height of a feature bar, in pixels
+    bar_vspace = 10,              -- space between feature bars, in pixels
+    track_vspace = 15,            -- space between tracks, in pixels
+    ruler_font_size = 10,         -- size of scale labels
+    ruler_space = 20,             -- space between ruler and first track
+    block_caption_font_size = 10, -- size of block captions
+    block_caption_space = 7,      -- space between blocks and their captions
+    track_caption_font_size = 14, -- size of track captions
+    track_caption_space = 7,      -- space between tracks and their captions
+    arrow_width = 6,              -- width of feature arrowheads, in pixels
+    stroke_width = .5,            -- width of outlines, in pixels
+    unit = "bp",                  -- basepair unit, e.g. "bp"
+    ruler_left_text = "5'",       -- text left of the ruler axis
+    ruler_right_text = "3'",      -- text right of the ruler axis
+    stroke_marked_width = 1.5,    -- width of outlines for marked elements, in pixels
+    show_grid = true,             -- shows light vertical lines for orientation
+    min_len_block = 20 ,          -- minimum length of a block in which single elements are shown
+    track_title_color     = {red=0.7, green=0.7, blue=0.7, alpha = 1.0},
+    default_stroke_color  = {red=0.1, green=0.1, blue=0.1, alpha = 1.0},
+    background_color      = {red=1.0, green=1.0, blue=1.0, alpha = 1.0},
+  },
+}

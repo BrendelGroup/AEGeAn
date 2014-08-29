@@ -1,0 +1,32 @@
+# Each line of this filter file corresponds to a single locus filter (empty
+# lines or lines beginning with # are ignored). There are 4 values associated
+# with each filter.
+#
+#  - Filter: the characteristic on which to filter loci; valid values are
+#    - LocusLength
+#    - GeneCount
+#    - TranscriptCount
+#    - ExonCount
+#    - CDSLength
+#  - Op: the logical operator used to evaluate the filter; valid values are
+#    - >
+#    - >=
+#    - <
+#    - <=
+#    - =
+#    - <> (perform no operation; locus satisfies this criterion automatically)
+#  - Value: the numerical value used to test the filter; must be a non-negative
+#    integer
+#  - Source: optional; if provided, distinguishes between different sources of
+#    annotation; values values are
+#    - R (for reference)
+#    - P (for prediction)
+
+# -------------------------------------
+# Filter         Op    Value     Source
+# -------------------------------------
+LocusLength      <>      0
+GeneCount        <>      0
+TranscriptCount  <>      0
+ExonCount        <>      0
+CDSLength        <>      0

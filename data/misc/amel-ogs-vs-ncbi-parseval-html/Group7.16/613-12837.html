@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ParsEval: Locus at Group7.16[613, 12837]</title>
+    <link rel="stylesheet" type="text/css" href="../parseval.css" />
+    <script type="text/javascript" src="../vendor/mootools-core-1.3.2-full-nocompat-yc.js"></script>
+    <script type="text/javascript" src="../vendor/mootools-more-1.3.2.1.js"></script>
+    <script type="text/javascript">
+window.addEvent('domready', function() {
+  var status =
+  {
+    'true': "(hide details)",
+    'false': "(show details)",
+  }
+  var compareWrapper0 = new Fx.Slide('compare_wrapper_0');
+  compareWrapper0.hide();
+  $('toggle_compare_0').addEvent('click', function(event){
+    event.stop();
+    compareWrapper0.toggle();
+  });
+  compareWrapper0.addEvent('complete', function() {
+    $('toggle_compare_0').set('text', status[compareWrapper0.open]);
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Locus at Group7.16[613, 12837]</h1>
+      <p><a href="index.html">⇐ Back to Group7.16 loci</a></p>
+
+      <h2>Gene annotations</h2>
+      <table>
+        <tr><th>Reference</th><th>Prediction</th></tr>
+        <tr><td>gene1</td><td>gene1</td></tr>
+      </table>
+
+      <div class='graphic'>
+        <a href='Group7.16_613-12837.png'><img src='Group7.16_613-12837.png' /></a>
+      </div>
+
+      <h2 class="bottomspace">Comparisons</h2>
+      <h3 class="compare-header">Comparison<a id="toggle_compare_0" href="#">(show details)</a></h3>
+      <div id="compare_wrapper_0"class="compare-wrapper">
+        <h3>Reference GFF3</h3>
+        <pre class="gff3 refr">
+##gff-version   3
+Group7.16	OGS	mRNA	613	12833	1	+	.	ID=mRNA1
+Group7.16	OGS	start_codon	613	615	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	613	740	.	+	0	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	613	740	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	741	963	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	964	1048	.	+	1	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	964	1048	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	1049	1968	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	1969	2241	.	+	0	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	1969	2241	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	2242	7743	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	7744	7922	.	+	0	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	7744	7922	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	7923	9593	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	9594	9766	.	+	1	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	9594	9766	1	+	.	Parent=mRNA1
+Group7.16	OGS	intron	9767	12449	.	+	.	Parent=mRNA1
+Group7.16	OGS	CDS	12450	12691	.	+	2	ID=CDS1;Parent=mRNA1
+Group7.16	OGS	exon	12450	12833	1	+	.	Parent=mRNA1
+Group7.16	OGS	stop_codon	12689	12691	.	+	.	Parent=mRNA1
+Group7.16	OGS	three_prime_UTR	12692	12833	1	+	.	Parent=mRNA1
+###
+</pre>
+        <h3>Prediction GFF3</h3>
+        <pre class="gff3 pred">
+##gff-version   3
+Group7.16	NCBI	mRNA	613	12837	.	+	.	ID=mRNA1;Name=XM_006562493.1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	start_codon	613	615	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	613	740	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	613	740	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	741	963	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	964	1048	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	964	1048	.	+	1	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	1049	1968	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	1969	2241	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	1969	2241	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	2242	7743	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	7744	7922	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	7744	7922	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	7923	9275	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	9276	9308	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	9276	9308	.	+	1	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	9309	9593	.	+	.	Parent=mRNA1
+Group7.16	NCBI	exon	9594	9766	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	CDS	9594	9766	.	+	1	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	intron	9767	12449	.	+	.	Parent=mRNA1
+Group7.16	NCBI	CDS	12450	12691	.	+	2	ID=CDS1;Parent=mRNA1;Name=XP_006562556.1;Dbxref=GeneID:726786,Genbank:XP_006562556.1,BEEBASE:GB46287;gbkey=CDS;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;protein_id=XP_006562556.1
+Group7.16	NCBI	exon	12450	12837	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
+Group7.16	NCBI	stop_codon	12689	12691	.	+	.	Parent=mRNA1
+Group7.16	NCBI	three_prime_UTR	12692	12837	.	+	.	Parent=mRNA1
+###
+</pre>
+        <h3>CDS structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference CDS segments</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>0</td></tr>
+          <tr><td>prediction CDS segments</td><td>7</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>1</td></tr>
+          <tr><td>Sensitivity</td><td>1.000     </td></tr>
+          <tr><td>Specificity</td><td>0.857     </td></tr>
+          <tr><td>F1 score</td><td>0.923     </td></tr>
+          <tr><td>Annotation edit distance</td><td>0.071     </td></tr>
+        </table>
+
+        <h3>Exon structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference exons</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>5</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>1</td></tr>
+          <tr><td>prediction exons</td><td>7</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>5</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>2</td></tr>
+          <tr><td>Sensitivity</td><td>0.833     </td></tr>
+          <tr><td>Specificity</td><td>0.714     </td></tr>
+          <tr><td>F1 score</td><td>0.769     </td></tr>
+          <tr><td>Annotation edit distance</td><td>0.226     </td></tr>
+        </table>
+
+        <h3>UTR structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference UTR segments</td><td>1</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>1</td></tr>
+          <tr><td>prediction UTR segments</td><td>1</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>1</td></tr>
+          <tr><td>Sensitivity</td><td>0.000     </td></tr>
+          <tr><td>Specificity</td><td>0.000     </td></tr>
+          <tr><td>F1 score</td><td>--        </td></tr>
+          <tr><td>Annotation edit distance</td><td>1.000     </td></tr>
+        </table>
+
+        <h3>Nucleotide-level comparison</h3>
+        <table class="table_wide table_extra_indent">
+          <tr><td>&nbsp;</td><th>CDS</th><th>UTRs</th><th>Overall</th></tr>
+          <tr><th class="left-align">matching coefficient</th><td>0.997     </td><td>1.000     </td><td>0.997</td></tr>
+          <tr><th class="left-align">correlation coefficient</th><td>0.984     </td><td>0.986     </td><td>--</td></tr>
+          <tr><th class="left-align">sensitivity</th><td>1.000     </td><td>1.000     </td><td>--</td></tr>
+          <tr><th class="left-align">specificity</th><td>0.970     </td><td>0.973     </td><td>--</td></tr>
+          <tr><th class="left-align">F1 Score</th><td>0.985     </td><td>0.986     </td><td>--</td></tr>
+          <tr><th class="left-align">Annotation edit distance</th><td>0.015     </td><td>0.014     </td><td>--</td></tr>
+        </table>
+      </div>
+
+
+      <p class="footer">
+        Generated by <a href="https://github.com/standage/AEGeAn/tree/e2149222bba33614471e40206e906f4d45395e7a">AEGeAn version e2149222bb</a>.<br />
+        Copyright © 2014 <a href="http://aegean.readthedocs.org/en/latest/contrib.html">AEGeAn authors</a>.<br />
+        See <a href="LICENSE">LICENSE</a> for details.      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ParsEval: Locus at Group7.16[75713, 79494]</title>
+    <link rel="stylesheet" type="text/css" href="../parseval.css" />
+    <script type="text/javascript" src="../vendor/mootools-core-1.3.2-full-nocompat-yc.js"></script>
+    <script type="text/javascript" src="../vendor/mootools-more-1.3.2.1.js"></script>
+    <script type="text/javascript">
+window.addEvent('domready', function() {
+  var status =
+  {
+    'true': "(hide details)",
+    'false': "(show details)",
+  }
+  var compareWrapper0 = new Fx.Slide('compare_wrapper_0');
+  compareWrapper0.hide();
+  $('toggle_compare_0').addEvent('click', function(event){
+    event.stop();
+    compareWrapper0.toggle();
+  });
+  compareWrapper0.addEvent('complete', function() {
+    $('toggle_compare_0').set('text', status[compareWrapper0.open]);
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Locus at Group7.16[75713, 79494]</h1>
+      <p><a href="index.html">⇐ Back to Group7.16 loci</a></p>
+
+      <h2>Gene annotations</h2>
+      <table>
+        <tr><th>Reference</th><th>Prediction</th></tr>
+        <tr><td>gene4</td><td>gene3</td></tr>
+      </table>
+
+      <div class='graphic'>
+        <a href='Group7.16_75713-79494.png'><img src='Group7.16_75713-79494.png' /></a>
+      </div>
+
+      <h2 class="bottomspace">Comparisons</h2>
+      <h3 class="compare-header">Comparison<a id="toggle_compare_0" href="#">(show details)</a></h3>
+      <div id="compare_wrapper_0"class="compare-wrapper">
+        <h3>Reference GFF3</h3>
+        <pre class="gff3 refr">
+##gff-version   3
+Group7.16	OGS	mRNA	75757	79210	1	-	.	ID=mRNA4
+Group7.16	OGS	three_prime_UTR	75757	75834	1	-	.	Parent=mRNA4
+Group7.16	OGS	exon	75757	76028	1	-	.	Parent=mRNA4
+Group7.16	OGS	stop_codon	75835	75837	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	75835	76028	.	-	0	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	intron	76029	76285	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	76286	76370	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	76286	76370	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	76371	77075	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	77076	77278	.	-	0	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	77076	77278	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	77279	77348	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	77349	77436	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	77349	77436	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	77437	78118	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	78119	78631	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	78119	78631	1	-	.	Parent=mRNA4
+Group7.16	OGS	intron	78632	78903	.	-	.	Parent=mRNA4
+Group7.16	OGS	CDS	78904	79047	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	exon	78904	79210	1	-	.	Parent=mRNA4
+Group7.16	OGS	start_codon	79045	79047	.	-	.	Parent=mRNA4
+Group7.16	OGS	five_prime_UTR	79048	79210	1	-	.	Parent=mRNA4
+###
+</pre>
+        <h3>Prediction GFF3</h3>
+        <pre class="gff3 pred">
+##gff-version   3
+Group7.16	NCBI	mRNA	75713	79494	.	-	.	ID=mRNA4;Name=XM_623919.3;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	three_prime_UTR	75713	75834	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	75713	76028	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	stop_codon	75835	75837	.	-	.	Parent=mRNA4
+Group7.16	NCBI	CDS	75835	76028	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	76029	76285	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	76286	76370	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	76286	76370	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	76371	77075	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	77076	77278	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	77076	77278	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	77279	77348	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	77349	77436	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	77349	77436	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	77437	78118	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	78119	78631	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	CDS	78119	78631	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	intron	78632	78903	.	-	.	Parent=mRNA4
+Group7.16	NCBI	CDS	78904	79047	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	exon	78904	79055	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	start_codon	79045	79047	.	-	.	Parent=mRNA4
+Group7.16	NCBI	five_prime_UTR	79048	79055	.	-	.	Parent=mRNA4
+Group7.16	NCBI	intron	79056	79460	.	-	.	Parent=mRNA4
+Group7.16	NCBI	exon	79461	79494	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
+Group7.16	NCBI	five_prime_UTR	79461	79494	.	-	.	Parent=mRNA4
+###
+</pre>
+        <h3>CDS structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference CDS segments</td><td>6</td></tr>
+          <tr><td>prediction CDS segments</td><td>6</td></tr>
+          <tr><th class="left-align" colspan="2">CDS segments structures match perfectly!</th></tr>
+        </table>
+
+        <h3>Exon structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference exons</td><td>6</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>4</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>2</td></tr>
+          <tr><td>prediction exons</td><td>7</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>4</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>3</td></tr>
+          <tr><td>Sensitivity</td><td>0.667     </td></tr>
+          <tr><td>Specificity</td><td>0.571     </td></tr>
+          <tr><td>F1 score</td><td>0.615     </td></tr>
+          <tr><td>Annotation edit distance</td><td>0.381     </td></tr>
+        </table>
+
+        <h3>UTR structure comparison</h3>
+        <table class="table_normal table_extra_indent">
+          <tr><td>reference UTR segments</td><td>2</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match prediction</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match prediction</td><td>2</td></tr>
+          <tr><td>prediction UTR segments</td><td>3</td></tr>
+          <tr class="cell_small"><td class="cell_indent">match reference</td><td>0</td></tr>
+          <tr class="cell_small"><td class="cell_indent">don't match reference</td><td>3</td></tr>
+          <tr><td>Sensitivity</td><td>0.000     </td></tr>
+          <tr><td>Specificity</td><td>0.000     </td></tr>
+          <tr><td>F1 score</td><td>--        </td></tr>
+          <tr><td>Annotation edit distance</td><td>1.000     </td></tr>
+        </table>
+
+        <h3>Nucleotide-level comparison</h3>
+        <table class="table_wide table_extra_indent">
+          <tr><td>&nbsp;</td><th>CDS</th><th>UTRs</th><th>Overall</th></tr>
+          <tr><th class="left-align">matching coefficient</th><td>1.000     </td><td>0.938     </td><td>0.872</td></tr>
+          <tr><th class="left-align">correlation coefficient</th><td>1.000     </td><td>0.402     </td><td>--</td></tr>
+          <tr><th class="left-align">sensitivity</th><td>1.000     </td><td>0.357     </td><td>--</td></tr>
+          <tr><th class="left-align">specificity</th><td>1.000     </td><td>0.524     </td><td>--</td></tr>
+          <tr><th class="left-align">F1 Score</th><td>1.000     </td><td>0.425     </td><td>--</td></tr>
+          <tr><th class="left-align">Annotation edit distance</th><td>0.000     </td><td>0.559     </td><td>--</td></tr>
+        </table>
+      </div>
+
+      <h2>Unmatched prediction transcripts</h2>
+      <ul>
+        <li>mRNA3</li>
+      </ul>
+
+
+      <p class="footer">
+        Generated by <a href="https://github.com/standage/AEGeAn/tree/e2149222bba33614471e40206e906f4d45395e7a">AEGeAn version e2149222bb</a>.<br />
+        Copyright © 2014 <a href="http://aegean.readthedocs.org/en/latest/contrib.html">AEGeAn authors</a>.<br />
+        See <a href="LICENSE">LICENSE</a> for details.      </p>
+    </div>
+  </body>
+</html>
