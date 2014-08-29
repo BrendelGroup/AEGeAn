@@ -11,7 +11,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #define PARSEVAL_UTILS
 
 /**
- * @type FIXME
+ * @type Data required for ParsEval's default runtime summary.
  */
 struct PeHtmlOverviewData
 {

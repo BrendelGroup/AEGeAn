@@ -119,12 +119,13 @@ static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
                                            GtUword k);
 
 /**
- * @function FIXME
+ * @function Create the sequence-level summary pages.
  */
 static void compare_report_html_print_seqfiles(AgnCompareReportHTML *rpt);
 
 /**
- * @function FIXME
+ * @function Store informatino about each locus for later use when creating the
+ * sequence-level summary pages.
  */
 static void
 compare_report_html_save_seq_locus_data(AgnCompareReportHTML *rpt,

@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #ifndef AEGEAN_LOCUS_FILTER_STREAM
 #define AEGEAN_LOCUS_FILTER_STREAM
 
@@ -18,7 +19,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
  * @class AgnLocusFilterStream
  *
  * Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream
- * used to FIXME.
+ * used to select loci based on user-specified criteria.
  */
 typedef struct AgnLocusFilterStream AgnLocusFilterStream;
 

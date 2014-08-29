@@ -33,10 +33,17 @@ static void locus_bron_kerbosch(GtArray *R, GtArray *P, GtArray *X,
 
 /**
  * @function ``GtFree`` function: treats each entry in the array as an
+ * ``AgnTranscriptClique **``, dereferences & deletes each entry, and deletes
+ * the array.
+ */
+static void locus_clique_array_delete(GtArray *array);
+
+/**
+ * @function ``GtFree`` function: treats each entry in the array as an
  * ``AgnCliquePair **``, dereferences & deletes each entry, and deletes the
  * array.
  */
-static void locus_clique_array_delete(GtArray *array);
+static void locus_clique_pair_array_delete(GtArray *array);
 
 /**
  * @function If reference transcripts belonging to the same locus overlap, they
@@ -1062,6 +1069,17 @@ static void locus_clique_array_delete(GtArray *array)
   agn_assert(array != NULL);
   while(gt_array_size(array) > 0)
   {
+    AgnTranscriptClique **clique = gt_array_pop(array);
+    agn_transcript_clique_delete(*clique);
+  }
+  gt_array_delete(array);
+}
+
+static void locus_clique_pair_array_delete(GtArray *array)
+{
+  agn_assert(array != NULL);
+  while(gt_array_size(array) > 0)
+  {
     AgnCliquePair **pair = gt_array_pop(array);
     agn_clique_pair_delete(*pair);
   }
@@ -1172,7 +1190,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
     }
   }
   gt_genome_node_add_user_data(locus,"pairs2report",gt_array_ref(pairs2report),
-                               (GtFree)locus_clique_array_delete);
+                               (GtFree)locus_clique_pair_array_delete);
   gt_array_delete(pairs2report);
   agn_comparison_resolve(stats);
 
@@ -1192,7 +1210,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
   if(gt_array_size(uniqrefr) > 0)
   {
     gt_genome_node_add_user_data(locus, "uniqrefr", gt_array_ref(uniqrefr),
-                                 (GtFree)gt_array_delete);
+                                 (GtFree)locus_clique_array_delete);
   }
   gt_array_delete(uniqrefr);
 
@@ -1212,7 +1230,7 @@ static void locus_select_pairs(AgnLocus *locus, GtArray *refrcliques,
   if(gt_array_size(uniqpred) > 0)
   {
     gt_genome_node_add_user_data(locus, "uniqpred", gt_array_ref(uniqpred),
-                                 (GtFree)gt_array_delete);
+                                 (GtFree)locus_clique_array_delete);
   }
   gt_array_delete(uniqpred);
 

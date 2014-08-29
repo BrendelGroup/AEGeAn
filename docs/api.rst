@@ -494,7 +494,7 @@ Class AgnLocusFilterStream
 
 .. c:type:: AgnLocusFilterStream
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to FIXME. See the `AgnLocusFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusFilterStream.h>`_.
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select loci based on user-specified criteria. See the `AgnLocusFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusFilterStream.h>`_.
 
 .. c:function:: GtNodeStream* agn_locus_filter_stream_new(GtNodeStream *in_stream, GtArray *filters)
 

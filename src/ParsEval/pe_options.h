@@ -16,7 +16,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "aegean.h"
 
 /**
- * @type FIXME
+ * @type The output mode to use with ParsEval.
  */
 enum PeOutFormat
 {
