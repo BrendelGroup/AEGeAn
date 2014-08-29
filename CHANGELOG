@@ -1,6 +1,25 @@
 AEGeAn Toolkit Version 0.10
 ===========================
 
+v0.10.1
+-------
+
+Simple usage of the AEGeAn Toolkit and additional functional tests revealed a
+couple of issues with the v0.10.0 release.
+
+  - In ParsEval's HTML output mode, the sequence overview pages were only being
+    created correctly when there was a single sequence in the input.
+
+  - ParsEval had a memory leak both in text and HTML output mode, stemming from
+    AgnTranscriptClique objects that never got freed.
+
+The first issue simply required a bit of refactoring and a different approach to
+generating the sequence overview pages. The second issue took some detective
+work to find the leak, which was in the core code (AgnLocus class).
+
+Along the way, I extended the functional tests and improved the testing for
+memory leaks a bit.
+
 v0.10.0
 -------
 
