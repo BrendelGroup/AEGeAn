@@ -149,4 +149,5 @@ agn-test:	all
 		@ test/AT1G05320.sh $(MEMCHECKFT)
 		@ test/FBgn0035002.sh $(MEMCHECKFT)
 		@ test/iLocusParsing.sh $(MEMCHECKFT)
+		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
 
