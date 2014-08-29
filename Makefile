@@ -65,7 +65,8 @@ INCS=-I src/genometools/src -I src/genometools/obj -I /usr/local/include/genomet
      -I /usr/include/cairo -I /sw/include/cairo
 ifeq ($(memcheck),yes)
   MEMCHECK=valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 \
-                    --suppressions=data/misc/libpixman.supp
+                    --suppressions=data/misc/libpixman.supp \
+                    --suppressions=data/misc/libpango.supp
   MEMCHECKFT=memcheck
 endif
 LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
