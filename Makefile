@@ -4,7 +4,7 @@
 prefix=/usr/local
 AGN_LINK=https://github.com/standage/AEGeAn
 AGN_DATE=2014
-AGN_VERSION=0.10.0
+AGN_VERSION=0.11.0
 
 #----End configuration----#
 #----End configuration----#
