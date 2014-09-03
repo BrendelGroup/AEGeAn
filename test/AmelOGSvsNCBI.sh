@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eo pipefail
 
 if [[ $1 == "memcheck" ]]; then
   memcheckcmd="valgrind --leak-check=full --show-reachable=yes --suppressions=data/misc/libpixman.supp --suppressions=data/misc/libpango.supp --error-exitcode=1"
