@@ -565,39 +565,33 @@ static void infer_cds_visitor_infer_utrs(AgnInferCDSVisitor *v)
 
 static void infer_cds_visitor_set_utrs(AgnInferCDSVisitor *v)
 {
-  GtGenomeNode **start, **stop;
-  GtRange start_range, stop_range;
-  GtUword i;
+  GtGenomeNode **start;
+  GtUword i, cds_start;
 
   if(!v->starts || gt_array_size(v->starts) != 1)
     return;
-  if(!v->stops  || gt_array_size(v->stops)  != 1)
-    return;
-
   start = gt_array_get(v->starts, 0);
-  stop  = gt_array_get(v->stops,  0);
-  start_range = gt_genome_node_get_range(*start);
-  stop_range  = gt_genome_node_get_range(*stop);
+  cds_start = gt_genome_node_get_start(*start);
 
   for(i = 0; i < gt_array_size(v->utrs); i++)
   {
     GtFeatureNode *utr = *(GtFeatureNode **)gt_array_get(v->utrs, i);
     GtStrand strand = gt_feature_node_get_strand(utr);
-    GtRange utr_range = gt_genome_node_get_range((GtGenomeNode *)utr);
+    GtUword utr_start = gt_genome_node_get_start((GtGenomeNode *)utr);
 
     if(!gt_feature_node_has_type(utr, "five_prime_UTR") &&
        !gt_feature_node_has_type(utr, "three_prime_UTR"))
     {
       if(strand == GT_STRAND_FORWARD)
       {
-        if(utr_range.start < start_range.start)
+        if(utr_start < cds_start)
           gt_feature_node_set_type(utr, "five_prime_UTR");
         else
           gt_feature_node_set_type(utr, "three_prime_UTR");
       }
       else
       {
-        if(utr_range.start < start_range.start)
+        if(utr_start < cds_start)
           gt_feature_node_set_type(utr, "three_prime_UTR");
         else
           gt_feature_node_set_type(utr, "five_prime_UTR");
