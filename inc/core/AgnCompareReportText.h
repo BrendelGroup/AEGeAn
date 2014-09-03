@@ -38,6 +38,8 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
  * Reports will be written to ``outstream`` and status messages will be written
  * to the logger.
  */
-GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger);
+GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, bool gff3,
+                                           GtLogger *logger);
+//                                           bool gff3);
 
 #endif

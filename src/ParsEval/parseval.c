@@ -104,18 +104,21 @@ int main(int argc, char **argv)
   {
     case TEXTMODE:
       if(options.summary_only)
-        rpt = agn_compare_report_text_new(NULL, logger);
+        rpt = agn_compare_report_text_new(NULL, false, logger);
       else
-        rpt = agn_compare_report_text_new(options.outfile, logger);
+        rpt = agn_compare_report_text_new(options.outfile,options.gff3,logger);
       break;
     case HTMLMODE:
       if(options.graphics)
       {
-        rpt = agn_compare_report_html_new(options.outfilename, &options.pngdata,
-                                          logger);
+        rpt = agn_compare_report_html_new(options.outfilename, options.gff3,
+                                          &options.pngdata, logger);
       }
       else
-        rpt = agn_compare_report_html_new(options.outfilename, NULL, logger);
+      {
+        rpt = agn_compare_report_html_new(options.outfilename, options.gff3,
+                                          NULL, logger);
+      }
       break;
     case CSVMODE:
       fprintf(stderr, "error: CSV output mode support temporarily "

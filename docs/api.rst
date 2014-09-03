@@ -72,7 +72,7 @@ Class AgnCompareReportHTML
 
   After the node stream has been processed, call this function to write a summary of all locus comparisons to the output directory.
 
-.. c:function:: GtNodeVisitor *agn_compare_report_html_new(const char *outdir, AgnLocusPngMetadata *pngdata, GtLogger *logger)
+.. c:function:: GtNodeVisitor *agn_compare_report_html_new(const char *outdir, bool gff3, AgnLocusPngMetadata *pngdata, GtLogger *logger)
 
   Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written in ``outdir`` and status messages will be written to the logger.
 
@@ -95,7 +95,7 @@ Class AgnCompareReportText
 
   After the node stream has been processed, call this function to write a summary of all locus comparisons to ``outstream``.
 
-.. c:function:: GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
+.. c:function:: GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, bool gff3, GtLogger *logger)
 
   Class constructor. Creates a node visitor used to process a stream of ``AgnLocus`` objects containing two sources of annotation to be compared. Reports will be written to ``outstream`` and status messages will be written to the logger.
 

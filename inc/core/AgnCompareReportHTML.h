@@ -45,7 +45,7 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt);
  * Reports will be written in ``outdir`` and status messages will be written
  * to the logger.
  */
-GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
+GtNodeVisitor *agn_compare_report_html_new(const char *outdir, bool gff3,
                                            AgnLocusPngMetadata *pngdata,
                                            GtLogger *logger);
 

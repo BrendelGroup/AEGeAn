@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <string.h>
 #include "AgnComparison.h"
 #include "AgnCompareReportText.h"
@@ -26,6 +27,7 @@ struct AgnCompareReportText
   GtStrArray *seqids;
   FILE *outstream;
   GtLogger *logger;
+  bool gff3;
 };
 
 //------------------------------------------------------------------------------
@@ -93,7 +95,8 @@ static void compare_report_text_pair_structure(FILE *outstream,
 /**
  * @function Print a comparison report for the given clique pair.
  */
-static void compare_report_text_print_pair(AgnCliquePair *pair,FILE *outstream);
+static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream,
+                                           bool gff3);
 
 /**
  * @function Print a breakdown of characteristics of loci that fall into a
@@ -127,7 +130,7 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
 {
   AgnComparisonData *data = &rpt->data;
   GtUword i;
-  
+
   fprintf(outstream, "  Sequences compared\n");
   for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
   {
@@ -187,7 +190,8 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
           data->stats.utr_nuc_stats.eds, "--");
 }
 
-GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
+GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, bool gff3,
+                                           GtLogger *logger)
 {
   GtNodeVisitor *nv = gt_node_visitor_create(compare_report_text_class());
   AgnCompareReportText *rpt = compare_report_text_cast(nv);
@@ -195,6 +199,7 @@ GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, GtLogger *logger)
   rpt->seqids = gt_str_array_new();
   rpt->outstream = outstream;
   rpt->logger = logger;
+  rpt->gff3 = gff3;
 
   return nv;
 }
@@ -344,7 +349,7 @@ static void compare_report_text_locus_handler(AgnCompareReportText *rpt,
   for(i = 0; i < gt_array_size(pairs2report); i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
-    compare_report_text_print_pair(pair, outstream);
+    compare_report_text_print_pair(pair, outstream, rpt->gff3);
   }
 
   unique = agn_locus_get_unique_refr_cliques(locus);
@@ -471,9 +476,9 @@ static void compare_report_text_pair_structure(FILE *outstream,
              stats->correct + stats->wrong, units,
              stats->correct, stats->wrong);
     fprintf(outstream,
-            "     |    %-30s %-10s\n" 
-            "     |    %-30s %-10s\n" 
-            "     |    %-30s %-10s\n" 
+            "     |    %-30s %-10s\n"
+            "     |    %-30s %-10s\n"
+            "     |    %-30s %-10s\n"
             "     |    %-30s %-10s\n",
             "Sensitivity:", stats->sns, "Specificity:", stats->sps,
             "F1 Score:", stats->f1s, "Annotation edit distance:",stats->eds);
@@ -481,7 +486,8 @@ static void compare_report_text_pair_structure(FILE *outstream,
   fprintf(outstream, "     |\n");
 }
 
-static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
+static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream,
+                                           bool gff3)
 {
   GtArray *tids;
   AgnTranscriptClique *refrclique, *predclique;
@@ -513,11 +519,14 @@ static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
   gt_array_delete(tids);
   fprintf(outstream, "     |\n");
 
-  fprintf(outstream, "     | reference GFF3:\n");
-  agn_transcript_clique_to_gff3(refrclique, outstream, " | ");
-  fprintf(outstream, "     | prediction GFF3:\n");
-  agn_transcript_clique_to_gff3(predclique, outstream, " | ");
-  fprintf(outstream, " |\n");
+  if(gff3)
+  {
+    fprintf(outstream, "     | reference GFF3:\n");
+    agn_transcript_clique_to_gff3(refrclique, outstream, " | ");
+    fprintf(outstream, "     | prediction GFF3:\n");
+    agn_transcript_clique_to_gff3(predclique, outstream, " | ");
+    fprintf(outstream, " |\n");
+  }
 
   AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
   compare_report_text_pair_structure(outstream, &pairstats->cds_struc_stats,
@@ -526,7 +535,7 @@ static void compare_report_text_print_pair(AgnCliquePair *pair, FILE *outstream)
                                      "Exon", "exons");
   compare_report_text_pair_structure(outstream, &pairstats->utr_struc_stats,
                                      "UTR", "UTR segments");
-  compare_report_text_pair_nucleotide(outstream, pair);  
+  compare_report_text_pair_nucleotide(outstream, pair);
 
   fprintf(outstream,
           "     |\n"

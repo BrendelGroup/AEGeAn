@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <string.h>
 #include "core/hashmap_api.h"
 #include "AgnComparison.h"
@@ -34,6 +35,7 @@ struct AgnCompareReportHTML
   void *ofuncdata;
   GtLogger *logger;
   GtStr *summary_title;
+  bool gff3;
 };
 
 typedef struct
@@ -113,10 +115,11 @@ compare_report_html_print_locus_to_seqfile(SeqfileLocusData *data,
                                            FILE *outstream);
 
 /**
- * @function Print a comparison report for the given clique pair.
+ * @function Print a comparison report for the given clique pair. Include markup
+ * to collapse the comparison if required.
  */
 static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
-                                           GtUword k);
+                                           GtUword k, bool collapse, bool gff3);
 
 /**
  * @function Create the sequence-level summary pages.
@@ -210,7 +213,7 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
   compare_report_html_print_seqfiles(rpt);
 }
 
-GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
+GtNodeVisitor *agn_compare_report_html_new(const char *outdir, bool gff3,
                                            AgnLocusPngMetadata *pngdata,
                                            GtLogger *logger)
 {
@@ -225,6 +228,7 @@ GtNodeVisitor *agn_compare_report_html_new(const char *outdir,
                                      (GtFree)gt_array_delete);
   rpt->logger = logger;
   rpt->summary_title = gt_str_new_cstr("ParsEval Summary");
+  rpt->gff3 = gff3;
 
   return nv;
 }
@@ -408,11 +412,12 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
     return;
   }
 
-  fputs("      <h2 class=\"bottomspace\">Comparisons</h2>\n", outstream);
+  fputs("      <h2 class=\"bottomspace\">Comparison(s)</h2>\n", outstream);
   for(i = 0; i < gt_array_size(pairs2report); i++)
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
-    compare_report_html_print_pair(pair, outstream, i);
+    bool collapse = gt_array_size(pairs2report) > 1;
+    compare_report_html_print_pair(pair, outstream, i, collapse, rpt->gff3);
   }
 
   unique = agn_locus_get_unique_refr_cliques(locus);
@@ -483,7 +488,7 @@ static void compare_report_html_locus_header(AgnLocus *locus, FILE *outstream)
            "href=\"../parseval.css\" />\n",
            gt_str_get(seqid), range.start, range.end);
 
-  if(numpairs > 0)
+  if(numpairs > 1)
   {
     GtUword i;
     fputs("    <script type=\"text/javascript\""
@@ -664,26 +669,31 @@ compare_report_html_print_locus_to_seqfile(SeqfileLocusData *data,
 }
 
 static void compare_report_html_print_pair(AgnCliquePair *pair, FILE *outstream,
-                                           GtUword k)
+                                           GtUword k, bool collapse, bool gff3)
 {
   AgnTranscriptClique *refrclique = agn_clique_pair_get_refr_clique(pair);
   AgnTranscriptClique *predclique = agn_clique_pair_get_pred_clique(pair);
 
-  fprintf(outstream,
-          "      <h3 class=\"compare-header\">Comparison"
-          "<a id=\"toggle_compare_%lu\" href=\"#\">(show details)</a></h3>\n",
-          k);
+  if(collapse)
+  {
+    fprintf(outstream, "      <h3 class=\"compare-header\">Comparison"
+            "<a id=\"toggle_compare_%lu\" href=\"#\">(show details)</a></h3>\n",
+            k);
+  }
   fprintf(outstream, "      <div id=\"compare_wrapper_%lu\""
                      "class=\"compare-wrapper\">\n", k);
 
-  fputs("        <h3>Reference GFF3</h3>\n"
-        "        <pre class=\"gff3 refr\">\n", outstream);
-  agn_transcript_clique_to_gff3(refrclique, outstream, NULL);
-  fputs("</pre>\n", outstream);
-  fputs("        <h3>Prediction GFF3</h3>\n"
-        "        <pre class=\"gff3 pred\">\n", outstream);
-  agn_transcript_clique_to_gff3(predclique, outstream, NULL);
-  fputs("</pre>\n", outstream);
+  if(gff3)
+  {
+    fputs("        <h3>Reference GFF3</h3>\n"
+          "        <pre class=\"gff3 refr\">\n", outstream);
+    agn_transcript_clique_to_gff3(refrclique, outstream, NULL);
+    fputs("</pre>\n", outstream);
+    fputs("        <h3>Prediction GFF3</h3>\n"
+          "        <pre class=\"gff3 pred\">\n", outstream);
+    agn_transcript_clique_to_gff3(predclique, outstream, NULL);
+    fputs("</pre>\n", outstream);
+  }
 
   AgnComparison *pairstats = agn_clique_pair_get_stats(pair);
   compare_report_html_pair_structure(outstream, &pairstats->cds_struc_stats,
