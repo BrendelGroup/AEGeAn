@@ -19,13 +19,13 @@ while(<STDIN>)
   my @fields = split(/\t/);
   if($fields[2] eq "locus")
   {
-    $ilocusid = sprintf("%s_%lu-%lu", $fields[0], $fields[3], $fields[4]);
+    ($ilocusid) = $fields[8] =~ m/ID=([^;]+)/;
     $offset = $fields[3] - 1;
     next;
   }
   $fields[0] = $ilocusid;
   $fields[3] -= $offset;
   $fields[4] -= $offset;
-  $fields[8] =~ s/Parent=locus[^;]+;*//;
+  $fields[8] =~ s/Parent=$ilocusid;*//;
   print join("\t", @fields);
 }
