@@ -16,11 +16,12 @@ while(<STDIN>)
   next if(m/\tlocus\t/);
 
   my @fields = split(/\t/);
-  my $ilocusid = $fields[0];
-  my ($ilseqid, $ilstart, $ilend) = $ilocusid =~ m/(.+)_(\d+)-(\d+)/;
+  my ($ilocuspos) = $fields[8] =~ m/iLocus_pos=([^;]+)/;
+  my ($ilseqid, $ilstart, $ilend) = $ilocuspos =~ m/(.+)_(\d+)-(\d+)/;
   my $offset = $ilstart - 1;
   $fields[0] = $ilseqid;
   $fields[3] += $offset;
   $fields[4] += $offset;
+  $fields[8] =~ s/iLocus_pos=([^;]+);//;
   print join("\t", @fields);
 }
