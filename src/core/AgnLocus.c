@@ -767,6 +767,8 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
   graphic_width = gt_genome_node_get_length(locus) * scaling_factor;
   if(graphic_width < 650)
     graphic_width = 650;
+  if(graphic_width > 10000)
+    graphic_width = 10000;
 
   // Generate the graphic...this is going to get a bit hairy
   GtStyle *style;
