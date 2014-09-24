@@ -6,6 +6,21 @@ types implemented by the GenomeTools library. For data types beginning with
 ``Gt``, see the GenomeTools API documentation at
 http://genometools.org/libgenometools.html.
 
+Class AgnASInspectVisitor
+-------------------------
+
+.. c:type:: AgnASInspectVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for summarizing the extent of alternative splicing in an annotation. See the `AgnASInspectVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnASInspectVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_as_inspect_visitor_new()
+
+  Constructor.
+
 Class AgnCliquePair
 -------------------
 

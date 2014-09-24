@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <getopt.h>
 #include "genometools.h"
 #include "AgnMrnaRepVisitor.h"

@@ -17,7 +17,8 @@ LP_EXE=bin/locuspocus
 XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
+AS_EXE=bin/asinspect
+BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE) $(AS_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -128,6 +129,10 @@ $(RP_EXE):	src/pmrna.c $(AGN_OBJS)
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
+
+$(AS_EXE):	src/asinspect.c $(AGN_OBJS)
+		@- mkdir -p bin
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/asinspect.c $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
 		ar ru libaegean.a $(AGN_OBJS)

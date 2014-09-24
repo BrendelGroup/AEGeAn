@@ -36,8 +36,7 @@ struct AgnLocusMapVisitor
 static const GtNodeVisitorClass *locus_map_visitor_class();
 
 /**
- * @function For any gene feature with attribute 'pseudo=true', set type to
- * 'pseudogene'.
+ * @function FIXME
  */
 static int
 visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
