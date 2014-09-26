@@ -24,6 +24,7 @@ struct AgnASInspectVisitor
   const GtNodeVisitor parent_instance;
   GtArray *as_genes;
   GtArray *se_events;
+  FILE *report;
 };
 
 typedef struct
@@ -77,18 +78,19 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
 // Method implementations
 //------------------------------------------------------------------------------
 
-GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in)
+GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in, FILE *report)
 {
-  GtNodeVisitor *nv = agn_as_inspect_visitor_new();
+  GtNodeVisitor *nv = agn_as_inspect_visitor_new(report);
   return gt_visitor_stream_new(in, nv);
 }
 
-GtNodeVisitor *agn_as_inspect_visitor_new(FILE *genefh, FILE *mrnafh)
+GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report)
 {
   GtNodeVisitor *nv = gt_node_visitor_create(as_inspect_visitor_class());
   AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
   v->as_genes = gt_array_new( sizeof(GtFeatureNode *) );
   v->se_events = gt_array_new( sizeof(SkippedExonEvent) );
+  v->report = report == NULL ? stdout : report;
   return nv;
 }
 
@@ -114,14 +116,9 @@ static const GtNodeVisitorClass *as_inspect_visitor_class()
 static GtUword check_skipped_exons(AgnASInspectVisitor *v, GtFeatureNode *gene,
                                    GtArray *mrnas)
 {
-GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)gene);
-GtRange range = gt_genome_node_get_range((GtGenomeNode *)gene);
-const char *geneid = gt_feature_node_get_attribute(gene, "ID");
-fprintf(stderr, "DEBUG check_skipped_exon gene %s (%s:%lu-%lu)\n", geneid, gt_str_get(seqid), range.start, range.end);
   GtUword i,j,k,m,n, numevents = 0;
   for(i = 0; i < gt_array_size(mrnas); i++)
   {
-fprintf(stderr, "DEBUG a %lu\n", gt_array_size(mrnas));
     GtFeatureNode *mrna1 = *(GtFeatureNode **)gt_array_get(mrnas, i);
     for(j = 0; j < gt_array_size(mrnas); j++)
     {
@@ -129,7 +126,6 @@ fprintf(stderr, "DEBUG a %lu\n", gt_array_size(mrnas));
         continue;
 
       GtFeatureNode *mrna2 = *(GtFeatureNode **)gt_array_get(mrnas, j);
-fprintf(stderr, "DEBUG b %lu,%lu mrna1=%s mrna2=%s\n", i, j, gt_feature_node_get_attribute(mrna1, "ID"), gt_feature_node_get_attribute(mrna2, "ID"));
       GtArray *m1_exons = gt_genome_node_get_user_data((GtGenomeNode *)mrna1,
                                                        "exons");
       GtIntervalTree *m2_exon_tree = gt_genome_node_get_user_data(
@@ -137,7 +133,6 @@ fprintf(stderr, "DEBUG b %lu,%lu mrna1=%s mrna2=%s\n", i, j, gt_feature_node_get
                                                            "exon_tree");
       for(k = 1; k < gt_array_size(m1_exons); k++)
       {
-fprintf(stderr, "DEBUG c\n");
         GtRange nullrange = {0,0};
         SkippedExonEvent se = {gene, nullrange, nullrange, nullrange};
         GtFeatureNode *leftexon  = *(GtFeatureNode **)gt_array_get(m1_exons, k-1);
@@ -147,7 +142,6 @@ fprintf(stderr, "DEBUG c\n");
                                               leftrange.end, overlap);
         for(m = 0; m < gt_array_size(overlap); m++)
         {
-fprintf(stderr, "DEBUG d.1 leftrange=%lu-%lu\n", leftrange.start, leftrange.end);
           GtFeatureNode *testexon = *(GtFeatureNode **)gt_array_get(overlap, m);
           GtRange testrange = gt_genome_node_get_range((GtGenomeNode *)testexon);
           if(gt_range_compare(&leftrange, &testrange) == 0)
@@ -167,7 +161,6 @@ fprintf(stderr, "DEBUG d.1 leftrange=%lu-%lu\n", leftrange.start, leftrange.end)
                                               rightrange.end, overlap);
         for(m = 0; m < gt_array_size(overlap); m++)
         {
-fprintf(stderr, "DEBUG d.2 rightrange=%lu-%lu\n", rightrange.start, rightrange.end);
           GtFeatureNode *testexon = *(GtFeatureNode **)gt_array_get(overlap, m);
           GtRange testrange = gt_genome_node_get_range((GtGenomeNode *)testexon);
           if(gt_range_compare(&rightrange, &testrange) == 0)
@@ -185,14 +178,17 @@ fprintf(stderr, "DEBUG d.2 rightrange=%lu-%lu\n", rightrange.start, rightrange.e
                                               rightrange.start - 1, overlap);
         for(m = 0; m < gt_array_size(overlap); m++)
         {
-fprintf(stderr, "DEBUG d.3 leftrange=%lu-%lu rightrange=%lu-%lu\n", leftrange.start, leftrange.end, rightrange.start, rightrange.end);
           GtFeatureNode *skipped = *(GtFeatureNode **)gt_array_get(overlap, m);
+          GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)skipped);
           se.skipped = gt_genome_node_get_range((GtGenomeNode *)skipped);
           bool newevent = true;
           for(n = 0; n < gt_array_size(v->se_events); n++)
           {
             SkippedExonEvent *testevent = gt_array_get(v->se_events, n);
-            if(skipped_exon_event_equal(&se, testevent))
+            GtStr *testseqid =
+                      gt_genome_node_get_seqid((GtGenomeNode *)testevent->gene);
+            if(gt_str_cmp(seqid, testseqid) == 0 &&
+               skipped_exon_event_equal(&se, testevent))
             {
               newevent = false;
               break;
@@ -200,8 +196,13 @@ fprintf(stderr, "DEBUG d.3 leftrange=%lu-%lu rightrange=%lu-%lu\n", leftrange.st
           }
           if(newevent)
           {
-GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)skipped);
-fprintf(stderr, "DEBUG skipped exon event: %s %lu-%lu %lu-%lu %lu-%lu\n", gt_str_get(seqid), se.left.start, se.left.end, se.skipped.start, se.skipped.end, se.right.start, se.right.end);
+            GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)skipped);
+            const char *geneid = gt_feature_node_get_attribute(gene, "ID");
+            if(geneid == NULL) geneid = "";
+            fprintf(v->report, "skipped exon: %s %s %lu-%lu %lu-%lu %lu-%lu\n",
+                    gt_str_get(seqid), geneid, se.left.start, se.left.end,
+                    se.skipped.start, se.skipped.end,
+                    se.right.start, se.right.end);
             gt_array_add(v->se_events, se);
             numevents++;
           }
@@ -216,10 +217,6 @@ fprintf(stderr, "DEBUG skipped exon event: %s %lu-%lu %lu-%lu %lu-%lu\n", gt_str
 static GtUword mrna_inspection(AgnASInspectVisitor *v, GtFeatureNode *gene,
                                GtArray *mrnas)
 {
- GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)gene);
-GtRange range = gt_genome_node_get_range((GtGenomeNode *)gene);
-const char *geneid = gt_feature_node_get_attribute(gene, "ID");
-fprintf(stderr, "DEBUG inspect gene %s (%s:%lu-%lu)\n", geneid, gt_str_get(seqid), range.start, range.end);
   GtUword i;
   agn_assert(v && mrnas && gt_array_size(mrnas) >= 2);
   for(i = 0; i < gt_array_size(mrnas); i++)
@@ -274,10 +271,6 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
   for(i = 0; i < gt_array_size(genes); i++)
   {
     GtFeatureNode *gene = *(GtFeatureNode **)gt_array_get(genes, i);
-GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)gene);
-GtRange range = gt_genome_node_get_range((GtGenomeNode *)gene);
-const char *geneid = gt_feature_node_get_attribute(gene, "ID");
-fprintf(stderr, "DEBUG visit gene %s (%s:%lu-%lu)\n", geneid, gt_str_get(seqid), range.start, range.end);
     GtArray *mrnas = agn_typecheck_select(gene, agn_typecheck_mrna);
     if(gt_array_size(mrnas) <= 1)
     {

@@ -35,10 +35,10 @@ chr2	nano	CDS	2067	2350	.	+	0	ID=CDS2;Parent=mRNA2
 chr2	nano	CDS	2662	2794	.	+	1	ID=CDS2;Parent=mRNA2
 chr2	nano	CDS	3365	3640	.	+	0	ID=CDS2;Parent=mRNA2
 chr2	nano	CDS	619	838	.	+	0	ID=CDS3;Parent=mRNA3
-chr2	nano	CDS	1198	1419	.	+	0	ID=CDS3;Parent=mRNA3
-chr2	nano	CDS	2067	2350	.	+	0	ID=CDS3;Parent=mRNA3
-chr2	nano	CDS	2662	2794	.	+	1	ID=CDS3;Parent=mRNA3
-chr2	nano	CDS	3365	3640	.	+	0	ID=CDS3;Parent=mRNA3
+chr2	nano	CDS	1198	1419	.	+	2	ID=CDS3;Parent=mRNA3
+chr2	nano	CDS	2067	2350	.	+	2	ID=CDS3;Parent=mRNA3
+chr2	nano	CDS	2662	2794	.	+	0	ID=CDS3;Parent=mRNA3
+chr2	nano	CDS	3365	3640	.	+	2	ID=CDS3;Parent=mRNA3
 ###
 chr3	nano	gene	488	3726	.	+	.	ID=gene3;Name=Mrjp
 chr3	nano	mRNA	488	3726	.	+	.	ID=mRNA4;Parent=gene3
@@ -58,10 +58,10 @@ chr3	nano	CDS	2067	2350	.	+	0	ID=CDS4;Parent=mRNA4
 chr3	nano	CDS	2662	2794	.	+	1	ID=CDS4;Parent=mRNA4
 chr3	nano	CDS	3365	3640	.	+	0	ID=CDS4;Parent=mRNA4
 chr3	nano	CDS	619	838	.	+	0	ID=CDS5;Parent=mRNA5
-chr3	nano	CDS	1198	1419	.	+	0	ID=CDS5;Parent=mRNA5
-chr3	nano	CDS	2067	2350	.	+	0	ID=CDS5;Parent=mRNA5
-chr3	nano	CDS	2662	2794	.	+	1	ID=CDS5;Parent=mRNA5
-chr3	nano	CDS	3365	3640	.	+	0	ID=CDS5;Parent=mRNA5
+chr3	nano	CDS	1198	1419	.	+	2	ID=CDS5;Parent=mRNA5
+chr3	nano	CDS	2067	2350	.	+	2	ID=CDS5;Parent=mRNA5
+chr3	nano	CDS	2662	2794	.	+	0	ID=CDS5;Parent=mRNA5
+chr3	nano	CDS	3365	3640	.	+	2	ID=CDS5;Parent=mRNA5
 chr3	nano	CDS	619	838	.	+	0	ID=CDS6;Parent=mRNA6
 chr3	nano	CDS	952	1115	.	+	2	ID=CDS6;Parent=mRNA6
 chr3	nano	CDS	2067	2350	.	+	0	ID=CDS6;Parent=mRNA6

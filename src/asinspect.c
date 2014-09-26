@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)annot);
   }
 
-  as  = agn_as_inspect_stream_new(annot);
+  as = agn_as_inspect_stream_new(annot, NULL);
   error = gt_error_new();
   int result = gt_node_stream_pull(as, error);
   if(result == -1)

@@ -26,11 +26,12 @@ typedef struct AgnASInspectVisitor AgnASInspectVisitor;
 /**
  * @function Constructor for a node stream based on this node visitor.
  */
-GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in);
+GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in, FILE *report);
 
 /**
- * @function Constructor.
+ * @function Constructor. If ``report`` == NULL, output will be written to
+ * terminal (stdout).
  */
-GtNodeVisitor *agn_as_inspect_visitor_new();
+GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report);
 
 #endif

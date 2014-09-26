@@ -13,13 +13,13 @@ Class AgnASInspectVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for summarizing the extent of alternative splicing in an annotation. See the `AgnASInspectVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnASInspectVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in)
+.. c:function:: GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in, FILE *report)
 
   Constructor for a node stream based on this node visitor.
 
-.. c:function:: GtNodeVisitor *agn_as_inspect_visitor_new()
+.. c:function:: GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report)
 
-  Constructor.
+  Constructor. If ``report`` == NULL, output will be written to terminal (stdout).
 
 Class AgnCliquePair
 -------------------
