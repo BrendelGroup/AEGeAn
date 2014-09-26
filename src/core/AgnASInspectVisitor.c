@@ -8,6 +8,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
 
+#include <string.h>
 #include "AgnASInspectVisitor.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
@@ -94,9 +95,94 @@ GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report)
   return nv;
 }
 
+bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test)
+{
+  GtError *error = gt_error_new();
+  const char *infile = "data/gff3/as-ce.gff3";
+  FILE *outstream = fopen("/dev/null", "w");
+  GtNodeStream *annot = gt_gff3_in_stream_new_unsorted(1, &infile);
+  GtNodeVisitor *nv = agn_as_inspect_visitor_new(outstream);
+  AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
+  GtNodeStream *as = gt_visitor_stream_new(annot, nv);
+  int result = gt_node_stream_pull(as, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "[AgnASInspectVisitor::agn_as_inspect_visitor_unit_test] "
+            "error loading annotations into memory: %s\n", gt_error_get(error));
+  }
+
+  agn_assert(gt_array_size(v->as_genes) == 2);
+  GtFeatureNode **gene1 = gt_array_get(v->as_genes, 0);
+  const char *geneid = gt_feature_node_get_attribute(*gene1, "ID");
+  bool test1 = strcmp(geneid, "gene2") == 0;
+  GtFeatureNode **gene2 = gt_array_get(v->as_genes, 1);
+  geneid = gt_feature_node_get_attribute(*gene2, "ID");
+  test1 = test1 && strcmp(geneid, "gene3") == 0;
+  agn_unit_test_result(test, "skipped exons: genes (GFF3)", test1);
+
+  agn_assert(gt_array_size(v->se_events) == 3);
+  SkippedExonEvent *event = gt_array_get(v->se_events, 0);
+  SkippedExonEvent testevent1 = { *gene1, {615,838}, {952,1115}, {1198,1419} };
+  bool test2 = skipped_exon_event_equal(event, &testevent1);
+  event = gt_array_get(v->se_events, 1);
+  SkippedExonEvent testevent2 = { *gene2, {615,838}, {952,1115}, {1198,1419} };
+  test2 = test2 && skipped_exon_event_equal(event, &testevent2);
+  event = gt_array_get(v->se_events, 2);
+  SkippedExonEvent testevent3 = { *gene2, {952,1115}, {1198,1419}, {2067,2350}};
+  test2 = test2 && skipped_exon_event_equal(event, &testevent3);
+  agn_unit_test_result(test, "skipped exons: events (GFF3)", test2);
+
+  gt_node_stream_delete(annot);
+  gt_node_stream_delete(as);
+
+
+  infile = "data/gff3/as-ce.gtf";
+  annot = gt_gtf_in_stream_new(infile);
+  GtNodeStream *sort = gt_sort_stream_new(annot);
+  nv = agn_as_inspect_visitor_new(outstream);
+  v = as_inspect_visitor_cast(nv);
+  as = gt_visitor_stream_new(sort, nv);
+  result = gt_node_stream_pull(as, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "[AgnASInspectVisitor::agn_as_inspect_visitor_unit_test] "
+            "error loading annotations into memory: %s\n", gt_error_get(error));
+  }
+
+  gt_assert(gt_array_size(v->as_genes) == 2);
+  agn_assert(gt_array_size(v->se_events) == 3);
+  gene1 = gt_array_get(v->as_genes, 0);
+  gene2 = gt_array_get(v->as_genes, 1);
+
+  event = gt_array_get(v->se_events, 0);
+  SkippedExonEvent testevent4 = { *gene1, {488,528}, {952,1115}, {1198,1419} };
+  bool test3 = skipped_exon_event_equal(event, &testevent4);
+  event = gt_array_get(v->se_events, 1);
+  SkippedExonEvent testevent5 = { *gene2, {488,528}, {952,1115}, {1198,1419} };
+  test3 = test3 && skipped_exon_event_equal(event, &testevent5);
+  event = gt_array_get(v->se_events, 2);
+  SkippedExonEvent testevent6 = { *gene2, {952,1115}, {1198,1419}, {2067,2350}};
+  test3 = test3 && skipped_exon_event_equal(event, &testevent6);
+  agn_unit_test_result(test, "skipped exons: events (GTF)", test3);
+
+  gt_error_delete(error);
+  gt_node_stream_delete(annot);
+  gt_node_stream_delete(sort);
+  gt_node_stream_delete(as);
+
+  fclose(outstream);
+
+  return agn_unit_test_success(test);
+}
+
 static void as_inspect_free(GtNodeVisitor *nv)
 {
   AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
+  while(gt_array_size(v->as_genes) > 0)
+  {
+    GtGenomeNode **gene = gt_array_pop(v->as_genes);
+    gt_genome_node_delete(*gene);
+  }
   gt_array_delete(v->as_genes);
   gt_array_delete(v->se_events);
 }
@@ -179,16 +265,12 @@ static GtUword check_skipped_exons(AgnASInspectVisitor *v, GtFeatureNode *gene,
         for(m = 0; m < gt_array_size(overlap); m++)
         {
           GtFeatureNode *skipped = *(GtFeatureNode **)gt_array_get(overlap, m);
-          GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)skipped);
           se.skipped = gt_genome_node_get_range((GtGenomeNode *)skipped);
           bool newevent = true;
           for(n = 0; n < gt_array_size(v->se_events); n++)
           {
             SkippedExonEvent *testevent = gt_array_get(v->se_events, n);
-            GtStr *testseqid =
-                      gt_genome_node_get_seqid((GtGenomeNode *)testevent->gene);
-            if(gt_str_cmp(seqid, testseqid) == 0 &&
-               skipped_exon_event_equal(&se, testevent))
+            if(skipped_exon_event_equal(&se, testevent))
             {
               newevent = false;
               break;
@@ -246,6 +328,10 @@ static GtUword mrna_inspection(AgnASInspectVisitor *v, GtFeatureNode *gene,
 
 static bool skipped_exon_event_equal(SkippedExonEvent *a, SkippedExonEvent *b)
 {
+  GtStr *seqid_a = gt_genome_node_get_seqid((GtGenomeNode *)a->gene);
+  GtStr *seqid_b = gt_genome_node_get_seqid((GtGenomeNode *)b->gene);
+  if(gt_str_cmp(seqid_a, seqid_b) != 0)
+    return false;
   if(gt_range_compare(&a->left, &b->left) != 0)
     return false;
   if(gt_range_compare(&a->skipped, &b->skipped) != 0)
@@ -280,7 +366,10 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
 
     GtUword numevents = mrna_inspection(v, gene, mrnas);
     if(numevents > 0)
+    {
+      gt_genome_node_ref((GtGenomeNode *)gene);
       gt_array_add(v->as_genes, gene);
+    }
     gt_array_delete(mrnas);
   }
 

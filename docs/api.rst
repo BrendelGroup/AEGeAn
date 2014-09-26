@@ -21,6 +21,10 @@ Class AgnASInspectVisitor
 
   Constructor. If ``report`` == NULL, output will be written to terminal (stdout).
 
+.. c:function:: bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnCliquePair
 -------------------
 

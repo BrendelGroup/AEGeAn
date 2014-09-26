@@ -34,4 +34,9 @@ GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in, FILE *report);
  */
 GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report);
 
+/**
+ * @function Run unit tests for this class. Returns true if all tests passed.
+ */
+bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test);
+
 #endif

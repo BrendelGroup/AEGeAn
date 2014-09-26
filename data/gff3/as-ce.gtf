@@ -28,6 +28,6 @@ chr3	nano	exon	2662	2794	.	+	.	gene_id "gene3"; transcript_id "mRNA5"; exon_numb
 chr3	nano	exon	3365	3726	.	+	.	gene_id "gene3"; transcript_id "mRNA5"; exon_number "5"; gene_name "Mrjp";
 chr3	nano	exon	488	528	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "1"; gene_name "Mrjp";
 chr3	nano	exon	952	1115	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "2"; gene_name "Mrjp";
-chr3	nano	exon	2067	2350	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "4"; gene_name "Mrjp";
-chr3	nano	exon	2662	2794	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "5"; gene_name "Mrjp";
-chr3	nano	exon	3365	3726	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "6"; gene_name "Mrjp";
+chr3	nano	exon	2067	2350	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "3"; gene_name "Mrjp";
+chr3	nano	exon	2662	2794	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "4"; gene_name "Mrjp";
+chr3	nano	exon	3365	3726	.	+	.	gene_id "gene3"; transcript_id "mRNA6"; exon_number "5"; gene_name "Mrjp";
