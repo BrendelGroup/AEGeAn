@@ -9,18 +9,18 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 
 #include <string.h>
-#include "AgnASInspectVisitor.h"
+#include "AgnASInspectCEVisitor.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
 
-#define as_inspect_visitor_cast(GV)\
-        gt_node_visitor_cast(as_inspect_visitor_class(), GV)
+#define as_inspect_ce_visitor_cast(GV)\
+        gt_node_visitor_cast(as_inspect_ce_visitor_class(), GV)
 
 //----------------------------------------------------------------------------//
 // Data structure definitions
 //----------------------------------------------------------------------------//
 
-struct AgnASInspectVisitor
+struct AgnASInspectCEVisitor
 {
   const GtNodeVisitor parent_instance;
   GtArray *as_genes;
@@ -44,23 +44,23 @@ typedef struct
 /**
  * @function FIXME
  */
-static void as_inspect_free(GtNodeVisitor *nv);
+static void as_inspect_ce_free(GtNodeVisitor *nv);
 
 /**
  * @function Implement the interface to the GtNodeVisitor class.
  */
-static const GtNodeVisitorClass *as_inspect_visitor_class();
+static const GtNodeVisitorClass *as_inspect_ce_visitor_class();
 
 /**
  * @function FIXME
  */
-static GtUword check_skipped_exons(AgnASInspectVisitor *v, GtFeatureNode *gene,
+static GtUword check_skipped_exons(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
                                    GtArray *mrnas);
 
 /**
  * @function FIXME
  */
-static GtUword mrna_inspection(AgnASInspectVisitor *v, GtFeatureNode *gene,
+static GtUword mrna_inspection(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
                                GtArray *mrnas);
 
 /**
@@ -79,35 +79,35 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
 // Method implementations
 //------------------------------------------------------------------------------
 
-GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in, FILE *report)
+GtNodeStream* agn_as_inspect_ce_stream_new(GtNodeStream *in, FILE *report)
 {
-  GtNodeVisitor *nv = agn_as_inspect_visitor_new(report);
+  GtNodeVisitor *nv = agn_as_inspect_ce_visitor_new(report);
   return gt_visitor_stream_new(in, nv);
 }
 
-GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report)
+GtNodeVisitor *agn_as_inspect_ce_visitor_new(FILE *report)
 {
-  GtNodeVisitor *nv = gt_node_visitor_create(as_inspect_visitor_class());
-  AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
+  GtNodeVisitor *nv = gt_node_visitor_create(as_inspect_ce_visitor_class());
+  AgnASInspectCEVisitor *v = as_inspect_ce_visitor_cast(nv);
   v->as_genes = gt_array_new( sizeof(GtFeatureNode *) );
   v->se_events = gt_array_new( sizeof(SkippedExonEvent) );
   v->report = report == NULL ? stdout : report;
   return nv;
 }
 
-bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test)
+bool agn_as_inspect_ce_visitor_unit_test(AgnUnitTest *test)
 {
   GtError *error = gt_error_new();
   const char *infile = "data/gff3/as-ce.gff3";
   FILE *outstream = fopen("/dev/null", "w");
   GtNodeStream *annot = gt_gff3_in_stream_new_unsorted(1, &infile);
-  GtNodeVisitor *nv = agn_as_inspect_visitor_new(outstream);
-  AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
+  GtNodeVisitor *nv = agn_as_inspect_ce_visitor_new(outstream);
+  AgnASInspectCEVisitor *v = as_inspect_ce_visitor_cast(nv);
   GtNodeStream *as = gt_visitor_stream_new(annot, nv);
   int result = gt_node_stream_pull(as, error);
   if(result == -1)
   {
-    fprintf(stderr, "[AgnASInspectVisitor::agn_as_inspect_visitor_unit_test] "
+    fprintf(stderr, "[AgnASInspectCEVisitor::agn_as_inspect_ce_visitor_unit_test] "
             "error loading annotations into memory: %s\n", gt_error_get(error));
   }
 
@@ -139,13 +139,13 @@ bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test)
   infile = "data/gff3/as-ce.gtf";
   annot = gt_gtf_in_stream_new(infile);
   GtNodeStream *sort = gt_sort_stream_new(annot);
-  nv = agn_as_inspect_visitor_new(outstream);
-  v = as_inspect_visitor_cast(nv);
+  nv = agn_as_inspect_ce_visitor_new(outstream);
+  v = as_inspect_ce_visitor_cast(nv);
   as = gt_visitor_stream_new(sort, nv);
   result = gt_node_stream_pull(as, error);
   if(result == -1)
   {
-    fprintf(stderr, "[AgnASInspectVisitor::agn_as_inspect_visitor_unit_test] "
+    fprintf(stderr, "[AgnASInspectCEVisitor::agn_as_inspect_ce_visitor_unit_test] "
             "error loading annotations into memory: %s\n", gt_error_get(error));
   }
 
@@ -175,9 +175,9 @@ bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test)
   return agn_unit_test_success(test);
 }
 
-static void as_inspect_free(GtNodeVisitor *nv)
+static void as_inspect_ce_free(GtNodeVisitor *nv)
 {
-  AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
+  AgnASInspectCEVisitor *v = as_inspect_ce_visitor_cast(nv);
   while(gt_array_size(v->as_genes) > 0)
   {
     GtGenomeNode **gene = gt_array_pop(v->as_genes);
@@ -187,19 +187,19 @@ static void as_inspect_free(GtNodeVisitor *nv)
   gt_array_delete(v->se_events);
 }
 
-static const GtNodeVisitorClass *as_inspect_visitor_class()
+static const GtNodeVisitorClass *as_inspect_ce_visitor_class()
 {
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (AgnASInspectVisitor),
-                                    as_inspect_free, NULL, visit_feature_node,
+    nvc = gt_node_visitor_class_new(sizeof (AgnASInspectCEVisitor),
+                                    as_inspect_ce_free, NULL, visit_feature_node,
                                     NULL, NULL, NULL);
   }
   return nvc;
 }
 
-static GtUword check_skipped_exons(AgnASInspectVisitor *v, GtFeatureNode *gene,
+static GtUword check_skipped_exons(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
                                    GtArray *mrnas)
 {
   GtUword i,j,k,m,n, numevents = 0;
@@ -296,7 +296,7 @@ static GtUword check_skipped_exons(AgnASInspectVisitor *v, GtFeatureNode *gene,
   return numevents;
 }
 
-static GtUword mrna_inspection(AgnASInspectVisitor *v, GtFeatureNode *gene,
+static GtUword mrna_inspection(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
                                GtArray *mrnas)
 {
   GtUword i;
@@ -345,7 +345,7 @@ static bool skipped_exon_event_equal(SkippedExonEvent *a, SkippedExonEvent *b)
 static int
 visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
 {
-  AgnASInspectVisitor *v = as_inspect_visitor_cast(nv);
+  AgnASInspectCEVisitor *v = as_inspect_ce_visitor_cast(nv);
   GtArray *genes = agn_typecheck_select(fn, agn_typecheck_gene);
   if(gt_array_size(genes) == 0)
   {

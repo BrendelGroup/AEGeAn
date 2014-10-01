@@ -6,22 +6,22 @@ types implemented by the GenomeTools library. For data types beginning with
 ``Gt``, see the GenomeTools API documentation at
 http://genometools.org/libgenometools.html.
 
-Class AgnASInspectVisitor
--------------------------
+Class AgnASInspectCEVisitor
+---------------------------
 
-.. c:type:: AgnASInspectVisitor
+.. c:type:: AgnASInspectCEVisitor
 
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for summarizing the extent of alternative splicing in an annotation. See the `AgnASInspectVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnASInspectVisitor.h>`_.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for summarizing the extent of exon skipping in an annotation. See the `AgnASInspectCEVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnASInspectCEVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_as_inspect_stream_new(GtNodeStream *in, FILE *report)
+.. c:function:: GtNodeStream* agn_as_inspect_ce_stream_new(GtNodeStream *in, FILE *report)
 
   Constructor for a node stream based on this node visitor.
 
-.. c:function:: GtNodeVisitor *agn_as_inspect_visitor_new(FILE *report)
+.. c:function:: GtNodeVisitor *agn_as_inspect_ce_visitor_new(FILE *report)
 
   Constructor. If ``report`` == NULL, output will be written to terminal (stdout).
 
-.. c:function:: bool agn_as_inspect_visitor_unit_test(AgnUnitTest *test)
+.. c:function:: bool agn_as_inspect_ce_visitor_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
 

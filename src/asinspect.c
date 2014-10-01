@@ -10,7 +10,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 #include <getopt.h>
 #include "genometools.h"
-#include "AgnASInspectVisitor.h"
+#include "AgnASInspectCEVisitor.h"
 
 typedef struct
 {
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)annot);
   }
 
-  as = agn_as_inspect_stream_new(annot, NULL);
+  as = agn_as_inspect_ce_stream_new(annot, NULL);
   error = gt_error_new();
   int result = gt_node_stream_pull(as, error);
   if(result == -1)
