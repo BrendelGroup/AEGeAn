@@ -170,6 +170,44 @@ GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
   return totallength;
 }
 
+GtArray *agn_mrna_exons(GtFeatureNode *mrna)
+{
+  agn_assert(mrna && agn_typecheck_mrna(mrna));
+  GtArray *exons = gt_genome_node_get_user_data((GtGenomeNode *)mrna, "exons");
+  if(exons == NULL)
+  {
+    exons = agn_typecheck_select(mrna, agn_typecheck_exon);
+    if(gt_array_size(exons) > 1)
+      gt_array_sort(exons, (GtCompare)agn_genome_node_compare);
+    gt_genome_node_add_user_data((GtGenomeNode *)mrna, "exons", exons,
+                                 (GtFree)gt_array_delete);
+  }
+  return exons;
+}
+
+GtIntervalTree *agn_mrna_exon_tree(GtFeatureNode *mrna)
+{
+  agn_assert(mrna && agn_typecheck_mrna(mrna));
+  GtIntervalTree *exon_tree = gt_genome_node_get_user_data((GtGenomeNode *)mrna,
+                                                           "exon_tree");
+  if(exon_tree == NULL)
+  {
+    GtUword i;
+    GtArray *exons = agn_mrna_exons(mrna);
+    exon_tree = gt_interval_tree_new(NULL);
+    for(i = 0; i < gt_array_size(exons); i++)
+    {
+      GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, i);
+      GtRange r = gt_genome_node_get_range(exon);
+      GtIntervalTreeNode *itn = gt_interval_tree_node_new(exon, r.start, r.end);
+      gt_interval_tree_insert(exon_tree, itn);
+    }
+    gt_genome_node_add_user_data((GtGenomeNode *)mrna, "exon_tree", exon_tree,
+                                 (GtFree)gt_interval_tree_delete);
+  }
+  return exon_tree;
+}
+
 GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
 {
   GtRange range = {0, 0};

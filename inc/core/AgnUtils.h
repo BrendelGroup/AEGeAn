@@ -11,6 +11,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #define AGN_UTILS
 
 #include "core/array_api.h"
+#include "core/interval_tree_api.h"
 #include "core/str_api.h"
 #include "extended/feature_index_api.h"
 #include "extended/genome_node_api.h"
@@ -104,6 +105,20 @@ bool agn_feature_overlap_check(GtArray *feats);
  * @function Determine the length of an mRNA's coding sequence.
  */
 GtUword agn_mrna_cds_length(GtFeatureNode *mrna);
+
+/**
+ * @function Return an array containing pointers to all exons associated with
+ * the given mRNA, sorted by postion. The user does not need to free the array:
+ * it will be freed when the mRNA object is deleted.
+ */
+GtArray *agn_mrna_exons(GtFeatureNode *mrna);
+
+/**
+ * @function Return an interval tree containing pointers to all exons associated
+ * with the given mRNA. The user does not need to free the tree object: it will
+ * be freed when the mRNA object is deleted.
+ */
+GtIntervalTree *agn_mrna_exon_tree(GtFeatureNode *mrna);
 
 /**
  * @function If a top-level feature ``top`` contains a multifeature child (with

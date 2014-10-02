@@ -847,6 +847,14 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 
   Determine the length of an mRNA's coding sequence.
 
+.. c:function:: GtArray *agn_mrna_exons(GtFeatureNode *mrna)
+
+  Return an array containing pointers to all exons associated with the given mRNA, sorted by postion. The user does not need to free the array: it will be freed when the mRNA object is deleted.
+
+.. c:function:: GtIntervalTree *agn_mrna_exon_tree(GtFeatureNode *mrna)
+
+  Return an interval tree containing pointers to all exons associated with the given mRNA. The user does not need to free the tree object: it will be freed when the mRNA object is deleted.
+
 .. c:function:: GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
 
   If a top-level feature ``top`` contains a multifeature child (with multi representative ``rep``), use this function to get the complete range of the multifeature.
