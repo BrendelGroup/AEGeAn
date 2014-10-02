@@ -195,99 +195,114 @@ static const GtNodeVisitorClass *as_inspect_ce_visitor_class()
   return nvc;
 }
 
+static GtUword check_exon_pair(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
+                               GtFeatureNode *leftexon,GtFeatureNode *rightexon,
+                               GtFeatureNode *mrna2)
+{
+  agn_assert(v && gene && leftexon && rightexon && mrna2);
+  GtIntervalTree *m2_exon_tree = agn_mrna_exon_tree(mrna2);
+  GtRange nullrange = {0,0};
+  SkippedExonEvent se = {gene, nullrange, nullrange, nullrange};
+  GtUword i,j, numevents = 0;
+
+  GtRange leftrange = gt_genome_node_get_range((GtGenomeNode *)leftexon);
+  GtArray *overlap = gt_array_new( sizeof(GtGenomeNode *) );
+  gt_interval_tree_find_all_overlapping(m2_exon_tree, leftrange.start,
+                                        leftrange.end, overlap);
+  for(i = 0; i < gt_array_size(overlap); i++)
+  {
+    GtGenomeNode *testexon = *(GtGenomeNode **)gt_array_get(overlap, i);
+    GtRange testrange = gt_genome_node_get_range(testexon);
+    if(gt_range_compare(&leftrange, &testrange) == 0)
+    {
+      se.left = leftrange;
+      break;
+    }
+  }
+  gt_array_delete(overlap);
+  if(gt_range_compare(&se.left, &nullrange) == 0)
+    return 0;
+
+  GtRange rightrange = gt_genome_node_get_range((GtGenomeNode *)rightexon);
+  overlap = gt_array_new( sizeof(GtGenomeNode *) );
+  gt_interval_tree_find_all_overlapping(m2_exon_tree, rightrange.start,
+                                        rightrange.end, overlap);
+  for(i = 0; i < gt_array_size(overlap); i++)
+  {
+    GtGenomeNode *testexon = *(GtGenomeNode **)gt_array_get(overlap, i);
+    GtRange testrange = gt_genome_node_get_range(testexon);
+    if(gt_range_compare(&rightrange, &testrange) == 0)
+    {
+      se.right = rightrange;
+      break;
+    }
+  }
+  gt_array_delete(overlap);
+  if(gt_range_compare(&se.right, &nullrange) == 0)
+    return 0;
+
+  overlap = gt_array_new( sizeof(GtFeatureNode *) );
+  gt_interval_tree_find_all_overlapping(m2_exon_tree, leftrange.end + 1,
+                                        rightrange.start - 1, overlap);
+  for(i = 0; i < gt_array_size(overlap); i++)
+  {
+    GtGenomeNode *skipped = *(GtGenomeNode **)gt_array_get(overlap, i);
+    se.skipped = gt_genome_node_get_range(skipped);
+    bool newevent = true;
+    for(j = 0; j < gt_array_size(v->se_events); j++)
+    {
+      SkippedExonEvent *testevent = gt_array_get(v->se_events, j);
+      if(skipped_exon_event_equal(&se, testevent))
+      {
+        newevent = false;
+        break;
+      }
+    }
+    if(newevent)
+    {
+      GtStr *seqid = gt_genome_node_get_seqid(skipped);
+      const char *geneid = gt_feature_node_get_attribute(gene, "ID");
+      if(geneid == NULL)
+      {
+        geneid = gt_feature_node_get_attribute(gene, "gene_id");
+        if(geneid == NULL)
+          geneid = "";
+      }
+      fprintf(v->report, "skipped exon: %s %s %lu-%lu %lu-%lu %lu-%lu\n",
+              gt_str_get(seqid), geneid, se.left.start, se.left.end,
+              se.skipped.start, se.skipped.end,
+              se.right.start, se.right.end);
+      gt_array_add(v->se_events, se);
+      numevents++;
+    }
+  }
+  gt_array_delete(overlap);
+  return numevents;
+}
+
 static GtUword check_skipped_exons(AgnASInspectCEVisitor *v,
                                    GtFeatureNode *gene, GtArray *mrnas)
 {
-  GtUword i,j,k,m,n, numevents = 0;
+  GtUword i,j,k, numevents = 0;
+  agn_assert(v && gene && mrnas);
+  agn_assert(gt_array_size(mrnas) > 1);
   for(i = 0; i < gt_array_size(mrnas); i++)
   {
-    GtFeatureNode *mrna1 = *(GtFeatureNode **)gt_array_get(mrnas, i);
+    GtFeatureNode **mrna1 = gt_array_get(mrnas, i);
+    GtArray *m1_exons = agn_mrna_exons(*mrna1);
+    if(agn_typecheck_count(*mrna1, agn_typecheck_exon) < 2)
+      continue;
     for(j = 0; j < gt_array_size(mrnas); j++)
     {
-      if(i == j)
+      GtFeatureNode **mrna2 = gt_array_get(mrnas, j);
+      if(i == j || agn_typecheck_count(*mrna2, agn_typecheck_exon) < 3)
         continue;
 
-      GtFeatureNode *mrna2 = *(GtFeatureNode **)gt_array_get(mrnas, j);
-      GtArray *m1_exons = agn_mrna_exons(mrna1);
-      GtIntervalTree *m2_exon_tree = agn_mrna_exon_tree(mrna2);
       for(k = 1; k < gt_array_size(m1_exons); k++)
       {
-        GtRange nullrange = {0,0};
-        SkippedExonEvent se = {gene, nullrange, nullrange, nullrange};
-        GtGenomeNode *leftexon  = *(GtGenomeNode **)gt_array_get(m1_exons, k-1);
-        GtRange leftrange = gt_genome_node_get_range(leftexon);
-        GtArray *overlap = gt_array_new( sizeof(GtGenomeNode *) );
-        gt_interval_tree_find_all_overlapping(m2_exon_tree, leftrange.start,
-                                              leftrange.end, overlap);
-        for(m = 0; m < gt_array_size(overlap); m++)
-        {
-          GtGenomeNode *testexon = *(GtGenomeNode **)gt_array_get(overlap, m);
-          GtRange testrange = gt_genome_node_get_range(testexon);
-          if(gt_range_compare(&leftrange, &testrange) == 0)
-          {
-            se.left = leftrange;
-            break;
-          }
-        }
-        gt_array_delete(overlap);
-        if(gt_range_compare(&se.left, &nullrange) == 0)
-          continue;
-  
-        GtGenomeNode *rightexon = *(GtGenomeNode **)gt_array_get(m1_exons, k);
-        GtRange rightrange = gt_genome_node_get_range(rightexon);
-        overlap = gt_array_new( sizeof(GtGenomeNode *) );
-        gt_interval_tree_find_all_overlapping(m2_exon_tree, rightrange.start,
-                                              rightrange.end, overlap);
-        for(m = 0; m < gt_array_size(overlap); m++)
-        {
-          GtGenomeNode *testexon = *(GtGenomeNode **)gt_array_get(overlap, m);
-          GtRange testrange = gt_genome_node_get_range(testexon);
-          if(gt_range_compare(&rightrange, &testrange) == 0)
-          {
-            se.right = rightrange;
-            break;
-          }
-        }
-        gt_array_delete(overlap);
-        if(gt_range_compare(&se.right, &nullrange) == 0)
-          continue;
-  
-        overlap = gt_array_new( sizeof(GtFeatureNode *) );
-        gt_interval_tree_find_all_overlapping(m2_exon_tree, leftrange.end + 1,
-                                              rightrange.start - 1, overlap);
-        for(m = 0; m < gt_array_size(overlap); m++)
-        {
-          GtGenomeNode *skipped = *(GtGenomeNode **)gt_array_get(overlap, m);
-          se.skipped = gt_genome_node_get_range(skipped);
-          bool newevent = true;
-          for(n = 0; n < gt_array_size(v->se_events); n++)
-          {
-            SkippedExonEvent *testevent = gt_array_get(v->se_events, n);
-            if(skipped_exon_event_equal(&se, testevent))
-            {
-              newevent = false;
-              break;
-            }
-          }
-          if(newevent)
-          {
-            GtStr *seqid = gt_genome_node_get_seqid(skipped);
-            const char *geneid = gt_feature_node_get_attribute(gene, "ID");
-            if(geneid == NULL)
-            {
-              geneid = gt_feature_node_get_attribute(gene, "gene_id");
-              if(geneid == NULL)
-                geneid = "";
-            }
-            fprintf(v->report, "skipped exon: %s %s %lu-%lu %lu-%lu %lu-%lu\n",
-                    gt_str_get(seqid), geneid, se.left.start, se.left.end,
-                    se.skipped.start, se.skipped.end,
-                    se.right.start, se.right.end);
-            gt_array_add(v->se_events, se);
-            numevents++;
-          }
-        }
-        gt_array_delete(overlap);
+        GtFeatureNode *lexon  = *(GtFeatureNode **)gt_array_get(m1_exons, k-1);
+        GtFeatureNode *rexon  = *(GtFeatureNode **)gt_array_get(m1_exons, k);
+        numevents += check_exon_pair(v, gene, lexon, rexon, *mrna2);
       }
     }
   }
