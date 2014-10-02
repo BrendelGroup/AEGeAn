@@ -9,6 +9,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 #include <string.h>
 #include "AgnASInspectCEVisitor.h"
+#include "AgnASInspectIRVisitor.h"
 #include "AgnCliquePair.h"
 #include "AgnFilterStream.h"
 #include "AgnGeneStream.h"
@@ -55,8 +56,10 @@ int main(int argc, char **argv)
                                         agn_locus_stream_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnIntervalLocusStream",
                                         agn_interval_locus_stream_unit_test));
-  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnASInspectVisitor.h",
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnASInspectCEVisitor.h",
                                         agn_as_inspect_ce_visitor_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnASInspectIRVisitor.h",
+                                        agn_as_inspect_ir_visitor_unit_test));
 
   unsigned passes   = 0;
   unsigned failures = 0;

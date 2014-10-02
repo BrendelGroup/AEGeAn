@@ -311,6 +311,7 @@ static GtUword check_skipped_exons(AgnASInspectCEVisitor *v,
 
 static bool skipped_exon_event_equal(SkippedExonEvent *a, SkippedExonEvent *b)
 {
+  agn_assert(a && b);
   GtStr *seqid_a = gt_genome_node_get_seqid((GtGenomeNode *)a->gene);
   GtStr *seqid_b = gt_genome_node_get_seqid((GtGenomeNode *)b->gene);
   if(gt_str_cmp(seqid_a, seqid_b) != 0)

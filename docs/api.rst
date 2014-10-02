@@ -25,6 +25,25 @@ Class AgnASInspectCEVisitor
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnASInspectIRVisitor
+---------------------------
+
+.. c:type:: AgnASInspectIRVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for summarizing the extent of intron retention in an annotation. See the `AgnASInspectIRVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnASInspectIRVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_as_inspect_ir_stream_new(GtNodeStream *in, FILE *report)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_as_inspect_ir_visitor_new(FILE *report)
+
+  Constructor. If ``report`` == NULL, output will be written to terminal (stdout).
+
+.. c:function:: bool agn_as_inspect_ir_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnCliquePair
 -------------------
 
