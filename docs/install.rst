@@ -23,9 +23,9 @@ For the impatient
     sudo ldconfig
 
     # Download, compile, and install the  AEGeAn Toolkit
-    curl https://github.com/standage/AEGeAn/archive/v0.10.1.tar.gz > AEGeAn-0.10.1.tar.gz
-    tar xzf AEGeAn-0.10.1.tar.gz
-    cd AEGeAn-0.10.1
+    curl https://github.com/standage/AEGeAn/archive/v0.10.2.tar.gz > AEGeAn-0.10.2.tar.gz
+    tar xzf AEGeAn-0.10.2.tar.gz
+    cd AEGeAn-0.10.2
     make test
     sudo make install
     sudo ldconfig # Update linker config again
