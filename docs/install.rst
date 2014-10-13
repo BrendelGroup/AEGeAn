@@ -16,17 +16,19 @@ For the impatient
     cd genometools-1.5.3
     make 64bit=yes
     sudo make 64bit=yes install
+    cd ..
+
+    # Make sure that the compiler/linker can find the GenomeTools library
+    sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/genometools-x86_64.conf'
+    sudo ldconfig
 
     # Download, compile, and install the  AEGeAn Toolkit
-    git clone https://github.com/standage/AEGeAn.git
-    cd AEGeAn
-    make
+    curl https://github.com/standage/AEGeAn/archive/v0.10.2.tar.gz > AEGeAn-0.10.2.tar.gz
+    tar xzf AEGeAn-0.10.2.tar.gz
+    cd AEGeAn-0.10.2
+    make test
     sudo make install
-
-    # Make sure that the compiler/linker can find the GenomeTools and AEGeAn
-    # libraries
-    sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
-    sudo ldconfig
+    sudo ldconfig # Update linker config again
 
 
 Prerequisites
@@ -48,26 +50,15 @@ platform-specific installation instructions).
 
 Downloading
 -----------
-The easiest way download the latest and greatest version of AEGeAn (including
-the most recent updates) is to clone from Github.
+Official stable releases of the AEGeAn Toolkit can be downloaded from the 
+`Releases tab <https://github.com/standage/AEGeAn/releases>`_ on the AEGeAn
+GitHub page. Alternatively, you can always download the latest and greatest
+version of AEGeAn (most recently updates, though not guaranteed to be stable)
+by cloning the Git repository.
 
 .. code-block:: bash
 
     git clone https://github.com/standage/AEGeAn.git
-
-Alternatively, you can download an archive of the source from
-https://github.com/standage/AEGeAn.
-
-If you would prefer instead to work with a more thoroughly tested stable
-release, do one of the following.
-
-* If you used git to clone AEGeAn, then run ``git tag`` to list all stable
-  releases. Then before compiling run ``git checkout vx.y.z`` where ``vx.y.z``
-  is the latest stable release.
-
-* Go to `AEGeAn's release page on Github
-  <https://github.com/standage/AEGeAn/releases>`_ and download an archive of the
-  latest release.
 
 **Note**: AEGeAn uses `Semantic Versioning <http://semver.org>`_ for labeling
 stable releases.
@@ -96,8 +87,9 @@ Compilation settings can be configured using the following flags with the
 * ``64bit=no``: do not compile for a 64-bit architecture
 * ``cairo=no``: compile without graphics support (if your system does not have
   the Cairo graphics libraries installed)
-* ``prefix=$DIR``: install GenomeTools and AEGeAn in ``$DIR`` rather than the
-  default directory ``/usr/local``
+* ``prefix=$DIR``: install AEGeAn in ``$DIR`` rather than the default directory
+  ``/usr/local``; it is expected that GenomeTools is installed with the same
+  prefix
 * ``optimize=yes``: enable performance optimization for the AEGeAn code
 * ``errorcheck=no``: allow code to compile even if there are warnings
 * ``debug=no``: disable debugging support
@@ -117,11 +109,10 @@ The default installation location is ``/usr/local/``, which means:
 * libraries are installed in ``/usr/local/lib``
 * auxiliary data files are installed in ``/usr/local/share``
 
-If you do not have administrative privileges on your
-machine, then you will not be able to run ``make install`` without specifying an
-alternative installation directory with ``prefix``. Creating an installation
-directory within your home directory, as shown in the following example, is
-recommended.
+If you do not have administrative privileges on your machine, then you will not
+be able to run ``make install`` without specifying an alternative installation
+directory with ``prefix``. Creating an installation directory within your home
+directory, as shown in the following example, is recommended.
 
 .. code-block:: bash
 

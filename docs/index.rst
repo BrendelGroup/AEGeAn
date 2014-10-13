@@ -4,7 +4,7 @@
 AEGeAn Toolkit: integrated genome analysis
 ==========================================
 
-.. image:: aegean-logo-v1.0-128.png
+.. image:: aegean-logo-v1_0-128.png
    :align: right
    :alt: AEGeAn logo
 
