@@ -85,7 +85,7 @@ GtNodeVisitor *agn_as_inspect_ce_visitor_new(FILE *report)
   AgnASInspectCEVisitor *v = as_inspect_ce_visitor_cast(nv);
   v->as_genes = gt_array_new( sizeof(GtFeatureNode *) );
   v->se_events = gt_array_new( sizeof(SkippedExonEvent) );
-  v->report = report == NULL ? stdout : report;
+  v->report = report;
   return nv;
 }
 
@@ -93,9 +93,8 @@ bool agn_as_inspect_ce_visitor_unit_test(AgnUnitTest *test)
 {
   GtError *error = gt_error_new();
   const char *infile = "data/gff3/as-ce.gff3";
-  FILE *outstream = fopen("/dev/null", "w");
   GtNodeStream *annot = gt_gff3_in_stream_new_unsorted(1, &infile);
-  GtNodeVisitor *nv = agn_as_inspect_ce_visitor_new(outstream);
+  GtNodeVisitor *nv = agn_as_inspect_ce_visitor_new(NULL);
   AgnASInspectCEVisitor *v = as_inspect_ce_visitor_cast(nv);
   GtNodeStream *as = gt_visitor_stream_new(annot, nv);
   int result = gt_node_stream_pull(as, error);
@@ -134,7 +133,7 @@ bool agn_as_inspect_ce_visitor_unit_test(AgnUnitTest *test)
   infile = "data/gff3/as-ce.gtf";
   annot = gt_gtf_in_stream_new(infile);
   GtNodeStream *sort = gt_sort_stream_new(annot);
-  nv = agn_as_inspect_ce_visitor_new(outstream);
+  nv = agn_as_inspect_ce_visitor_new(NULL);
   v = as_inspect_ce_visitor_cast(nv);
   as = gt_visitor_stream_new(sort, nv);
   result = gt_node_stream_pull(as, error);
@@ -165,8 +164,6 @@ bool agn_as_inspect_ce_visitor_unit_test(AgnUnitTest *test)
   gt_node_stream_delete(annot);
   gt_node_stream_delete(sort);
   gt_node_stream_delete(as);
-
-  fclose(outstream);
 
   return agn_unit_test_success(test);
 }
@@ -268,10 +265,13 @@ static GtUword check_exon_pair(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
         if(geneid == NULL)
           geneid = "";
       }
-      fprintf(v->report, "skipped exon: %s %s %lu-%lu %lu-%lu %lu-%lu\n",
-              gt_str_get(seqid), geneid, se.left.start, se.left.end,
-              se.skipped.start, se.skipped.end,
-              se.right.start, se.right.end);
+      if(v->report)
+      {
+        fprintf(v->report, "skipped exon: %s %s %lu-%lu %lu-%lu %lu-%lu\n",
+                gt_str_get(seqid), geneid, se.left.start, se.left.end,
+                se.skipped.start, se.skipped.end,
+                se.right.start, se.right.end);
+      }
       gt_array_add(v->se_events, se);
       numevents++;
     }

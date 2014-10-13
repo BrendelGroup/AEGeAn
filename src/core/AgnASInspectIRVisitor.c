@@ -85,7 +85,7 @@ GtNodeVisitor *agn_as_inspect_ir_visitor_new(FILE *report)
   AgnASInspectIRVisitor *v = as_inspect_ir_visitor_cast(nv);
   v->as_genes = gt_array_new( sizeof(GtFeatureNode *) );
   v->ir_events = gt_array_new( sizeof(RetainedIntronEvent) );
-  v->report = report == NULL ? stdout : report;
+  v->report = report;
   return nv;
 }
 
@@ -93,9 +93,8 @@ bool agn_as_inspect_ir_visitor_unit_test(AgnUnitTest *test)
 {
   GtError *error = gt_error_new();
   const char *infile = "data/gff3/as-ir.gff3";
-  FILE *outstream = fopen("/dev/null", "w");
   GtNodeStream *annot = gt_gff3_in_stream_new_unsorted(1, &infile);
-  GtNodeVisitor *nv = agn_as_inspect_ir_visitor_new(outstream);
+  GtNodeVisitor *nv = agn_as_inspect_ir_visitor_new(NULL);
   AgnASInspectIRVisitor *v = as_inspect_ir_visitor_cast(nv);
   GtNodeStream *as = gt_visitor_stream_new(annot, nv);
   int result = gt_node_stream_pull(as, error);
@@ -134,7 +133,7 @@ bool agn_as_inspect_ir_visitor_unit_test(AgnUnitTest *test)
   infile = "data/gff3/as-ir.gtf";
   annot = gt_gtf_in_stream_new(infile);
   GtNodeStream *sort = gt_sort_stream_new(annot);
-  nv = agn_as_inspect_ir_visitor_new(outstream);
+  nv = agn_as_inspect_ir_visitor_new(NULL);
   v = as_inspect_ir_visitor_cast(nv);
   as = gt_visitor_stream_new(sort, nv);
   result = gt_node_stream_pull(as, error);
@@ -144,12 +143,12 @@ bool agn_as_inspect_ir_visitor_unit_test(AgnUnitTest *test)
             "test] error loading annotations into memory: %s\n",
             gt_error_get(error));
   }
-  
+
   gt_assert(gt_array_size(v->as_genes) == 2);
   agn_assert(gt_array_size(v->ir_events) == 3);
   gene1 = gt_array_get(v->as_genes, 0);
   gene2 = gt_array_get(v->as_genes, 1);
-  
+
   event = gt_array_get(v->ir_events, 0);
   RetainedIntronEvent testevent4 = { *gene1, {1198,1419}, {2067,2350} };
   bool test3 = retained_intron_event_equal(event, &testevent4);
@@ -160,13 +159,11 @@ bool agn_as_inspect_ir_visitor_unit_test(AgnUnitTest *test)
   RetainedIntronEvent testevent6 = { *gene2, {2067,2350}, {2662,2794}};
   test3 = test3 && retained_intron_event_equal(event, &testevent6);
   agn_unit_test_result(test, "retained introns: events (GTF)", test3);
-  
+
   gt_error_delete(error);
   gt_node_stream_delete(annot);
   gt_node_stream_delete(sort);
   gt_node_stream_delete(as);
-
-  fclose(outstream);
 
   return agn_unit_test_success(test);
 }
@@ -247,9 +244,12 @@ static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
                 if(geneid == NULL)
                   geneid = "";
               }
-              fprintf(v->report, "retained intron: %s %s %lu-%lu %lu-%lu\n",
-                      gt_str_get(seqid), geneid, ri.left.start, ri.left.end,
-                      ri.right.start, ri.right.end);
+              if(v->report)
+              {
+                fprintf(v->report, "retained intron: %s %s %lu-%lu %lu-%lu\n",
+                        gt_str_get(seqid), geneid, ri.left.start, ri.left.end,
+                        ri.right.start, ri.right.end);
+              }
               gt_array_add(v->ir_events, ri);
               numevents++;
             }

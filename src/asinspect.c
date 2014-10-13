@@ -11,10 +11,12 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include <getopt.h>
 #include "genometools.h"
 #include "AgnASInspectCEVisitor.h"
+#include "AgnASInspectIRVisitor.h"
 
 typedef struct
 {
   bool gtf;
+  FILE *outstream;
 } ASInspectOptions;
 
 static void print_usage(FILE *outstream)
@@ -24,19 +26,22 @@ static void print_usage(FILE *outstream)
 "GFF3/GTF file\n"
 "Usage: asinspect [options] annot.gff3\n"
 "  Options:\n"
-"    -g|--gtf:     specifies that input is in GTF format; defaut is GFF3\n"
-"    -h|--help:    print this help message and exit\n\n");
+"    -g|--gtf:         specifies that input is in GTF format; defaut is GFF3\n"
+"    -h|--help:        print this help message and exit\n"
+"    -o|--out: FILE    file to which output will be written; default is\n"
+"                      terminal (standard output)\n\n");
 }
 
 static void parse_options(int argc, char **argv, ASInspectOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "gh";
+  const char *optstr = "gho:";
   const struct option pmrna_options[] =
   {
-    { "gtf",  no_argument, NULL, 'g' },
-    { "help", no_argument, NULL, 'h' },
+    { "gtf",  no_argument,       NULL, 'g' },
+    { "help", no_argument,       NULL, 'h' },
+    { "out",  required_argument, NULL, 'o' },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex);
       opt != -1;
@@ -51,15 +56,23 @@ static void parse_options(int argc, char **argv, ASInspectOptions *options)
         print_usage(stdout);
         exit(0);
         break;
+      case 'o':
+        options->outstream = fopen(optarg, "w");
+        if(options->outstream == NULL)
+        {
+          fprintf(stderr, "error: could not open output file '%s'\n", optarg);
+          exit(1);
+        }
+        break;
     }
   }
 }
 
 int main(int argc, char **argv)
 {
-  GtNodeStream *annot, *as;
+  GtNodeStream *annot, *as_ce, *as_ir;
   GtError *error;
-  ASInspectOptions options = { false };
+  ASInspectOptions options = { false, stdout };
   parse_options(argc, argv, &options);
   int numargs = argc - optind;
 
@@ -87,14 +100,16 @@ int main(int argc, char **argv)
     gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)annot);
   }
 
-  as = agn_as_inspect_ce_stream_new(annot, NULL);
+  as_ce = agn_as_inspect_ce_stream_new(annot, options.outstream);
+  as_ir = agn_as_inspect_ir_stream_new(as_ce, options.outstream);
   error = gt_error_new();
-  int result = gt_node_stream_pull(as, error);
+  int result = gt_node_stream_pull(as_ir, error);
   if(result == -1)
     fprintf(stderr, "error processing node stream: %s\n", gt_error_get(error));
 
   gt_error_delete(error);
-  gt_node_stream_delete(as);
+  gt_node_stream_delete(as_ir);
+  gt_node_stream_delete(as_ce);
   gt_node_stream_delete(annot);
   gt_lib_clean();
   return result;
