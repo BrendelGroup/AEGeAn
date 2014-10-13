@@ -196,7 +196,7 @@ static const GtNodeVisitorClass *as_inspect_ir_visitor_class()
 }
 
 static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
-                                   GtFeatureNode *gene, GtArray *mrnas)
+                                     GtFeatureNode *gene, GtArray *mrnas)
 {
   GtUword i,j,k,m,n, numevents = 0;
   agn_assert(v && gene && mrnas);
@@ -211,7 +211,7 @@ static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
     {
       GtFeatureNode **mrna2 = gt_array_get(mrnas, j);
       GtArray *m2_exons = agn_mrna_exons(*mrna2);
-      if(i == j || agn_typecheck_count(*mrna2, agn_typecheck_exon) < 3)
+      if(i == j)
         continue;
 
       for(k = 1; k < gt_array_size(m1_exons); k++)
