@@ -298,6 +298,11 @@ int main(int argc, char **argv)
 
   GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
   current_stream = agn_locus_stream_new(last_stream, logger);
+  if(current_stream == NULL)
+  {
+    fprintf(stderr, "[AEGeAn::LocusPocus] locus stream failed; aborting\n");
+    return 1;
+  }
   agn_locus_stream_set_source((AgnLocusStream *)current_stream, source);
   if(options.idformat != NULL)
   {

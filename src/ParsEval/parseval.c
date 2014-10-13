@@ -83,6 +83,11 @@ int main(int argc, char **argv)
   predgff3 = tempstream;
 
   current_stream = agn_locus_stream_new_pairwise(refrgff3, predgff3, logger);
+  if(current_stream == NULL)
+  {
+    fprintf(stderr, "[AEGeAn::ParsEval] locus stream failed; aborting\n");
+    return 1;
+  }
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

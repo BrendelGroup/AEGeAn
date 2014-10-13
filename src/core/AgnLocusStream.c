@@ -114,6 +114,7 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
   stream->count = 0;
   stream->idformat = gt_cstr_dup("locus%lu");
+  stream->loci = NULL;
 
   GtError *error = gt_error_new();
   stream->feats = gt_feature_index_memory_new();
@@ -126,12 +127,14 @@ GtNodeStream* agn_locus_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   {
     agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnLocusStream::agn_locus_stream_new] error "
-                  "processing input: %s\n", gt_error_get(error));
+                  "processing input: %s", gt_error_get(error));
+    gt_node_stream_delete(ns);
+    return NULL;
   }
   gt_node_stream_delete(feat_stream);
 
   stream->loci = gt_feature_index_memory_new();
-  agn_feature_index_copy_regions(stream->loci, stream->feats, true,error);
+  agn_feature_index_copy_regions(stream->loci, stream->feats, true, error);
   gt_error_delete(error);
 
   locus_stream_parse(stream);
@@ -153,6 +156,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
   stream->count = 0;
   stream->idformat = gt_cstr_dup("locus%lu");
+  stream->loci = NULL;
 
   GtError *error = gt_error_new();
   stream->feats = NULL;
@@ -165,7 +169,7 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   {
     agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnLocusStream::agn_locus_stream_new_pairwise] "
-                 "error processing reference input: %s\n", gt_error_get(error));
+                 "error processing reference input: %s", gt_error_get(error));
   }
   gt_node_stream_delete(refr_instream);
   GtNodeStream *pred_instream = gt_feature_out_stream_new(pred_stream,
@@ -175,7 +179,9 @@ GtNodeStream *agn_locus_stream_new_pairwise(GtNodeStream *refr_stream,
   {
     agn_assert(gt_error_is_set(error));
     gt_logger_log(logger, "[AgnLocusStream::agn_locus_stream_new_pairwise] "
-                 "error processing prediction input: %s\n",gt_error_get(error));
+                 "error processing prediction input: %s",gt_error_get(error));
+    gt_node_stream_delete(ns);
+    return NULL;
   }
   gt_node_stream_delete(pred_instream);
 
@@ -352,7 +358,8 @@ static void locus_stream_free(GtNodeStream *ns)
     gt_feature_index_delete(stream->refrfeats);
   if(stream->predfeats != NULL)
     gt_feature_index_delete(stream->predfeats);
-  gt_feature_index_delete(stream->loci);
+  if(stream->loci != NULL)
+    gt_feature_index_delete(stream->loci);
   gt_str_delete(stream->source);
   gt_free(stream->idformat);
 }
@@ -366,7 +373,7 @@ static void locus_stream_parse(AgnLocusStream *stream)
   if(gt_error_is_set(error))
   {
     gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse] error "
-                  "retrieving sequence IDs: %s\n", gt_error_get(error));
+                  "retrieving sequence IDs: %s", gt_error_get(error));
   }
   numseqs = gt_str_array_size(seqids);
 
@@ -430,7 +437,7 @@ static void locus_stream_parse_pairwise(AgnLocusStream *stream)
   if(gt_error_is_set(error))
   {
     gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_parse] error "
-                  "retrieving sequence IDs: %s\n", gt_error_get(error));
+                  "retrieving sequence IDs: %s", gt_error_get(error));
   }
   GtStrArray *seqids = agn_str_array_union(refrseqids, predseqids);
   numseqs = gt_str_array_size(seqids);
@@ -551,7 +558,7 @@ static int locus_stream_query_overlap(AgnLocusStream *stream, AgnLocus *locus,
   {
     gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_query_overlap]"
                   "error retrieving overlapping features for locus %s[%lu, "
-                  "%lu]: %s\n", gt_str_get(seqid), range.start, range.end,
+                  "%lu]: %s", gt_str_get(seqid), range.start, range.end,
                   gt_error_get(error));
   }
   gt_error_delete(error);
@@ -598,7 +605,7 @@ static int locus_stream_query_overlap_pairwise(AgnLocusStream *stream,
     const char *src = (source == REFERENCESOURCE) ? "reference" : "prediction";
     gt_logger_log(stream->logger, "[AgnLocusStream::locus_stream_query_overlap"
                   "_pairwise] error retrieving overlapping %s reatures for "
-                  "locus %s[%lu, %lu]: %s\n", src, gt_str_get(seqid),
+                  "locus %s[%lu, %lu]: %s", src, gt_str_get(seqid),
                   range.start, range.end, gt_error_get(error));
   }
 
