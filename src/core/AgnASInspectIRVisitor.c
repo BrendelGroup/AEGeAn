@@ -269,9 +269,13 @@ static bool retained_intron_event_equal(RetainedIntronEvent *a,
   GtStr *seqid_b = gt_genome_node_get_seqid((GtGenomeNode *)b->gene);
   if(gt_str_cmp(seqid_a, seqid_b) != 0)
     return false;
-  if(gt_range_compare(&a->left, &b->left) != 0)
+
+  GtStrand stra = gt_feature_node_get_strand(a->gene);
+  GtStrand strb = gt_feature_node_get_strand(b->gene);
+  if(stra != strb)
     return false;
-  if(gt_range_compare(&a->right, &b->right) != 0)
+
+  if(a->left.start != b->left.start || a->right.end != b->right.end)
     return false;
 
   return true;
