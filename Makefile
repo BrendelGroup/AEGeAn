@@ -132,7 +132,7 @@ $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 
 $(AS_EXE):	src/asinspect.c $(AGN_OBJS)
 		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/asinspect.c $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INCS) -DWITHOUT_CAIRO -o $@ $(AGN_OBJS) src/asinspect.c $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
 		ar ru libaegean.a $(AGN_OBJS)
