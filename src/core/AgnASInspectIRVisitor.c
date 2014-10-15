@@ -53,6 +53,13 @@ static const GtNodeVisitorClass *as_inspect_ir_visitor_class();
 /**
  * @function FIXME
  */
+static GtUword check_exon_pair(AgnASInspectIRVisitor *v, GtFeatureNode *gene,
+                               GtFeatureNode *leftexon,GtFeatureNode *rightexon,
+                               GtFeatureNode *mrna2);
+
+/**
+ * @function FIXME
+ */
 static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
                                    GtFeatureNode *gene, GtArray *mrnas);
 
@@ -192,10 +199,59 @@ static const GtNodeVisitorClass *as_inspect_ir_visitor_class()
   return nvc;
 }
 
+static GtUword check_exon_pair(AgnASInspectIRVisitor *v, GtFeatureNode *gene,
+                               GtFeatureNode *leftexon,GtFeatureNode *rightexon,
+                               GtFeatureNode *mrna2)
+{
+  GtUword i, j, numevents = 0;
+  GtArray *m2_exons = agn_mrna_exons(mrna2);
+  GtRange lrange = gt_genome_node_get_range((GtGenomeNode *)leftexon);
+  GtRange rrange = gt_genome_node_get_range((GtGenomeNode *)rightexon);
+  RetainedIntronEvent ri = { gene, lrange, rrange };
+  for(i = 0; i < gt_array_size(m2_exons); i++)
+  {
+    GtGenomeNode **testexon = gt_array_get(m2_exons, i);
+    GtRange testrange = gt_genome_node_get_range(*testexon);
+    if(testrange.start == lrange.start && testrange.end == rrange.end)
+    {
+      bool newevent = true;
+      for(j = 0; j < gt_array_size(v->ir_events); j++)
+      {
+        RetainedIntronEvent *testevent = gt_array_get(v->ir_events, j);
+        if(retained_intron_event_equal(&ri, testevent))
+        {
+          newevent = false;
+          break;
+        }
+      }
+      if(newevent)
+      {
+        GtStr *seqid = gt_genome_node_get_seqid(*testexon);
+        const char *geneid = gt_feature_node_get_attribute(gene, "ID");
+        if(geneid == NULL)
+        {
+          geneid = gt_feature_node_get_attribute(gene, "gene_id");
+          if(geneid == NULL)
+            geneid = "";
+        }
+        if(v->report)
+        {
+          fprintf(v->report, "retained intron: %s %s %lu-%lu %lu-%lu\n",
+                  gt_str_get(seqid), geneid, ri.left.start, ri.left.end,
+                  ri.right.start, ri.right.end);
+        }
+        gt_array_add(v->ir_events, ri);
+        numevents++;
+      }
+    }
+  }
+  return numevents;
+}
+
 static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
                                      GtFeatureNode *gene, GtArray *mrnas)
 {
-  GtUword i,j,k,m,n, numevents = 0;
+  GtUword i,j,k, numevents = 0;
   agn_assert(v && gene && mrnas);
   agn_assert(gt_array_size(mrnas) > 1);
   for(i = 0; i < gt_array_size(mrnas); i++)
@@ -207,7 +263,6 @@ static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
     for(j = 0; j < gt_array_size(mrnas); j++)
     {
       GtFeatureNode **mrna2 = gt_array_get(mrnas, j);
-      GtArray *m2_exons = agn_mrna_exons(*mrna2);
       if(i == j)
         continue;
 
@@ -215,46 +270,7 @@ static GtUword check_retained_inrons(AgnASInspectIRVisitor *v,
       {
         GtFeatureNode *lexon  = *(GtFeatureNode **)gt_array_get(m1_exons, k-1);
         GtFeatureNode *rexon  = *(GtFeatureNode **)gt_array_get(m1_exons, k);
-        GtRange lrange = gt_genome_node_get_range((GtGenomeNode *)lexon);
-        GtRange rrange = gt_genome_node_get_range((GtGenomeNode *)rexon);
-        RetainedIntronEvent ri = { gene, lrange, rrange };
-        for(m = 0; m < gt_array_size(m2_exons); m++)
-        {
-          GtGenomeNode **testexon = gt_array_get(m2_exons, m);
-          GtRange testrange = gt_genome_node_get_range(*testexon);
-          if(testrange.start == lrange.start && testrange.end == rrange.end)
-          {
-            bool newevent = true;
-            for(n = 0; n < gt_array_size(v->ir_events); n++)
-            {
-              RetainedIntronEvent *testevent = gt_array_get(v->ir_events, n);
-              if(retained_intron_event_equal(&ri, testevent))
-              {
-                newevent = false;
-                break;
-              }
-            }
-            if(newevent)
-            {
-              GtStr *seqid = gt_genome_node_get_seqid(*testexon);
-              const char *geneid = gt_feature_node_get_attribute(gene, "ID");
-              if(geneid == NULL)
-              {
-                geneid = gt_feature_node_get_attribute(gene, "gene_id");
-                if(geneid == NULL)
-                  geneid = "";
-              }
-              if(v->report)
-              {
-                fprintf(v->report, "retained intron: %s %s %lu-%lu %lu-%lu\n",
-                        gt_str_get(seqid), geneid, ri.left.start, ri.left.end,
-                        ri.right.start, ri.right.end);
-              }
-              gt_array_add(v->ir_events, ri);
-              numevents++;
-            }
-          }
-        }
+        numevents += check_exon_pair(v, gene, lexon, rexon, *mrna2);
       }
     }
   }

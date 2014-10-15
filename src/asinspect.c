@@ -129,10 +129,10 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  //current_stream = agn_as_inspect_ir_stream_new(last_stream,
-  //                                              options.outstream);
-  //gt_queue_add(streams, current_stream);
-  //last_stream = current_stream;
+  current_stream = agn_as_inspect_ir_stream_new(last_stream,
+                                                options.outstream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
 
   error = gt_error_new();
   int result = gt_node_stream_pull(last_stream, error);

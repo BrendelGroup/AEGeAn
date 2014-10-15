@@ -55,6 +55,13 @@ static const GtNodeVisitorClass *as_inspect_ce_visitor_class();
 /**
  * @function FIXME
  */
+static GtUword check_exon_pair(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
+                               GtFeatureNode *leftexon,GtFeatureNode *rightexon,
+                               GtFeatureNode *mrna2);
+
+/**
+ * @function FIXME
+ */
 static GtUword check_skipped_exons(AgnASInspectCEVisitor *v,
                                    GtFeatureNode *gene, GtArray *mrnas);
 

@@ -9,6 +9,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 
 #include "AgnASInspectCEVisitor.h"
+#include "AgnASInspectIRVisitor.h"
 #include "AgnCliquePair.h"
 #include "AgnCompareReportHTML.h"
 #include "AgnCompareReportText.h"
