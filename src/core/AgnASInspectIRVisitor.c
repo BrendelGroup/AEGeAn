@@ -10,6 +10,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 #include <string.h>
 #include "AgnASInspectIRVisitor.h"
+#include "AgnLocus.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
 
@@ -74,6 +75,12 @@ static bool retained_intron_event_equal(RetainedIntronEvent *a,
  */
 static int
 visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
+
+/**
+ * @function FIXME
+ */
+static int
+visit_feature_node_locus(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
 
 
 //------------------------------------------------------------------------------
@@ -229,11 +236,11 @@ static GtUword check_exon_pair(AgnASInspectIRVisitor *v, GtFeatureNode *gene,
         GtStr *seqid = gt_genome_node_get_seqid(*testexon);
         const char *geneid = gt_feature_node_get_attribute(gene, "ID");
         if(geneid == NULL)
-        {
           geneid = gt_feature_node_get_attribute(gene, "gene_id");
-          if(geneid == NULL)
-            geneid = "";
-        }
+        if(geneid == NULL)
+          geneid = gt_feature_node_get_attribute(gene, "Name");
+        if(geneid == NULL)
+          geneid = "";
         if(v->report)
         {
           fprintf(v->report, "retained intron: %s %s %lu-%lu %lu-%lu\n",
@@ -300,6 +307,9 @@ static bool retained_intron_event_equal(RetainedIntronEvent *a,
 static int
 visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
 {
+  if(gt_feature_node_has_type(fn, "locus"))
+    return visit_feature_node_locus(nv, fn, error);
+
   AgnASInspectIRVisitor *v = as_inspect_ir_visitor_cast(nv);
   GtArray *genes = agn_typecheck_select(fn, agn_typecheck_gene);
   if(gt_array_size(genes) == 0)
@@ -329,5 +339,64 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
   }
 
   gt_array_delete(genes);
+  return 0;
+}
+
+static int
+visit_feature_node_locus(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
+{
+  AgnASInspectIRVisitor *v = as_inspect_ir_visitor_cast(nv);
+  GtArray *refr_mrnas = agn_locus_refr_mrnas((AgnLocus *)fn);
+  GtArray *test_mrnas = agn_locus_pred_mrnas((AgnLocus *)fn);
+  if(gt_array_size(refr_mrnas) == 0 || gt_array_size(test_mrnas) == 0)
+  {
+    gt_array_delete(refr_mrnas);
+    gt_array_delete(test_mrnas);
+    return 0;
+  }
+
+  GtUword i,j,k;
+  for(i = 0; i < gt_array_size(refr_mrnas); i++)
+  {
+    GtFeatureNode **refr_mrna = gt_array_get(refr_mrnas, i);
+    GtArray *refr_exons = agn_mrna_exons(*refr_mrna);
+    GtUword numevents = 0;
+
+    for(j = 0; j < gt_array_size(test_mrnas); j++)
+    {
+      GtFeatureNode **test_mrna = gt_array_get(test_mrnas, j);
+      GtArray *test_exons = agn_mrna_exons(*test_mrna);
+
+      if(gt_array_size(refr_exons) > 1 && gt_array_size(test_exons) > 0)
+      {
+        for(k = 1; k < gt_array_size(refr_exons); k++)
+        {
+          GtFeatureNode **leftexon  = gt_array_get(refr_exons, k-1);
+          GtFeatureNode **rightexon = gt_array_get(refr_exons, k);
+          numevents += check_exon_pair(v, *refr_mrna, *leftexon, *rightexon,
+                                       *test_mrna);
+        }
+      }
+
+      if(gt_array_size(refr_exons) > 0 && gt_array_size(test_exons) > 1)
+      {
+        for(k = 1; k < gt_array_size(test_exons); k++)
+        {
+          GtFeatureNode **leftexon  = gt_array_get(test_exons, k-1);
+          GtFeatureNode **rightexon = gt_array_get(test_exons, k);
+          numevents += check_exon_pair(v, *refr_mrna, *leftexon, *rightexon,
+                                       *refr_mrna);
+        }
+      }
+
+      if(numevents > 0)
+      {
+        gt_genome_node_ref(*(GtGenomeNode **)refr_mrna);
+        gt_array_add(v->as_genes, *refr_mrna);
+      }
+    }
+  }
+  gt_array_delete(refr_mrnas);
+  gt_array_delete(test_mrnas);
   return 0;
 }

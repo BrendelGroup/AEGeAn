@@ -274,11 +274,11 @@ static GtUword check_exon_pair(AgnASInspectCEVisitor *v, GtFeatureNode *gene,
       GtStr *seqid = gt_genome_node_get_seqid(skipped);
       const char *geneid = gt_feature_node_get_attribute(gene, "ID");
       if(geneid == NULL)
-      {
         geneid = gt_feature_node_get_attribute(gene, "gene_id");
-        if(geneid == NULL)
-          geneid = "";
-      }
+      if(geneid == NULL)
+        geneid = gt_feature_node_get_attribute(gene, "Name");
+      if(geneid == NULL)
+        geneid = "";
       if(v->report)
       {
         fprintf(v->report, "skipped exon: %s %s %lu-%lu %lu-%lu %lu-%lu\n",
