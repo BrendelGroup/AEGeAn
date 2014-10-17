@@ -135,6 +135,8 @@ int main(int argc, char **argv)
   last_stream = current_stream;
 
   error = gt_error_new();
+  fprintf(options.outstream, "Mechanism\tGeneID\tRefrMrna\tTestMrna\tSeqID\t"
+          "Description\n");
   int result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
     fprintf(stderr, "error processing node stream: %s\n", gt_error_get(error));

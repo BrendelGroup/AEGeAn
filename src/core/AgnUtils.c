@@ -147,6 +147,24 @@ void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
   gt_feature_node_remove_leaf(root, fn);
 }
 
+GtFeatureNode *agn_get_feature_by_id(GtFeatureNode *root, const char *fid)
+{
+  GtFeatureNode *fn;
+  GtFeatureNodeIterator *iter;
+
+  iter = gt_feature_node_iterator_new(root);
+  for(fn  = gt_feature_node_iterator_next(iter);
+      fn != NULL;
+      fn  = gt_feature_node_iterator_next(iter))
+  {
+    const char *testid = gt_feature_node_get_attribute(fn, "ID");
+    if(testid != NULL && strcmp(testid, fid) == 0)
+      break;
+  }
+
+  return fn;
+}
+
 GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
 {
   GtUword totallength = 0;

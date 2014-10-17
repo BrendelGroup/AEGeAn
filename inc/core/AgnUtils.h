@@ -89,6 +89,12 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
                                         bool use_orig, GtError *error);
 
 /**
+ * @function Returns true if any of the features in ``feats`` overlaps, false
+ * otherwise.
+ */
+bool agn_feature_overlap_check(GtArray *feats);
+
+/**
  * @function Remove feature ``fn`` and all its subfeatures from ``root``.
  * Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn``
  * need not be a leaf feature.
@@ -96,10 +102,9 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
 
 /**
- * @function Returns true if any of the features in ``feats`` overlaps, false
- * otherwise.
+ * @function Search a feature graph for the feature node with the given ID.
  */
-bool agn_feature_overlap_check(GtArray *feats);
+GtFeatureNode *agn_get_feature_by_id(GtFeatureNode *root, const char *fid);
 
 /**
  * @function Determine the length of an mRNA's coding sequence.

@@ -854,13 +854,17 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 
   Copy the sequence regions from ``refrsrc`` and ``predsrc`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
 
+.. c:function:: bool agn_feature_overlap_check(GtArray *feats)
+
+  Returns true if any of the features in ``feats`` overlaps, false otherwise.
+
 .. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 
   Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
 
-.. c:function:: bool agn_feature_overlap_check(GtArray *feats)
+.. c:function:: GtFeatureNode *agn_get_feature_by_id(GtFeatureNode *root, const char *fid)
 
-  Returns true if any of the features in ``feats`` overlaps, false otherwise.
+  Search a feature graph for the feature node with the given ID.
 
 .. c:function:: GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
 
