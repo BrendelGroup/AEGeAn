@@ -11,7 +11,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
   - wget http://genometools.org/pub/genometools-unstable.tar.gz
-  - tar xzf genometools-unstable
+  - tar xzf genometools-unstable.tar.gz
   - cd genometools-unstable && sudo make 64bit=yes install && cd -
   - sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/genometools-x86_64.conf'
   - sudo ldconfig
