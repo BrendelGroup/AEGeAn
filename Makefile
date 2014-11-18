@@ -57,20 +57,24 @@ ifneq ($(debug),no)
   CFLAGS += -g
 endif
 LDFLAGS=-lgenometools -lm \
-        -L$(prefix)/lib
+        -L$(prefix)/lib \
+        -L/usr/local/lib \
+        -L/Users/standage/local/lib
 ifdef lib
   LDFLAGS += -L$(lib)
 endif
-INCS=-I src/genometools/src -I src/genometools/obj -I /usr/local/include/genometools \
-     -I inc/core -I inc/ParsEval -I inc/VAnG       \
-     -I /usr/include/cairo -I /sw/include/cairo
+INCS=-I /usr/local/include/genometools               \
+     -I inc/core -I inc/ParsEval -I inc/VAnG         \
+     -I /usr/include/cairo -I /sw/include/cairo      \
+     -I /usr/local/Cellar/cairo/1.14.0/include/cairo \
+     -I $(prefix)/include/genometools                \
+     -I ~/local/include/genometools
 ifeq ($(memcheck),yes)
   MEMCHECK=valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 \
                     --suppressions=data/misc/libpixman.supp \
                     --suppressions=data/misc/libpango.supp
   MEMCHECKFT=memcheck
 endif
-LDPATH=LD_LIBRARY_PATH=src/genometools/lib DYLD_LIBRARY_PATH=src/genometools/lib
 
 # Targets
 all:		$(BINS) libaegean.a
@@ -144,16 +148,17 @@ test:		agn-test
 		
 
 agn-test:	all
-		@ $(LDPATH) $(MEMCHECK) bin/unittests
-		@ $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(LDPATH) $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/unittests
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ echo AEGeAn Functional Tests
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/AT1G05320.sh $(MEMCHECKFT)
 		@ test/FBgn0035002.sh $(MEMCHECKFT)
 		@ test/iLocusParsing.sh $(MEMCHECKFT)
 		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
+
 

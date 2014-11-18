@@ -80,10 +80,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
   AgnLocusMapVisitor *v = locus_map_visitor_cast(nv);
   gt_error_check(error);
   agn_assert(gt_feature_node_has_type(fn, "locus"));
-  char lid[1024];
-  GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)fn);
-  GtRange range = gt_genome_node_get_range((GtGenomeNode *)fn);
-  sprintf(lid, "%s:%lu-%lu", gt_str_get(seqid), range.start, range.end);
+  const char *locusid = gt_feature_node_get_attribute(fn, "ID");
 
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
   GtFeatureNode *current;
@@ -94,13 +91,13 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
     if(agn_typecheck_gene(current) && v->genefh != NULL)
     {
       const char *geneid = gt_feature_node_get_attribute(current, "ID");
-      fprintf(v->genefh, "%s\t%s\n", geneid, lid);
+      fprintf(v->genefh, "%s\t%s\n", geneid, locusid);
     }
 
     if(agn_typecheck_mrna(current) && v->mrnafh != NULL)
     {
       const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
-      fprintf(v->mrnafh, "%s\t%s\n", mrnaid, lid);
+      fprintf(v->mrnafh, "%s\t%s\n", mrnaid, locusid);
     }
   }
   gt_feature_node_iterator_delete(iter);
