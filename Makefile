@@ -57,17 +57,14 @@ ifneq ($(debug),no)
 endif
 LDFLAGS=-lgenometools -lm \
         -L$(prefix)/lib \
-        -L/usr/local/lib \
-        -L/Users/standage/local/lib
+        -L/usr/local/lib
 ifdef lib
   LDFLAGS += -L$(lib)
 endif
-INCS=-I /usr/local/include/genometools               \
-     -I inc/core -I inc/ParsEval -I inc/VAnG         \
-     -I /usr/include/cairo -I /sw/include/cairo      \
-     -I /usr/local/Cellar/cairo/1.14.0/include/cairo \
-     -I $(prefix)/include/genometools                \
-     -I ~/local/include/genometools
+INCS=$(shell pkg-config --silence-errors --cflags-only-I cairo) \
+     -I /usr/local/include/genometools \
+     -I inc/core -I inc/VAnG \
+     -I $(prefix)/include/genometools
 ifeq ($(memcheck),yes)
   MEMCHECK=valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 \
                     --suppressions=data/misc/libpixman.supp \
