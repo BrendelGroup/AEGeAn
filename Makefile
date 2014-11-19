@@ -12,12 +12,11 @@ AGN_VERSION=0.11.0
 # Binaries
 PE_EXE=bin/parseval
 CN_EXE=bin/canon-gff3
-VN_EXE=bin/vang
 LP_EXE=bin/locuspocus
 XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
+BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -25,14 +24,6 @@ BINS=$(PE_EXE) $(CN_EXE) $(VN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
 AGN_SRCS=$(wildcard src/core/Agn*.c)
 AGN_OBJS=$(patsubst src/core/%.c,obj/%.o,$(AGN_SRCS))
 AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
-
-# VAnG class and module files
-VN_SRCS=$(wildcard src/VAnG/Vang*.c)
-VN_OBJS=$(patsubst src/VAnG/%.c,obj/%.o,$(VN_SRCS))
-VN_HDRS=$(patsubst src/VAnG/%.c,inc/VAnG/%.h,$(VN_SRCS))
-
-# All class and module files
-CLSS_MDL_OBJS=$(AGN_OBJS) $(VN_OBJS)
 
 # Compilation settings
 CC=gcc
@@ -62,8 +53,8 @@ ifdef lib
   LDFLAGS += -L$(lib)
 endif
 INCS=$(shell pkg-config --silence-errors --cflags-only-I cairo) \
+     -I inc/core \
      -I /usr/local/include/genometools \
-     -I inc/core -I inc/VAnG \
      -I $(prefix)/include/genometools
 ifeq ($(memcheck),yes)
   MEMCHECK=valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 \
@@ -92,16 +83,12 @@ uninstall:
 		rm -r $(prefix)/share/parseval
 
 clean:		
-		rm -rf $(BINS) $(UT_EXE) libaegean.a $(CLSS_MDL_OBJS) inc/core/AgnVersion.h bin/*.dSYM
+		rm -rf $(BINS) $(UT_EXE) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
-$(VN_OBJS):	obj/%.o : src/VAnG/%.c inc/VAnG/%.h inc/core/AgnVersion.h
-		@- mkdir -p obj
-		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
-		
 $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c src/ParsEval/pe_options.h src/ParsEval/pe_utils.h $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c $(LDFLAGS)
@@ -109,10 +96,6 @@ $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_uti
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
-		
-$(VN_EXE):	src/VAnG/vang.c $(VN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(VN_OBJS) src/VAnG/vang.c $(LDFLAGS)
 
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@- mkdir -p bin
