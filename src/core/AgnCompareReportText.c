@@ -27,6 +27,7 @@ struct AgnCompareReportText
   GtStrArray *seqids;
   FILE *outstream;
   GtLogger *logger;
+  GtUword locuscount;
   bool gff3;
 };
 
@@ -131,6 +132,13 @@ void agn_compare_report_text_create_summary(AgnCompareReportText *rpt,
   AgnComparisonData *data = &rpt->data;
   GtUword i;
 
+  agn_assert(rpt);
+  if(rpt->locuscount == 0)
+  {
+    fprintf(outstream, "No loci for comparison\n");
+    return;
+  }
+
   fprintf(outstream, "  Sequences compared\n");
   for(i = 0; i < gt_str_array_size(rpt->seqids); i++)
   {
@@ -200,6 +208,7 @@ GtNodeVisitor *agn_compare_report_text_new(FILE *outstream, bool gff3,
   rpt->outstream = outstream;
   rpt->logger = logger;
   rpt->gff3 = gff3;
+  rpt->locuscount = 0;
 
   return nv;
 }
@@ -592,6 +601,7 @@ static int compare_report_text_visit_feature_node(GtNodeVisitor *nv,
   agn_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
 
   rpt = compare_report_text_cast(nv);
+  rpt->locuscount += 1;
   locus = (AgnLocus *)fn;
   agn_locus_comparative_analysis(locus, rpt->logger);
   agn_locus_data_aggregate(locus, &rpt->data);

@@ -36,6 +36,7 @@ struct AgnCompareReportHTML
   GtLogger *logger;
   GtStr *summary_title;
   bool gff3;
+  GtUword locuscount;
 };
 
 typedef struct
@@ -195,6 +196,8 @@ static int compare_report_html_visit_region_node(GtNodeVisitor *nv,
 
 void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 {
+  agn_assert(rpt);
+
   // Create the output file
   char filename[1024];
   sprintf(filename, "%s/index.html", rpt->outdir);
@@ -203,6 +206,15 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
   {
     fprintf(stderr, "error: unable to open output file '%s'\n", filename);
     exit(1);
+  }
+
+  if(rpt->locuscount == 0)
+  {
+    fprintf(outstream, "<!doctype html>\n"
+            "<html lang=\"en\">\n"
+            "  <body><p>No loci for comparison.</p></body>\n"
+            "</html>\n");
+    return;
   }
 
   compare_report_html_summary_headmatter(rpt, outstream);
@@ -229,6 +241,7 @@ GtNodeVisitor *agn_compare_report_html_new(const char *outdir, bool gff3,
   rpt->logger = logger;
   rpt->summary_title = gt_str_new_cstr("ParsEval Summary");
   rpt->gff3 = gff3;
+  rpt->locuscount = 0;
 
   return nv;
 }
@@ -1067,6 +1080,7 @@ static int compare_report_html_visit_feature_node(GtNodeVisitor *nv,
   agn_assert(nv && fn && gt_feature_node_has_type(fn, "locus"));
 
   rpt = compare_report_html_cast(nv);
+  rpt->locuscount += 1;
   locus = (AgnLocus *)fn;
   agn_locus_comparative_analysis(locus, rpt->logger);
   agn_locus_data_aggregate(locus, &rpt->data);
