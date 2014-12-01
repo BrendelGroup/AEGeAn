@@ -98,7 +98,7 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  if(options.filters != NULL)
+  if(gt_array_size(options.filters) > 0)
   {
     current_stream = agn_locus_filter_stream_new(last_stream, options.filters);
     gt_queue_add(streams, current_stream);

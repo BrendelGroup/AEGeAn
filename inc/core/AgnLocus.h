@@ -247,7 +247,7 @@ GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src);
 #define agn_locus_num_refr_genes(LC)\
         agn_locus_gene_num(LC, REFERENCESOURCE)
 #define agn_locus_num_genes(LC)\
-        agn_locus_gene_num(LC, DEFAULTSOURCE
+        agn_locus_gene_num(LC, DEFAULTSOURCE)
 
 /**
  * @function Get the mRNAs associated with this locus. Rather than calling
