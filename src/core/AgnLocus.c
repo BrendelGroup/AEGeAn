@@ -575,6 +575,18 @@ GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src)
   return count;
 }
 
+GtStr *agn_locus_get_position(AgnLocus *locus)
+{
+  GtRange range = gt_genome_node_get_range(locus);
+  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  GtStr *pos = gt_str_clone(seqid);
+  gt_str_append_char(pos, '_');
+  gt_str_append_ulong(pos, range.start);
+  gt_str_append_char(pos, '-');
+  gt_str_append_ulong(pos, range.end);
+  return pos;
+}
+
 GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
 {
   GtArray *mrnas = gt_array_new( sizeof(GtFeatureNode *) );

@@ -30,7 +30,7 @@ struct AgnGeneLocusMapping
 
 typedef struct
 {
-  const char *locusid;
+  const char *locuspos;
   GtStrArray *geneids;
 } GetGeneIdsData;
 
@@ -52,18 +52,17 @@ static int map_visit_print(void *key, void *value, void *data, GtError *error);
 void agn_gene_locus_mapping_add(AgnGeneLocusMapping *map, AgnLocus *locus)
 {
   GtArray *genes;
-  const char *locusid;
+  GtStr *locuspos;
 
   agn_assert(map && locus);
-  locusid = gt_feature_node_get_attribute((GtFeatureNode *)locus, "ID");
-  agn_assert(locusid && strcmp(locusid, "") != 0);
+  locuspos = agn_locus_get_position(locus);
 
   genes = agn_locus_get_genes(locus);
   while(gt_array_size(genes) > 0)
   {
     GtFeatureNode *gene = gt_array_pop(genes);
     const char *geneid = gt_feature_node_get_attribute(gene, "ID");
-    gt_hashmap_add(map->mapping, gt_cstr_dup(geneid), gt_str_new_cstr(locusid));
+    gt_hashmap_add(map->mapping, gt_cstr_dup(geneid), locuspos);
   }
   gt_array_delete(genes);
 }
@@ -106,14 +105,14 @@ void agn_gene_locus_mapping_delete(AgnGeneLocusMapping *map)
 
 GtStrArray *
 agn_gene_locus_mapping_get_geneids_for_locus(AgnGeneLocusMapping *map,
-                                             const char *locusid,
+                                             const char *locuspos,
                                              GtError *error)
 {
-  agn_assert(map && locusid && error);
-  agn_assert(strcmp(locusid, "") != 0);
+  agn_assert(map && locuspos && error);
+  agn_assert(strcmp(locuspos, "") != 0);
 
   GetGeneIdsData data;
-  data.locusid = locusid;
+  data.locuspos = locuspos;
   data.geneids = gt_str_array_new();
   gt_hashmap_foreach(map->mapping, map_visit_get_geneids, &data, error);
   return data.geneids;
@@ -123,9 +122,9 @@ GtStr *agn_gene_locus_mapping_get_locus(AgnGeneLocusMapping *map,
                                         const char *geneid)
 {
   agn_assert(map && geneid);
-  GtStr *locusid = gt_hashmap_get(map->mapping, geneid);
-  agn_assert(locusid);
-  return gt_str_ref(locusid);
+  GtStr *locuspos = gt_hashmap_get(map->mapping, geneid);
+  agn_assert(locuspos);
+  return gt_str_ref(locuspos);
 }
 
 AgnGeneLocusMapping *agn_gene_locus_mapping_open(const char *filepath)
@@ -145,10 +144,10 @@ AgnGeneLocusMapping *agn_gene_locus_mapping_open(const char *filepath)
   {
     if(strlen(buffer) == 0)
       continue;
-    char *geneid  = strtok(buffer, "\t\n");
-    char *locusid = strtok(NULL,   "\t\n");
-    agn_assert(geneid && locusid);
-    gt_hashmap_add(map->mapping, gt_cstr_dup(geneid), gt_str_new_cstr(locusid));
+    char *geneid   = strtok(buffer, "\t\n");
+    char *locuspos = strtok(NULL,   "\t\n");
+    agn_assert(geneid && locuspos);
+    gt_hashmap_add(map->mapping, gt_cstr_dup(geneid), gt_str_new_cstr(locuspos));
   }
   fclose(mapfile);
 
@@ -170,22 +169,22 @@ GtStr *agn_gene_locus_mapping_unmap_gene(AgnGeneLocusMapping *map,
 {
   agn_assert(map && geneid);
   agn_assert(strcmp(geneid, "") != 0);
-  GtStr *locusid = gt_hashmap_get(map->mapping, geneid);
-  if(locusid == NULL)
+  GtStr *locuspos = gt_hashmap_get(map->mapping, geneid);
+  if(locuspos == NULL)
     return NULL;
   
-  gt_str_ref(locusid);
+  gt_str_ref(locuspos);
   gt_hashmap_remove(map->mapping, geneid);
-  return locusid;
+  return locuspos;
 }
 
 static
 int map_visit_get_geneids(void *key, void *value, void *data, GtError *error)
 {
   const char *geneid = key;
-  GtStr *locusid = value;
+  GtStr *locuspos = value;
   GetGeneIdsData *dat = data;
-  if(strcmp(gt_str_get(locusid), dat->locusid) == 0)
+  if(strcmp(gt_str_get(locuspos), dat->locuspos) == 0)
     gt_str_array_add_cstr(dat->geneids, geneid);
   return 0;
 }
@@ -193,8 +192,8 @@ int map_visit_get_geneids(void *key, void *value, void *data, GtError *error)
 static int map_visit_print(void *key, void *value, void *data, GtError *error)
 {
   const char *geneid = key;
-  GtStr *locusid = value;
+  GtStr *locuspos = value;
   FILE *outstream = data;
-  fprintf(outstream, "%s\t%s\n", geneid, gt_str_get(locusid));
+  fprintf(outstream, "%s\t%s\n", geneid, gt_str_get(locuspos));
   return 0;
 }
