@@ -24,53 +24,55 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 typedef struct AgnSeqGeneMapping AgnSeqGeneMapping;
 
 /**
- * Inspect a locus object and add all of its associated genes to the map.
+ * @function Inspect a locus object and add all of its associated genes to the
+ * map.
  */
 void agn_seq_gene_mapping_add(AgnSeqGeneMapping *map, AgnLocus *locus);
 
 /**
- * Write the map to a file and call the class destructor to free memory.
+ * @function Write the map to a file and call the class destructor to free
+ * memory.
  */
 void agn_seq_gene_mapping_close(AgnSeqGeneMapping *map);
 
 /**
- * Destructor.
+ * @function Destructor.
  */
 void agn_seq_gene_mapping_delete(AgnSeqGeneMapping *map);
 
 /**
- * Return an array of gene IDs associated with the specified sequence, or NULL
- * if there are none.
+ * @function Return an array of gene IDs associated with the specified sequence,
+ * or NULL if there are none.
  */
 GtStrArray *agn_seq_gene_mapping_get_genes(AgnSeqGeneMapping *map,
                                            const char *seqid);
 
 /**
- * Test whether a sequence is present in the map.
+ * @function Test whether a sequence is present in the map.
  */
 bool agn_seq_gene_mapping_has_seqid(AgnSeqGeneMapping *map, const char *seqid);
 
 /**
- * Read a sequence-gene mapping from a file.
+ * @function Read a sequence-gene mapping from a file.
  */
 AgnSeqGeneMapping *agn_seq_gene_mapping_open(const char *filepath);
 
 /**
- * Create a new, empty sequence-gene mapping in memory.
+ * @function Create a new, empty sequence-gene mapping in memory.
  */
 AgnSeqGeneMapping *agn_seq_gene_mapping_new(const char *filepath);
 
 /**
- * Search the genes associated with the given sequence, and if `geneid` is
- * found, remove it and return true; otherwise return false.
+ * @function Search the genes associated with the given sequence, and if
+ * `geneid` is found, remove it and return true; otherwise return false.
  */
 bool agn_seq_gene_mapping_unmap_gene(AgnSeqGeneMapping *map,
                                      const char *seqid,
                                      const char *geneid);
 
 /**
- * Remove the specified sequence from the map and return an array of any
- * associated gene IDs.
+ * @function Remove the specified sequence from the map and return an array of
+ * any associated gene IDs.
  */
 GtStrArray *agn_seq_gene_mapping_unmap_seqid(AgnSeqGeneMapping *map,
                                              const char *seqid);

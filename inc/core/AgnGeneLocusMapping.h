@@ -25,47 +25,50 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 typedef struct AgnGeneLocusMapping AgnGeneLocusMapping;
 
 /**
- * Inspect a locus object and add all of its associated genes to the map.
+ * @function Inspect a locus object and add all of its associated genes to the
+ * map.
  */
 void agn_gene_locus_mapping_add(AgnGeneLocusMapping *map, AgnLocus *locus);
 
 /**
- * Write the map to a file and call the class destructor to free memory.
+ * @function Write the map to a file and call the class destructor to free
+ * memory.
  */
 void agn_gene_locus_mapping_close(AgnGeneLocusMapping *map);
 
 /**
- * Destructor.
+ * @function Destructor.
  */
 void agn_gene_locus_mapping_delete(AgnGeneLocusMapping *map);
 
 /**
- * Return a list of all the gene IDs associated with the given locus ID.
+ * @function Return a list of all the gene IDs associated with the given locus
+ * position.
  */
 GtStrArray *
 agn_gene_locus_mapping_get_geneids_for_locus(AgnGeneLocusMapping *map,
-                                             const char *locusid,
+                                             const char *locuspos,
                                              GtError *error);
 
 /**
- * Given a gene ID, return the associated locus ID.
+ * @function Given a gene ID, return the associated locus ID.
  */
 GtStr *agn_gene_locus_mapping_get_locus(AgnGeneLocusMapping *map,
                                         const char *geneid);
 
 /**
- * Read a gene-locus mapping from a file.
+ * @function Read a gene-locus mapping from a file.
  */
 AgnGeneLocusMapping *agn_gene_locus_mapping_open(const char *filepath);
 
 /**
- * Create a new, empty gene-locus mapping in memory.
+ * @function Create a new, empty gene-locus mapping in memory.
  */
 AgnGeneLocusMapping *agn_gene_locus_mapping_new(const char *filepath);
 
 /**
- * Remove a gene ID from the map and return the associated locus ID. Caller is
- * responsible to free the locus ID.
+ * @function Remove a gene ID from the map and return the associated locus ID.
+ * Caller is responsible to free the locus ID.
  */
 GtStr *agn_gene_locus_mapping_unmap_gene(AgnGeneLocusMapping *map,
                                          const char *geneid);
