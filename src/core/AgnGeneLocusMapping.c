@@ -9,9 +9,9 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 
 #include <string.h>
-#include "AgnGeneLocusMapping.h"
 #include "core/array_api.h"
-#include "core/file_api.h"
+#include "core/hashmap_api.h"
+#include "AgnGeneLocusMapping.h"
 
 //------------------------------------------------------------------------------
 // Data structure definition
@@ -37,12 +37,13 @@ typedef struct
 /**
  * Callback function: collect all gene IDs associated with the given locus ID.
  */
+static
 int map_visit_get_geneids(void *key, void *value, void *data, GtError *error);
 
 /**
  * Callback function: print gene-locus mapping.
  */
-int map_visit_print(void *key, void *value, void *data, GtError *error);
+static int map_visit_print(void *key, void *value, void *data, GtError *error);
 
 //------------------------------------------------------------------------------
 // Method implementations
@@ -91,6 +92,7 @@ void agn_gene_locus_mapping_close(AgnGeneLocusMapping *map)
     exit(1);
   }
   agn_gene_locus_mapping_delete(map);
+  gt_error_delete(error);
 }
 
 void agn_gene_locus_mapping_delete(AgnGeneLocusMapping *map)
@@ -121,8 +123,8 @@ GtStr *agn_gene_locus_mapping_get_locus(AgnGeneLocusMapping *map,
                                         const char *geneid)
 {
   agn_assert(map && geneid);
-  agn_assert(strcmp(geneid, "") != 0);
   GtStr *locusid = gt_hashmap_get(map->mapping, geneid);
+  agn_assert(locusid);
   return gt_str_ref(locusid);
 }
 
@@ -177,6 +179,7 @@ GtStr *agn_gene_locus_mapping_unmap_gene(AgnGeneLocusMapping *map,
   return locusid;
 }
 
+static
 int map_visit_get_geneids(void *key, void *value, void *data, GtError *error)
 {
   const char *geneid = key;
@@ -187,7 +190,7 @@ int map_visit_get_geneids(void *key, void *value, void *data, GtError *error)
   return 0;
 }
 
-int map_visit_print(void *key, void *value, void *data, GtError *error)
+static int map_visit_print(void *key, void *value, void *data, GtError *error)
 {
   const char *geneid = key;
   GtStr *locusid = value;
