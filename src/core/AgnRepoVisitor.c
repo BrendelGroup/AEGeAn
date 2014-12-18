@@ -130,6 +130,8 @@ static int repo_visitor_fn_handler(GtNodeVisitor *nv, GtFeatureNode *fn,
   if(gt_genome_node_accept((AgnLocus *)fn, gff3, error) == -1)
     return -1;
   
+  agn_gene_locus_mapping_add(rv->glmap, locus);
+  agn_seq_gene_mapping_add(rv->sgmap, locus);
   gt_str_delete(filename);
   gt_file_delete(file);
   gt_node_visitor_delete(gff3);
@@ -202,8 +204,17 @@ static int repo_visitor_rn_handler(GtNodeVisitor *nv, GtRegionNode *rn,
   agn_assert(nv && rn && error);
   AgnRepoVisitor *rv = repo_visitor_cast(nv);
   const char *seqid = gt_str_get(gt_genome_node_get_seqid((GtGenomeNode *)rn));
-  chdir(rv->repopath);
+  GtStrArray *geneids = agn_seq_gene_mapping_unmap_seqid(rv->sgmap, seqid);
+  GtUword i;
+  for(i = 0; i < gt_str_array_size(geneids); i++)
+  {
+    const char *geneid = gt_str_array_get(geneids, i);
+    GtStr *locuspos = agn_gene_locus_mapping_unmap_gene(rv->glmap, geneid);
+    gt_str_delete(locuspos);
+  }
+  gt_str_array_delete(geneids);
 
+  chdir(rv->repopath);
   struct stat buffer;
   if(stat(seqid, &buffer) == 0)
   {
