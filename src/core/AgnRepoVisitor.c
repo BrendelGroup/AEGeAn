@@ -79,6 +79,8 @@ GtNodeStream *agn_repo_stream_new(GtNodeStream *instream, const char *path,
 {
   agn_assert(instream && path && error);
   GtNodeVisitor *nv = agn_repo_visitor_new(path, error);
+  if(nv == NULL)
+    return NULL;
   return gt_visitor_stream_new(instream, nv);
 }
 
@@ -121,13 +123,14 @@ static int repo_visitor_fn_handler(GtNodeVisitor *nv, GtFeatureNode *fn,
   agn_assert(nv);
   AgnRepoVisitor *rv = repo_visitor_cast(nv);
   agn_assert(gt_feature_node_has_type(fn, "locus"));
-  GtStr *filename = repo_visitor_locus_filename(rv, (AgnLocus *)fn);
+  AgnLocus *locus = (AgnLocus *)fn;
+  GtStr *filename = repo_visitor_locus_filename(rv, locus);
   GtFile *file = gt_file_new(gt_str_get(filename), "w", error);
   if(file == NULL)
     return -1;
   GtNodeVisitor *gff3 = gt_gff3_visitor_new(file);
   gt_gff3_visitor_retain_id_attributes((GtGFF3Visitor *)gff3);
-  if(gt_genome_node_accept((AgnLocus *)fn, gff3, error) == -1)
+  if(gt_genome_node_accept(locus, gff3, error) == -1)
     return -1;
   
   agn_gene_locus_mapping_add(rv->glmap, locus);
@@ -204,15 +207,6 @@ static int repo_visitor_rn_handler(GtNodeVisitor *nv, GtRegionNode *rn,
   agn_assert(nv && rn && error);
   AgnRepoVisitor *rv = repo_visitor_cast(nv);
   const char *seqid = gt_str_get(gt_genome_node_get_seqid((GtGenomeNode *)rn));
-  GtStrArray *geneids = agn_seq_gene_mapping_unmap_seqid(rv->sgmap, seqid);
-  GtUword i;
-  for(i = 0; i < gt_str_array_size(geneids); i++)
-  {
-    const char *geneid = gt_str_array_get(geneids, i);
-    GtStr *locuspos = agn_gene_locus_mapping_unmap_gene(rv->glmap, geneid);
-    gt_str_delete(locuspos);
-  }
-  gt_str_array_delete(geneids);
 
   chdir(rv->repopath);
   struct stat buffer;
@@ -226,6 +220,17 @@ static int repo_visitor_rn_handler(GtNodeVisitor *nv, GtRegionNode *rn,
       return -1;
     }
     gt_str_delete(command);
+    
+    GtStrArray *geneids = agn_seq_gene_mapping_unmap_seqid(rv->sgmap, seqid);
+    agn_assert(geneids);
+    GtUword i;
+    for(i = 0; i < gt_str_array_size(geneids); i++)
+    {
+      const char *geneid = gt_str_array_get(geneids, i);
+      GtStr *locuspos = agn_gene_locus_mapping_unmap_gene(rv->glmap, geneid);
+      gt_str_delete(locuspos);
+    }
+    gt_str_array_delete(geneids);
   }
 
   if(mkdir(seqid, 0755) != 0)
@@ -233,6 +238,7 @@ static int repo_visitor_rn_handler(GtNodeVisitor *nv, GtRegionNode *rn,
     gt_error_set(error, "error creating seq directory '%s'", seqid);
     return -1;
   }
+  chdir(rv->cwd);
 
   return 0;
 }

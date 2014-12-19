@@ -56,8 +56,8 @@ void agn_seq_gene_mapping_add(AgnSeqGeneMapping *map, AgnLocus *locus)
   genes = agn_locus_get_genes(locus);
   while(gt_array_size(genes) > 0)
   {
-    GtFeatureNode *gene = gt_array_pop(genes);
-    const char *geneid = gt_feature_node_get_attribute(gene, "ID");
+    GtFeatureNode **gene = gt_array_pop(genes);
+    const char *geneid = gt_feature_node_get_attribute(*gene, "ID");
     gt_str_array_add_cstr(genelist, geneid);
   }
   gt_array_delete(genes);
@@ -111,7 +111,7 @@ GtStrArray *agn_seq_gene_mapping_get_genes(AgnSeqGeneMapping *map,
 bool agn_seq_gene_mapping_has_seqid(AgnSeqGeneMapping *map, const char *seqid)
 {
   agn_assert(map && seqid);
-  return gt_hashmap_get(map->mapping, seqid) == NULL;
+  return gt_hashmap_get(map->mapping, seqid) != NULL;
 }
 
 AgnSeqGeneMapping *agn_seq_gene_mapping_open(const char *filepath)

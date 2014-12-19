@@ -16,7 +16,8 @@ LP_EXE=bin/locuspocus
 XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
+GA_EXE=bin/geneannology
+BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE) $(GA_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -24,6 +25,9 @@ BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
 AGN_SRCS=$(wildcard src/core/Agn*.c)
 AGN_OBJS=$(patsubst src/core/%.c,obj/%.o,$(AGN_SRCS))
 AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
+
+# GeneAnnoLogy command sources
+GA_COMMAND_SRCS=src/GeneAnnoLogy/ga_init.c
 
 # Compilation settings
 CC=gcc
@@ -112,6 +116,10 @@ $(RP_EXE):	src/pmrna.c $(AGN_OBJS)
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
+
+$(GA_EXE):	src/GeneAnnoLogy/geneannology.c src/GeneAnnoLogy/ga_commands.h $(GA_COMMAND_SRCS) $(AGN_OBJS)
+		@- mkdir -p bin
+		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/GEneAnnoLogy/geneannology.c $(GA_COMMAND_SRCS) $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
 		ar ru libaegean.a $(AGN_OBJS)
