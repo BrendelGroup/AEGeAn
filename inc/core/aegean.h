@@ -16,7 +16,6 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
 #include "AgnInferParentStream.h"
-#include "AgnIntervalLocusStream.h"
 #include "AgnLocus.h"
 #include "AgnLocusFilterStream.h"
 #include "AgnLocusMapVisitor.h"
