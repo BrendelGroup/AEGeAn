@@ -29,7 +29,7 @@ struct AgnLocusStream
   int endmode;
   GtFeatureIndex *seqranges;
   AgnLocus *prev_locus;
-  GtFeatureNode *buffer;
+  GtGenomeNode *buffer;
   GtStr *source;
   GtStr *idformat;
   char *refrfile;
@@ -157,8 +157,7 @@ static int locus_stream_add_feature(AgnLocusStream *stream, AgnLocus *locus,
   }
   else
   {
-    const char *
-         filename = gt_genome_node_get_filename((GtGenomeNode *)stream->buffer);
+    const char * filename = gt_genome_node_get_filename(stream->buffer);
     if(strcmp(filename, stream->refrfile) == 0)
       agn_locus_add_refr_feature(locus, feature);
     else if(strcmp(filename, stream->predfile) == 0)
@@ -205,26 +204,6 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
 {
   agn_assert(stream && gn && error);
   
-  if(*gn == NULL)
-  {
-    if(stream->buffer != NULL)
-    {
-      GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)stream->buffer);
-      AgnLocus *locus = locus_stream_create(stream, seqid);
-      *gn = locus;
-      stream->prev_locus = locus;
-      int code = locus_stream_add_feature(stream, locus, stream->buffer, error);
-      stream->buffer = NULL;
-      return code;
-    }
-    else
-    {
-      int result = gt_node_stream_next(stream->in_stream, gn, error);
-      if(!*gn || result)
-        return result;
-    }
-  }
-
   GtArray *current_locus = gt_array_new( sizeof(GtFeatureNode *) );
   if(stream->buffer != NULL)
   {
@@ -233,9 +212,19 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
   }
   
   bool again = false;
-  int result;
+  int result = 0;
   do
   {
+    if(gt_array_size(current_locus) > 0)
+      result = gt_node_stream_next(stream->in_stream, gn, error);
+    if(!*gn || result)
+      break;
+    if(gt_feature_node_try_cast(*gn) == NULL)
+    {
+      stream->buffer = *gn;
+      break;
+    }
+    
     GtStr *newseqid = gt_genome_node_get_seqid(*gn);
     GtRange newrange = gt_genome_node_get_range(*gn);
     GtUword i;
@@ -245,8 +234,8 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
       GtGenomeNode **oldfeature = gt_array_get(current_locus, i);
       GtStr *oldseqid = gt_genome_node_get_seqid(*oldfeature);
       GtRange oldrange = gt_genome_node_get_range(*oldfeature);
-      agn_assert(gt_str_cmp(newseqid, oldseqid) == 0);
-      if(gt_range_overlap(&newrange, &oldrange))
+      if(gt_str_cmp(newseqid, oldseqid) == 0 &&
+         gt_range_overlap(&newrange, &oldrange))
       {
         overlap = true;
         break;
@@ -255,36 +244,37 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     if(overlap || gt_array_size(current_locus) == 0)
     {
       gt_array_add(current_locus, *gn);
-      result = gt_node_stream_next(stream->in_stream, gn, error);
-      if(!result && *gn)
-        again = true;
+      again = true;
     }
     else
     {
-      stream->buffer = gt_feature_node_cast(*gn);
+      stream->buffer = *gn;
       again = false;
     }
   } while(again);
   if(result)
     return result;
 
-  agn_assert(gt_array_size(current_locus) > 0);
-  GtGenomeNode **rep = gt_array_get(current_locus, 0);
-  GtStr *seqid = gt_genome_node_get_seqid(*rep);
-  AgnLocus *locus = locus_stream_create(stream, seqid);
-  GtUword i;
   bool haderror = false;
-  for(i = 0; i < gt_array_size(current_locus); i++)
+  if(gt_array_size(current_locus) > 0)
   {
-    GtFeatureNode **fn = gt_array_get(current_locus, i);
-    if(locus_stream_add_feature(stream, locus, *fn, error) == -1)
-    {  
-      haderror = true;
-      break;
+    GtGenomeNode **rep = gt_array_get(current_locus, 0);
+    GtStr *seqid = gt_genome_node_get_seqid(*rep);
+    AgnLocus *locus = locus_stream_create(stream, seqid);
+    while(gt_array_size(current_locus) > 0)
+    {
+      GtFeatureNode **fn = gt_array_pop(current_locus);
+      if(locus_stream_add_feature(stream, locus, *fn, error) == -1)
+      {  
+        haderror = true;
+        break;
+      }
     }
+    *gn = locus;
+    stream->prev_locus = locus;
   }
-  *gn = locus;
-  stream->prev_locus = locus;
+  gt_array_delete(current_locus);
+
   if(haderror)
     return -1;
   return 0;
@@ -309,18 +299,31 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 
   AgnLocusStream *stream = locus_stream_cast(ns);
   if(stream->buffer != NULL)
-    return locus_stream_fn_handler(stream, gn, error);
+  {
+    if(gt_region_node_try_cast(stream->buffer))
+    {
+      *gn = stream->buffer;
+      stream->buffer = NULL;
+      return locus_stream_rn_handler(stream, gn, error);
+    }
+    else if(gt_feature_node_try_cast(stream->buffer))
+      return locus_stream_fn_handler(stream, gn, error);
+    else
+    {
+      *gn = stream->buffer;
+      stream->buffer = NULL;
+      return 0;
+    }
+  }
 
   int result = gt_node_stream_next(stream->in_stream, gn, error);
   if(result || !*gn)
     return result;
 
-  GtFeatureNode *fn = gt_feature_node_try_cast(*gn);
-  if(fn)
+  if(gt_feature_node_try_cast(*gn))
     return locus_stream_fn_handler(stream, gn, error);
 
-  GtRegionNode *rn = gt_region_node_try_cast(*gn);
-  if(rn)
+  if(gt_region_node_try_cast(*gn))
     return locus_stream_rn_handler(stream, gn, error);
 
   return 0;

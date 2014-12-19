@@ -279,6 +279,10 @@ int main(int argc, char **argv)
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
+  
+  current_stream = gt_sort_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
 
   if(options.pseudofix)
   {
