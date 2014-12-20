@@ -8,7 +8,7 @@ fi
 echo "    iLocus Parsing"
 
 temp="iLocusParseTest.gff3"
-$memcheckcmd bin/locuspocus --intloci --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -21,7 +21,7 @@ fi
 printf "        | %-36s | %s\n" "default" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --intloci --delta=200 --outfile=${temp} --skipends --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --delta=200 --outfile=${temp} --skipends --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi

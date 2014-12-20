@@ -125,10 +125,10 @@ test:		agn-test
 agn-test:	all
 		@ $(MEMCHECK) bin/unittests
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
-		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --intloci --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ echo AEGeAn Functional Tests
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/AT1G05320.sh $(MEMCHECKFT)

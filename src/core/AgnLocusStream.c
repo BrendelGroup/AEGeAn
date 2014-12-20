@@ -24,11 +24,14 @@ struct AgnLocusStream
 {
   const GtNodeStream parent_instance;
   GtNodeStream *in_stream;
+  GtUword delta;
   GtUword count;
   bool skip_empty;
   int endmode;
   GtFeatureIndex *seqranges;
   AgnLocus *prev_locus;
+  AgnLocus *emptylocus;
+  AgnLocus *term_locus;
   GtGenomeNode *buffer;
   GtStr *source;
   GtStr *idformat;
@@ -52,9 +55,9 @@ static int locus_stream_add_feature(AgnLocusStream *stream, AgnLocus *locus,
 static const GtNodeStreamClass *locus_stream_class(void);
 
 /**
- * @function Allocate memory for a new locus feature.
+ * @function Extend the locus coordinates.
  */
-static AgnLocus *locus_stream_create(AgnLocusStream *stream, GtStr *seqid);
+static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus);
 
 /**
  * @function Callback function: collect overlapping top-level features into
@@ -67,6 +70,11 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
  * @function Destructor: release instance data.
  */
 static void locus_stream_free(GtNodeStream *ns);
+
+/**
+ * @function Mint an ID for the given locus
+ */
+static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus);
 
 /**
  * @function Feeds feature nodes of type ``locus`` to the output stream.
@@ -103,11 +111,14 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
   GtNodeStream *ns = gt_node_stream_create(locus_stream_class(), false);
   AgnLocusStream *stream = locus_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
+  stream->delta = delta;
   stream->count = 0;
   stream->skip_empty = false;
   stream->endmode = 0;
   stream->seqranges = gt_feature_index_memory_new();
   stream->prev_locus = NULL;
+  stream->emptylocus = NULL;
+  stream->term_locus = NULL;
   stream->buffer = NULL;
   stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
   stream->idformat = gt_str_new_cstr("locus%lu");
@@ -157,7 +168,7 @@ static int locus_stream_add_feature(AgnLocusStream *stream, AgnLocus *locus,
   }
   else
   {
-    const char * filename = gt_genome_node_get_filename(stream->buffer);
+    const char * filename = gt_genome_node_get_filename((GtGenomeNode*)feature);
     if(strcmp(filename, stream->refrfile) == 0)
       agn_locus_add_refr_feature(locus, feature);
     else if(strcmp(filename, stream->predfile) == 0)
@@ -185,18 +196,106 @@ static const GtNodeStreamClass *locus_stream_class(void)
   return nsc;
 }
 
-static AgnLocus *locus_stream_create(AgnLocusStream *stream, GtStr *seqid)
+static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
 {
-  agn_assert(stream && seqid);
-  AgnLocus *locus = agn_locus_new(seqid);
-  stream->count++;
-  
-  char locusid[256];
-  sprintf(locusid, gt_str_get(stream->idformat), stream->count);
-  gt_feature_node_set_attribute((GtFeatureNode *)locus, "ID", locusid);
-  gt_feature_node_set_source((GtFeatureNode *)locus, stream->source);
+  agn_assert(stream && locus);
+  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  GtRange locusrange = gt_genome_node_get_range(locus);
+  GtRange seqrange;
+  gt_feature_index_get_range_for_seqid(stream->seqranges, &seqrange,
+                                       gt_str_get(seqid), NULL);
+  GtStr *prev_seqid;
+  if(stream->prev_locus)
+    prev_seqid = gt_genome_node_get_seqid(stream->prev_locus);
 
-  return locus;
+  // Handle initial loci
+  if(stream->prev_locus == NULL || gt_str_cmp(seqid, prev_seqid) != 0)
+  {
+    if(locusrange.start >= seqrange.start + (2*stream->delta))
+    {
+      agn_locus_set_range(locus, locusrange.start - stream->delta,
+                          locusrange.end);
+      if(stream->endmode >= 0)
+      {
+        stream->emptylocus = agn_locus_new(seqid);
+        agn_locus_set_range(stream->emptylocus, seqrange.start,
+                            locusrange.start - stream->delta - 1);
+        agn_locus_set_range(stream->emptylocus, seqrange.start,
+                            locusrange.start - stream->delta - 1);
+      }
+    }
+    else
+    {
+      agn_locus_set_range(locus, seqrange.start, locusrange.end);
+    }
+  }
+  
+  // Handle internal loci
+  if(stream->prev_locus && gt_str_cmp(seqid, prev_seqid) == 0)
+  {
+    GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
+    if(prev_range.end + stream->delta >= locusrange.start)
+    {
+      agn_locus_set_range(stream->prev_locus, prev_range.start,
+                          locusrange.start - 1);
+      agn_locus_set_range(locus, prev_range.end + 1, locusrange.end);
+    }
+    else if(prev_range.end + (2*stream->delta) >= locusrange.start)
+    {
+      agn_locus_set_range(stream->prev_locus, prev_range.start,
+                          prev_range.end + stream->delta);
+      agn_locus_set_range(locus, locusrange.start - stream->delta,
+                          locusrange.end);
+    }
+    else if(prev_range.end + (3*stream->delta) >= locusrange.start)
+    {
+      GtUword midpoint = (prev_range.end + locusrange.start) / 2;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, midpoint);
+      agn_locus_set_range(locus, midpoint + 1, locusrange.end);
+    }
+    else
+    {
+      agn_locus_set_range(stream->prev_locus, prev_range.start,
+                          prev_range.end + stream->delta);
+      agn_locus_set_range(locus, locusrange.start - stream->delta,
+                          locusrange.end);
+      
+      if(stream->endmode <= 0)
+      {
+        agn_assert(stream->emptylocus == NULL);
+        stream->emptylocus = agn_locus_new(seqid);
+        agn_locus_set_range(stream->emptylocus,
+                            prev_range.end + stream->delta + 1,
+                            locusrange.start - stream->delta - 1);
+      }
+    }
+  }
+  
+  // Handle terminal loci
+  locusrange = gt_genome_node_get_range(locus);
+  GtStr *buffer_seqid;
+  if(stream->buffer)
+    buffer_seqid = gt_genome_node_get_seqid(stream->buffer);
+  if(stream->buffer == NULL || gt_str_cmp(seqid, buffer_seqid) != 0 ||
+     gt_feature_node_try_cast(stream->buffer) == NULL)
+  {
+    if(seqrange.end > (2*stream->delta) &&
+       locusrange.end <= seqrange.end - (2*stream->delta))
+    {
+      agn_locus_set_range(locus, locusrange.start,
+                          locusrange.end + stream->delta);
+      if(stream->endmode >= 0)
+      {
+        stream->term_locus = agn_locus_new(seqid);
+        agn_locus_set_range(stream->term_locus,
+                            locusrange.end + stream->delta + 1, seqrange.end);
+      }
+    }
+    else
+    {
+      agn_locus_set_range(locus, locusrange.start, seqrange.end);
+    }
+  }
 }
 
 static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
@@ -218,7 +317,11 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     if(gt_array_size(current_locus) > 0)
       result = gt_node_stream_next(stream->in_stream, gn, error);
     if(!*gn || result)
+    {
+      if(!*gn)
+        stream->buffer = NULL;
       break;
+    }
     if(gt_feature_node_try_cast(*gn) == NULL)
     {
       stream->buffer = *gn;
@@ -260,7 +363,7 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
   {
     GtGenomeNode **rep = gt_array_get(current_locus, 0);
     GtStr *seqid = gt_genome_node_get_seqid(*rep);
-    AgnLocus *locus = locus_stream_create(stream, seqid);
+    AgnLocus *locus = agn_locus_new(seqid);
     while(gt_array_size(current_locus) > 0)
     {
       GtFeatureNode **fn = gt_array_pop(current_locus);
@@ -270,7 +373,21 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
         break;
       }
     }
-    *gn = locus;
+    
+    if(stream->delta > 0)
+    {
+      locus_stream_extend(stream, locus);
+    }
+    if(stream->emptylocus != NULL)
+    {
+      locus_stream_mint(stream, stream->emptylocus);
+      *gn = stream->emptylocus;
+    }
+    else
+    {
+      *gn = locus;
+    }
+    locus_stream_mint(stream, locus);
     stream->prev_locus = locus;
   }
   gt_array_delete(current_locus);
@@ -292,18 +409,104 @@ static void locus_stream_free(GtNodeStream *ns)
   gt_free(stream->predfile);
 }
 
+static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
+{
+  agn_assert(stream);
+  stream->count++;
+
+  char locusid[256];
+  sprintf(locusid, gt_str_get(stream->idformat), stream->count);
+  gt_feature_node_set_attribute((GtFeatureNode *)locus, "ID", locusid);
+  gt_feature_node_set_source((GtFeatureNode *)locus, stream->source);
+
+  GtArray *types = gt_array_new( sizeof(const char *) );
+  GtHashmap *countsbytype = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                           gt_free_func);
+  GtFeatureNode *feature;
+  GtFeatureNode *locusfn = (GtFeatureNode *)locus;
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(locusfn);
+  for(feature  = gt_feature_node_iterator_next(iter);
+      feature != NULL;
+      feature  = gt_feature_node_iterator_next(iter))
+  {
+    const char *childtype = gt_feature_node_get_type(feature);
+    GtUword *num_of_type = gt_hashmap_get(countsbytype, childtype);
+    if(num_of_type == NULL)
+    {
+      char *type = gt_cstr_dup(childtype);
+      gt_array_add(types, type);
+      num_of_type = gt_malloc( sizeof(GtUword) );
+      (*num_of_type) = 0;
+      gt_hashmap_add(countsbytype, type, num_of_type);
+    }
+    (*num_of_type)++;
+
+    GtFeatureNodeIterator*
+      subiter = gt_feature_node_iterator_new_direct(feature);
+    GtFeatureNode *subfeature;
+    for(subfeature = gt_feature_node_iterator_next(subiter);
+        subfeature != NULL;
+        subfeature = gt_feature_node_iterator_next(subiter))
+    {
+      childtype = gt_feature_node_get_type(subfeature);
+      num_of_type = gt_hashmap_get(countsbytype, childtype);
+      if(num_of_type == NULL)
+      {
+        char *type = gt_cstr_dup(childtype);
+        gt_array_add(types, type);
+        num_of_type = gt_malloc( sizeof(GtUword) );
+        (*num_of_type) = 0;
+        gt_hashmap_add(countsbytype, type, num_of_type);
+      }
+      (*num_of_type)++;
+    }
+    gt_feature_node_iterator_delete(subiter);
+  }
+  gt_feature_node_iterator_delete(iter);
+  
+  GtUword i;
+  for(i = 0; i < gt_array_size(types); i++)
+  {
+    const char **attrkey = gt_array_get(types, i);
+    GtUword *attrvalue = gt_hashmap_get(countsbytype, *attrkey);
+    char value[32];
+    sprintf(value, "%lu", *attrvalue);
+    gt_feature_node_set_attribute(locusfn, *attrkey, value);
+  }
+
+  gt_hashmap_delete(countsbytype);
+  gt_array_delete(types);
+}
+
 static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                              GtError *error)
 {
   agn_assert(ns && gn && error);
 
-  AgnLocusStream *stream = locus_stream_cast(ns);
+  AgnLocusStream *stream = locus_stream_cast(ns);  
+  if(stream->emptylocus != NULL)
+  {
+    *gn = stream->prev_locus;
+    stream->emptylocus = NULL;
+    return 0;
+  }
+
+  if(stream->term_locus != NULL)
+  {
+    *gn = stream->term_locus;
+    locus_stream_mint(stream, stream->term_locus);
+    stream->term_locus = NULL;
+    stream->prev_locus = NULL;
+    return 0;
+  }
+  
   if(stream->buffer != NULL)
   {
     if(gt_region_node_try_cast(stream->buffer))
     {
       *gn = stream->buffer;
       stream->buffer = NULL;
+      stream->prev_locus = NULL;
       return locus_stream_rn_handler(stream, gn, error);
     }
     else if(gt_feature_node_try_cast(stream->buffer))
