@@ -15,6 +15,7 @@ typedef struct
 {
   GtFile *outstream;
   GtStr *source;
+  bool infer;
 } CanonGFF3Options;
 
 static void print_usage(FILE *outstream)
@@ -22,6 +23,9 @@ static void print_usage(FILE *outstream)
   fputs("\nUsage: canon-gff3 [options] gff3file1 [gff3file2 ...]\n"
 "  Options:\n"
 "     -h|--help               print this help message and exit\n"
+"     -i|--infer              for transcript features lacking an explicitly\n"
+"                             declared gene feature as a parent, create this\n"
+"                             feature on-they-fly\n"
 "     -o|--outfile: STRING    name of file to which GFF3 data will be\n"
 "                             written; default is terminal (stdout)\n"
 "     -s|--source: STRING     reset the source of each feature to the given\n"
@@ -34,10 +38,11 @@ static void canon_gff3_parse_options(int argc, char * const *argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "ho:s:";
+  const char *optstr = "hio:s:";
   const struct option init_options[] =
   {
     { "help",    no_argument,       NULL, 'h' },
+    { "infer",   no_argument,       NULL, 'i' },
     { "outfile", required_argument, NULL, 'o' },
     { "source",  required_argument, NULL, 's' },
     { NULL,      no_argument,       NULL, 0 },
@@ -52,6 +57,10 @@ static void canon_gff3_parse_options(int argc, char * const *argv,
       case 'h':
         print_usage(stdout);
         exit(1);
+        break;
+
+      case 'i':
+        options->infer = true;
         break;
 
       case 'o':
@@ -79,7 +88,7 @@ int main(int argc, char * const *argv)
   GtLogger *logger;
   GtQueue *streams;
   GtNodeStream *stream, *last_stream;
-  CanonGFF3Options options = { NULL, NULL };
+  CanonGFF3Options options = { NULL, NULL, false };
   
   gt_lib_init();
   error = gt_error_new();
@@ -95,6 +104,19 @@ int main(int argc, char * const *argv)
   gt_queue_add(streams, stream);
   last_stream = stream;
   
+  if(options.infer)
+  {
+    GtHashmap *type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                             gt_free_func);
+    gt_hashmap_add(type_parents, gt_cstr_dup("mRNA"), gt_cstr_dup("gene"));
+    gt_hashmap_add(type_parents, gt_cstr_dup("tRNA"), gt_cstr_dup("gene"));
+    stream = agn_infer_parent_stream_new(last_stream,
+                                                 type_parents);
+    gt_hashmap_delete(type_parents);
+    gt_queue_add(streams, stream);
+    last_stream = stream;
+  }
+  
   stream = agn_gene_stream_new(last_stream, logger);
   gt_queue_add(streams, stream);
   last_stream = stream;
@@ -108,7 +130,8 @@ int main(int argc, char * const *argv)
   }
 
   stream = gt_gff3_out_stream_new(last_stream, options.outstream);
-  gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)stream);
+  if(!options.infer)
+    gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)stream);
   gt_queue_add(streams, stream);
   last_stream = stream;
 

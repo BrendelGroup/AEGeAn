@@ -49,8 +49,8 @@ int main(int argc, char **argv)
                                         agn_infer_exons_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnGeneStream",
                                         agn_gene_stream_unit_test));
-//  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnLocusStream",
-//                                        agn_locus_stream_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnLocusStream",
+                                        agn_locus_stream_unit_test));
 
   unsigned passes   = 0;
   unsigned failures = 0;

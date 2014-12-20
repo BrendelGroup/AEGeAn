@@ -10,6 +10,9 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 #include <string.h>
 #include "extended/feature_index_memory_api.h"
+#include "extended/sort_stream_api.h"
+#include "AgnGeneStream.h"
+#include "AgnInferParentStream.h"
 #include "AgnLocusStream.h"
 #include "AgnLocus.h"
 
@@ -87,8 +90,14 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
  * computing end locus coordinates correctly.
  */
 static int locus_stream_rn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
-                                   GtError *error)
-;
+                                   GtError *error);
+
+/**
+ * @function Load data from the following file(s) for unit testing.
+ */
+static void locus_stream_test_data(GtQueue *queue, GtUword delta, int numfiles,
+                                   const char **filenames, bool pairwise,
+                                   bool skipempty);
 
 //------------------------------------------------------------------------------
 // Method definitions
@@ -155,7 +164,93 @@ void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source)
 
 bool agn_locus_stream_unit_test(AgnUnitTest *test)
 {
-  return false;
+  GtQueue *queue = gt_queue_new();
+
+  const char *filenames[] = { "data/gff3/grape-refr.gff3",
+                              "data/gff3/grape-pred.gff3",
+                              "" };
+  locus_stream_test_data(queue, 0, 2, filenames, true, true);
+  GtUword starts[] = {    72, 10503, 22053, 26493, 30020, 37652, 42669, 48012,
+                       49739, 55535, 67307, 77131, 83378, 88551 };
+  GtUword ends[] =   {  5081, 11678, 23448, 29602, 33324, 38250, 45569, 48984,
+                       54823, 61916, 69902, 81356, 86893, 92176 };
+  GtUword numrefr[] = { 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 };
+  GtUword numpred[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 };
+  bool grapetest = gt_queue_size(queue) == 14;
+  if(grapetest)
+  {
+    int i = 0;
+    while(gt_queue_size(queue) > 0)
+    {
+      AgnLocus *locus = gt_queue_get(queue);
+      GtRange range = gt_genome_node_get_range(locus);
+      GtUword refrtrans = agn_locus_num_refr_mrnas(locus);
+      GtUword predtrans = agn_locus_num_pred_mrnas(locus);
+      grapetest = grapetest && starts[i] == range.start &&
+                  ends[i] == range.end && numrefr[i] == refrtrans &&
+                  numpred[i] == predtrans;
+      i++;
+      agn_locus_delete(locus);
+    }
+  }
+  agn_unit_test_result(test, "grape test (pairwise)", grapetest);
+
+
+  filenames[0] = "data/gff3/pd0159-refr.gff3";
+  filenames[1] = "data/gff3/pd0159-pred.gff3";
+  locus_stream_test_data(queue, 0, 2, filenames, true, true);
+  GtUword pdstarts[] = { 15005, 25101, 27822,  33635,  40258,  42504, 50007,
+                         56261, 60860, 73343,  93338, 107687, 107919 };
+  GtUword pdends[]   = { 24351, 25152, 29494,  38145,  42162,  45986, 51764,
+                         59660, 69505, 90631, 107441, 107862, 111581 };
+  GtUword pdnumrefr[] = { 1, 0, 1, 0, 1, 1, 1, 1, 3, 1, 1, 0, 1 };
+  GtUword pdnumpred[] = { 2, 1, 1, 1, 0, 1, 1, 1, 3, 3, 2, 1, 1 };
+  bool pdtest = gt_queue_size(queue) == 13;
+  if(pdtest)
+  {
+    int i = 0;
+    while(gt_queue_size(queue) > 0)
+    {
+      AgnLocus *locus = gt_queue_get(queue);
+      GtRange range = gt_genome_node_get_range(locus);
+      GtUword refrtrans = agn_locus_num_refr_mrnas(locus);
+      GtUword predtrans = agn_locus_num_pred_mrnas(locus);
+      pdtest = pdtest && pdstarts[i] == range.start && pdends[i] == range.end &&
+               pdnumrefr[i] == refrtrans && pdnumpred[i] == predtrans;
+      i++;
+      agn_locus_delete(locus);
+    }
+  }
+  agn_unit_test_result(test, "Pdom test (pairwise)", pdtest);
+
+
+  filenames[0] = "data/gff3/amel-aug-nvit-param.gff3",
+  filenames[1] = "data/gff3/amel-aug-dmel-param.gff3",
+  filenames[2] = "data/gff3/amel-aug-athal-param.gff3";
+  locus_stream_test_data(queue, 0, 3, filenames, false, true);
+  GtUword augstarts[] = {     1, 36466, 44388, 72127, 76794 };
+  GtUword augends[]   = { 33764, 41748, 70877, 76431, 97981 };
+  GtUword augntrans[] = { 6, 3, 4, 2, 6 };
+  bool augtest = gt_queue_size(queue) == 5;
+  if(augtest)
+  {
+    int i = 0;
+    while(gt_queue_size(queue) > 0)
+    {
+      AgnLocus *locus = gt_queue_get(queue);
+      GtRange range = gt_genome_node_get_range(locus);
+      GtUword ntrans = agn_locus_num_mrnas(locus);
+      augtest = augtest &&
+                augstarts[i] == range.start && augends[i] == range.end &&
+                augntrans[i] == ntrans;
+      i++;
+      agn_locus_delete(locus);
+    }
+  }
+  agn_unit_test_result(test, "Amel test (Augustus)", augtest);
+
+  gt_queue_delete(queue);
+  return agn_unit_test_success(test);
 }
 
 static int locus_stream_add_feature(AgnLocusStream *stream, AgnLocus *locus,
@@ -175,8 +270,18 @@ static int locus_stream_add_feature(AgnLocusStream *stream, AgnLocus *locus,
       agn_locus_add_pred_feature(locus, feature);
     else
     {
-      gt_error_set(error, "filename '%s' does not match reference or "
-                   "prediction", filename);
+      if(strcmp(filename, "generated") == 0)
+      {
+        gt_error_set(error, "cannot infer parent features while doing "
+                     "comparative analysis; please preprocess annotations with "
+                     "`canon-gff3` to create explicit `gene` features and then "
+                     "try again");
+      }
+      else
+      {
+        gt_error_set(error, "filename '%s' does not match reference or "
+                     "prediction", filename);
+      }
       return -1;
     }
   }
@@ -215,7 +320,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     {
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
-      if(stream->endmode >= 0)
+      if(stream->endmode >= 0 && !stream->skip_empty)
       {
         stream->emptylocus = agn_locus_new(seqid);
         agn_locus_set_range(stream->emptylocus, seqrange.start,
@@ -260,7 +365,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
       
-      if(stream->endmode <= 0)
+      if(stream->endmode <= 0 && !stream->skip_empty)
       {
         agn_assert(stream->emptylocus == NULL);
         stream->emptylocus = agn_locus_new(seqid);
@@ -538,4 +643,78 @@ static int locus_stream_rn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
   agn_assert(stream && gn && error);
   GtRegionNode *rn = gt_region_node_cast(*gn);
   return gt_feature_index_add_region_node(stream->seqranges, rn, error);
+}
+
+static void locus_stream_test_data(GtQueue *queue, GtUword delta, int numfiles,
+                                   const char **filenames, bool pairwise,
+                                   bool skipempty)
+{
+  GtNodeStream *current_stream, *last_stream;
+  GtQueue *streams = gt_queue_new();
+  
+  current_stream = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+  
+  current_stream = gt_sort_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  GtHashmap *type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                           gt_free_func);
+  gt_hashmap_add(type_parents, gt_cstr_dup("mRNA"), gt_cstr_dup("gene"));
+  current_stream = agn_infer_parent_stream_new(last_stream, type_parents);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  GtLogger *logger = gt_logger_new(true, "", stderr);
+  current_stream = agn_gene_stream_new(last_stream, logger);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_locus_stream_new(last_stream, delta);
+  if(pairwise)
+  {
+    agn_assert(numfiles == 2);
+    agn_locus_stream_label_pairwise((AgnLocusStream *)current_stream,
+                                    filenames[0], filenames[1]);
+  }
+  if(skipempty)
+    agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+  
+  GtError *error = gt_error_new();
+  GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
+  current_stream = gt_array_out_stream_new(last_stream, loci, error);
+  agn_assert(!gt_error_is_set(error));
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+  
+  int result = gt_node_stream_pull(last_stream, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "error loading unit test data: %s\n", gt_error_get(error));
+    exit(1);
+  }
+  
+  gt_array_reverse(loci);
+  while(gt_array_size(loci) > 0)
+  {
+    AgnLocus **locus = gt_array_pop(loci);
+    gt_queue_add(queue, *locus);
+  }
+
+  while(gt_queue_size(streams) > 0)
+  {
+    GtNodeStream *ns = gt_queue_get(streams);
+    gt_node_stream_delete(ns);
+  }
+  gt_queue_delete(streams);
+  gt_logger_delete(logger);
+  gt_error_delete(error);
+  gt_array_delete(loci);
+  gt_hashmap_delete(type_parents);
 }
