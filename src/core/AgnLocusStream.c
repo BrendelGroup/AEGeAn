@@ -266,7 +266,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       agn_locus_set_range(locus, seqrange.start, locusrange.end);
     }
   }
-  
+
   // Handle internal loci
   if(stream->prev_locus && gt_str_cmp(seqid, prev_seqid) == 0)
   {
@@ -296,7 +296,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                           prev_range.end + stream->delta);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
-      
+
       if(stream->endmode <= 0 && !stream->skip_empty)
       {
         agn_assert(stream->emptylocus == NULL);
@@ -307,7 +307,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       }
     }
   }
-  
+
   // Handle terminal loci
   locusrange = gt_genome_node_get_range(locus);
   GtStr *buffer_seqid = NULL;
@@ -340,14 +340,14 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
                                    GtError *error)
 {
   agn_assert(stream && gn && error);
-  
+
   GtArray *current_locus = gt_array_new( sizeof(GtFeatureNode *) );
   if(stream->buffer != NULL)
   {
     gt_array_add(current_locus, stream->buffer);
     stream->buffer = NULL;
   }
-  
+
   bool again = false;
   int result = 0;
   do
@@ -365,7 +365,7 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
       stream->buffer = *gn;
       break;
     }
-    
+
     GtStr *newseqid = gt_genome_node_get_seqid(*gn);
     GtRange newrange = gt_genome_node_get_range(*gn);
     GtUword i;
@@ -406,12 +406,12 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     {
       GtFeatureNode **fn = gt_array_pop(current_locus);
       if(locus_stream_add_feature(stream, locus, *fn, error) == -1)
-      {  
+      {
         haderror = true;
         break;
       }
     }
-    
+
     if(stream->delta > 0)
     {
       locus_stream_extend(stream, locus);
@@ -501,7 +501,7 @@ static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
     gt_feature_node_iterator_delete(subiter);
   }
   gt_feature_node_iterator_delete(iter);
-  
+
   GtUword i;
   for(i = 0; i < gt_array_size(types); i++)
   {
@@ -521,7 +521,7 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 {
   agn_assert(ns && gn && error);
 
-  AgnLocusStream *stream = locus_stream_cast(ns);  
+  AgnLocusStream *stream = locus_stream_cast(ns);
   if(stream->emptylocus != NULL)
   {
     *gn = stream->prev_locus;
@@ -537,7 +537,7 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     stream->prev_locus = NULL;
     return 0;
   }
-  
+
   if(stream->buffer != NULL)
   {
     if(gt_region_node_try_cast(stream->buffer))
@@ -583,13 +583,13 @@ static void locus_stream_test_data(GtQueue *queue, int numfiles,
 {
   GtNodeStream *current_stream, *last_stream;
   GtQueue *streams = gt_queue_new();
-  
+
   current_stream = gt_gff3_in_stream_new_unsorted(numfiles, filenames);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-  
+
   current_stream = gt_sort_stream_new(last_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
@@ -615,21 +615,21 @@ static void locus_stream_test_data(GtQueue *queue, int numfiles,
   }
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-  
+
   GtError *error = gt_error_new();
   GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
   current_stream = gt_array_out_stream_new(last_stream, loci, error);
   agn_assert(!gt_error_is_set(error));
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-  
+
   int result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
   {
     fprintf(stderr, "error loading unit test data: %s\n", gt_error_get(error));
     exit(1);
   }
-  
+
   gt_array_reverse(loci);
   while(gt_array_size(loci) > 0)
   {
