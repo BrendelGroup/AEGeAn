@@ -116,7 +116,7 @@ static void locus_update_range(AgnLocus *locus, GtFeatureNode *transcript);
 void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature,
                    AgnComparisonSource source)
 {
-  gt_genome_node_ref((GtGenomeNode *)feature);
+  //gt_genome_node_ref((GtGenomeNode *)feature);
   gt_feature_node_add_child((GtFeatureNode *)locus, feature);
   locus_update_range(locus, feature);
 

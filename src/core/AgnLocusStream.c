@@ -75,7 +75,8 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
 static void locus_stream_free(GtNodeStream *ns);
 
 /**
- * @function Mint an ID for the given locus
+ * @function Mint an ID for the given locus, tally counts of children and
+ * grandchildren.
  */
 static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus);
 
@@ -156,8 +157,6 @@ void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source)
 
 bool agn_locus_stream_unit_test(AgnUnitTest *test)
 {
-  //locus_stream_unit_test_loci(test);
-  //return agn_unit_test_success(test);
   return false;
 }
 
