@@ -47,7 +47,7 @@ int ga_init(int argc, char * const *argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = agn_locus_stream_new(last_stream, logger);
+  current_stream = agn_locus_stream_new(last_stream, 0);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
