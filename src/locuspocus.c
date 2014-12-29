@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <getopt.h>
 #include <string.h>
 #include "genometools.h"
@@ -18,7 +19,6 @@ typedef struct
   bool debug;
   GtHashmap *filter;
   FILE *genestream;
-  bool intloci;
   char *idformat;
   unsigned long delta;
   GtFile *outstream;
@@ -28,6 +28,7 @@ typedef struct
   FILE *transstream;
   bool pseudofix;
   bool verbose;
+  bool skipempty;
 } LocusPocusOptions;
 
 // Set default values for program
@@ -37,7 +38,6 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->filter = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
   gt_hashmap_add(options->filter, gt_cstr_dup("gene"), gt_cstr_dup("gene"));
   options->genestream = NULL;
-  options->intloci = false;
   options->idformat = NULL;
   options->delta = 500;
   options->outstream = gt_file_new_from_fileptr(stdout);
@@ -48,6 +48,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->transstream = NULL;
   options->pseudofix = false;
   options->verbose = false;
+  options->skipempty = false;
 }
 
 static void free_option_memory(LocusPocusOptions *options)
@@ -74,15 +75,14 @@ static void print_usage(FILE *outstream)
 "                           (standard error)\n"
 "    -h|--help              print this help message and exit\n\n"
 "  iLocus parsing:\n"
-"    -i|--intloci           parse and report interval loci rather than gene\n"
-"                           loci\n"
 "    -l|--delta: INT        when parsing interval loci, use the following\n"
 "                           delta to extend gene loci and include potential\n"
 "                           regulatory regions; default is 500\n"
 "    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
 "                           iLoci at either end of the sequence\n"
-"    -e|--endsonly          report only gene-less iLoci at the ends of\n"
-"                           sequences (complement of --skipends)\n\n"
+"    -e|--endsonly          report only empty iLoci at the ends of sequences\n"
+"                           (complement of --skipends)\n"
+"    -y|--skipempty         do not report empty iLoci\n\n"
 "  Output options:\n"
 "    -I|--idformat: STR     provide a printf-style format string to override\n"
 "                           the default ID format for newly created loci;\n"
@@ -117,7 +117,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "def:g:hI:il:o:p:st:uv";
+  const char *optstr = "def:g:hI:l:o:p:st:uvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
@@ -127,7 +127,6 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "genemap",   required_argument, NULL, 'g' },
     { "help",      no_argument,       NULL, 'h' },
     { "idformat",  required_argument, NULL, 'I' },
-    { "intloci",   no_argument,       NULL, 'i' },
     { "delta",     required_argument, NULL, 'l' },
     { "outfile",   required_argument, NULL, 'o' },
     { "parent",    required_argument, NULL, 'p' },
@@ -135,6 +134,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "transmap",  required_argument, NULL, 't' },
     { "pseudo",    no_argument,       NULL, 'u' },
     { "verbose",   no_argument,       NULL, 'v' },
+    { "skipempty", no_argument,       NULL, 'y' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -184,9 +184,6 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
           gt_free(options->idformat);
         options->idformat = gt_cstr_dup(optarg);
         break;
-      case 'i':
-        options->intloci = 1;
-        break;
       case 'l':
         if(sscanf(optarg, "%lu", &options->delta) == EOF)
         {
@@ -232,6 +229,9 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         break;
       case 'v':
         options->verbose = 1;
+        break;
+      case 'y':
+        options->skipempty = true;
         break;
     }
   }
@@ -280,6 +280,10 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
+  current_stream = gt_sort_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
   if(options.pseudofix)
   {
     current_stream = agn_pseudogene_fix_stream_new(last_stream);
@@ -296,42 +300,19 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  GtStr *source = gt_str_new_cstr("AEGeAn::LocusPocus");
-  current_stream = agn_locus_stream_new(last_stream, logger);
-  if(current_stream == NULL)
-  {
-    fprintf(stderr, "[AEGeAn::LocusPocus] locus stream failed; aborting\n");
-    return 1;
-  }
-  agn_locus_stream_set_source((AgnLocusStream *)current_stream, source);
+  current_stream = agn_locus_stream_new(last_stream, options.delta);
+  agn_locus_stream_set_source((AgnLocusStream *)current_stream,
+                              "AEGeAn::LocusPocus");
+  agn_locus_stream_set_endmode((AgnLocusStream*)current_stream,options.endmode);
   if(options.idformat != NULL)
   {
     agn_locus_stream_set_idformat((AgnLocusStream *)current_stream,
                                   options.idformat);
   }
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-
-  if(options.intloci)
+  if(options.skipempty)
   {
-    current_stream = agn_interval_locus_stream_new(last_stream, options.delta,
-                                                   options.endmode, logger);
-    agn_interval_locus_stream_set_source(
-                              (AgnIntervalLocusStream *)current_stream, source);
-    if(options.idformat != NULL)
-    {
-      agn_interval_locus_stream_set_idformat(
-                    (AgnIntervalLocusStream *)current_stream, options.idformat);
-    }
-    gt_queue_add(streams, current_stream);
-    last_stream = current_stream;
+    agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
   }
-  gt_str_delete(source);
-
-  /* FIXME I don't understand why this is needed, but without it memory is
-   * leaked; if it's not in this precise location, no memory is leaked but
-   * segfaults result */
-  current_stream = agn_node_delete_stream_new(last_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

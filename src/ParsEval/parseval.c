@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   GtError *error;
   GtLogger *logger;
   GtQueue *streams;
-  GtNodeStream *current_stream, *last_stream, *refrgff3, *predgff3, *tempstream;
+  GtNodeStream *current_stream, *last_stream;
   GtNodeVisitor *rpt;
   PeHtmlOverviewData odata;
   char *start_time;
@@ -48,53 +48,25 @@ int main(int argc, char **argv)
   //----- Set up the node processing stream -----//
   //---------------------------------------------//
 
-  refrgff3 = gt_gff3_in_stream_new_unsorted(1, &options.refrfile);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)refrgff3);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)refrgff3);
-  gt_queue_add(streams, refrgff3);
-  if(options.refrlabel != NULL)
-  {
-    GtStr *label = gt_str_new_cstr(options.refrlabel);
-    GtNodeVisitor *nv = gt_set_source_visitor_new(label);
-    tempstream = gt_visitor_stream_new(refrgff3, nv);
-    gt_queue_add(streams, tempstream);
-    refrgff3 = tempstream;
-    gt_str_delete(label);
-  }
-  tempstream = agn_gene_stream_new(refrgff3, logger);
-  gt_queue_add(streams, tempstream);
-  refrgff3 = tempstream;
-
-  predgff3 = gt_gff3_in_stream_new_unsorted(1, &options.predfile);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)predgff3);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)predgff3);
-  gt_queue_add(streams, predgff3);
-  if(options.predlabel != NULL)
-  {
-    GtStr *label = gt_str_new_cstr(options.predlabel);
-    GtNodeVisitor *nv = gt_set_source_visitor_new(label);
-    tempstream = gt_visitor_stream_new(predgff3, nv);
-    gt_queue_add(streams, tempstream);
-    predgff3 = tempstream;
-    gt_str_delete(label);
-  }
-  tempstream = agn_gene_stream_new(predgff3, logger);
-  gt_queue_add(streams, tempstream);
-  predgff3 = tempstream;
-
-  current_stream = agn_locus_stream_new_pairwise(refrgff3, predgff3, logger);
-  if(current_stream == NULL)
-  {
-    fprintf(stderr, "[AEGeAn::ParsEval] locus stream failed; aborting\n");
-    return 1;
-  }
+  const char * infiles[] = { options.refrfile, options.predfile };
+  current_stream = gt_gff3_in_stream_new_unsorted(2, infiles);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  /* FIXME I don't understand why this is needed, but without it memory is
-   * leaked; if it's not in this precise location, no memory is leaked but
-   * segfaults result */
-  current_stream = agn_node_delete_stream_new(last_stream);
+  current_stream = gt_sort_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_gene_stream_new(last_stream, logger);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_locus_stream_new(last_stream, 0);
+  agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
+  agn_locus_stream_label_pairwise((AgnLocusStream *)current_stream,
+                                  options.refrfile, options.predfile);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

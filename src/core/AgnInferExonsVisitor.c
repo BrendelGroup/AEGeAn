@@ -228,7 +228,7 @@ infer_exons_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
   {
     if(!agn_typecheck_gene(current) && !agn_typecheck_transcript(current))
       continue;
-    
+
     GtUword i;
     v->gene = current;
 
@@ -440,7 +440,7 @@ infer_exons_visitor_visit_gene_infer_introns(AgnInferExonsVisitor *v)
       GtGenomeNode **exon2 = gt_array_get(exons, i);
       GtRange first_range  = gt_genome_node_get_range(*exon1);
       GtRange second_range = gt_genome_node_get_range(*exon2);
-      
+
       if(first_range.end == second_range.start - 1)
       {
         gt_logger_log(v->logger, "mRNA '%s' (line %u) has directly adjacent "
@@ -453,7 +453,7 @@ infer_exons_visitor_visit_gene_infer_introns(AgnInferExonsVisitor *v)
         gt_array_add(introns_to_add, irange);
       }
     }
-    
+
     for(i = 0; i < gt_array_size(introns_to_add); i++)
     {
       GtRange *irange = gt_array_get(introns_to_add, i);

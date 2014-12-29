@@ -317,7 +317,7 @@ bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
   agn_unit_test_result(test, "Test 5: multichild, inferred parent", t5);
   gt_genome_node_delete(gn);
 
-  gt_queue_delete(queue);  
+  gt_queue_delete(queue);
   return agn_unit_test_success(test);
 }
 

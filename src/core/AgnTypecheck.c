@@ -51,7 +51,7 @@ bool agn_typecheck_intron(GtFeatureNode *fn)
 }
 
 bool agn_typecheck_mrna(GtFeatureNode *fn)
-{ 
+{
   return gt_feature_node_has_type(fn, "mRNA") ||
          gt_feature_node_has_type(fn, "messenger RNA") ||
          gt_feature_node_has_type(fn, "messenger_RNA");

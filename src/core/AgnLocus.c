@@ -116,7 +116,6 @@ static void locus_update_range(AgnLocus *locus, GtFeatureNode *transcript);
 void agn_locus_add(AgnLocus *locus, GtFeatureNode *feature,
                    AgnComparisonSource source)
 {
-  gt_genome_node_ref((GtGenomeNode *)feature);
   gt_feature_node_add_child((GtFeatureNode *)locus, feature);
   locus_update_range(locus, feature);
 
@@ -362,6 +361,15 @@ void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data)
 
 void agn_locus_delete(AgnLocus *locus)
 {
+  /*GtFeatureNode *fn, *locusfn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(locusfn);
+  for(fn  = gt_feature_node_iterator_next(iter);
+      fn != NULL;
+      fn  = gt_feature_node_iterator_next(iter))
+  {
+    gt_genome_node_delete((GtGenomeNode *)fn);
+  }
+  gt_feature_node_iterator_delete(iter);*/
   gt_genome_node_delete(locus);
 }
 
@@ -829,7 +837,7 @@ void agn_locus_print_png(AgnLocus *locus, AgnLocusPngMetadata *metadata)
     fprintf(stderr, "error: %s\n", gt_error_get(error));
     exit(EXIT_FAILURE);
   }
-  
+
   char pngfile[512];
   sprintf(pngfile, metadata->filename_template, gt_str_get(seqid),
           gt_str_get(seqid), locusrange.start, locusrange.end);
@@ -1295,6 +1303,8 @@ static void locus_test_data(GtQueue *queue)
   GtStr *seqid = gt_str_new_cstr("chr8");
   GtFeatureNode *refr = *(GtFeatureNode **)gt_array_get(refrfeats, 2);
   GtFeatureNode *pred = *(GtFeatureNode **)gt_array_get(predfeats, 3);
+  gt_genome_node_ref((GtGenomeNode *)refr);
+  gt_genome_node_ref((GtGenomeNode *)pred);
   AgnLocus *locus = agn_locus_new(seqid);
   agn_locus_add_refr_feature(locus, refr);
   agn_locus_add_pred_feature(locus, pred);
@@ -1302,17 +1312,21 @@ static void locus_test_data(GtQueue *queue)
 
   refr = *(GtFeatureNode **)gt_array_get(refrfeats, 9);
   pred = *(GtFeatureNode **)gt_array_get(predfeats, 11);
+  gt_genome_node_ref((GtGenomeNode *)refr);
+  gt_genome_node_ref((GtGenomeNode *)pred);
   locus = agn_locus_new(seqid);
   agn_locus_add_refr_feature(locus, refr);
   agn_locus_add_pred_feature(locus, pred);
   gt_queue_add(queue, locus);
 
   refr = *(GtFeatureNode **)gt_array_get(refrfeats, 0);
+  gt_genome_node_ref((GtGenomeNode *)refr);
   locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, refr);
   gt_queue_add(queue, locus);
 
   refr = *(GtFeatureNode **)gt_array_get(refrfeats, 3);
+  gt_genome_node_ref((GtGenomeNode *)refr);
   locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, refr);
   gt_queue_add(queue, locus);
@@ -1366,7 +1380,7 @@ static bool locus_gene_source_test(AgnLocus *locus, GtFeatureNode *transcript,
     return true;
   else if(source == PREDICTIONSOURCE && inpred)
     return true;
-    
+
   return false;
 }
 
