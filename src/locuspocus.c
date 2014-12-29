@@ -12,7 +12,6 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include <string.h>
 #include "genometools.h"
 #include "aegean.h"
-#include "AgnInspectVisitor.h"
 
 // Simple data structure for program options
 typedef struct
@@ -280,7 +279,7 @@ int main(int argc, char **argv)
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-  
+
   current_stream = gt_sort_stream_new(last_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
@@ -314,10 +313,6 @@ int main(int argc, char **argv)
   {
     agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
   }
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-
-  current_stream = agn_inspect_stream_new(last_stream, stderr);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

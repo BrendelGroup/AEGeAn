@@ -29,7 +29,7 @@ typedef struct AgnLocusStream AgnLocusStream;
 /**
  * @function Use the given filenames to label the direct children of each iLocus
  * as a 'reference' feature or a 'prediction' feature, to facilitate pairwise
- * comparison. Note that these labels carry no connotation as to the relative 
+ * comparison. Note that these labels carry no connotation as to the relative
  * quality of the respective annotation sources.
  */
 void agn_locus_stream_label_pairwise(AgnLocusStream *stream,
