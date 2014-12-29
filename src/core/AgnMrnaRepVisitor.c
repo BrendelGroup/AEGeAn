@@ -164,6 +164,6 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
     gt_array_delete(mrnas);
   }
   gt_array_delete(genes);
-  
+
   return 0;
 }

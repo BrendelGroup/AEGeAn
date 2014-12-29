@@ -58,7 +58,7 @@ int main(int argc, char **argv)
   current_stream = gt_sort_stream_new(last_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-  
+
   current_stream = agn_gene_stream_new(last_stream, logger);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;

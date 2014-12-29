@@ -19,7 +19,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
  *
  * Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node
  * visitor used for inferring exon features when only CDS and UTR features are
- * provided explicitly. 
+ * provided explicitly.
  */
 typedef struct AgnInferExonsVisitor AgnInferExonsVisitor;
 

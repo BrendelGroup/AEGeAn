@@ -89,7 +89,7 @@ int main(int argc, char * const *argv)
   GtQueue *streams;
   GtNodeStream *stream, *last_stream;
   CanonGFF3Options options = { NULL, NULL, false };
-  
+
   gt_lib_init();
   error = gt_error_new();
   canon_gff3_parse_options(argc, argv + 0, &options, error);
@@ -103,7 +103,7 @@ int main(int argc, char * const *argv)
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)stream);
   gt_queue_add(streams, stream);
   last_stream = stream;
-  
+
   if(options.infer)
   {
     GtHashmap *type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
@@ -116,11 +116,11 @@ int main(int argc, char * const *argv)
     gt_queue_add(streams, stream);
     last_stream = stream;
   }
-  
+
   stream = agn_gene_stream_new(last_stream, logger);
   gt_queue_add(streams, stream);
   last_stream = stream;
-  
+
   if(options.source != NULL)
   {
     GtNodeVisitor *ssv = gt_set_source_visitor_new(options.source);
