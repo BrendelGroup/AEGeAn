@@ -31,3 +31,4 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnTypecheck.h"
 #include "AgnUnitTest.h"
 #include "AgnUtils.h"
+#include "AgnVersion.h"

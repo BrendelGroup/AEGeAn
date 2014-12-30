@@ -65,16 +65,23 @@ static int ga_notyetimplemented(int argc, const char **argv)
 
 static void ga_print_usage(FILE *outstream)
 {
-  fputs("Usage: geneannology <command> [options] repo [<args>]\n"
-    "  Commands:\n"
-    "    cat\n"
-    "    commit\n"
-    "    delete\n"
-    "    diff\n"
-    "    init\n"
-    "    status\n"
-    "    update\n",
-    outstream);
+  fputs("\n"
+        "[GeneAnnoLogy] version control tools for gene annotations;\n"
+        "               part of the AEGeAn Toolkit\n\n"
+        "Usage: geneannology <command> [options] repo [<args>]\n"
+        "  Commands:\n"
+        "    clean\n"
+        "    init\n"
+        "  Flags:\n"
+        "    -h/--help\n"
+        "    -v/--version\n"
+        "\n",
+        outstream);
+}
+
+static void ga_print_version(FILE *outstream)
+{
+  fputs("[GeneAnnoLogy] AEGeAn Toolkit version " AEGEAN_VERSION "\n",outstream);
 }
 
 static int ga_unsupported(int argc, const char **argv)
@@ -138,8 +145,8 @@ int main(int argc, const char **argv)
   // Parse command name, run the associated command
   if(argc < 2)
   {
-    fprintf(stderr, "[GeneAnnoLogy] error: no command specified\n");
     ga_print_usage(stderr);
+    fprintf(stderr, "error: no command specified\n");
     return 1;
   }
 
@@ -150,16 +157,23 @@ int main(int argc, const char **argv)
     return 0;
   }
 
+  if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "-version") == 0 ||
+     strcmp(argv[1], "--version") == 0)
+  {
+    ga_print_version(stdout);
+    return 0;
+  }
+
   const char *command = argv[1];
   int (*action)(int, const char **) = gt_hashmap_get(commands, command);
   if(!action)
   {
-    fprintf(stderr, "[GeneAnnoLogy] error: unknown command '%s'\n", command);
     ga_print_usage(stderr);
+    fprintf(stderr, "[error: unknown command '%s'\n", command);
     return 1;
   }
 
-  int code = action(argc - 2, argv + 2);
+  int code = action(argc - 1, argv + 1);
 
   // Free memory and exit
   gt_hashmap_delete(commands);
