@@ -60,7 +60,6 @@ static int ga_notyetimplemented(int argc, const char **argv)
 {
   fprintf(stderr, "[GeneAnnoLogy] error: the command '%s' has not yet been "
           "implemented.\n", argv[0]);
-  ga_print_usage(stderr);
   return 1;
 }
 
