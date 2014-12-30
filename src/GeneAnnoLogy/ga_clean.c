@@ -12,9 +12,9 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "genometools.h"
 #include "aegean.h"
 
-static void ga_init_print_usage(FILE *outstream)
+static void ga_clean_print_usage(FILE *outstream)
 {
-  fputs("Usage: geneannology init [options] repo gff3file\n", outstream);
+  fputs("Usage: geneannology clean [options] repo gff3file\n", outstream);
 }
 
 int ga_init(int argc, char * const *argv)
@@ -26,7 +26,7 @@ int ga_init(int argc, char * const *argv)
 
   if(argc == 0)
   {
-    ga_init_print_usage(stderr);
+    ga_clean_print_usage(stderr);
     return -1;
   }
   else if(argc == 1)
@@ -55,7 +55,7 @@ int ga_init(int argc, char * const *argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = agn_repo_stream_new(last_stream, argv[0], error);
+  current_stream = agn_repo_stream_open_clean(last_stream, argv[0], error);
   if(current_stream == NULL)
   {
     fprintf(stderr, "[GeneAnnoLogy] error setting up repo: %s\n",
@@ -64,7 +64,7 @@ int ga_init(int argc, char * const *argv)
   }
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-
+  
   int result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
   {

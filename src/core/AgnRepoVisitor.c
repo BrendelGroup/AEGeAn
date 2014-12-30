@@ -84,6 +84,16 @@ GtNodeStream *agn_repo_stream_new(GtNodeStream *instream, const char *path,
   return gt_visitor_stream_new(instream, nv);
 }
 
+GtNodeStream *agn_repo_stream_open_clean(GtNodeStream *instream,
+                                         const char *path, GtError *error)
+{
+  agn_assert(instream && path && error);
+  GtNodeVisitor *nv = agn_repo_visitor_open_clean(path, error);
+  if(nv == NULL)
+    return NULL;
+  return gt_visitor_stream_new(instream, nv);
+}
+
 GtNodeVisitor *agn_repo_visitor_new(const char *path, GtError *error)
 {
   struct stat buffer;
@@ -97,6 +107,47 @@ GtNodeVisitor *agn_repo_visitor_new(const char *path, GtError *error)
   GtNodeVisitor *nv = gt_node_visitor_create(repo_visitor_class());
   AgnRepoVisitor *rv = repo_visitor_cast(nv);
   rv->repopath = gt_cstr_dup(path);
+  if(getcwd(rv->cwd, PATH_MAX) == NULL)
+  {
+    gt_error_set(error, "error getting cwd");
+    return NULL;
+  }
+  if(repo_visitor_init(rv, error) != 0)
+    return NULL;
+  
+  rv->glmap = agn_gene_locus_mapping_new(path);
+  rv->sgmap = agn_seq_gene_mapping_new(path);
+  return nv;
+}
+
+GtNodeVisitor *agn_repo_visitor_open_clean(const char *path, GtError *error)
+{
+  struct stat buffer;
+  agn_assert(path && error);
+  if(stat(path, &buffer))
+  {
+    gt_error_set(error, "repo '%s' does not exist", path);
+    return NULL;
+  }
+
+  GtNodeVisitor *nv = gt_node_visitor_create(repo_visitor_class());
+  AgnRepoVisitor *rv = repo_visitor_cast(nv);
+  rv->repopath = gt_cstr_dup(path);
+  if(getcwd(rv->cwd, PATH_MAX) == NULL)
+  {
+    gt_error_set(error, "error getting cwd");
+    return NULL;
+  }
+  
+  chdir(rv->repopath);
+  int result = system("rm -r *");
+  if(result != 0)
+  {
+    gt_error_set(error, "error removing existing annotations");
+    return NULL;
+  }
+  chdir(rv->cwd);
+  
   if(repo_visitor_init(rv, error) != 0)
     return NULL;
   
@@ -164,11 +215,6 @@ static int repo_visitor_init(AgnRepoVisitor *rv, GtError *error)
     return status;
   }
 
-  if(getcwd(rv->cwd, PATH_MAX) == NULL)
-  {
-    gt_error_set(error, "error getting cwd");
-    return -1;
-  }
 #ifdef DEBUG
   fprintf(stderr, "[AgnRepoVisitor::repo_visitor_init] chdir: %s -> %s\n",
           rv->cwd, rv->repopath);
