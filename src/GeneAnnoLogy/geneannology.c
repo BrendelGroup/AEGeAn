@@ -79,11 +79,6 @@ static void ga_print_usage(FILE *outstream)
         outstream);
 }
 
-static void ga_print_version(FILE *outstream)
-{
-  fputs("[GeneAnnoLogy] AEGeAn Toolkit version " AEGEAN_VERSION "\n",outstream);
-}
-
 static int ga_unsupported(int argc, const char **argv)
 {
   fprintf(stderr,
@@ -160,7 +155,7 @@ int main(int argc, const char **argv)
   if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "-version") == 0 ||
      strcmp(argv[1], "--version") == 0)
   {
-    ga_print_version(stdout);
+    agn_print_version("GeneAnnoLogy", stdout);
     return 0;
   }
 

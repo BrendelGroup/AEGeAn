@@ -21,17 +21,19 @@ static void ga_clean_print_usage(FILE *outstream)
 "                      annotation\n\n"
 "Usage: geneannology clean [options] repo annot.gff3\n"
 "  Options:\n"
-"    -h|--help    print this help message and exit\n\n", outstream);
+"    -h|--help       print this help message and exit\n"
+"    -v|--version    print version number and exit\n\n", outstream);
 }
 
 static void ga_clean_parse_options(int argc, char * const *argv)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "h";
+  const char *optstr = "hv";
   const struct option clean_options[] =
   {
-    { "help", no_argument, NULL, 'h' },
+    { "help",    no_argument, NULL, 'h' },
+    { "version", no_argument, NULL, 'v' },
   };
 
   for( opt = getopt_long(argc, argv, optstr, clean_options, &optindex);
@@ -42,6 +44,16 @@ static void ga_clean_parse_options(int argc, char * const *argv)
     {
       ga_clean_print_usage(stdout);
       exit(0);
+    }
+    else if(opt == 'v')
+    {
+      agn_print_version("GeneAnnoLogy::clean", stdout);
+      exit(0);
+    }
+    else
+    {
+      ga_clean_print_usage(stderr);
+      fprintf(stderr, "error: unknown option '%c'", opt);
     }
   }
 }

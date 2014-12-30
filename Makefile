@@ -122,8 +122,9 @@ $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
 
 $(GA_EXE):	src/GeneAnnoLogy/geneannology.c src/GeneAnnoLogy/ga_commands.h $(GA_COMMAND_SRCS) $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/GeneAnnoLogy/geneannology.c $(GA_COMMAND_SRCS) $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile GeneAnnoLogy]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/GeneAnnoLogy/geneannology.c $(GA_COMMAND_SRCS) $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
 		@ echo "[create libaegean]"
