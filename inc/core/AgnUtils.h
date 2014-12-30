@@ -119,6 +119,12 @@ GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep);
 int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b);
 
 /**
+ * @function CLI function: provide the name of the program, and this function
+ * prints out the AEGeAn version number to the specified outstream.
+ */
+void agn_print_version(const char *progname, FILE *outstream);
+
+/**
  * @function Format the given non-negative number with commas as the thousands
  * separator. The resulting string will be written to ``buffer``.
  */

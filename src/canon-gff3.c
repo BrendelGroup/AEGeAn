@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <getopt.h>
 #include "genometools.h"
 #include "aegean.h"
@@ -29,7 +30,8 @@ static void print_usage(FILE *outstream)
 "     -o|--outfile: STRING    name of file to which GFF3 data will be\n"
 "                             written; default is terminal (stdout)\n"
 "     -s|--source: STRING     reset the source of each feature to the given\n"
-"                             value\n\n",
+"                             value\n"
+"     -v|--version            print version number and exit\n\n",
         outstream);
 }
 
@@ -38,13 +40,14 @@ static void canon_gff3_parse_options(int argc, char * const *argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hio:s:";
+  const char *optstr = "hio:s:v";
   const struct option init_options[] =
   {
     { "help",    no_argument,       NULL, 'h' },
     { "infer",   no_argument,       NULL, 'i' },
     { "outfile", required_argument, NULL, 'o' },
     { "source",  required_argument, NULL, 's' },
+    { "version", no_argument,       NULL, 'v' },
     { NULL,      no_argument,       NULL, 0 },
   };
 
@@ -56,7 +59,7 @@ static void canon_gff3_parse_options(int argc, char * const *argv,
     {
       case 'h':
         print_usage(stdout);
-        exit(1);
+        exit(0);
         break;
 
       case 'i':
@@ -73,6 +76,11 @@ static void canon_gff3_parse_options(int argc, char * const *argv,
         if(options->source != NULL)
           gt_str_delete(options->source);
         options->source = gt_str_new_cstr(optarg);
+        break;
+
+      case 'v':
+        agn_print_version("CanonGFF3", stdout);
+        exit(0);
         break;
 
       default:
