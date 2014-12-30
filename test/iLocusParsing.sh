@@ -5,7 +5,7 @@ if [ "$1" == "memcheck" ]; then
   memcheckcmd="valgrind --leak-check=full --show-reachable=yes --suppressions=data/misc/libpixman.supp --suppressions=data/misc/libpango.supp --error-exitcode=1"
 fi
 
-echo "    iLocus Parsing"
+echo "    AEGeAn::LocusPocus"
 
 temp="iLocusParseTest.gff3"
 $memcheckcmd bin/locuspocus --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1

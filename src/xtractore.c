@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <getopt.h>
 #include <string.h>
 #include "genometools.h"
@@ -117,7 +118,7 @@ static void xtract_options_parse(int argc, char **argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hi:o:t:vw:";
+  const char *optstr = "hi:o:t:Vvw:";
   char *type;
   const struct option xtractore_options[] =
   {
@@ -125,7 +126,8 @@ static void xtract_options_parse(int argc, char **argv,
     { "idfile",  required_argument, NULL, 'i' },
     { "outfile", required_argument, NULL, 'o' },
     { "type",    required_argument, NULL, 't' },
-    { "verbose", no_argument,       NULL, 'v' },
+    { "verbose", no_argument,       NULL, 'V' },
+    { "version", no_argument,       NULL, 'v' },
     { "width",   required_argument, NULL, 'w' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
@@ -159,8 +161,12 @@ static void xtract_options_parse(int argc, char **argv,
         type = gt_cstr_dup(optarg);
         gt_hashmap_add(options->typestoextract, type, type);
         break;
-      case 'v':
+      case 'V':
         options->verbose = true;
+        break;
+      case 'v':
+        agn_print_version("Xtractore", stdout);
+        exit(0);
         break;
       case 'w':
         if(sscanf(optarg, "%u", &options->width) == EOF)
@@ -368,7 +374,8 @@ static void xt_print_usage(FILE *outstream)
 "                          default is terminal (stdout)\n"
 "    -t|--type: STRING     feature type to extract; can be used multiple\n"
 "                          times to extract features of multiple types\n"
-"    -v|--verbose          print verbose warning and error messages\n"
+"    -v|--version          print version number and exit\n"
+"    -V|--verbose          print verbose warning and error messages\n"
 "    -w|--width: INT       width of each line of sequence in the Fasta\n"
 "                          output; default is 80; set to 0 for no\n"
 "                          formatting\n\n");

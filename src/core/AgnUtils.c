@@ -12,6 +12,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "extended/feature_node_iterator_api.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
+#include "AgnVersion.h"
 
 GtArray* agn_array_copy(GtArray *source, size_t size)
 {
@@ -198,6 +199,12 @@ GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
 int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
 {
   return gt_genome_node_cmp(*gn_a, *gn_b);
+}
+
+void agn_print_version(const char *progname, FILE *outstream)
+{
+  fprintf(outstream, "[%s] AEGeAn Toolkit %s (%s %s)\n", progname,
+          AGN_SEMANTIC_VERSION, AGN_VERSION_STABILITY, AGN_VERSION_HASH_SLUG);
 }
 
 int agn_sprintf_comma(GtUword n, char *buffer)

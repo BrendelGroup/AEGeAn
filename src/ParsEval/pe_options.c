@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include "pe_options.h"
 
 void pe_free_option_memory(ParsEvalOptions *options)
@@ -20,7 +21,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "a:df:ghko:pr:st:vwx:y:";
+  const char *optstr = "a:df:ghko:pr:st:Vvwx:y:";
   const struct option parseval_options[] =
   {
     { "datashare",  required_argument, NULL, 'a' },
@@ -34,7 +35,8 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     { "filterfile", required_argument, NULL, 'r' },
     { "summary",    no_argument,       NULL, 's' },
     { "maxtrans",   required_argument, NULL, 't' },
-    { "verbose",    no_argument,       NULL, 'v' },
+    { "verbose",    no_argument,       NULL, 'V' },
+    { "version",    no_argument,       NULL, 'v' },
     { "overwrite",  no_argument,       NULL, 'w' },
     { "refrlabel",  required_argument, NULL, 'x' },
     { "predlabel",  required_argument, NULL, 'y' },
@@ -121,8 +123,13 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
         }
         break;
 
-      case 'v':
+      case 'V':
         options->verbose = true;
+        break;
+
+      case 'v':
+        agn_print_version("ParsEval", stdout);
+        exit(0);
         break;
 
       case 'w':
@@ -172,9 +179,9 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 
   if(argc - optind != 2)
   {
+    pe_print_usage(stderr);
     fprintf(stderr, "error: must provide 2 (and only 2) input files, you "
             "provided %d\n\n", argc - optind);
-    pe_print_usage(stderr);
     exit(1);
   }
 
@@ -311,7 +318,8 @@ void pe_print_usage(FILE *outstream)
 "  Basic options:\n"
 "    -d|--debug:                 Print debugging messages\n"
 "    -h|--help:                  Print help message and exit\n"
-"    -v|--verbose:               Print verbose warning messages\n\n"
+"    -V|--verbose:               Print verbose warning messages\n"
+"    -v|--version:               Print version number and exit\n\n"
 "  Output options:\n"
 "    -a|--datashare: STRING      Location from which to copy shared data for\n"
 "                                HTML output (if `make install' has not yet\n"

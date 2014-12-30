@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include "AgnCliquePair.h"
 #include "AgnCompareReportHTML.h"
 #include "AgnCompareReportText.h"

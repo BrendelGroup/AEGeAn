@@ -2,9 +2,6 @@
 #---Begin configuration---#
 
 prefix=/usr/local
-AGN_LINK=https://github.com/standage/AEGeAn
-AGN_DATE=2014
-AGN_VERSION=0.11.0
 
 #----End configuration----#
 #----End configuration----#
@@ -91,41 +88,50 @@ clean:
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
-		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
+		@ echo "[compile $*]"
+		@ $(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
 $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c src/ParsEval/pe_options.h src/ParsEval/pe_utils.h $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile ParsEval]"
+		@ $(CC) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c $(LDFLAGS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile CanonGFF3]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
 
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile LocusPocus]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
 
 $(XT_EXE):	src/xtractore.c $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/xtractore.c $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile Xtractore]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/xtractore.c $(LDFLAGS)
 
 $(RP_EXE):	src/pmrna.c $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile $@]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
 
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
-		@- mkdir -p bin
-		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
+		@ mkdir -p bin
+		@ echo "[compile unit tests]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
 
 $(GA_EXE):	src/GeneAnnoLogy/geneannology.c src/GeneAnnoLogy/ga_commands.h $(GA_COMMAND_SRCS) $(AGN_OBJS)
 		@- mkdir -p bin
 		$(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/GeneAnnoLogy/geneannology.c $(GA_COMMAND_SRCS) $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
-		ar ru libaegean.a $(AGN_OBJS)
+		@ echo "[create libaegean]"
+		@ ar ru libaegean.a $(AGN_OBJS)
 
 inc/core/AgnVersion.h:	
-			@- bash -c "if [ -d .git ]; then perl data/scripts/version.pl > inc/core/AgnVersion.h; else perl data/scripts/version.pl --link=$(AGN_LINK) --date=$(AGN_DATE) --version=$(AGN_VERSION) > inc/core/AgnVersion.h; fi"
+			@- echo "[print $@]"
+			@ data/scripts/version.py > $@
 
 test:		agn-test
 		
@@ -138,10 +144,10 @@ agn-test:	all
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ echo AEGeAn Functional Tests
-		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/AT1G05320.sh $(MEMCHECKFT)
 		@ test/FBgn0035002.sh $(MEMCHECKFT)
 		@ test/iLocusParsing.sh $(MEMCHECKFT)
+		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
 
 

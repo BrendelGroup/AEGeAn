@@ -73,7 +73,8 @@ static void print_usage(FILE *outstream)
 "  Basic options:\n"
 "    -d|--debug             print detailed debugging messages to terminal\n"
 "                           (standard error)\n"
-"    -h|--help              print this help message and exit\n\n"
+"    -h|--help              print this help message and exit\n"
+"    -v|--version           print version number and exit\n\n"
 "  iLocus parsing:\n"
 "    -l|--delta: INT        when parsing interval loci, use the following\n"
 "                           delta to extend gene loci and include potential\n"
@@ -97,7 +98,7 @@ static void print_usage(FILE *outstream)
 "                           default is terminal (standard output)\n"
 "    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
 "                           to its corresponding locus to the given file\n"
-"    -v|--verbose           include all locus subfeatures (genes, RNAs, etc)\n"
+"    -V|--verbose           include all locus subfeatures (genes, RNAs, etc)\n"
 "                           in the GFF3 output; default includes only locus\n"
 "                           features\n\n"
 "  Input options:\n"
@@ -117,7 +118,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "def:g:hI:l:o:p:st:uvy";
+  const char *optstr = "def:g:hI:l:o:p:st:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
@@ -133,7 +134,8 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "skipends",  no_argument,       NULL, 's' },
     { "transmap",  required_argument, NULL, 't' },
     { "pseudo",    no_argument,       NULL, 'u' },
-    { "verbose",   no_argument,       NULL, 'v' },
+    { "version",   no_argument,       NULL, 'v' },
+    { "verbose",   no_argument,       NULL, 'V' },
     { "skipempty", no_argument,       NULL, 'y' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
@@ -228,6 +230,10 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         options->pseudofix = 1;
         break;
       case 'v':
+        agn_print_version("LocusPocus", stdout);
+        exit(0);
+        break;
+      case 'V':
         options->verbose = 1;
         break;
       case 'y':
