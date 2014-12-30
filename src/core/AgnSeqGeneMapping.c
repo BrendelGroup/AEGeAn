@@ -52,7 +52,7 @@ void agn_seq_gene_mapping_add(AgnSeqGeneMapping *map, AgnLocus *locus)
     char *key = gt_cstr_dup(gt_str_get(seqid));
     gt_hashmap_add(map->mapping, key, genelist);
   }
-  
+
   genes = agn_locus_get_genes(locus);
   while(gt_array_size(genes) > 0)
   {

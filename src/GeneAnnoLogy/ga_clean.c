@@ -17,7 +17,7 @@ static void ga_clean_print_usage(FILE *outstream)
   fputs("Usage: geneannology clean [options] repo gff3file\n", outstream);
 }
 
-int ga_init(int argc, char * const *argv)
+int ga_clean(int argc, char * const *argv)
 {
   GtNodeStream *current_stream, *last_stream;
   GtQueue *streams = gt_queue_new();
@@ -51,10 +51,6 @@ int ga_init(int argc, char * const *argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = agn_node_delete_stream_new(last_stream);
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-
   current_stream = agn_repo_stream_open_clean(last_stream, argv[0], error);
   if(current_stream == NULL)
   {
@@ -64,14 +60,14 @@ int ga_init(int argc, char * const *argv)
   }
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
-  
+
   int result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
   {
     fprintf(stderr, "[GeneAnnoLogy] error processing node stream: %s\n",
             gt_error_get(error));
   }
-  
+
   gt_error_delete(error);
   gt_logger_delete(logger);
   while(gt_queue_size(streams) > 0)

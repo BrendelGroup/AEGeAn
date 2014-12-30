@@ -114,9 +114,16 @@ GtNodeVisitor *agn_repo_visitor_new(const char *path, GtError *error)
   }
   if(repo_visitor_init(rv, error) != 0)
     return NULL;
-  
-  rv->glmap = agn_gene_locus_mapping_new(path);
-  rv->sgmap = agn_seq_gene_mapping_new(path);
+
+  GtStr *gl_filename = gt_str_new_cstr(path);
+  gt_str_append_cstr(gl_filename, "/gene-locus.map");
+  GtStr *sg_filename = gt_str_new_cstr(path);
+  gt_str_append_cstr(sg_filename, "/sequence-gene.map");
+  rv->glmap = agn_gene_locus_mapping_new(gt_str_get(gl_filename));
+  rv->sgmap = agn_seq_gene_mapping_new(gt_str_get(sg_filename));
+  gt_str_delete(gl_filename);
+  gt_str_delete(sg_filename);
+
   return nv;
 }
 
@@ -138,21 +145,25 @@ GtNodeVisitor *agn_repo_visitor_open_clean(const char *path, GtError *error)
     gt_error_set(error, "error getting cwd");
     return NULL;
   }
-  
+
   chdir(rv->repopath);
-  int result = system("rm -r *");
+  int result = system("git rm -r *");
   if(result != 0)
   {
     gt_error_set(error, "error removing existing annotations");
     return NULL;
   }
   chdir(rv->cwd);
-  
-  if(repo_visitor_init(rv, error) != 0)
-    return NULL;
-  
-  rv->glmap = agn_gene_locus_mapping_new(path);
-  rv->sgmap = agn_seq_gene_mapping_new(path);
+
+  GtStr *gl_filename = gt_str_new_cstr(path);
+  gt_str_append_cstr(gl_filename, "/gene-locus.map");
+  GtStr *sg_filename = gt_str_new_cstr(path);
+  gt_str_append_cstr(sg_filename, "/sequence-gene.map");
+  rv->glmap = agn_gene_locus_mapping_new(gt_str_get(gl_filename));
+  rv->sgmap = agn_seq_gene_mapping_new(gt_str_get(sg_filename));
+  gt_str_delete(gl_filename);
+  gt_str_delete(sg_filename);
+
   return nv;
 }
 
@@ -183,7 +194,7 @@ static int repo_visitor_fn_handler(GtNodeVisitor *nv, GtFeatureNode *fn,
   gt_gff3_visitor_retain_id_attributes((GtGFF3Visitor *)gff3);
   if(gt_genome_node_accept(locus, gff3, error) == -1)
     return -1;
-  
+
   agn_gene_locus_mapping_add(rv->glmap, locus);
   agn_seq_gene_mapping_add(rv->sgmap, locus);
   gt_str_delete(filename);
@@ -196,8 +207,8 @@ static void repo_visitor_free(GtNodeVisitor *nv)
 {
   agn_assert(nv);
   AgnRepoVisitor *rv = repo_visitor_cast(nv);
-  agn_gene_locus_mapping_delete(rv->glmap);
-  agn_seq_gene_mapping_delete(rv->sgmap);
+  agn_gene_locus_mapping_close(rv->glmap);
+  agn_seq_gene_mapping_close(rv->sgmap);
   chdir(rv->repopath);
   if(system("git add .") != 0)
     fprintf(stderr, "warning: file staging failed\n");
@@ -241,7 +252,7 @@ static GtStr *repo_visitor_locus_filename(AgnRepoVisitor *rv, AgnLocus *locus)
   char filename[PATH_MAX];
   const char *seqid = gt_str_get(gt_genome_node_get_seqid(locus));
   GtRange range = gt_genome_node_get_range(locus);
-  
+
   sprintf(filename, "%s/%s/%s_%lu-%lu.gff3", rv->repopath, seqid, seqid,
           range.start, range.end);
   return gt_str_new_cstr(filename);
@@ -266,7 +277,7 @@ static int repo_visitor_rn_handler(GtNodeVisitor *nv, GtRegionNode *rn,
       return -1;
     }
     gt_str_delete(command);
-    
+
     GtStrArray *geneids = agn_seq_gene_mapping_unmap_seqid(rv->sgmap, seqid);
     agn_assert(geneids);
     GtUword i;

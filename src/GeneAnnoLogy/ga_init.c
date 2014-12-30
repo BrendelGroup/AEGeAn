@@ -48,10 +48,7 @@ int ga_init(int argc, char * const *argv)
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, 0);
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-
-  current_stream = agn_node_delete_stream_new(last_stream);
+  agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
@@ -71,7 +68,7 @@ int ga_init(int argc, char * const *argv)
     fprintf(stderr, "[GeneAnnoLogy] error processing node stream: %s\n",
             gt_error_get(error));
   }
-  
+
   gt_error_delete(error);
   gt_logger_delete(logger);
   while(gt_queue_size(streams) > 0)

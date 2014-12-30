@@ -172,7 +172,7 @@ GtStr *agn_gene_locus_mapping_unmap_gene(AgnGeneLocusMapping *map,
   GtStr *locuspos = gt_hashmap_get(map->mapping, geneid);
   if(locuspos == NULL)
     return NULL;
-  
+
   gt_str_ref(locuspos);
   gt_hashmap_remove(map->mapping, geneid);
   return locuspos;

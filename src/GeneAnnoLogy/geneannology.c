@@ -131,8 +131,9 @@ int main(int argc, const char **argv)
   gt_hashmap_add(commands, "status", ga_notyetimplemented);
 
   //   - commands unique to GeneAnnoLogy
-  gt_hashmap_add(commands, "delete",  ga_notyetimplemented);
-  gt_hashmap_add(commands, "update",  ga_notyetimplemented);
+  gt_hashmap_add(commands, "clean",  ga_clean);
+  gt_hashmap_add(commands, "delete", ga_notyetimplemented);
+  gt_hashmap_add(commands, "update", ga_notyetimplemented);
 
 
   // Parse command name, run the associated command
