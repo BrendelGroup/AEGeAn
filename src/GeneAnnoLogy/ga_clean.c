@@ -13,6 +13,14 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "genometools.h"
 #include "aegean.h"
 
+typedef struct
+{
+  const char *source;
+  const char *repo;
+  const char **filenames;
+  int numfiles;
+} GaCleanOptions;
+
 static void ga_clean_print_usage(FILE *outstream)
 {
   fputs("\n"
@@ -21,20 +29,29 @@ static void ga_clean_print_usage(FILE *outstream)
 "                      annotation\n\n"
 "Usage: geneannology clean [options] repo annot.gff3\n"
 "  Options:\n"
-"    -h|--help       print this help message and exit\n"
-"    -v|--version    print version number and exit\n\n", outstream);
+"    -h|--help              print this help message and exit\n"
+"    -s|--source: STRING    replace the 'source' label (GFF3 2nd column) of\n"
+"                           the input with the given value\n"
+"    -v|--version           print version number and exit\n\n", outstream);
 }
 
-static void ga_clean_parse_options(int argc, char * const *argv)
+static void ga_clean_parse_options(int argc, char * const *argv,
+                                   GaCleanOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hv";
+  const char *optstr = "hs:v";
   const struct option clean_options[] =
   {
-    { "help",    no_argument, NULL, 'h' },
-    { "version", no_argument, NULL, 'v' },
+    { "help",    no_argument,       NULL, 'h' },
+    { "source",  required_argument, NULL, 's' },
+    { "version", no_argument,       NULL, 'v' },
   };
+
+  options->source = NULL;
+  options->repo = NULL;
+  options->filenames = NULL;
+  options->numfiles = 0;
 
   for( opt = getopt_long(argc, argv, optstr, clean_options, &optindex);
        opt != -1;
@@ -45,6 +62,10 @@ static void ga_clean_parse_options(int argc, char * const *argv)
       ga_clean_print_usage(stdout);
       exit(0);
     }
+    else if(opt == 's')
+    {
+      options->source = optarg;
+    }
     else if(opt == 'v')
     {
       agn_print_version("GeneAnnoLogy::clean", stdout);
@@ -54,8 +75,20 @@ static void ga_clean_parse_options(int argc, char * const *argv)
     {
       ga_clean_print_usage(stderr);
       fprintf(stderr, "error: unknown option '%c'", opt);
+      exit(1);
     }
   }
+
+  int numargs = argc - optind;
+  if(numargs == 0)
+    return;
+
+  options->repo = argv[optind];
+  options->numfiles = numargs - 1;
+  if(numargs == 1)
+    return;
+
+  options->filenames = (const char **)(argv + optind + 1);
 }
 
 int ga_clean(int argc, char * const *argv)
@@ -66,22 +99,23 @@ int ga_clean(int argc, char * const *argv)
   GtError *error = gt_error_new();
 
   agn_assert(argc > 0);
-  ga_clean_parse_options(argc, argv);
-  if(argc == 1)
+  GaCleanOptions options;
+  ga_clean_parse_options(argc, argv, &options);
+  if(options.repo == NULL)
   {
     ga_clean_print_usage(stderr);
-    return -1;
+    return 0;
   }
-  else if(argc == 2)
+  else if(options.numfiles == 0)
   {
-    fprintf(stderr, "[GeneAnnoLogy] warning: repo=%s, reading input from "
-            "stdin\n", argv[1]);
+    fprintf(stderr, "[GeneAnnoLogy::clean] warning: repo=%s, reading input from"
+            " stdin\n", options.repo);
     current_stream = gt_gff3_in_stream_new_unsorted(0, NULL);
   }
   else
   {
-    const char **filenames = (const char **)argv + 2;
-    current_stream = gt_gff3_in_stream_new_unsorted(argc - 2, filenames);
+    current_stream = gt_gff3_in_stream_new_unsorted(options.numfiles,
+                                                    options.filenames);
   }
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
@@ -93,10 +127,21 @@ int ga_clean(int argc, char * const *argv)
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, 0);
+  agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = agn_repo_stream_open_clean(last_stream, argv[1], error);
+  if(options.source)
+  {
+    GtStr *src = gt_str_new_cstr(options.source);
+    GtNodeVisitor *nv = gt_set_source_visitor_new(src);
+    current_stream = gt_visitor_stream_new(last_stream, nv);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+    gt_str_delete(src);
+  }
+
+  current_stream = agn_repo_stream_open_clean(last_stream, options.repo, error);
   if(current_stream == NULL)
   {
     fprintf(stderr, "[GeneAnnoLogy] error setting up repo: %s\n",
