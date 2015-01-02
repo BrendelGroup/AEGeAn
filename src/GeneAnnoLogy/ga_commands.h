@@ -14,6 +14,9 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 // Remove all existing annotations from the repository and start over fresh
 int ga_clean(int argc, char * const *argv);
 
+// Save a snapshot of the repository
+int ga_commit(int argc, char * const *argv);
+
 // Initialize a new repository
 int ga_init(int argc, char * const *argv);
 

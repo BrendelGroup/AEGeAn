@@ -24,7 +24,8 @@ AGN_OBJS=$(patsubst src/core/%.c,obj/%.o,$(AGN_SRCS))
 AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
 # GeneAnnoLogy command sources
-GA_COMMAND_SRCS=src/GeneAnnoLogy/ga_init.c src/GeneAnnoLogy/ga_clean.c
+GA_COMMAND_SRCS=src/GeneAnnoLogy/ga_init.c src/GeneAnnoLogy/ga_clean.c \
+                src/GeneAnnoLogy/ga_commit.c
 
 # Compilation settings
 CC=gcc

@@ -53,9 +53,9 @@ static void ga_clean_parse_options(int argc, char * const *argv,
   options->filenames = NULL;
   options->numfiles = 0;
 
-  for( opt = getopt_long(argc, argv, optstr, clean_options, &optindex);
-       opt != -1;
-       opt = getopt_long(argc, argv, optstr, clean_options, &optindex) )
+  for(opt  = getopt_long(argc, argv, optstr, clean_options, &optindex);
+      opt != -1;
+      opt  = getopt_long(argc, argv, optstr, clean_options, &optindex))
   {
     if(opt == 'h')
     {

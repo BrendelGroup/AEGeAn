@@ -24,7 +24,7 @@ typedef struct
 static void ga_init_print_usage(FILE *outstream)
 {
   fputs("\n"
-"    [GeneAnnoLogy::init] initialize a new annotation repository\n\n"
+"[GeneAnnoLogy::init] initialize a new annotation repository\n\n"
 "Usage: geneannology init [options] repo annot.gff3\n"
 "  Options:\n"
 "    -h|--help              print this help message and exit\n"
@@ -51,9 +51,9 @@ static void ga_init_parse_options(int argc, char * const *argv,
   options->filenames = NULL;
   options->numfiles = 0;
 
-  for( opt = getopt_long(argc, argv, optstr, init_options, &optindex);
-       opt != -1;
-       opt = getopt_long(argc, argv, optstr, init_options, &optindex) )
+  for(opt  = getopt_long(argc, argv, optstr, init_options, &optindex);
+      opt != -1;
+      opt  = getopt_long(argc, argv, optstr, init_options, &optindex))
   {
     if(opt == 'h')
     {

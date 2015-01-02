@@ -125,7 +125,7 @@ int main(int argc, const char **argv)
   gt_hashmap_add(commands, "tag",      ga_delegate);
 
   //   - commands defined by git but overridden by GeneAnnoLogy
-  gt_hashmap_add(commands, "commit", ga_notyetimplemented);
+  gt_hashmap_add(commands, "commit", ga_commit);
   gt_hashmap_add(commands, "diff",   ga_notyetimplemented);
   gt_hashmap_add(commands, "init",   ga_init);
   gt_hashmap_add(commands, "show",   ga_notyetimplemented);
