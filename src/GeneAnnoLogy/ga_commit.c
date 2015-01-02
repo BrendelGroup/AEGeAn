@@ -9,6 +9,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 
 #include <getopt.h>
+#include <unistd.h>
 #include "ga_commands.h"
 #include "genometools.h"
 #include "aegean.h"
