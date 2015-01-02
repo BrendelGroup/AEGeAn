@@ -964,7 +964,6 @@ Group7.16	NCBI	five_prime_UTR	123952	124108	.	-	.	Parent=mRNA9
 ========== ParsEval Summary
 ============================================================
 
-Started:                28 Aug 2014, 11:09PM
 Reference annotations:  OGS
 Prediction annotations: NCBI
 Executing command:      bin/parseval --refrlabel=OGS --predlabel=NCBI data/gff3/amel-ogs-g716.gff3 data/gff3/amel-ncbi-g716.gff3 
@@ -1042,7 +1041,7 @@ Executing command:      bin/parseval --refrlabel=OGS --predlabel=NCBI data/gff3/
       don't match reference................16 (100.0%)
     Sensitivity............................0.000
     Specificity............................0.000
-    F1 Score...............................nan
+    F1 Score...............................--
     Annotation edit distance...............1.000
 
   Nucleotide-level comparison      CDS          UTRs         Overall   

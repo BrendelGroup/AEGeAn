@@ -562,32 +562,54 @@ static void compare_report_text_summary_struc(FILE *outstream,
   fprintf(outstream, "  %s structure comparison\n", label);
 
   GtUword refrcnt = stats->correct + stats->missing;
+  GtUword predcnt = stats->correct + stats->wrong;
+  char rmatchp[32], rnomatchp[32], pmatchr[32], pnomatchr[32];
+  if(refrcnt > 0)
+  {
+    sprintf(rmatchp,   "%.1f%%", (float)stats->correct / (float)refrcnt * 100);
+    sprintf(rnomatchp, "%.1f%%", (float)stats->missing / (float)refrcnt * 100);
+  }
+  else
+  {
+    sprintf(rmatchp,   "--");
+    sprintf(rnomatchp, "--");
+  }
+  if(predcnt > 0)
+  {
+    sprintf(pmatchr,   "%.1f%%", (float)stats->correct / (float)predcnt * 100);
+    sprintf(pnomatchr, "%.1f%%", (float)stats->wrong   / (float)predcnt * 100);
+  }
+  else
+  {
+    sprintf(pmatchr,   "--");
+    sprintf(pnomatchr, "--");
+  }
+
   sprintf(buffer, "    reference .............................%lu\n", refrcnt);
   strncpy(buffer + 14, units, strlen(units));
   fputs(buffer, outstream);
   fprintf(outstream,
-          "      match prediction.....................%lu (%.1f%%)\n",
-          stats->correct, (float)stats->correct / (float)refrcnt * 100 );
+          "      match prediction.....................%lu (%s)\n",
+          stats->correct, rmatchp);
   fprintf(outstream,
-          "      don't match prediction...............%lu (%.1f%%)\n",
-          stats->missing, (float)stats->missing / (float)refrcnt * 100 );
+          "      don't match prediction...............%lu (%s)\n",
+          stats->missing, rnomatchp);
 
-  GtUword predcnt = stats->correct + stats->wrong;
   sprintf(buffer, "    prediction ............................%lu\n", predcnt);
   strncpy(buffer + 15, units, strlen(units));
   fputs(buffer, outstream);
   fprintf(outstream,
-          "      match reference......................%lu (%.1f%%)\n",
-          stats->correct, (float)stats->correct / (float)predcnt * 100 );
+          "      match reference......................%lu (%s)\n",
+          stats->correct, pmatchr);
   fprintf(outstream,
-          "      don't match reference................%lu (%.1f%%)\n",
-          stats->wrong, (float)stats->wrong / (float)predcnt * 100 );
+          "      don't match reference................%lu (%s)\n",
+          stats->wrong, pnomatchr);
 
-  fprintf(outstream, "    Sensitivity............................%.3lf\n"
-                     "    Specificity............................%.3lf\n"
-                     "    F1 Score...............................%.3lf\n"
-                     "    Annotation edit distance...............%.3lf\n\n",
-          stats->sn, stats->sp, stats->f1, stats->ed);
+  fprintf(outstream, "    Sensitivity............................%s\n"
+                     "    Specificity............................%s\n"
+                     "    F1 Score...............................%s\n"
+                     "    Annotation edit distance...............%s\n\n",
+          stats->sns, stats->sps, stats->f1s, stats->eds);
 }
 
 static int compare_report_text_visit_feature_node(GtNodeVisitor *nv,
