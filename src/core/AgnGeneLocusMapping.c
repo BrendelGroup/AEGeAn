@@ -62,8 +62,9 @@ void agn_gene_locus_mapping_add(AgnGeneLocusMapping *map, AgnLocus *locus)
   {
     GtFeatureNode **gene = gt_array_pop(genes);
     const char *geneid = gt_feature_node_get_attribute(*gene, "ID");
-    gt_hashmap_add(map->mapping, gt_cstr_dup(geneid), locuspos);
+    gt_hashmap_add(map->mapping, gt_cstr_dup(geneid), gt_str_ref(locuspos));
   }
+  gt_str_delete(locuspos);
   gt_array_delete(genes);
 }
 

@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -84,6 +84,16 @@ GtNodeStream *agn_repo_stream_new(GtNodeStream *instream, const char *path,
   return gt_visitor_stream_new(instream, nv);
 }
 
+GtNodeStream *agn_repo_stream_open(GtNodeStream *instream, const char *path,
+                                   GtError *error)
+{
+  agn_assert(instream && path && error);
+  GtNodeVisitor *nv = agn_repo_visitor_open(path, error);
+  if(nv == NULL)
+    return NULL;
+  return gt_visitor_stream_new(instream, nv);
+}
+
 GtNodeStream *agn_repo_stream_open_clean(GtNodeStream *instream,
                                          const char *path, GtError *error)
 {
@@ -127,7 +137,7 @@ GtNodeVisitor *agn_repo_visitor_new(const char *path, GtError *error)
   return nv;
 }
 
-GtNodeVisitor *agn_repo_visitor_open_clean(const char *path, GtError *error)
+GtNodeVisitor *agn_repo_visitor_open(const char *path, GtError *error)
 {
   struct stat buffer;
   agn_assert(path && error);
@@ -146,14 +156,36 @@ GtNodeVisitor *agn_repo_visitor_open_clean(const char *path, GtError *error)
     return NULL;
   }
 
-  chdir(rv->repopath);
-  int result = system("git rm -r *");
-  if(result != 0)
+  GtStr *gl_filename = gt_str_new_cstr(path);
+  gt_str_append_cstr(gl_filename, "/gene-locus.map");
+  GtStr *sg_filename = gt_str_new_cstr(path);
+  gt_str_append_cstr(sg_filename, "/sequence-gene.map");
+  rv->glmap = agn_gene_locus_mapping_open(gt_str_get(gl_filename));
+  rv->sgmap = agn_seq_gene_mapping_open(gt_str_get(sg_filename));
+  gt_str_delete(gl_filename);
+  gt_str_delete(sg_filename);
+
+  return nv;
+}
+
+GtNodeVisitor *agn_repo_visitor_open_clean(const char *path, GtError *error)
+{
+  struct stat buffer;
+  agn_assert(path && error);
+  if(stat(path, &buffer))
   {
-    gt_error_set(error, "error removing existing annotations");
+    gt_error_set(error, "repo '%s' does not exist", path);
     return NULL;
   }
-  chdir(rv->cwd);
+
+  GtNodeVisitor *nv = gt_node_visitor_create(repo_visitor_class());
+  AgnRepoVisitor *rv = repo_visitor_cast(nv);
+  rv->repopath = gt_cstr_dup(path);
+  if(getcwd(rv->cwd, PATH_MAX) == NULL)
+  {
+    gt_error_set(error, "error getting cwd");
+    return NULL;
+  }
 
   GtStr *gl_filename = gt_str_new_cstr(path);
   gt_str_append_cstr(gl_filename, "/gene-locus.map");
@@ -190,8 +222,15 @@ static int repo_visitor_fn_handler(GtNodeVisitor *nv, GtFeatureNode *fn,
   GtFile *file = gt_file_new(gt_str_get(filename), "w", error);
   if(file == NULL)
     return -1;
+
+  GtStr *seqid = gt_genome_node_get_seqid(locus);
+  GtRange range = gt_genome_node_get_range(locus);
+  GtGenomeNode *rn = gt_region_node_new(seqid, range.start, range.end);
+
   GtNodeVisitor *gff3 = gt_gff3_visitor_new(file);
   gt_gff3_visitor_retain_id_attributes((GtGFF3Visitor *)gff3);
+  if(gt_genome_node_accept(rn, gff3, error) == -1)
+    return -1;
   if(gt_genome_node_accept(locus, gff3, error) == -1)
     return -1;
 

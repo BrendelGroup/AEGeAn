@@ -125,6 +125,7 @@ int ga_init(int argc, char * const *argv)
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, 0);
+  agn_locus_stream_set_source((AgnLocusStream *)current_stream, "GeneAnnoLogy");
   agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
@@ -142,7 +143,7 @@ int ga_init(int argc, char * const *argv)
   current_stream = agn_repo_stream_new(last_stream, argv[1], error);
   if(current_stream == NULL)
   {
-    fprintf(stderr, "[GeneAnnoLogy] error setting up repo: %s\n",
+    fprintf(stderr, "[GeneAnnoLogy::init] error setting up repo: %s\n",
             gt_error_get(error));
     return -1;
   }
@@ -152,7 +153,7 @@ int ga_init(int argc, char * const *argv)
   int result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
   {
-    fprintf(stderr, "[GeneAnnoLogy] error processing node stream: %s\n",
+    fprintf(stderr, "[GeneAnnoLogy::init] error processing node stream: %s\n",
             gt_error_get(error));
   }
 

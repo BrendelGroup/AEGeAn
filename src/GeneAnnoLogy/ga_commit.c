@@ -42,7 +42,7 @@ static void ga_commit_parse_options(int argc, char * const *argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hs:v";
+  const char *optstr = "a:dfhm:v";
   const struct option commit_options[] =
   {
     { "author",  required_argument, NULL, 'a' },
@@ -50,6 +50,7 @@ static void ga_commit_parse_options(int argc, char * const *argv,
     { "fix",     no_argument,       NULL, 'f' },
     { "help",    no_argument,       NULL, 'h' },
     { "message", required_argument, NULL, 'm' },
+    { "vesion",  no_argument,       NULL, 'v' },
   };
 
   options->author = NULL;

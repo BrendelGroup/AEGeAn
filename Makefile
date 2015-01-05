@@ -24,8 +24,9 @@ AGN_OBJS=$(patsubst src/core/%.c,obj/%.o,$(AGN_SRCS))
 AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
 # GeneAnnoLogy command sources
-GA_COMMAND_SRCS=src/GeneAnnoLogy/ga_init.c src/GeneAnnoLogy/ga_clean.c \
-                src/GeneAnnoLogy/ga_commit.c
+GA_COMMAND_SRCS=src/GeneAnnoLogy/ga_utils.c \
+                src/GeneAnnoLogy/ga_init.c src/GeneAnnoLogy/ga_clean.c \
+                src/GeneAnnoLogy/ga_commit.c src/GeneAnnology/ga_union.c
 
 # Compilation settings
 CC=gcc
@@ -89,32 +90,32 @@ clean:
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
-		@ echo "[compile $*]"
+		@ echo "[compile object $*]"
 		@ $(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
 $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c src/ParsEval/pe_options.h src/ParsEval/pe_utils.h $(AGN_OBJS)
 		@ mkdir -p bin
-		@ echo "[compile ParsEval]"
+		@ echo "[compile binary ParsEval]"
 		@ $(CC) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c $(LDFLAGS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@ mkdir -p bin
-		@ echo "[compile CanonGFF3]"
+		@ echo "[compile binary CanonGFF3]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
 
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@ mkdir -p bin
-		@ echo "[compile LocusPocus]"
+		@ echo "[compile binary LocusPocus]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
 
 $(XT_EXE):	src/xtractore.c $(AGN_OBJS)
 		@ mkdir -p bin
-		@ echo "[compile Xtractore]"
+		@ echo "[compile binary Xtractore]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/xtractore.c $(LDFLAGS)
 
 $(RP_EXE):	src/pmrna.c $(AGN_OBJS)
 		@ mkdir -p bin
-		@ echo "[compile $@]"
+		@ echo "[compile binary $@]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
 
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
@@ -124,11 +125,11 @@ $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 
 $(GA_EXE):	src/GeneAnnoLogy/geneannology.c src/GeneAnnoLogy/ga_commands.h $(GA_COMMAND_SRCS) $(AGN_OBJS)
 		@ mkdir -p bin
-		@ echo "[compile GeneAnnoLogy]"
+		@ echo "[compile binary GeneAnnoLogy]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/GeneAnnoLogy/geneannology.c $(GA_COMMAND_SRCS) $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
-		@ echo "[create libaegean]"
+		@ echo "[create libaegean library]"
 		@ ar ru libaegean.a $(AGN_OBJS)
 
 inc/core/AgnVersion.h:	

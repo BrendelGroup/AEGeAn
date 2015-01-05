@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -71,7 +71,9 @@ static void ga_print_usage(FILE *outstream)
         "Usage: geneannology <command> [options] repo [<args>]\n"
         "  Commands:\n"
         "    clean\n"
+        "    commit\n"
         "    init\n"
+        "    union\n"
         "  Flags:\n"
         "    -h/--help\n"
         "    -v/--version\n"
@@ -134,6 +136,7 @@ int main(int argc, const char **argv)
   //   - commands unique to GeneAnnoLogy
   gt_hashmap_add(commands, "clean",  ga_clean);
   gt_hashmap_add(commands, "delete", ga_notyetimplemented);
+  gt_hashmap_add(commands, "union",  ga_union);
   gt_hashmap_add(commands, "update", ga_notyetimplemented);
 
 
