@@ -31,6 +31,7 @@ struct AgnInferCDSVisitor
   GtArray *stops;
   GtUword cdscounter;
   GtLogger *logger;
+  GtStr *source;
 };
 
 
@@ -118,9 +119,13 @@ static int infer_cds_visitor_visit_feature_node(GtNodeVisitor *nv,
 // Method implementations
 //------------------------------------------------------------------------------
 
-GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtLogger *logger)
+GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtStr *source,
+                                       GtLogger *logger)
 {
   GtNodeVisitor *nv = agn_infer_cds_visitor_new(logger);
+  if(source != NULL)
+    agn_infer_cds_visitor_set_source((AgnInferCDSVisitor *)nv, source);
+
   GtNodeStream *ns = gt_visitor_stream_new(in, nv);
   return ns;
 }
@@ -132,7 +137,17 @@ GtNodeVisitor *agn_infer_cds_visitor_new(GtLogger *logger)
   AgnInferCDSVisitor *v = infer_cds_visitor_cast(nv);
   v->logger = logger;
   v->cdscounter = 0;
+  v->source = NULL;
   return nv;
+}
+
+void agn_infer_cds_visitor_set_source(AgnInferCDSVisitor *v,
+                                      GtStr *source)
+{
+  agn_assert(v && source);
+  if(v->source != NULL)
+    gt_str_delete(v->source);
+  v->source = gt_str_ref(source);
 }
 
 bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
@@ -608,7 +623,7 @@ static void infer_cds_visitor_test_data(GtQueue *queue)
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
   GtLogger *logger = gt_logger_new(true, "", stderr);
-  GtNodeStream *icv_stream = agn_infer_cds_stream_new(gff3in, logger);
+  GtNodeStream *icv_stream = agn_infer_cds_stream_new(gff3in, NULL, logger);
   GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
   GtNodeStream *arraystream = gt_array_out_stream_new(icv_stream, feats, error);
   int pullresult = gt_node_stream_pull(arraystream, error);

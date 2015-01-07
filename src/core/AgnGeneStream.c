@@ -78,7 +78,8 @@ GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
   gt_queue_add(stream->streams, gt_node_stream_ref(in_stream));
   last_stream = in_stream;
 
-  current_stream = agn_infer_cds_stream_new(last_stream, logger);
+  current_stream = agn_infer_cds_stream_new(last_stream, stream->source,
+                                            logger);
   gt_queue_add(stream->streams, current_stream);
   last_stream = current_stream;
 
