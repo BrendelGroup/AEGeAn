@@ -29,6 +29,7 @@ struct AgnGeneStream
   GtNodeStream *in_stream;
   GtQueue *streams;
   GtLogger *logger;
+  GtStr *source;
 };
 
 
@@ -65,30 +66,46 @@ static void gene_stream_test_data(GtQueue *queue);
 
 GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
 {
-  GtNodeStream *ns;
+  GtNodeStream *ns, *current_stream, *last_stream;
   AgnGeneStream *stream;
-  agn_assert(in_stream);
+  agn_assert(in_stream && logger);
 
   ns = gt_node_stream_create(gene_stream_class(), false);
   stream = gene_stream_cast(ns);
   stream->logger = logger;
   stream->streams = gt_queue_new();
+  stream->source = NULL;
   gt_queue_add(stream->streams, gt_node_stream_ref(in_stream));
+  last_stream = in_stream;
+
+  current_stream = agn_infer_cds_stream_new(last_stream, stream->source,
+                                            logger);
+  gt_queue_add(stream->streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_infer_exons_stream_new(last_stream, stream->source,
+                                              logger);
+  gt_queue_add(stream->streams, current_stream);
+  last_stream = current_stream;
 
   GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
                                           gt_free_func);
   gt_hashmap_add(typestokeep, gt_cstr_dup("gene"), gt_cstr_dup("gene"));
-
-  GtNodeStream *ic_stream = agn_infer_cds_stream_new(in_stream, logger);
-  gt_queue_add(stream->streams, ic_stream);
-  GtNodeStream *ie_stream = agn_infer_exons_stream_new(ic_stream, logger);
-  gt_queue_add(stream->streams, ie_stream);
-  GtNodeStream *filterstream = agn_filter_stream_new(ie_stream, typestokeep);
-  gt_queue_add(stream->streams, filterstream);
-  stream->in_stream = filterstream;
-
+  current_stream = agn_filter_stream_new(last_stream, typestokeep);
+  gt_queue_add(stream->streams, current_stream);
+  last_stream = current_stream;
   gt_hashmap_delete(typestokeep);
+
+  stream->in_stream = last_stream;
   return ns;
+}
+
+void agn_gene_stream_set_source(AgnGeneStream *gs, GtStr *source)
+{
+  agn_assert(gs && source);
+  if(gs->source != NULL)
+    gt_str_delete(gs->source);
+  gs->source = gt_str_ref(source);
 }
 
 bool agn_gene_stream_unit_test(AgnUnitTest *test)
@@ -174,6 +191,8 @@ static void gene_stream_free(GtNodeStream *ns)
     gt_node_stream_delete(s);
   }
   gt_queue_delete(stream->streams);
+  if(stream->source != NULL)
+    gt_str_delete(stream->source);
 }
 
 static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)

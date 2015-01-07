@@ -30,6 +30,7 @@ struct AgnInferExonsVisitor
   GtArray *exons;
   GtArray *introns;
   GtLogger *logger;
+  GtStr *source;
 };
 
 
@@ -41,6 +42,11 @@ struct AgnInferExonsVisitor
  * @function Cast a node visitor object as a AgnInferExonsVisitor.
  */
 static const GtNodeVisitorClass* infer_exons_visitor_class();
+
+/**
+ * @function Destructor.
+ */
+static void infer_exons_visitor_free(GtNodeVisitor *nv);
 
 /**
  * @function Generate data for unit testing.
@@ -83,9 +89,12 @@ infer_exons_visitor_visit_gene_infer_introns(AgnInferExonsVisitor *v);
 // Method implementations
 //----------------------------------------------------------------------------//
 
-GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtLogger *logger)
+GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtStr *source,
+                                         GtLogger *logger)
 {
   GtNodeVisitor *nv = agn_infer_exons_visitor_new(logger);
+  if(source != NULL)
+    agn_infer_exons_visitor_set_source((AgnInferExonsVisitor *)nv, source);
   GtNodeStream *ns = gt_visitor_stream_new(in, nv);
   return ns;
 }
@@ -96,7 +105,16 @@ GtNodeVisitor* agn_infer_exons_visitor_new(GtLogger *logger)
   nv = gt_node_visitor_create(infer_exons_visitor_class());
   AgnInferExonsVisitor *v = infer_exons_visitor_cast(nv);
   v->logger = logger;
+  v->source = NULL;
   return nv;
+}
+
+void agn_infer_exons_visitor_set_source(AgnInferExonsVisitor *v, GtStr *source)
+{
+  agn_assert(v && source);
+  if(v->source != NULL)
+    gt_str_delete(v->source);
+  v->source = gt_str_ref(source);
 }
 
 bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
@@ -173,13 +191,20 @@ static const GtNodeVisitorClass* infer_exons_visitor_class()
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (AgnInferExonsVisitor), NULL, NULL,
+    nvc = gt_node_visitor_class_new(sizeof (AgnInferExonsVisitor),
+                                    infer_exons_visitor_free, NULL,
                                     infer_exons_visitor_visit_feature_node,
                                     NULL, NULL, NULL);
   }
   return nvc;
 }
 
+static void infer_exons_visitor_free(GtNodeVisitor *nv)
+{
+  AgnInferExonsVisitor *v = infer_exons_visitor_cast(nv);
+  if(v->source != NULL)
+    gt_str_delete(v->source);
+}
 
 static void infer_exons_visitor_test_data(GtQueue *queue)
 {
@@ -189,7 +214,7 @@ static void infer_exons_visitor_test_data(GtQueue *queue)
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
   GtLogger *logger = gt_logger_new(true, "", stderr);
-  GtNodeStream *iev_stream = agn_infer_exons_stream_new(gff3in, logger);
+  GtNodeStream *iev_stream = agn_infer_exons_stream_new(gff3in, NULL, logger);
   GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
   GtNodeStream *arraystream = gt_array_out_stream_new(iev_stream, feats, error);
   int pullresult = gt_node_stream_pull(arraystream, error);
@@ -389,6 +414,8 @@ infer_exons_visitor_visit_gene_infer_exons(AgnInferExonsVisitor *v)
         gt_feature_node_get_strand(*(GtFeatureNode **)firstcds)
       );
       GtFeatureNode *fn_exon = (GtFeatureNode *)exon;
+      if(v->source)
+        gt_feature_node_set_source(fn_exon, v->source);
       gt_feature_node_add_child(fn, fn_exon);
       if(mrnaid)
         gt_feature_node_add_attribute(fn_exon, "Parent", mrnaid);
@@ -470,6 +497,8 @@ infer_exons_visitor_visit_gene_infer_introns(AgnInferExonsVisitor *v)
         irange->end, gt_feature_node_get_strand(*(GtFeatureNode **)firstexon)
       );
       GtFeatureNode *fn_intron = (GtFeatureNode *)intron;
+      if(v->source)
+        gt_feature_node_set_source(fn_intron, v->source);
       gt_feature_node_add_child(fn, fn_intron);
       if(mrnaid)
         gt_feature_node_add_attribute(fn_intron, "Parent", mrnaid);

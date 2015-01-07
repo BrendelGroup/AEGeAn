@@ -1044,26 +1044,45 @@ static void compare_report_html_summary_struc(FILE *outstream,
 
   GtUword refrcnt = stats->correct + stats->missing;
   GtUword predcnt = stats->correct + stats->wrong;
+  char rmatchp[32], rnomatchp[32], pmatchr[32], pnomatchr[32];
+  if(refrcnt > 0)
+  {
+    sprintf(rmatchp,   "%.1f%%", (float)stats->correct / (float)refrcnt * 100);
+    sprintf(rnomatchp, "%.1f%%", (float)stats->missing / (float)refrcnt * 100);
+  }
+  else
+  {
+    sprintf(rmatchp,   "--");
+    sprintf(rnomatchp, "--");
+  }
+  if(predcnt > 0)
+  {
+    sprintf(pmatchr,   "%.1f%%", (float)stats->correct / (float)predcnt * 100);
+    sprintf(pnomatchr, "%.1f%%", (float)stats->wrong   / (float)predcnt * 100);
+  }
+  else
+  {
+    sprintf(pmatchr,   "--");
+    sprintf(pnomatchr, "--");
+  }
+
   fprintf(outstream,
           "      <table class=\"table_normal table_extra_indent\">\n"
           "        <tr><td>reference %s</td><td>%lu</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">match prediction</td><td>%lu (%.1f%%)</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">don't match prediction</td><td>%lu (%.1f%%)</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">match prediction</td><td>%lu (%s)</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">don't match prediction</td><td>%lu (%s)</td></tr>\n"
           "        <tr><td>prediction %s</td><td>%lu</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">match prediction</td><td>%lu (%.1f%%)</td></tr>\n"
-          "        <tr class=\"cell_small\"><td class=\"cell_indent\">don't match prediction</td><td>%lu (%.1f%%)</td></tr>\n"
-          "        <tr><td>Sensitivity</td><td>%.3f</td></tr>\n"
-          "        <tr><td>Specificity</td><td>%.3f</td></tr>\n"
-          "        <tr><td>F1 score</td><td>%.3f</td></tr>\n"
-          "        <tr><td>Annotation edit distance</td><td>%.3f</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">match prediction</td><td>%lu (%s)</td></tr>\n"
+          "        <tr class=\"cell_small\"><td class=\"cell_indent\">don't match prediction</td><td>%lu (%s)</td></tr>\n"
+          "        <tr><td>Sensitivity</td><td>%s</td></tr>\n"
+          "        <tr><td>Specificity</td><td>%s</td></tr>\n"
+          "        <tr><td>F1 score</td><td>%s</td></tr>\n"
+          "        <tr><td>Annotation edit distance</td><td>%s</td></tr>\n"
           "      </table>\n\n",
-          units, stats->correct + stats->missing,
-          stats->correct, (float)stats->correct / (float)refrcnt * 100,
-          stats->missing, (float)stats->missing / (float)refrcnt * 100,
-          units, stats->correct + stats->wrong,
-          stats->correct, (float)stats->correct / (float)predcnt * 100,
-          stats->wrong, (float)stats->wrong / (float)predcnt * 100,
-          stats->sn, stats->sp, stats->f1, stats->ed);
+          units, stats->correct + stats->missing, stats->correct, rmatchp,
+          stats->missing, rnomatchp, units, stats->correct + stats->wrong,
+          stats->correct, pmatchr, stats->wrong, pnomatchr,
+          stats->sns, stats->sps, stats->f1s, stats->eds);
 }
 
 static int compare_report_html_visit_feature_node(GtNodeVisitor *nv,
