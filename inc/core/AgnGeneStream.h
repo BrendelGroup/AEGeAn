@@ -31,6 +31,12 @@ typedef struct AgnGeneStream AgnGeneStream;
 GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger);
 
 /**
+ * @function Specify a source (GFF3 column 2) to be applied to newly inferred
+ * features (default is '.').
+ */
+void agn_gene_stream_set_source(AgnGeneStream *gs, GtStr *source);
+
+/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_gene_stream_unit_test(AgnUnitTest *test);
