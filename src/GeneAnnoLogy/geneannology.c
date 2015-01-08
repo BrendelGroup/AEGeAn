@@ -73,6 +73,7 @@ static void ga_print_usage(FILE *outstream)
         "    clean\n"
         "    commit\n"
         "    init\n"
+        "    merge\n"
         "    union\n"
         "  Flags:\n"
         "    -h/--help\n"
@@ -119,7 +120,6 @@ int main(int argc, const char **argv)
   gt_hashmap_add(commands, "fetch",    ga_delegate);
   gt_hashmap_add(commands, "grep",     ga_delegate);
   gt_hashmap_add(commands, "log",      ga_delegate);
-  gt_hashmap_add(commands, "merge",    ga_delegate);
   gt_hashmap_add(commands, "pull",     ga_delegate);
   gt_hashmap_add(commands, "push",     ga_delegate);
   gt_hashmap_add(commands, "rebase",   ga_delegate);
@@ -130,6 +130,7 @@ int main(int argc, const char **argv)
   gt_hashmap_add(commands, "commit", ga_commit);
   gt_hashmap_add(commands, "diff",   ga_notyetimplemented);
   gt_hashmap_add(commands, "init",   ga_init);
+  gt_hashmap_add(commands, "merge",  ga_merge);
   gt_hashmap_add(commands, "show",   ga_notyetimplemented);
   gt_hashmap_add(commands, "status", ga_notyetimplemented);
 

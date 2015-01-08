@@ -140,7 +140,7 @@ int ga_init(int argc, char * const *argv)
     gt_str_delete(src);
   }
 
-  current_stream = agn_repo_stream_new(last_stream, argv[1], error);
+  current_stream = agn_repo_stream_new(last_stream, options.repo, error);
   if(current_stream == NULL)
   {
     fprintf(stderr, "[GeneAnnoLogy::init] error setting up repo: %s\n",

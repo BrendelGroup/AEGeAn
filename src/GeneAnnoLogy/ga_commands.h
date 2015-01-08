@@ -23,6 +23,9 @@ int ga_commit(int argc, char * const *argv);
 // Initialize a new repository
 int ga_init(int argc, char * const *argv);
 
+// Merge two sets of annotations into one non-redundant set
+int ga_merge(int argc, char * const *argv);
+
 // Add new annotations to a repository. Keep all old and new annotations: do
 // not attempt to resolve redundant or overlapping annotations.
 int ga_union(int argc, char * const *argv);
