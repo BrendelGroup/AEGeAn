@@ -214,6 +214,7 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
             "<html lang=\"en\">\n"
             "  <body><p>No loci for comparison.</p></body>\n"
             "</html>\n");
+    fclose(outstream);
     return;
   }
 
