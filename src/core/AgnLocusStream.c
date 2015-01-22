@@ -257,7 +257,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         AgnLocus *emptylocus = agn_locus_new(seqid);
         agn_locus_set_range(emptylocus, seqrange.start,
                             locusrange.start - stream->delta - 1);
-        gt_feature_node_add_attribute((GtFeatureNode *)emptylocus,"end","true");
+        GtFeatureNode *elfn = (GtFeatureNode *)emptylocus;
+        gt_feature_node_add_attribute(elfn, "fragment", "true");
         gt_queue_add(stream->locusqueue, emptylocus);
       }
     }
@@ -328,7 +329,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         AgnLocus *term_locus = agn_locus_new(seqid);
         agn_locus_set_range(term_locus,
                             locusrange.end + stream->delta + 1, seqrange.end);
-        gt_feature_node_add_attribute((GtFeatureNode *)term_locus,"end","true");
+        GtFeatureNode *tlfn = (GtFeatureNode *)term_locus;
+        gt_feature_node_add_attribute(tlfn, "fragment", "true");
         gt_queue_add(stream->locusqueue, term_locus);
       }
     }
