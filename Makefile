@@ -140,6 +140,7 @@ agn-test:	all
 		@ test/FBgn0035002.sh $(MEMCHECKFT)
 		@ test/iLocusParsing.sh $(MEMCHECKFT)
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
+		@ test/canon-gff3-ft.sh $(MEMCHECKFT)
 		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
 
 

@@ -219,14 +219,17 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
 
     GtUword num_valid_mrnas = 0;
     GtFeatureNode *current;
-    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
-    GtQueue *invalid_mrnas = gt_queue_new();
+    GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+    GtQueue *invalid_transcripts = gt_queue_new();
     for(current  = gt_feature_node_iterator_next(iter);
         current != NULL;
         current  = gt_feature_node_iterator_next(iter))
     {
       if(!agn_typecheck_mrna(current))
+      {
+        gt_queue_add(invalid_transcripts, current);
         continue;
+      }
 
       GtArray *cds     = agn_typecheck_select(current, agn_typecheck_cds);
       GtArray *exons   = agn_typecheck_select(current, agn_typecheck_exon);
@@ -251,19 +254,19 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
       if(keepmrna)
         num_valid_mrnas++;
       else
-        gt_queue_add(invalid_mrnas, current);
+        gt_queue_add(invalid_transcripts, current);
 
       gt_array_delete(cds);
       gt_array_delete(exons);
       gt_array_delete(introns);
     }
     gt_feature_node_iterator_delete(iter);
-    while(gt_queue_size(invalid_mrnas) > 0)
+    while(gt_queue_size(invalid_transcripts) > 0)
     {
-      GtFeatureNode *mrna = gt_queue_get(invalid_mrnas);
+      GtFeatureNode *mrna = gt_queue_get(invalid_transcripts);
       agn_feature_node_remove_tree(fn, mrna);
     }
-    gt_queue_delete(invalid_mrnas);
+    gt_queue_delete(invalid_transcripts);
 
     if(num_valid_mrnas > 0)
       return 0;
