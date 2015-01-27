@@ -110,7 +110,8 @@ int main(int argc, char **argv)
   // Execute the processing stream
   //----------
   error = gt_error_new();
-  if(gt_node_stream_pull(last_stream, error) == -1)
+  int had_err = gt_node_stream_pull(last_stream, error);
+  if(had_err)
     fprintf(stderr, "Error processing node stream: %s\n", gt_error_get(error));
   gt_error_delete(error);
 
@@ -124,5 +125,5 @@ int main(int argc, char **argv)
   }
   gt_queue_delete(streams);
   gt_lib_clean();
-  return 0;
+  return had_err;
 }
