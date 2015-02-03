@@ -14,7 +14,8 @@ XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
 TD_EXE=bin/tidygff3
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE) $(UT_EXE)
+INSTALL_BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE)
+BINS=$(INSTALL_BINS) $(UT_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -66,22 +67,28 @@ all:		$(BINS) libaegean.a
 		
 
 install:	all
-		@- test -d $(prefix)/bin || mkdir $(prefix)/bin
-		cp $(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE) $(prefix)/bin/.
+		@ mkdir -p $(prefix)/bin/
+		@ mkdir -p $(prefix)/lib/
+		@ mkdir -p $(prefix)/include/aegean/
+		@ mkdir -p $(prefix)/share/aegean/
+		@ rm -f $(prefix)/include/aegean/*
+		cp $(INSTALL_BINS) $(prefix)/bin/.
 		cp libaegean.a $(prefix)/lib/.
-		@- test -d $(prefix)/include/aegean || mkdir $(prefix)/include/aegean
-		@- rm -f $(prefix)/include/aegean/*
 		cp inc/core/*.h $(prefix)/include/aegean/.
-		@- test -d $(prefix)/share || mkdir $(prefix)/share
-		@- test -d $(prefix)/share/aegean || mkdir $(prefix)/share/aegean
 		cp -r data/share/* $(prefix)/share/aegean/.
 
+install-scripts:
+		@ mkdir -p $(prefix)/bin/
+		cp data/scripts/*.p? $(prefix)/bin/.
+
 uninstall:	
-		rm -r $(prefix)/$(PE_EXE)
-		rm -r $(prefix)/share/parseval
+		for exe in $(INSTALL_BINS); do rm -r $(prefix)/$$exe; done
+		rm -r $(prefix)/include/aegean/
+		rm -r $(prefix)/share/aegean/
+		rm $(prefix)/lib/libaegean.a
 
 clean:		
-		rm -rf $(BINS) $(UT_EXE) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM
+		rm -rf $(BINS) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
