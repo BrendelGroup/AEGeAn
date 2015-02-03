@@ -67,7 +67,7 @@ all:		$(BINS) libaegean.a
 
 install:	all
 		@- test -d $(prefix)/bin || mkdir $(prefix)/bin
-		cp $(PE_EXE) $(XT_EXE) $(LP_EXE) $(prefix)/bin/.
+		cp $(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE) $(prefix)/bin/.
 		cp libaegean.a $(prefix)/lib/.
 		@- test -d $(prefix)/include/aegean || mkdir $(prefix)/include/aegean
 		@- rm -f $(prefix)/include/aegean/*
