@@ -40,7 +40,7 @@ def parse_gff3(fp):
 if __name__ == "__main__":
   desc = "Correct a GFF3's sequence-region declarations with Fasta sequences"
   parser = argparse.ArgumentParser(description=desc)
-  parser.add_argument("gff3", help="Annotation in GFF3 format")
+  parser.add_argument("gff3", help="Annotation in GFF3 format; use - for stdin")
   parser.add_argument("fasta", help="Corresponding sequences in Fasta format")
   args = parser.parse_args()
 
@@ -49,6 +49,8 @@ if __name__ == "__main__":
     for seqid, seqlen in seq_len(fp):
       print "##sequence-region   %s 1 %d" % (seqid, seqlen)
 
-  with open(args.gff3, "r") as fp:
-    for entry in parse_gff3(fp):
-      print entry
+  gff3in = sys.stdin
+  if args.gff3 != "-":
+    gff3in = open(args.gff3, "r")
+  for entry in parse_gff3(gff3in):
+    print entry
