@@ -386,6 +386,7 @@ int main(int argc, char **argv)
   const char *featfile, *seqfile;
   char *seqdesc;
   GtError *error;
+  GtHashmap *seqs_observed;
   GtFeatureIndex *features;
   GtNodeStream *current_stream, *last_stream;
   GtQueue *streams;
@@ -441,6 +442,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  seqs_observed = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
   seqfastas = gt_str_array_new();
   gt_str_array_add_cstr(seqfastas, seqfile);
   seqiter = gt_seq_iterator_sequence_buffer_new(seqfastas, error);
@@ -448,6 +450,7 @@ int main(int argc, char **argv)
                                        error)) > 0)
   {
     char *seqid = strtok(seqdesc, " \n\t");
+    gt_hashmap_add(seqs_observed, gt_cstr_dup(seqid), seqs_observed);
     GtArray *seqfeatures =
                 gt_feature_index_get_features_for_seqid(features, seqid, error);
     GtUword nfeats = gt_array_size(seqfeatures);
@@ -474,6 +477,20 @@ int main(int argc, char **argv)
             gt_error_get(error));
     return 1;
   }
+
+  GtStrArray *gff3seqids = gt_feature_index_get_seqids(features, error);
+  GtUword i;
+  for(i = 0; i < gt_str_array_size(gff3seqids); i++)
+  {
+    const char *seqid = gt_str_array_get(gff3seqids, i);
+    if(gt_hashmap_get(seqs_observed, seqid) == NULL)
+    {
+      fprintf(stderr, "[AEGeAn::Xtractore] warning: sequence '%s' contains "
+              "annotated features but no sequence was provided\n", seqid);
+    }
+  }
+  gt_str_array_delete(gff3seqids);
+  gt_hashmap_delete(seqs_observed);
 
   gt_seq_iterator_delete(seqiter);
   gt_str_array_delete(seqfastas);
