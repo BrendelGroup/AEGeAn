@@ -4,5 +4,18 @@ AEGeAn Toolkit Version 0.11
 v0.11.0
 -------
 
-In progress.
+The biggest change with version v0.11 is the updated API for locus parsing. The
+new `AgnLocusStream` class replaces the old two-step procedure involving the
+`AgnLocusStream` class followed by the `AgnIntervalLocusStream` class. All
+locus-parsing settings such as the extension delta and inclusion of sequence
+fragments can be controlled using the new `AgnLocusStream` API. I'm very happy
+that the new locus parsing code is completely streaming, although if you want
+to report iLoci for unannotated sequences this requires an additional step which
+essentially loads all of the data into memory anyway. :-/
 
+Other updates include the following.
+  * With this release, all compiled programs are guaranteed to have a working
+    `-v/--version` flag.
+  * Improvements to version reporting. See #120.
+  * Fixed long-standing issues with ParsEval HTML reports. See #119.
+  * Various other improvements and fixes.
