@@ -1,12 +1,13 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #include <string.h>
 #include "extended/feature_node_iterator_api.h"
 #include "AgnInferParentStream.h"
@@ -21,6 +22,7 @@ struct AgnInferParentStream
   const GtNodeStream parent_instance;
   GtNodeStream *in_stream;
   GtHashmap *type_parents;
+  GtStr *source;
 };
 
 
@@ -75,7 +77,15 @@ GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream,
   stream = infer_parent_stream_cast(ns);
   stream->in_stream = gt_node_stream_ref(in_stream);
   stream->type_parents = gt_hashmap_ref(type_parents);
+  stream->source = gt_str_new_cstr("AEGeAn::AgnInferParentStream");
   return ns;
+}
+
+void agn_infer_parent_stream_set_source(AgnInferParentStream *stream,
+                                        GtStr *source)
+{
+  gt_str_delete(stream->source);
+  stream->source = gt_str_ref(source);
 }
 
 static const GtNodeStreamClass *infer_parent_stream_class(void)
@@ -95,6 +105,7 @@ static void infer_parent_stream_free(GtNodeStream *ns)
   AgnInferParentStream *stream = infer_parent_stream_cast(ns);
   gt_node_stream_delete(stream->in_stream);
   gt_hashmap_delete(stream->type_parents);
+  gt_str_delete(stream->source);
 }
 
 static void
@@ -146,6 +157,7 @@ infer_parent_stream_handle_pseudo(AgnInferParentStream *ips, GtFeatureNode **fn)
     GtGenomeNode *newparent = gt_feature_node_new(seqid, parenttype,
                                                   childrange.start,
                                                   childrange.end, s);
+    gt_feature_node_set_source((GtFeatureNode *)newparent, ips->source);
     gt_genome_node_ref((GtGenomeNode *)child);
     gt_feature_node_add_child((GtFeatureNode *)newparent, child);
     gt_hashmap_add(obsrv_nodes, testfn, newparent);
@@ -206,6 +218,7 @@ static int infer_parent_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     parent = gt_feature_node_new(seqid, parenttype, fnrange.start,
                                  fnrange.end, fnstrand);
     GtFeatureNode *parentfn = gt_feature_node_cast(parent);
+    gt_feature_node_set_source(parentfn, stream->source);
     gt_feature_node_add_child(parentfn, fn);
     *gn = parent;
     return 0;

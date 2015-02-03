@@ -12,8 +12,9 @@ CN_EXE=bin/canon-gff3
 LP_EXE=bin/locuspocus
 XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
+TD_EXE=bin/tidygff3
 UT_EXE=bin/unittests
-BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(UT_EXE)
+BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE) $(UT_EXE)
 
 #----- Source, header, and object files -----#
 
@@ -111,6 +112,11 @@ $(RP_EXE):	src/pmrna.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile $@]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
+
+$(TD_EXE):	src/tidygff3.c $(AGN_OBJS)
+		@ mkdir -p bin
+		@ echo "[compile $@]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/tidygff3.c $(LDFLAGS)
 
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 		@ mkdir -p bin

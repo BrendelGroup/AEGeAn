@@ -1,12 +1,13 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #ifndef AEGEAN_INFER_PARENT_STREAM
 #define AEGEAN_INFER_PARENT_STREAM
 
@@ -33,6 +34,12 @@ typedef struct AgnInferParentStream AgnInferParentStream;
  */
 GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream,
                                           GtHashmap *type_parents);
+
+/**
+ * @function Set the source (GFF3 2nd column) for all inferred features.
+ */
+void agn_infer_parent_stream_set_source(AgnInferParentStream *stream,
+                                        GtStr *source);
 
 /**
  * @function Run unit tests for this class. Returns true if all tests passed.
