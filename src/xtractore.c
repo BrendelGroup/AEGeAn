@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -341,7 +341,13 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   const char *featid   = gt_feature_node_get_attribute(fn, "ID");
   const char *parentid = gt_feature_node_get_attribute(fn, "Parent");
   if(featid)
-    fprintf(options->outfile, ">%s %s\n", featid, subseqid);
+  {
+    const char *featname = gt_feature_node_get_attribute(fn, "Name");
+    if(featname)
+      fprintf(options->outfile, ">%s %s %s\n", featid, featname, subseqid);
+    else
+      fprintf(options->outfile, ">%s %s\n", featid, subseqid);
+  }
   else if(parentid)
     fprintf(options->outfile, ">%s %s\n", parentid, subseqid);
   else
