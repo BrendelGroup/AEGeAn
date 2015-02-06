@@ -253,16 +253,18 @@ static void infer_cds_visitor_check_cds_phase(AgnInferCDSVisitor *v)
     return;
 
   GtFeatureNode *cdsf1 = *(GtFeatureNode **)gt_array_get(v->cds, 0);
+  GtStrand strand = gt_feature_node_get_strand(cdsf1);
+  if(strand == GT_STRAND_REVERSE)
+    cdsf1 = *(GtFeatureNode **)gt_array_get(v->cds, num_cds_feats - 1);
   gt_feature_node_set_phase(cdsf1, GT_PHASE_ZERO);
   if(num_cds_feats == 1)
     return;
 
-  GtStrand strand = gt_feature_node_get_strand(cdsf1);
   unsigned long cds_length = gt_genome_node_get_length((GtGenomeNode *)cdsf1);
-  unsigned long i;
+  int i;
   if(strand == GT_STRAND_REVERSE)
   {
-    for(i = num_cds_feats - 1; i > 0; i--)
+    for(i = num_cds_feats - 2; i >= 0; i--)
     {
       GtFeatureNode *cds = *(GtFeatureNode **)gt_array_get(v->cds, i);
       int phasenum = cds_length % 3;

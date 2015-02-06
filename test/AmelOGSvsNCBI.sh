@@ -13,11 +13,9 @@ bin/parseval --refrlabel=OGS \
              data/gff3/amel-ogs-g716.gff3 \
              data/gff3/amel-ncbi-g716.gff3 \
   | grep -v '^Started' \
-  | sed 's/-nan/nan/' \
   > $tempfile
 
 grep -v '^Started' data/misc/amel-ogs-vs-ncbi-parseval.txt \
-  | sed 's/-nan/nan/' \
   > ${tempfile}.orig
 
 diff $tempfile ${tempfile}.orig > /dev/null 2>&1
