@@ -1,7 +1,14 @@
 #!/usr/bin/env python
-import re, sys
 
-# Usage: check-gff3 < annot.gff3
+# Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+#
+# The AEGeAn Toolkit is distributed under the ISC License. See
+# the 'LICENSE' file in the AEGeAn source code distribution or
+# online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+#
+# Usage: check-gff3.py < annot.gff3
+
+import re, sys
 
 types = {}
 counts = {}
