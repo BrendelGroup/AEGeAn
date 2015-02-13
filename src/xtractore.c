@@ -338,12 +338,12 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   agn_assert(type);
 
   GtStrand strand = gt_feature_node_get_strand(fn);
-  char strandchar = '.';
-  if(strand == GT_STRAND_FORWARD)      strandchar = '+';
-  else if(strand == GT_STRAND_REVERSE) strandchar = '-';
+  char *strandstr = "";
+  if(strand == GT_STRAND_FORWARD)      strandstr = "+";
+  else if(strand == GT_STRAND_REVERSE) strandstr = "-";
 
-  sprintf(subseqid, "%s_%lu-%lu%c", gt_str_get(seqid), range.start, range.end,
-          strandchar);
+  sprintf(subseqid, "%s_%lu-%lu%s", gt_str_get(seqid), range.start, range.end,
+          strandstr);
   const char *featid   = gt_feature_node_get_attribute(fn, "ID");
   const char *parentid = gt_feature_node_get_attribute(fn, "Parent");
   if(featid)
