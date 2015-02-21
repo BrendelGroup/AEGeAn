@@ -1,3 +1,4 @@
 *.h linguist-language=C
 docs linguist-documentation
-data/share/vendor lingust-vendored
+data/share/vendor linguist-vendored
+data/misc/*-html linguist-vendored
