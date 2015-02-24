@@ -23,6 +23,8 @@ def merge_iloci(loci):
   for locus in loci:
     fields = locus.split("\t")
     assert len(fields) == 9
+    if seqid:
+        assert fields[0] == seqid
     seqid = fields[0]
     lstart = int(fields[3])
     lend   = int(fields[4])
@@ -66,6 +68,7 @@ def parse_iloci(fp):
       if len(prev_loci) > 0:
         yield merge_iloci(prev_loci)
         prev_loci = []
+      seqid = locusseqid
 
     if ";gene=" in line:
       prev_loci.append(line)
