@@ -203,7 +203,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
 {
   gt_error_check(error);
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
-  GtFeatureNode *current;
+  GtFeatureNode *current, *subfeat;
   for(current  = gt_feature_node_iterator_next(iter);
       current != NULL;
       current  = gt_feature_node_iterator_next(iter))
@@ -213,7 +213,19 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
 
     const char *attrvalue = gt_feature_node_get_attribute(current, "pseudo");
     if(attrvalue && strcmp(attrvalue, "true") == 0)
+    {
       gt_feature_node_set_type(current, "pseudogene");
+      GtFeatureNodeIterator *subiter = gt_feature_node_iterator_new(current);
+      for(subfeat  = gt_feature_node_iterator_next(subiter);
+          subfeat != NULL;
+          subfeat  = gt_feature_node_iterator_next(subiter))
+      {
+        if(gt_feature_node_has_type(subfeat, "transcript"))
+          gt_feature_node_set_type(subfeat, "pseudogenic_transcript");
+        else if(gt_feature_node_has_type(subfeat, "exon"))
+          gt_feature_node_set_type(subfeat, "pseudogenic_exon");
+      }
+    }
   }
   gt_feature_node_iterator_delete(iter);
   return 0;

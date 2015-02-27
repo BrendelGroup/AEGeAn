@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed CDS phase correction on the reverse strand
 - Corrected non-deterministic selection of primary isoform when multiple isoforms have the same (maximum) length
+- In addition to correcting gene features, `AgnPseudogeneFixStream` also now corrects transcript and exon features as well.
 ### Changed
 - Locations printed by Xtractore (of the form `seqid_start-end`) now include a strand character if strand is defined
 - Began using [this specification](http://keepachangelog.com/) for maintaining a ChangeLog.
