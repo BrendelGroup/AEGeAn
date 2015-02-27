@@ -225,6 +225,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
         else if(gt_feature_node_has_type(subfeat, "exon"))
           gt_feature_node_set_type(subfeat, "pseudogenic_exon");
       }
+      gt_feature_node_iterator_delete(subiter);
     }
   }
   gt_feature_node_iterator_delete(iter);
