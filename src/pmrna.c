@@ -118,7 +118,7 @@ int main(int argc, char **argv)
   //----------
   // Free memory
   //----------
-  while(gt_queue_size(streams) > 1)
+  while(gt_queue_size(streams) > 0)
   {
     stream = gt_queue_get(streams);
     gt_node_stream_delete(stream);
