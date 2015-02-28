@@ -1,0 +1,24 @@
+##gff-version   3
+##sequence-region   NC_007070.3 2867466 12447095
+NC_007070.3	Gnomon	pseudogene	2867466	2870827	.	-	.	ID=gene167;Name=LOC726235;Dbxref=BEEBASE:GB50367,GeneID:726235;gbkey=Gene;gene=LOC726235;pseudo=true
+NC_007070.3	Gnomon	pseudogenic_exon	2867466	2867810	.	-	.	ID=id2060;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=6;gbkey=exon;gene=LOC726235
+NC_007070.3	Gnomon	pseudogenic_exon	2867900	2868158	.	-	.	ID=id2061;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=5;gbkey=exon;gene=LOC726235
+NC_007070.3	Gnomon	pseudogenic_exon	2868394	2868788	.	-	.	ID=id2062;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=4;gbkey=exon;gene=LOC726235
+NC_007070.3	Gnomon	pseudogenic_exon	2868879	2869464	.	-	.	ID=id2063;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=3;gbkey=exon;gene=LOC726235
+NC_007070.3	Gnomon	pseudogenic_exon	2869870	2870091	.	-	.	ID=id2064;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=2;gbkey=exon;gene=LOC726235
+NC_007070.3	Gnomon	pseudogenic_exon	2870507	2870827	.	-	.	ID=id2065;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=1;gbkey=exon;gene=LOC726235
+###
+NC_007070.3	Gnomon	pseudogene	12439836	12447095	.	-	.	ID=gene791;Name=LOC726918;Dbxref=BEEBASE:GB44753,GeneID:726918;gbkey=Gene;gene=LOC726918;pseudo=true
+NC_007070.3	Gnomon	pseudogenic_transcript	12439836	12447095	.	-	.	ID=rna1607;Parent=gene791;Name=XR_120501.2;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12439836	12440600	.	-	.	ID=id10440;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12440784	12440876	.	-	.	ID=id10439;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12440983	12441094	.	-	.	ID=id10438;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12441226	12441417	.	-	.	ID=id10437;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12441495	12441794	.	-	.	ID=id10436;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12441887	12442069	.	-	.	ID=id10435;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12442140	12444571	.	-	.	ID=id10434;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12444702	12445048	.	-	.	ID=id10433;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12445123	12445328	.	-	.	ID=id10432;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12445408	12446204	.	-	.	ID=id10431;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+NC_007070.3	Gnomon	pseudogenic_exon	12446935	12447095	.	-	.	ID=id10430;Parent=rna1607;Dbxref=GeneID:726918,Genbank:XR_120501.2,BEEBASE:GB44753;gbkey=misc_RNA;gene=LOC726918;product=uncharacterized LOC726918;transcript_id=XR_120501.2
+###
