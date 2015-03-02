@@ -15,5 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Python script for merging iLoci.
 - Documentation for GFF3 expectations, both in general and tool-specific terms.
 - Functional tests for primary mRNA selection and pseudogene correction.
+### Removed
+- Discarded vestigial `AgnNodeDeleteVisitor` class.
 
 
