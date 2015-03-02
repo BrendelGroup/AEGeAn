@@ -1,0 +1,29 @@
+##gff-version   3
+##sequence-region   1 2342200 2347000
+1	.	gene	2342274	2346184	.	-	.	ID=gene00001;Name=At1g07620
+1	.	mRNA	2342274	2346184	.	-	.	ID=mRNA00001;Parent=gene00001;Name=At1g07620.1
+1	.	exon	2342274	2343362	.	-	.	Parent=mRNA00001
+1	.	exon	2343456	2343518	.	-	.	Parent=mRNA00001
+1	.	exon	2343541	2343689	.	-	.	Parent=mRNA00001
+1	.	exon	2343852	2343960	.	-	.	Parent=mRNA00001
+1	.	exon	2344060	2344226	.	-	.	Parent=mRNA00001
+1	.	exon	2344633	2345064	.	-	.	Parent=mRNA00001
+1	.	exon	2345143	2346184	.	-	.	Parent=mRNA00001
+1	.	CDS	2342274	2343362	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	CDS	2343456	2343518	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	CDS	2343541	2343689	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	CDS	2343852	2343960	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	CDS	2344060	2344226	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	CDS	2344633	2345064	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	CDS	2345143	2346184	.	-	.	ID=cds000001;Parent=mRNA00001
+1	.	cDNA_match	2342195	2343362	.	-	.	ID=cDNA00001;Name=42473524;full_length_transcript=1
+1	.	cDNA_match	2343456	2343518	.	-	.	ID=cDNA00001;Name=42473524;full_length_transcript=1
+1	.	cDNA_match	2343607	2343689	.	-	.	ID=cDNA00001;Name=42473524;full_length_transcript=1
+1	.	cDNA_match	2343852	2343960	.	-	.	ID=cDNA00001;Name=42473524;full_length_transcript=1
+1	.	cDNA_match	2344060	2344268	.	-	.	ID=cDNA00001;Name=42473524;full_length_transcript=1
+1	.	cDNA_match	2344393	2345064	.	-	.	ID=cDNA00002;Name=51968419;full_length_transcript=1
+1	.	cDNA_match	2345143	2346159	.	-	.	ID=cDNA00002;Name=51968419;full_length_transcript=1
+1	.	cDNA_match	2346242	2346386	.	-	.	ID=cDNA00002;Name=51968419;full_length_transcript=1
+1	.	cDNA_match	2346627	2346839	.	-	.	ID=cDNA00002;Name=51968419;full_length_transcript=1
+1	.	EST_match	2344530	2344803	.	-	.	ID=EST00001;Name=40452728;end_type=T
+1	.	EST_match	2342196	2342525	.	-	.	ID=EST00002;Name=8729125;end_type=T
