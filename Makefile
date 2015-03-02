@@ -155,6 +155,7 @@ agn-test:	all
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/canon-gff3-ft.sh $(MEMCHECKFT)
 		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
+		@ test/align-convert.sh
 		@ test/misc-ft.sh $(MEMCHECKFT)
 
 
