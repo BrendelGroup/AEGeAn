@@ -29,8 +29,8 @@ typedef struct AgnGaevalVisitor AgnGaevalVisitor;
  */
 struct AgnGaevalParams
 {
-  double galpha;
-  double gbeta;
+  double alpha;
+  double beta;
   double gamma;
   double epsilon;
   GtUword exp_cds_len;

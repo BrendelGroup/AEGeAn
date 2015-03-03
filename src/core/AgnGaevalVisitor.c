@@ -15,6 +15,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "extended/feature_index_memory_api.h"
 #include "AgnFilterStream.h"
 #include "AgnGaevalVisitor.h"
+#include "AgnInferExonsVisitor.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
 

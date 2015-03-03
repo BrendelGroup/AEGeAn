@@ -10,11 +10,12 @@ prefix=/usr/local
 PE_EXE=bin/parseval
 CN_EXE=bin/canon-gff3
 LP_EXE=bin/locuspocus
+GV_EXE=bin/gaeval
 XT_EXE=bin/xtractore
 RP_EXE=bin/pmrna
 TD_EXE=bin/tidygff3
 UT_EXE=bin/unittests
-INSTALL_BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE)
+INSTALL_BINS=$(PE_EXE) $(CN_EXE) $(LP_EXE) $(GV_EXE) $(XT_EXE) $(RP_EXE) $(TD_EXE)
 BINS=$(INSTALL_BINS) $(UT_EXE)
 
 #----- Source, header, and object files -----#
@@ -110,6 +111,11 @@ $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@ echo "[compile LocusPocus]"
 		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
 
+$(GV_EXE):	src/gaeval.c $(AGN_OBJS)
+		@ mkdir -p bin
+		@ echo "[compile GAEVAL]"
+		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/gaeval.c $(LDFLAGS)
+
 $(XT_EXE):	src/xtractore.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile Xtractore]"
@@ -154,6 +160,7 @@ agn-test:	all
 		@ test/iLocusParsing.sh $(MEMCHECKFT)
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/canon-gff3-ft.sh $(MEMCHECKFT)
+		@ test/gaeval-ft.sh $(MEMCHECKFT)
 		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
 		@ test/align-convert.sh
 		@ test/misc-ft.sh $(MEMCHECKFT)
