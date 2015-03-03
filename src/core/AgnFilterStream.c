@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -136,7 +136,8 @@ static int filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
         continue;
 
       gt_genome_node_ref((GtGenomeNode *)current);
-      if(gt_feature_node_is_multi(current))
+      if(gt_feature_node_is_multi(current) &&
+         gt_feature_node_is_pseudo(current) == false)
       {
         GtFeatureNode *rep = gt_feature_node_get_multi_representative(current);
         GtFeatureNode *parent = gt_hashmap_get(multi_parents, rep);
