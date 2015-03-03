@@ -208,6 +208,7 @@ static double gaeval_visitor_calculate_coverage(AgnGaevalVisitor *v,
   }
   double coverage = gaeval_visitor_coverage_resolve(genemodel, exon_coverage);
   gt_array_delete(exon_coverage);
+  gt_array_delete(overlapping);
 
   return coverage;
 }
@@ -401,6 +402,10 @@ static void gv_test_calc_coverage(AgnUnitTest *test)
 
   gt_error_delete(error);
   gt_array_delete(feats);
+  gt_genome_node_delete((GtGenomeNode *)g1);
+  gt_genome_node_delete((GtGenomeNode *)g2);
+  gt_genome_node_delete((GtGenomeNode *)g3);
+  gt_node_visitor_delete(nv);
 }
 
 static void gv_test_intersect(AgnUnitTest *test)
@@ -503,6 +508,15 @@ static void gv_test_intersect(AgnUnitTest *test)
   gt_array_delete(cov);
 
   gt_array_delete(feats);
+  gt_genome_node_delete(g1);
+  gt_genome_node_delete(g2);
+  gt_genome_node_delete(g3);
+  gt_genome_node_delete(est1);
+  gt_genome_node_delete(est2);
+  gt_genome_node_delete(est3);
+  gt_genome_node_delete(est4);
+  gt_genome_node_delete(est5);
+  gt_genome_node_delete(est6);
 }
 
 static void gv_test_range_intersect(AgnUnitTest *test)
