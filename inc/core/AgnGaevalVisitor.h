@@ -15,14 +15,17 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnUnitTest.h"
 
 /**
- * @class AgnInferExonsVisitor
+ * @class AgnGaevalVisitor
  *
- * FIXME
+ * Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node
+ * visitor used for calculating transcript coverage and integrity scores for
+ * gene models using alignment data.
  */
 typedef struct AgnGaevalVisitor AgnGaevalVisitor;
 
 /**
- * @type FIXME
+ * @type Parameters used in calculating GAEVAL integrity.
+ * See http://www.plantgdb.org/GAEVAL/docs/integrity.html
  */
 struct AgnGaevalParams
 {
