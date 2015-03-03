@@ -9,6 +9,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 
 #include <getopt.h>
+#include <math.h>
 #include "genometools.h"
 #include "AgnGaevalVisitor.h"
 #include "AgnInferExonsVisitor.h"
@@ -39,9 +40,19 @@ static void print_usage(FILE *outstream)
 "\ngaeval: calculate coverage and intergrity scores for gene models based on "
 "transcript alignments\n"
 "Usage: gaeval [options] alignments.gff3 genes.gff3 [moregenes.gff3 ...]\n"
-"  Options:\n"
-"    -h|--help           print this help message and exit\n"
-"    -v|--version        print version number and exit\n\n");
+"  Basic options:\n"
+"    -h|--help               print this help message and exit\n"
+"    -v|--version            print version number and exit\n\n"
+"  Weights for calculating integrity score (must add up to 1.0):\n"
+"    -a|--alpha: DOUBLE      introns confirmed, or %% expected CDS length for\n"
+"                            single-exon genes; default is 0.6\n"
+"    -b|--beta: DOUBLE       exon coverage; default is 0.3\n"
+"    -g|--gamma: DOUBLE      %% expected 5' UTR length; default is 0.05\n"
+"    -e|--epsilon: DOUBLE    %% expected 3' UTR length; default is 0.05\n\n"
+"  Expected feature lengths for calculating integrity score:\n"
+"    -c|--exp-cds: INT       expected CDS length (in bp); default is 400\n"
+"    -5|--exp-5putr: INT     expected 5' UTR length; default is 200\n"
+"    -3|--exp-3putr: INT     expected 3' UTR length; default is 100\n\n");
 }
 
 static void parse_options(int argc, char **argv, GaevalOptions *options)
@@ -49,21 +60,50 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
   default_params(&options->params);
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hv";
+  const char *optstr = "hva:b:g:e:c:5:3:";
   const struct option gaeval_options[] =
   {
-    { "help",    no_argument, NULL, 'h' },
-    { "version", no_argument, NULL, 'v' },
+    { "help",      no_argument,       NULL, 'h' },
+    { "version",   no_argument,       NULL, 'v' },
+    { "alpha",     required_argument, NULL, 'a' },
+    { "beta",      required_argument, NULL, 'b' },
+    { "gamma",     required_argument, NULL, 'g' },
+    { "epsilon",   required_argument, NULL, 'e' },
+    { "exp-cds",   required_argument, NULL, 'c' },
+    { "exp-5putr", required_argument, NULL, '5' },
+    { "exp-3putr", required_argument, NULL, '3' },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, gaeval_options, &optindex);
       opt != -1;
       opt  = getopt_long(argc, argv + 0, optstr, gaeval_options, &optindex))
   {
-    if(opt == 'h')
+    if(opt == '3')
+      options->params.exp_3putr_len = atoi(optarg);
+
+    else if(opt == '5')
+      options->params.exp_5putr_len = atoi(optarg);
+
+    else if(opt == 'a')
+      options->params.alpha = atof(optarg);
+
+    else if(opt == 'b')
+      options->params.beta = atof(optarg);
+
+    else if(opt == 'c')
+      options->params.exp_cds_len = atoi(optarg);
+
+    else if(opt == 'e')
+      options->params.epsilon = atof(optarg);
+
+    else if(opt == 'h')
     {
       print_usage(stdout);
       exit(0);
     }
+
+    else if(opt == 'g')
+      options->params.gamma = atof(optarg);
+
     else if(opt == 'v')
     {
       agn_print_version("GAEVAL", stdout);
@@ -74,10 +114,21 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
   if(numargs < 2)
   {
     print_usage(stderr);
-    fprintf(stderr, "[AEGeAn::GAEVAL] error: must provide at least 2 input "
-            "files, %d provided\n", numargs);
+    fprintf(stderr, "error: must provide at least 2 input files, %d provided\n",
+            numargs);
     exit(1);
   }
+
+  double weight_total = options->params.alpha + options->params.beta +
+                        options->params.gamma + options->params.epsilon;
+  if(fabs(weight_total - 1.0) > 0.00001)
+  {
+    print_usage(stderr);
+    fprintf(stderr, "error: integrity score weights must add up to 1.0; "
+            "specified weights total %.2lf\n", weight_total);
+    exit(1);
+  }
+
   options->alignfile = argv[optind + 0];
   options->genefiles = (const char **)argv + optind + 1;
   options->numgenefiles = numargs - 1;

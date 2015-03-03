@@ -394,9 +394,9 @@ static void gv_test_calc_coverage(AgnUnitTest *test)
   double cov1 = gaeval_visitor_calculate_coverage(gv, g1, error);
   double cov2 = gaeval_visitor_calculate_coverage(gv, g2, error);
   double cov3 = gaeval_visitor_calculate_coverage(gv, g3, error);
-  bool test1 = abs(cov1 - 0.252) < 0.00001 &&
-               abs(cov2 - 0.473) < 0.00001 &&
-               abs(cov3 - 1.000) < 0.00001;
+  bool test1 = fabs(cov1 - 0.252) < 0.001 &&
+               fabs(cov2 - 0.473) < 0.001 &&
+               fabs(cov3 - 1.000) < 0.001;
 
   agn_unit_test_result(test, "calculate coverage", test1);
 
