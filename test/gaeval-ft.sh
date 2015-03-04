@@ -19,5 +19,20 @@ result="FAIL"
 if [[ $status == 0 ]]; then
   result="PASS"
 fi
-printf "        | %-36s | %s\n" "unit test 1" $result
+printf "        | %-36s | %s\n" "sans CDS" $result
+rm $tempfile
+
+
+$memcheckcmd \
+bin/gaeval data/gff3/gaeval-stream-unit-test-2.gff3 \
+           data/gff3/gaeval-stream-unit-test-2.gff3 \
+    > $tempfile
+
+diff $tempfile data/gff3/gaeval-stream-unit-test-2-out.gff3 > /dev/null
+status=$?
+result="FAIL"
+if [[ $status == 0 ]]; then
+  result="PASS"
+fi
+printf "        | %-36s | %s\n" "Pdom" $result
 rm $tempfile

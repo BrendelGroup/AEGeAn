@@ -101,6 +101,16 @@ void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
 bool agn_feature_overlap_check(GtArray *feats);
 
 /**
+ * @function Determine the length of an mRNA's 3' UTR.
+ */
+GtUword agn_mrna_3putr_length(GtFeatureNode *mrna);
+
+/**
+ * @function Determine the length of an mRNA's 5'UTR.
+ */
+GtUword agn_mrna_5putr_length(GtFeatureNode *mrna);
+
+/**
  * @function Determine the length of an mRNA's coding sequence.
  */
 GtUword agn_mrna_cds_length(GtFeatureNode *mrna);

@@ -1,0 +1,95 @@
+##gff-version   3
+##sequence-region   scaffold9 47520 56748
+scaffold9	maker	gene	47520	52539	.	+	.	ID=gene1
+scaffold9	maker	mRNA	47520	52539	.	+	.	ID=mRNA1;Parent=gene1;_AED=0.10;_eAED=0.10;gaeval_coverage=1.000;gaeval_integrity=0.850
+scaffold9	maker	exon	47520	47801	.	+	.	Parent=mRNA1
+scaffold9	maker	five_prime_UTR	47520	47801	.	+	.	ID=five_prime_UTR1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	intron	47802	50948	.	+	.	Parent=mRNA1
+scaffold9	maker	five_prime_UTR	50949	50966	.	+	.	ID=five_prime_UTR1;Parent=mRNA1
+scaffold9	maker	exon	50949	51063	.	+	.	Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	start_codon	50967	50969	.	+	.	Parent=mRNA1
+scaffold9	maker	CDS	50967	51063	.	+	0	ID=CDS1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	intron	51064	51281	.	+	.	Parent=mRNA1
+scaffold9	maker	exon	51282	51443	.	+	.	Parent=mRNA1
+scaffold9	maker	CDS	51282	51443	.	+	2	ID=CDS1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	intron	51444	51605	.	+	.	Parent=mRNA1
+scaffold9	maker	exon	51606	51716	.	+	.	Parent=mRNA1
+scaffold9	maker	CDS	51606	51716	.	+	2	ID=CDS1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	intron	51717	51809	.	+	.	Parent=mRNA1
+scaffold9	maker	exon	51810	51994	.	+	.	Parent=mRNA1
+scaffold9	maker	CDS	51810	51994	.	+	2	ID=CDS1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	intron	51995	52075	.	+	.	Parent=mRNA1
+scaffold9	maker	exon	52076	52220	.	+	.	Parent=mRNA1
+scaffold9	maker	CDS	52076	52220	.	+	0	ID=CDS1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	intron	52221	52528	.	+	.	Parent=mRNA1
+scaffold9	maker	exon	52529	52539	.	+	.	Parent=mRNA1
+scaffold9	maker	CDS	52529	52539	.	+	2	ID=CDS1;Parent=mRNA1
+scaffold9	AEGeAn::GAEVAL	stop_codon	52537	52539	.	+	.	Parent=mRNA1
+###
+scaffold9	GeneSeqer	nucleotide_match	47520	47801	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	50949	51063	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	51282	51443	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	51606	51716	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	51810	51994	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	52076	52240	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	52529	52633	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	53083	53216	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	53869	54031	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	54195	54371	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	54640	54912	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	54997	55589	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	55920	56185	.	+	.	ID=nucleotide_match1
+scaffold9	GeneSeqer	nucleotide_match	56346	56748	.	+	.	ID=nucleotide_match1
+###
+scaffold9	GeneSeqer	nucleotide_match	47520	47801	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	50949	51063	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	51282	51443	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	51606	51716	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	51810	51994	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	52080	52240	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	52529	52633	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	53083	53216	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	53869	54031	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	54195	54371	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	54640	54912	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	54997	55164	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	56072	56185	.	+	.	ID=nucleotide_match2
+scaffold9	GeneSeqer	nucleotide_match	56346	56748	.	+	.	ID=nucleotide_match2
+###
+scaffold9	GeneSeqer	nucleotide_match	48610	48948	.	+	.	.
+scaffold9	maker	gene	52878	56748	.	+	.	ID=gene2
+scaffold9	maker	mRNA	52878	56748	.	+	.	ID=mRNA2;Parent=gene2;_AED=0.24;_eAED=0.24;gaeval_coverage=0.997;gaeval_integrity=0.863
+scaffold9	AEGeAn::GAEVAL	start_codon	52878	52880	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	52878	52883	.	+	.	Parent=mRNA2
+scaffold9	maker	CDS	52878	52883	.	+	0	ID=CDS2;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	52884	53082	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	53083	53216	.	+	.	Parent=mRNA2
+scaffold9	maker	CDS	53083	53216	.	+	0	ID=CDS2;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	53217	53868	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	53869	54031	.	+	.	Parent=mRNA2
+scaffold9	maker	CDS	53869	54031	.	+	1	ID=CDS2;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	54032	54194	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	54195	54371	.	+	.	Parent=mRNA2
+scaffold9	maker	CDS	54195	54371	.	+	0	ID=CDS2;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	54372	54639	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	54640	54912	.	+	.	Parent=mRNA2
+scaffold9	maker	CDS	54640	54912	.	+	0	ID=CDS2;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	54913	54996	.	+	.	Parent=mRNA2
+scaffold9	maker	CDS	54997	55170	.	+	0	ID=CDS2;Parent=mRNA2
+scaffold9	maker	exon	54997	55589	.	+	.	Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	stop_codon	55168	55170	.	+	.	Parent=mRNA2
+scaffold9	maker	three_prime_UTR	55171	55589	.	+	.	ID=three_prime_UTR1;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	55590	55919	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	55920	56185	.	+	.	Parent=mRNA2
+scaffold9	maker	three_prime_UTR	55920	56185	.	+	.	ID=three_prime_UTR1;Parent=mRNA2
+scaffold9	AEGeAn::GAEVAL	intron	56186	56345	.	+	.	Parent=mRNA2
+scaffold9	maker	exon	56346	56748	.	+	.	Parent=mRNA2
+scaffold9	maker	three_prime_UTR	56346	56748	.	+	.	ID=three_prime_UTR1;Parent=mRNA2
+###
+scaffold9	GeneSeqer	nucleotide_match	53670	53891	.	+	.	.
+scaffold9	GeneSeqer	nucleotide_match	55550	56185	.	+	.	ID=nucleotide_match3
+scaffold9	GeneSeqer	nucleotide_match	56346	56748	.	+	.	ID=nucleotide_match3
+###
+scaffold9	GeneSeqer	nucleotide_match	55935	56185	.	+	.	ID=nucleotide_match4
+scaffold9	GeneSeqer	nucleotide_match	56346	56748	.	+	.	ID=nucleotide_match4
+###

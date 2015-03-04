@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Corrected non-deterministic selection of primary isoform when multiple isoforms have the same (maximum) length.
 - In addition to correcting gene features, `AgnPseudogeneFixStream` also now corrects transcript and exon features as well.
 - Corrected memory leak in pmrna.
+- Implemented the advertised (but missing) `set_source` functionality in `AgnInferCDSVisitor` class.
 ### Changed
 - Locations printed by Xtractore (of the form `seqid_start-end`) now include a strand character if strand is defined.
 - Began using [this specification](http://keepachangelog.com/) for maintaining a ChangeLog.

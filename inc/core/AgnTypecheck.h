@@ -34,6 +34,13 @@ GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *));
 bool agn_typecheck_exon(GtFeatureNode *fn);
 
 /**
+ * @function Traverse the feature graph starting at `root` and add up the length
+ * of all features matching the given selection function `func`.
+ */
+GtUword agn_typecheck_feature_combined_length(GtFeatureNode *root,
+                                              bool (*func)(GtFeatureNode *));
+
+/**
  * @function Returns true if the given feature is a gene; false otherwise.
  */
 bool agn_typecheck_gene(GtFeatureNode *fn);

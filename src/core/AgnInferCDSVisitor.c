@@ -339,6 +339,8 @@ static void infer_cds_visitor_check_start(AgnInferCDSVisitor *v)
                                                      startrange.start,
                                                      startrange.end,
                                                      strand);
+    if(v->source)
+      gt_feature_node_set_source((GtFeatureNode *)codonfeature, v->source);
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
     gt_array_add(v->starts, cf);
@@ -390,6 +392,8 @@ static void infer_cds_visitor_check_stop(AgnInferCDSVisitor *v)
                                                      stoprange.start,
                                                      stoprange.end,
                                                      strand);
+    if(v->source)
+      gt_feature_node_set_source((GtFeatureNode *)codonfeature, v->source);
     GtFeatureNode *cf = (GtFeatureNode *)codonfeature;
     gt_feature_node_add_child(v->mrna, cf);
     gt_array_add(v->stops, cf);
@@ -453,6 +457,8 @@ static void infer_cds_visitor_infer_cds(AgnInferCDSVisitor *v)
       GtGenomeNode *cdsfeat;
       cdsfeat = gt_feature_node_new(gt_genome_node_get_seqid(exon_gn), "CDS",
                                     cdsrange.start, cdsrange.end, exon_strand);
+      if(v->source)
+        gt_feature_node_set_source((GtFeatureNode *)cdsfeat, v->source);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)cdsfeat);
       gt_array_add(v->cds, cdsfeat);
     }
@@ -555,6 +561,8 @@ static void infer_cds_visitor_infer_utrs(AgnInferCDSVisitor *v)
       GtGenomeNode *utr = gt_feature_node_new(gt_genome_node_get_seqid(*exon),
                                               lefttype, utrrange.start,
                                               utrrange.end, strand);
+      if(v->source)
+        gt_feature_node_set_source((GtFeatureNode *)utr, v->source);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)utr);
       gt_array_add(v->utrs, utr);
     }
@@ -574,6 +582,8 @@ static void infer_cds_visitor_infer_utrs(AgnInferCDSVisitor *v)
       GtGenomeNode *utr = gt_feature_node_new(gt_genome_node_get_seqid(*exon),
                                               righttype, utrrange.start,
                                               utrrange.end, strand);
+      if(v->source)
+        gt_feature_node_set_source((GtFeatureNode *)utr, v->source);
       gt_feature_node_add_child(v->mrna, (GtFeatureNode *)utr);
       gt_array_add(v->utrs, utr);
     }

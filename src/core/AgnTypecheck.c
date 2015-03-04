@@ -7,6 +7,7 @@ the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+#include <string.h>
 #include "extended/feature_node_iterator_api.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
@@ -38,6 +39,30 @@ GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
 bool agn_typecheck_exon(GtFeatureNode *fn)
 {
   return gt_feature_node_has_type(fn, "exon");
+}
+
+GtUword agn_typecheck_feature_combined_length(GtFeatureNode *root,
+                                              bool (*func)(GtFeatureNode *))
+{
+  GtUword totallength = 0;
+  const char *id = NULL;
+  GtArray *parts = agn_typecheck_select(root, func);
+  while(gt_array_size(parts) > 0)
+  {
+    GtGenomeNode **part = gt_array_pop(parts);
+    GtFeatureNode *partfn = gt_feature_node_cast(*part);
+    const char *fid = gt_feature_node_get_attribute(partfn, "ID");
+    if(fid)
+    {
+      if(id == NULL)
+        id = fid;
+      else
+        agn_assert(strcmp(id, fid) == 0);
+    }
+    totallength += gt_genome_node_get_length(*part);
+  }
+  gt_array_delete(parts);
+  return totallength;
 }
 
 bool agn_typecheck_gene(GtFeatureNode *fn)

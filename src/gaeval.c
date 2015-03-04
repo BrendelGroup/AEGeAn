@@ -12,6 +12,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include <math.h>
 #include "genometools.h"
 #include "AgnGaevalVisitor.h"
+#include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
 #include "AgnUtils.h"
 
@@ -154,7 +155,7 @@ int main(int argc, char **argv)
   gt_queue_add(streams, stream);
   align_stream = stream;
 
-  stream = gt_gff3_in_stream_new_unsorted(options.numgenefiles, 
+  stream = gt_gff3_in_stream_new_unsorted(options.numgenefiles,
                                           options.genefiles);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)stream);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)stream);
@@ -163,6 +164,10 @@ int main(int argc, char **argv)
 
   GtStr *source = gt_str_new_cstr("AEGeAn::GAEVAL");
   GtLogger *logger = gt_logger_new(true, "", stderr);
+  stream = agn_infer_cds_stream_new(last_stream, source, logger);
+  gt_queue_add(streams, stream);
+  last_stream = stream;
+
   stream = agn_infer_exons_stream_new(last_stream, source, logger);
   gt_queue_add(streams, stream);
   last_stream = stream;

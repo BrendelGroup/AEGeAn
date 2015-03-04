@@ -46,6 +46,14 @@ static double gaeval_visitor_calculate_coverage(AgnGaevalVisitor *v,
                                                 GtError *error);
 
 /**
+ * @function Calculate integrity for the given gene model.
+ */
+static double gaeval_visitor_calculate_integrity(AgnGaevalVisitor *v,
+                                                 GtFeatureNode *genemodel,
+                                                 double coverage,
+                                                 GtError *error);
+
+/**
  * @function Cast a node visitor object as a AgnGaevalVisitor.
  */
 static const GtNodeVisitorClass* gaeval_visitor_class();
@@ -69,10 +77,21 @@ static GtArray*
 gaeval_visitor_intersect(GtGenomeNode *genemodel, GtGenomeNode *alignment);
 
 /**
+ * @function Calculate the proportion of introns confirmed by gaps in
+ * overlapping alignments.
+ */
+static double gaeval_visitor_introns_confirmed(GtArray *introns, GtArray *gaps);
+
+/**
  * @function Determine the overlap, if any, between the two ranges. Returns the
  * null range {0,0} in case of no overlap.
  */
 static GtRange gaeval_visitor_range_intersect(GtRange *r1, GtRange *r2);
+
+/**
+ * @function Typecheck select function for grabbing `match_gap` features.
+ */
+static bool gaeval_visitor_typecheck_gap(GtFeatureNode *fn);
 
 /**
  * @function Used to bombine the coverage from individual alignments into a
@@ -132,17 +151,38 @@ agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
   v->alignments = gt_feature_index_memory_new();
   v->params = gparams;
 
+
   // Set up node stream to load alignment features into memory
+  GtQueue *streams = gt_queue_new();
+  GtNodeStream *stream, *last_stream;
   GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
   gt_hashmap_add(typestokeep, "cDNA_match", "cDNA_match");
   gt_hashmap_add(typestokeep, "EST_match", "EST_match");
   gt_hashmap_add(typestokeep, "nucleotide_match", "nucleotide_match");
-  GtNodeStream *fstream = agn_filter_stream_new(astream, typestokeep);
-  GtNodeStream *align_stream = gt_feature_out_stream_new(fstream,v->alignments);
+  stream = agn_filter_stream_new(astream, typestokeep);
+  gt_queue_add(streams, stream);
+  last_stream = stream;
+
+  stream = gt_feature_out_stream_new(last_stream, v->alignments);
+  gt_queue_add(streams, stream);
+  last_stream = stream;
+
+  stream = gt_inter_feature_stream_new(last_stream, "cDNA_match", "match_gap");
+  gt_queue_add(streams, stream);
+  last_stream = stream;
+
+  stream = gt_inter_feature_stream_new(last_stream, "EST_match", "match_gap");
+  gt_queue_add(streams, stream);
+  last_stream = stream;
+
+  stream = gt_inter_feature_stream_new(last_stream, "nucleotide_match",
+                                       "match_gap");
+  gt_queue_add(streams, stream);
+  last_stream = stream;
 
   // Process the node stream
   GtError *error = gt_error_new();
-  int result = gt_node_stream_pull(align_stream, error);
+  int result = gt_node_stream_pull(last_stream, error);
   if(result == -1)
   {
     fprintf(stderr, "[AEGeAn::AgnGaevalStream] error parsing alignments: %s\n",
@@ -152,8 +192,12 @@ agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
   }
   gt_error_delete(error);
   gt_hashmap_delete(typestokeep);
-  gt_node_stream_delete(fstream);
-  gt_node_stream_delete(align_stream);
+  while(gt_queue_size(streams) > 0)
+  {
+    stream = gt_queue_get(streams);
+    gt_node_stream_delete(stream);
+  }
+  gt_queue_delete(streams);
 
   return nv;
 }
@@ -197,7 +241,7 @@ static double gaeval_visitor_calculate_coverage(AgnGaevalVisitor *v,
   GtUword i;
   for(i = 0; i < gt_array_size(overlapping); i++)
   {
-    GtFeatureNode *alignment = *(GtFeatureNode **)gt_array_get(overlapping,i);
+    GtFeatureNode *alignment = *(GtFeatureNode **)gt_array_get(overlapping, i);
     GtArray *covered_parts = gaeval_visitor_intersect((GtGenomeNode*)genemodel,
                                                       (GtGenomeNode*)alignment);
     if(covered_parts != NULL)
@@ -213,23 +257,78 @@ static double gaeval_visitor_calculate_coverage(AgnGaevalVisitor *v,
   return coverage;
 }
 
+static double gaeval_visitor_calculate_integrity(AgnGaevalVisitor *v,
+                                                 GtFeatureNode *genemodel,
+                                                 double coverage,
+                                                 GtError *error)
+{
+  agn_assert(v && genemodel);
+
+  GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)genemodel);
+  GtRange mrna_range = gt_genome_node_get_range((GtGenomeNode *)genemodel);
+  GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
+  gt_feature_index_get_features_for_range(v->alignments, overlapping,
+                                          gt_str_get(seqid), &mrna_range,
+                                          error);
+  GtArray *gaps = gt_array_new( sizeof(GtFeatureNode *) );
+  while(gt_array_size(overlapping) > 0)
+  {
+    GtFeatureNode *alignment = *(GtFeatureNode **)gt_array_pop(overlapping);
+    GtArray *agaps = agn_typecheck_select(alignment,
+                                          gaeval_visitor_typecheck_gap);
+    gt_array_add_array(gaps, agaps);
+    gt_array_delete(agaps);
+  }
+  gt_array_delete(overlapping);
+
+  GtUword utr5p_len = agn_mrna_5putr_length(genemodel);
+  double utr5p_score = 0.0;
+  if(utr5p_len >= v->params.exp_5putr_len)
+    utr5p_score = 1.0;
+  else
+    utr5p_score = (double)utr5p_len / (double)v->params.exp_5putr_len;
+
+  GtUword utr3p_len = agn_mrna_3putr_length(genemodel);
+  double utr3p_score = 0.0;
+  if(utr3p_len >= v->params.exp_3putr_len)
+    utr3p_score = 1.0;
+  else
+    utr3p_score = (double)utr3p_len / (double)v->params.exp_3putr_len;
+
+  GtArray *introns = agn_typecheck_select(genemodel, agn_typecheck_intron);
+  GtUword exoncount = agn_typecheck_count(genemodel, agn_typecheck_exon);
+  agn_assert(gt_array_size(introns) == exoncount - 1);
+  double structure_score = 0.0;
+  if(gt_array_size(introns) == 0)
+  {
+    GtUword cdslen = agn_mrna_cds_length(genemodel);
+    if(cdslen >= v->params.exp_cds_len)
+      structure_score = 1.0;
+    else
+      structure_score = (double)cdslen / (double)v->params.exp_cds_len;
+  }
+  else
+  {
+    structure_score = gaeval_visitor_introns_confirmed(introns, gaps);
+  }
+  gt_array_delete(gaps);
+
+  double integrity = (v->params.alpha   * structure_score) +
+                     (v->params.beta    * coverage)        +
+                     (v->params.gamma   * utr5p_score)     +
+                     (v->params.epsilon * utr3p_score);
+
+  return integrity;
+}
+
 static double gaeval_visitor_coverage_resolve(GtFeatureNode *genemodel,
                                               GtArray *exon_coverage)
 {
   agn_assert(genemodel && exon_coverage);
   agn_assert(gt_feature_node_has_type(genemodel, "mRNA"));
 
-  GtUword cum_exon_length = 0;
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(genemodel);
-  GtFeatureNode *tempfeat;
-  for(tempfeat  = gt_feature_node_iterator_next(iter);
-      tempfeat != NULL;
-      tempfeat  = gt_feature_node_iterator_next(iter))
-  {
-    if(gt_feature_node_has_type(tempfeat, "exon"))
-      cum_exon_length += gt_genome_node_get_length((GtGenomeNode *)tempfeat);
-  }
-  gt_feature_node_iterator_delete(iter);
+  GtUword cum_exon_length =
+      agn_typecheck_feature_combined_length(genemodel, agn_typecheck_exon);
 
   GtUword i, covered = 0;
   for(i = 0; i < gt_array_size(exon_coverage); i++)
@@ -278,16 +377,50 @@ gaeval_visitor_intersect(GtGenomeNode *genemodel, GtGenomeNode *alignment)
         tempaln != NULL;
         tempaln  = gt_feature_node_iterator_next(aniter))
     {
+      if(gt_feature_node_has_type(tempaln, "match_gap"))
+        continue;
       GtRange alnrange = gt_genome_node_get_range((GtGenomeNode *) tempaln);
       GtRange intr = gaeval_visitor_range_intersect(&featrange, &alnrange);
       if(gt_range_compare(&intr, &nullrange) != 0)
+      {
         gt_array_add(covered_parts, intr);
+      }
     }
     gt_feature_node_iterator_delete(aniter);
   }
   gt_feature_node_iterator_delete(gniter);
 
   return covered_parts;
+}
+
+static double gaeval_visitor_introns_confirmed(GtArray *introns, GtArray *gaps)
+{
+  agn_assert(introns && gaps);
+  GtUword intron_count = gt_array_size(introns);
+  GtUword gap_count = gt_array_size(gaps);
+  agn_assert(intron_count > 0);
+
+  if(gap_count == 0)
+    return 0.0;
+
+  GtUword i, j, num_confirmed = 0;
+  for(i = 0; i < intron_count; i++)
+  {
+    GtGenomeNode *intron = *(GtGenomeNode **)gt_array_get(introns, i);
+    GtRange intron_range = gt_genome_node_get_range(intron);
+    for(j = 0; j < gap_count; j++)
+    {
+      GtGenomeNode *gap = *(GtGenomeNode **)gt_array_get(gaps, j);
+      GtRange gap_range = gt_genome_node_get_range(gap);
+      if(gt_range_compare(&intron_range, &gap_range) == 0)
+      {
+        num_confirmed++;
+        break;
+      }
+    }
+  }
+
+  return (double)num_confirmed / (double)intron_count;
 }
 
 static GtRange gaeval_visitor_range_intersect(GtRange *r1, GtRange *r2)
@@ -302,6 +435,11 @@ static GtRange gaeval_visitor_range_intersect(GtRange *r1, GtRange *r2)
   }
   GtRange nullrange = {0, 0};
   return nullrange;
+}
+
+static bool gaeval_visitor_typecheck_gap(GtFeatureNode *fn)
+{
+  return gt_feature_node_has_type(fn, "match_gap");
 }
 
 static void gaeval_visitor_union(GtArray *cov1, GtArray *cov2)
@@ -325,7 +463,9 @@ static void gaeval_visitor_union(GtArray *cov1, GtArray *cov2)
       }
     }
     if(overlaps == false)
+    {
       gt_array_add(cov1, *range2);
+    }
   }
   if(gt_array_size(cov1) > 1)
     gt_array_sort(cov1, (GtCompare)gt_range_compare);
@@ -351,6 +491,12 @@ gaeval_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
     char covstr[16];
     sprintf(covstr, "%.3lf", coverage);
     gt_feature_node_add_attribute(tempfeat, "gaeval_coverage", covstr);
+
+    double integrity =
+        gaeval_visitor_calculate_integrity(v, tempfeat, coverage, error);
+    char intstr[16];
+    sprintf(intstr, "%.3lf", integrity);
+    gt_feature_node_add_attribute(tempfeat, "gaeval_integrity", intstr);
   }
   gt_feature_node_iterator_delete(feats);
 
