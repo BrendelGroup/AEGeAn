@@ -15,6 +15,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "extended/feature_index_memory_api.h"
 #include "AgnFilterStream.h"
 #include "AgnGaevalVisitor.h"
+#include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
@@ -113,9 +114,19 @@ gaeval_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
 static void gv_test_calc_coverage(AgnUnitTest *test);
 
 /**
+ * @function Unit test for integrity calculations.
+ */
+static void gv_test_calc_integrity(AgnUnitTest *test);
+
+/**
  * @function Unit test for `gaeval_visitor_intersect` function.
  */
 static void gv_test_intersect(AgnUnitTest *test);
+
+/**
+ * @function Unit test for `gaeval_visitor_introns_confirmed` function.
+ */
+static void gv_test_introns_confirmed(AgnUnitTest *test);
 
 /**
  * @function Unit test for `gaeval_visitor_range_intersect` function.
@@ -150,6 +161,16 @@ agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
   AgnGaevalVisitor *v = gaeval_visitor_cast(nv);
   v->alignments = gt_feature_index_memory_new();
   v->params = gparams;
+
+  // Check that sum of weights is 1.0
+  double weights_total = gparams.alpha + gparams.beta +
+                         gparams.gamma + gparams.epsilon;
+  if(fabs(weights_total - 1.0) > 0.0001)
+  {
+    fprintf(stderr, "[AgnGaevalVisitor::agn_gaeval_visitor_new] warning: "
+            "sum of weights is not 1.0 %.3lf; integrity calculations will be "
+            "incorrect\n", weights_total);
+  }
 
 
   // Set up node stream to load alignment features into memory
@@ -208,6 +229,8 @@ bool agn_gaeval_visitor_unit_test(AgnUnitTest *test)
   gv_test_union(test);
   gv_test_intersect(test);
   gv_test_calc_coverage(test);
+  gv_test_introns_confirmed(test);
+  gv_test_calc_integrity(test);
   return agn_unit_test_success(test);
 }
 
@@ -506,7 +529,7 @@ static void gv_test_calc_coverage(AgnUnitTest *test)
 {
   const char *filename = "data/gff3/gaeval-stream-unit-test-1.gff3";
   GtNodeStream *align_in = gt_gff3_in_stream_new_unsorted(1, &filename);
-  AgnGaevalParams params;
+  AgnGaevalParams params = { 0.6, 0.3, 0.05, 0.05, 400, 200, 100 };
   GtNodeVisitor *nv = agn_gaeval_visitor_new(align_in, params);
   AgnGaevalVisitor *gv = gaeval_visitor_cast(nv);
   gt_node_stream_delete(align_in);
@@ -522,7 +545,7 @@ static void gv_test_calc_coverage(AgnUnitTest *test)
   int result = gt_node_stream_pull(featstream, error);
   if(result == -1)
   {
-    fprintf(stderr, "[AgnGaevalVisitor::gv_test_range_intersect] error "
+    fprintf(stderr, "[AgnGaevalVisitor::gv_test_calc_coverage] error "
             "processing GFF3: %s\n", gt_error_get(error));
     return;
   }
@@ -553,6 +576,63 @@ static void gv_test_calc_coverage(AgnUnitTest *test)
   gt_node_visitor_delete(nv);
 }
 
+static void gv_test_calc_integrity(AgnUnitTest *test)
+{
+  const char *filename = "data/gff3/gaeval-stream-unit-test-2.gff3";
+  GtNodeStream *align_in = gt_gff3_in_stream_new_unsorted(1, &filename);
+  AgnGaevalParams params = { 0.6, 0.3, 0.05, 0.05, 400, 200, 100 };
+  GtNodeVisitor *nv = agn_gaeval_visitor_new(align_in, params);
+  AgnGaevalVisitor *gv = gaeval_visitor_cast(nv);
+  gt_node_stream_delete(align_in);
+
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &filename);
+  GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(typestokeep, "mRNA", "mRNA");
+  GtNodeStream *filtstream = agn_filter_stream_new(gff3in, typestokeep);
+  GtLogger *logger = gt_logger_new(true, "", stderr);
+  GtNodeStream *ics = agn_infer_cds_stream_new(filtstream, NULL, logger);
+  GtNodeStream *ies = agn_infer_exons_stream_new(ics, NULL, logger);
+
+  GtError *error = gt_error_new();
+  GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *featstream = gt_array_out_stream_new(ies, feats, error);
+  int result = gt_node_stream_pull(featstream, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "[AgnGaevalVisitor::gv_test_calc_integrity] error "
+            "processing GFF3: %s\n", gt_error_get(error));
+    return;
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(filtstream);
+  gt_node_stream_delete(featstream);
+  gt_node_stream_delete(ics);
+  gt_node_stream_delete(ies);
+  gt_logger_delete(logger);
+  gt_hashmap_delete(typestokeep);
+
+  agn_assert(gt_array_size(feats) == 2);
+  GtFeatureNode *g1 = *(GtFeatureNode **)gt_array_get(feats, 0);
+  GtFeatureNode *g2 = *(GtFeatureNode **)gt_array_get(feats, 1);
+
+  double cov1 = gaeval_visitor_calculate_coverage(gv,  g1, error);
+  double cov2 = gaeval_visitor_calculate_coverage(gv,  g2, error);
+  double int1 = gaeval_visitor_calculate_integrity(gv, g1, cov1, error);
+  double int2 = gaeval_visitor_calculate_integrity(gv, g2, cov2, error);
+
+  bool test1 = fabs(cov1 - 1.000) < 0.001 &&
+               fabs(cov2 - 0.997) < 0.001 &&
+               fabs(int1 - 0.850) < 0.001 &&
+               fabs(int2 - 0.863) < 0.001;
+  agn_unit_test_result(test, "calculate integrity", test1);
+
+  gt_error_delete(error);
+  gt_array_delete(feats);
+  gt_genome_node_delete((GtGenomeNode *)g1);
+  gt_genome_node_delete((GtGenomeNode *)g2);
+  gt_node_visitor_delete(nv);
+}
+
 static void gv_test_intersect(AgnUnitTest *test)
 {
   GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
@@ -563,7 +643,7 @@ static void gv_test_intersect(AgnUnitTest *test)
   int result = gt_node_stream_pull(fstream, error);
   if(result == -1)
   {
-    fprintf(stderr, "[AgnGaevalVisitor::gv_test_range_intersect] error "
+    fprintf(stderr, "[AgnGaevalVisitor::gv_test_intersect] error "
             "processing GFF3: %s\n", gt_error_get(error));
     return;
   }
@@ -662,6 +742,59 @@ static void gv_test_intersect(AgnUnitTest *test)
   gt_genome_node_delete(est4);
   gt_genome_node_delete(est5);
   gt_genome_node_delete(est6);
+}
+
+static void gv_test_introns_confirmed(AgnUnitTest *test)
+{
+  GtGenomeNode *intron, *gap;
+  GtStr *seqid = gt_str_new_cstr("chr");
+  GtArray *introns = gt_array_new( sizeof(GtGenomeNode *) );
+  intron = gt_feature_node_new(seqid, "intron", 1000, 1170, GT_STRAND_REVERSE);
+  gt_array_add(introns, intron);
+  intron = gt_feature_node_new(seqid, "intron", 1225, 1305, GT_STRAND_REVERSE);
+  gt_array_add(introns, intron);
+  intron = gt_feature_node_new(seqid, "intron", 1950, 2110, GT_STRAND_REVERSE);
+  gt_array_add(introns, intron);
+  intron = gt_feature_node_new(seqid, "intron", 2545, 2655, GT_STRAND_REVERSE);
+  gt_array_add(introns, intron);
+  intron = gt_feature_node_new(seqid, "intron", 2800, 2950, GT_STRAND_REVERSE);
+  gt_array_add(introns, intron);
+
+  GtArray *gaps = gt_array_new( sizeof(GtGenomeNode *) );
+
+  double intcon = gaeval_visitor_introns_confirmed(introns, gaps);
+  bool test1 = fabs(intcon - 0.0) < 0.0001;
+  agn_unit_test_result(test, "introns confirmed (no gaps)", test1);
+
+  gap = gt_feature_node_new(seqid, "match_gap", 1000, 1170, GT_STRAND_REVERSE);
+  gt_array_add(gaps, gap);
+  gap = gt_feature_node_new(seqid, "match_gap", 1225, 1302, GT_STRAND_REVERSE);
+  gt_array_add(gaps, gap);
+  gap = gt_feature_node_new(seqid, "match_gap", 1950, 2110, GT_STRAND_REVERSE);
+  gt_array_add(gaps, gap);
+  gap = gt_feature_node_new(seqid, "match_gap", 2575, 2655, GT_STRAND_REVERSE);
+  gt_array_add(gaps, gap);
+  gap = gt_feature_node_new(seqid, "match_gap", 2800, 2950, GT_STRAND_REVERSE);
+  gt_array_add(gaps, gap);
+
+  intcon = gaeval_visitor_introns_confirmed(introns, gaps);
+  bool test2 = fabs(intcon - 0.6) < 0.0001;
+  agn_unit_test_result(test, "introns confirmed (gaps)", test2);
+
+  while(gt_array_size(introns) > 0)
+  {
+    intron = *(GtGenomeNode **)gt_array_pop(introns);
+    gt_genome_node_delete(intron);
+  }
+  gt_array_delete(introns);
+
+  while(gt_array_size(gaps) > 0)
+  {
+    gap = *(GtGenomeNode **)gt_array_pop(gaps);
+    gt_genome_node_delete(gap);
+  }
+  gt_array_delete(gaps);
+  gt_str_delete(seqid);
 }
 
 static void gv_test_range_intersect(AgnUnitTest *test)
