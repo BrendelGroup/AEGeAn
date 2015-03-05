@@ -361,16 +361,13 @@ gaeval_visitor_intersect(GtGenomeNode *genemodel, GtGenomeNode *alignment)
     return NULL;
 
   GtArray *covered_parts = gt_array_new( sizeof(GtRange) );
-  GtFeatureNodeIterator *gniter = gt_feature_node_iterator_new(genefn);
-  GtFeatureNode *tempfeat;
-  for(tempfeat  = gt_feature_node_iterator_next(gniter);
-      tempfeat != NULL;
-      tempfeat  = gt_feature_node_iterator_next(gniter))
+  GtArray *exons = agn_typecheck_select(genefn, agn_typecheck_exon);
+  GtWord i;
+  for(i = 0; i < gt_array_size(exons); i++)
   {
-    if(gt_feature_node_has_type(tempfeat, "exon") == false)
-      continue;
+    GtGenomeNode *exon = *(GtGenomeNode **)gt_array_get(exons, i);
+    GtRange exonrange = gt_genome_node_get_range(exon);
 
-    GtRange featrange = gt_genome_node_get_range((GtGenomeNode *)tempfeat);
     GtFeatureNodeIterator *aniter = gt_feature_node_iterator_new(algnfn);
     GtFeatureNode *tempaln;
     GtRange nullrange = {0, 0};
@@ -380,8 +377,9 @@ gaeval_visitor_intersect(GtGenomeNode *genemodel, GtGenomeNode *alignment)
     {
       if(gt_feature_node_has_type(tempaln, "match_gap"))
         continue;
+
       GtRange alnrange = gt_genome_node_get_range((GtGenomeNode *) tempaln);
-      GtRange intr = gaeval_visitor_range_intersect(&featrange, &alnrange);
+      GtRange intr = gaeval_visitor_range_intersect(&exonrange, &alnrange);
       if(gt_range_compare(&intr, &nullrange) != 0)
       {
         gt_array_add(covered_parts, intr);
@@ -389,7 +387,7 @@ gaeval_visitor_intersect(GtGenomeNode *genemodel, GtGenomeNode *alignment)
     }
     gt_feature_node_iterator_delete(aniter);
   }
-  gt_feature_node_iterator_delete(gniter);
+  gt_array_delete(exons);
 
   return covered_parts;
 }
