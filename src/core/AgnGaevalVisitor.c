@@ -312,6 +312,7 @@ static double gaeval_visitor_calculate_integrity(AgnGaevalVisitor *v,
     structure_score = gaeval_visitor_introns_confirmed(introns, gaps);
   }
   gt_array_delete(gaps);
+  gt_array_delete(introns);
 
   double integrity = (v->params.alpha   * structure_score) +
                      (v->params.beta    * coverage)        +

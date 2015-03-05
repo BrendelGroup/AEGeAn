@@ -70,6 +70,11 @@ static void infer_cds_visitor_check_stop(AgnInferCDSVisitor *v);
 static const GtNodeVisitorClass *infer_cds_visitor_class();
 
 /**
+ * @function Destructor.
+ */
+static void infer_cds_visitor_free(GtNodeVisitor *ns);
+
+/**
  * @function Infer CDS for any mRNAs that have none specified but have exons and
  * start/stop codons explicitly specified.
  */
@@ -405,11 +410,19 @@ static const GtNodeVisitorClass *infer_cds_visitor_class()
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (AgnInferCDSVisitor), NULL, NULL,
+    nvc = gt_node_visitor_class_new(sizeof (AgnInferCDSVisitor),
+                                    infer_cds_visitor_free, NULL,
                                     infer_cds_visitor_visit_feature_node, NULL,
                                     NULL, NULL);
   }
   return nvc;
+}
+
+static void infer_cds_visitor_free(GtNodeVisitor *nv)
+{
+  AgnInferCDSVisitor *v = infer_cds_visitor_cast(nv);
+  if(v->source)
+    gt_str_delete(v->source);
 }
 
 static void infer_cds_visitor_infer_cds(AgnInferCDSVisitor *v)
