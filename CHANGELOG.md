@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.12.2] - 2015-03-06
+
+### Fixed
+- Documentation issues (installation instructions and C API docs).
+
 ## [0.12.1] - 2015-03-06
 
 ### Fixed
