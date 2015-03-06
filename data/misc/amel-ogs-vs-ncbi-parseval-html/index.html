@@ -23,6 +23,7 @@
     <div id="content">
       <h1>ParsEval Summary</h1>
       <pre class="command">
+Started:                06 Mar 2015, 03:25PM
 Reference annotations:  OGS
 Prediction annotations: NCBI
 Executing command:      bin/parseval --datashare=data/share/ --outformat=html --png --outfile=pe.temp --overwrite --refrlabel=OGS --predlabel=NCBI data/gff3/amel-ogs-g716.gff3 data/gff3/amel-ncbi-g716.gff3 </pre>
@@ -41,7 +42,6 @@ Executing command:      bin/parseval --datashare=data/share/ --outformat=html --
         <tbody>
         <tr><td><a href="Group7.16/index.html">Group7.16</a></td><td>10</td><td>8</td><td>8</td></tr>
         </tbody>
-
       </table>
 
       <h2>Gene loci <span class="tooltip">[?]<span class="tooltip_text">If a gene annotation overlaps with another gene annotation, those annotations are associated with the same gene locus. See <a target="_blank" href="http://aegean.readthedocs.org/en/refactor/loci.html">this page</a> for a formal definition of a locus annotation.</span></span></h2>
@@ -73,17 +73,17 @@ Executing command:      bin/parseval --datashare=data/share/ --outformat=html --
       <h2>Comparisons</h2>
       <table class="comparisons">
         <tr><th>Total comparisons</th><th>8</th></tr>
-        <tr><td>perfect matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Prediction transcripts (exons, coding sequences, andUTRs) line up perfectly with reference transcripts.</span></span></td><td>0 (0.0%)</tr>
-        <tr><td>perfect matches with mislabeled UTRs <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">5'/3' orientation of UTRs is reversed between reference and prediction, but a perfect match in all other aspects.</span></span></td><td>0 (0.0%)</tr>
-        <tr><td>CDS structure matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Not a perfect match, but prediction coding sequence(s) line up perfectly with reference coding sequence(s).</span></span></td><td>4 (50.0%)</tr>
+        <tr><td>(+) perfect matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Prediction transcripts (exons, coding sequences, and UTRs) line up perfectly with reference transcripts.</span></span></td><td>0 (0.0%)</tr>
+        <tr><td>(+) perfect matches with mislabeled UTRs <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">5'/3' orientation of UTRs is reversed between reference and prediction, but a perfect match in all other aspects.</span></span></td><td>0 (0.0%)</tr>
+        <tr><td><a href="cdsmatches.html">(+)</a> CDS structure matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Not a perfect match, but prediction coding sequence(s) line up perfectly with reference coding sequence(s).</span></span></td><td>4 (50.0%)</tr>
         <tr class="cell_small"><td class="cell_indent">average length</td><td>8691.00 bp</td></tr>
         <tr class="cell_small"><td class="cell_indent">average # refr exons</td><td>5.75</td></tr>
         <tr class="cell_small"><td class="cell_indent">average # pred exons</td><td>6.00</td></tr>
         <tr class="cell_small"><td class="cell_indent">average refr CDS length</td><td>455.25 aa</td></tr>
         <tr class="cell_small"><td class="cell_indent">average pred CDS length</td><td>455.25 aa</td></tr>
-        <tr><td>exon structure matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Not a perfect match or CDS match, but prediction exon structure is identical to reference exon structure.</span></span></td><td>0 (0.0%)</tr>
-        <tr><td>UTR structure matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Not a perfect match, CDS match, or exon structure match, but prediction UTRs line up perfectly with reference UTRs.</span></span></td><td>0 (0.0%)</tr>
-        <tr><td>non-matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Differences in CDS, exon, and UTR structure.</span></span></td><td>4 (50.0%)</tr>
+        <tr><td>(+) exon structure matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Not a perfect match or CDS match, but prediction exon structure is identical to reference exon structure.</span></span></td><td>0 (0.0%)</tr>
+        <tr><td>(+) UTR structure matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Not a perfect match, CDS match, or exon structure match, but prediction UTRs line up perfectly with reference UTRs.</span></span></td><td>0 (0.0%)</tr>
+        <tr><td><a href="nonmatches.html">(+)</a> non-matches <span class="tooltip"><span class="small_tooltip">[?]</span><span class="tooltip_text">Differences in CDS, exon, and UTR structure.</span></span></td><td>4 (50.0%)</tr>
         <tr class="cell_small"><td class="cell_indent">average length</td><td>13661.75 bp</td></tr>
         <tr class="cell_small"><td class="cell_indent">average # refr exons</td><td>6.50</td></tr>
         <tr class="cell_small"><td class="cell_indent">average # pred exons</td><td>6.25</td></tr>
@@ -145,4 +145,6 @@ Executing command:      bin/parseval --datashare=data/share/ --outformat=html --
       </table>
 
       <p class="footer">
+        Generated by <a href="https://github.com/standage/AEGeAn/tree/aebb2aa1c1dc45feebb5f93abd9c7df679b72702">AEGeAn v0.13.0 (unstable aebb2aa1c1)</a>.<br />
+        Copyright © 2015 <a href="http://aegean.readthedocs.org/en/latest/contrib.html">AEGeAn authors</a>.<br />
         See <a href="LICENSE">LICENSE</a> for details.      </p>

@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Added
+- Ability to access ParsEval locus reports by category (perfect match, CDS match, etc).
+
 ## [0.12.2] - 2015-03-06
 
 ### Fixed
