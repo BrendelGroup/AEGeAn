@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [Unreleased][unreleased]
+
+## [0.12.0] - 2015-03-05
 ### Fixed
 - Fixed CDS phase correction on the reverse strand.
 - Corrected non-deterministic selection of primary isoform when multiple isoforms have the same (maximum) length.
@@ -18,7 +21,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Functional tests for primary mRNA selection and pseudogene correction.
 - Node visitor for calculating coverage and GAEVAL integrity scores.
 - New implementation of GAEVAL that calculates coverage and integrity scores for mRNA features.
+- New branch `coverity`, which leverages Travis to run Coverity Scan static analysis.
 ### Removed
 - Discarded vestigial `AgnNodeDeleteVisitor` class.
-
-
