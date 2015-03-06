@@ -11,9 +11,9 @@ For the impatient
     sudo apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
 
     # Download, compile, and install the GenomeTools package
-    curl -O http://genometools.org/pub/genometools-1.5.4.tar.gz
-    tar xzf genometools-1.5.4.tar.gz
-    cd genometools-1.5.4
+    curl -O http://genometools.org/pub/genometools-unstable.tar.gz
+    tar xzf genometools-unastable.tar.gz
+    cd genometools-unstable
     make 64bit=yes
     sudo make 64bit=yes install
     cd ..
@@ -23,9 +23,9 @@ For the impatient
     sudo ldconfig
 
     # Download, compile, and install the  AEGeAn Toolkit
-    curl https://github.com/standage/AEGeAn/archive/v0.12.0.tar.gz > AEGeAn-0.12.0.tar.gz
-    tar xzf AEGeAn-0.12.0.tar.gz
-    cd AEGeAn-0.12.0
+    curl https://github.com/standage/AEGeAn/archive/v0.12.2.tar.gz > AEGeAn-0.12.2.tar.gz
+    tar xzf AEGeAn-0.12.2.tar.gz
+    cd AEGeAn-0.12.2
     make test
     sudo make install
     sudo ldconfig # Update linker config again
