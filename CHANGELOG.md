@@ -7,7 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Change log formatting issues.
 - Correct year in AgnVersion.h.
-- Coverity Scan configuration.
+
+### Removed
+- Faulty Coverity Scan configuration.
 
 ## [0.12.0] - 2015-03-05
 
