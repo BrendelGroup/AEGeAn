@@ -21,7 +21,7 @@ if logerr:
   sha1 = ""
   sha1slug = ""
   link = "https://github.com/standage/AEGeAn/releases/tag/"+ semver
-  year = "2014"
+  year = "2015"
 else:
   sha1match = re.search("commit (\S+)", logout)
   assert sha1match, "could not find latest commit SHA1 hash"
