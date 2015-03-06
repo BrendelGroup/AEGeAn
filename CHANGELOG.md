@@ -5,8 +5,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
-### Added
-- Travis / Coverity Scan integration.
+## [0.12.2] - 2015-03-06
+
+### Fixed
+- Documentation issues (installation instructions and C API docs).
+
+## [0.12.1] - 2015-03-06
+
+### Fixed
+- Change log formatting issues.
+- Correct year in AgnVersion.h.
+
+### Removed
+- Faulty Coverity Scan configuration.
 
 ## [0.12.0] - 2015-03-05
 
