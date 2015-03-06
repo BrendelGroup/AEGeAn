@@ -16,6 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Python script for merging iLoci.
 - Documentation for GFF3 expectations, both in general and tool-specific terms.
 - Functional tests for primary mRNA selection and pseudogene correction.
+- Node visitor for calculating coverage and GAEVAL integrity scores.
+- New implementation of GAEVAL that calculates coverage and integrity scores for mRNA features.
 ### Removed
 - Discarded vestigial `AgnNodeDeleteVisitor` class.
 

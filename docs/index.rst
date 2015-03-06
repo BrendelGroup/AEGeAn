@@ -23,6 +23,7 @@ AEGeAn Toolkit: integrated genome analysis
    parseval
    canon
    locuspocus
+   gaeval
    loci
    citing
    api
