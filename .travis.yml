@@ -3,6 +3,8 @@ compiler:
   - clang
   - gcc
 env:
+  global:
+    - secure: dvoqjqYCjvOs6m6bcqW9hIxq8ZzgkA21SwPFm+PP1tRdMo7gspfhjDHceEBKHTxe75e6m1d7fEQjfrmtqMRruFP9qLgDvFdmwX5jSKrj45vjq1DYc+6RNdxXCBdOEQhlf2VVNWGzJ3j+NplHhzob8dHM8G6jNzz3YVpW+7e6pKM=
   - memcheck=yes optimize=yes
   - memcheck=yes optimize=no
   - memcheck=no optimize=yes
@@ -14,5 +16,14 @@ before_install:
   - cd genometools && make && sudo make install && cd -
   - sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/genometools-x86_64.conf'
   - sudo ldconfig
+addons:
+  coverity_scan:
+    project:
+      name: standage/AEGeAn
+      description: Build submitted via Travis CI
+    notification_email: daniel.standage@gmail.com
+    build_command_prepend: make clean
+    build_command: make test
+    branch_pattern: covscan
 install: sudo make install
 script: make test
