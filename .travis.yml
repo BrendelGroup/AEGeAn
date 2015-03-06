@@ -5,10 +5,11 @@ compiler:
 env:
   global:
     - secure: dvoqjqYCjvOs6m6bcqW9hIxq8ZzgkA21SwPFm+PP1tRdMo7gspfhjDHceEBKHTxe75e6m1d7fEQjfrmtqMRruFP9qLgDvFdmwX5jSKrj45vjq1DYc+6RNdxXCBdOEQhlf2VVNWGzJ3j+NplHhzob8dHM8G6jNzz3YVpW+7e6pKM=
-  - memcheck=yes optimize=yes
-  - memcheck=yes optimize=no
-  - memcheck=no optimize=yes
-  - memcheck=no optimize=no
+  matrix:
+    - memcheck=yes optimize=yes
+    - memcheck=yes optimize=no
+    - memcheck=no optimize=yes
+    - memcheck=no optimize=no
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
