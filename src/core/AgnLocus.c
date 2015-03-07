@@ -589,9 +589,9 @@ GtStr *agn_locus_get_position(AgnLocus *locus)
   GtStr *seqid = gt_genome_node_get_seqid(locus);
   GtStr *pos = gt_str_clone(seqid);
   gt_str_append_char(pos, '_');
-  gt_str_append_ulong(pos, range.start);
+  gt_str_append_uword(pos, range.start);
   gt_str_append_char(pos, '-');
-  gt_str_append_ulong(pos, range.end);
+  gt_str_append_uword(pos, range.end);
   return pos;
 }
 

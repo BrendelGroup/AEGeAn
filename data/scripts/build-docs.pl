@@ -1,13 +1,16 @@
 #!/usr/bin/env perl
+
+# Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+#
+# The AEGeAn Toolkit is distributed under the ISC License. See
+# the 'LICENSE' file in the AEGeAn source code distribution or
+# online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+#
+# Usage: perl build-docs.pl inc/core inc/ParsEval > docs/api.rst
+
 use strict;
 use warnings;
 use Getopt::Long;
-
-# Daniel S. Standage
-# 13 Sept 2013
-# daniel.standage@gmail.com
-#
-# Usage: perl build-docs.pl inc/core inc/ParsEval > docs/api.rst
 
 print "AEGeAn C API\n============\n\nThe AEGeAn Toolkit relies heavily on data
 types implemented by the GenomeTools library. For data types beginning with

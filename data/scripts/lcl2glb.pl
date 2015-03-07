@@ -1,10 +1,17 @@
 #!/usr/local/env perl
-use strict;
 
+# Copyright (c) 2010-201%, Daniel S. Standage and CONTRIBUTORS
+#
+# The AEGeAn Toolkit is distributed under the ISC License. See
+# the 'LICENSE' file in the AEGeAn source code distribution or
+# online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
+#
 # lcl2glb.pl: convert glb2lcl.pl output from locus based coordinates to sequence
 #             (chromosome or scaffold) based coordinates.
 #
 # Usage: perl lcl2glb.pl < locus-features-local.gff3 > locus-features-global.gff3
+
+use strict;
 
 while(<STDIN>)
 {

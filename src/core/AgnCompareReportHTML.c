@@ -31,6 +31,7 @@ struct AgnCompareReportHTML
   const char *outdir;
   GtHashmap *seqdata;
   GtHashmap *seqlocusdata;
+  GtHashmap *compclassdata;
   AgnCompareReportHTMLOverviewFunc ofunc;
   void *ofuncdata;
   GtLogger *logger;
@@ -41,6 +42,7 @@ struct AgnCompareReportHTML
 
 typedef struct
 {
+  char     seqid[64];
   GtRange  lrange;
   unsigned numperfect, nummislabeled, numcdsmatch, numexonmatch, numutrmatch,
            numnonmatch;
@@ -63,6 +65,7 @@ static const GtNodeVisitorClass *compare_report_html_class();
 static void compare_report_html_comp_class_summary(AgnCompClassDesc *summ,
                                                    GtUword num_comparisons,
                                                    const char *label,
+                                                   const char *compkey,
                                                    const char *desc,
                                                    FILE *outstream);
 
@@ -109,11 +112,17 @@ static void compare_report_html_pair_structure(FILE *outstream,
                                                const char *units);
 
 /**
+ * @function List loci according to their comparison class: perfect match, CDS
+ * match, etc.
+ */
+static void compare_report_html_print_compclassfiles(AgnCompareReportHTML *rpt);
+
+/**
  * @function Add the locus' information to the sequence summary page
  */
 static void
 compare_report_html_print_locus_to_seqfile(SeqfileLocusData *data,
-                                           FILE *outstream);
+                                           bool printseqid, FILE *outstream);
 
 /**
  * @function Print a comparison report for the given clique pair. Include markup
@@ -224,6 +233,7 @@ void agn_compare_report_html_create_summary(AgnCompareReportHTML *rpt)
 
   fclose(outstream);
   compare_report_html_print_seqfiles(rpt);
+  compare_report_html_print_compclassfiles(rpt);
 }
 
 GtNodeVisitor *agn_compare_report_html_new(const char *outdir, bool gff3,
@@ -239,6 +249,20 @@ GtNodeVisitor *agn_compare_report_html_new(const char *outdir, bool gff3,
   rpt->seqdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
   rpt->seqlocusdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
                                      (GtFree)gt_array_delete);
+  rpt->compclassdata = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                      (GtFree)gt_array_delete);
+  gt_hashmap_add(rpt->compclassdata, gt_cstr_dup("perfect"),
+                 gt_array_new(sizeof(SeqfileLocusData)));
+  gt_hashmap_add(rpt->compclassdata, gt_cstr_dup("mislabeled"),
+                 gt_array_new(sizeof(SeqfileLocusData)));
+  gt_hashmap_add(rpt->compclassdata, gt_cstr_dup("cds"),
+                 gt_array_new(sizeof(SeqfileLocusData)));
+  gt_hashmap_add(rpt->compclassdata, gt_cstr_dup("exon"),
+                 gt_array_new(sizeof(SeqfileLocusData)));
+  gt_hashmap_add(rpt->compclassdata, gt_cstr_dup("utr"),
+                 gt_array_new(sizeof(SeqfileLocusData)));
+  gt_hashmap_add(rpt->compclassdata, gt_cstr_dup("nonmatch"),
+                 gt_array_new(sizeof(SeqfileLocusData)));
   rpt->logger = logger;
   rpt->summary_title = gt_str_new_cstr("ParsEval Summary");
   rpt->gff3 = gff3;
@@ -276,15 +300,65 @@ static const GtNodeVisitorClass *compare_report_html_class()
   return nvc;
 }
 
+
+static void compare_report_html_compclass_header(FILE *outstream,
+                                                 const char *compclass)
+{
+  fprintf(outstream,
+          "<!doctype html>\n"
+          "<html lang=\"en\">\n"
+          "  <head>\n"
+          "    <meta charset=\"utf-8\" />\n"
+          "    <title>ParsEval: Loci containing %s</title>\n"
+          "    <link rel=\"stylesheet\" type=\"text/css\" href=\"parseval.css\" />\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.js\"></script>\n"
+          "    <script type=\"text/javascript\" language=\"javascript\" src=\"vendor/jquery.dataTables.js\"></script>\n"
+          "    <script type=\"text/javascript\">\n"
+          "      $(document).ready(function() {\n"
+          "        $('#locus_table').dataTable( {\n"
+          "          \"sScrollY\": \"400px\",\n"
+          "          \"bPaginate\": false,\n"
+          "          \"bScrollCollapse\": true,\n"
+          "          \"bSort\": false,\n"
+          "          \"bFilter\": false,\n"
+          "          \"bInfo\": false\n"
+          "        });\n"
+          "      } );\n"
+          "    </script>\n"
+          "  </head>\n"
+          "  <body>\n"
+          "    <div id=\"content\">\n"
+          "      <h1>Loci containing %s</h1>\n"
+          "      <p><a href=\"index.html\">⇐ Back to summary</a></p>\n\n"
+          "      <p class=\"indent\">\n"
+          "        Below is a list of all loci containing %s.\n"
+          "        Click on the <a>(+)</a> symbol for a report of the complete comparative analysis corresponding to each locus.\n"
+          "      </p>\n\n"
+          "      <table class=\"loci\" id=\"locus_table\">\n"
+          "        <thead>\n"
+          "          <tr>\n"
+          "            <th>&nbsp;</th>\n"
+          "            <th>Sequence</th>\n"
+          "            <th>Start</th>\n"
+          "            <th>End</th>\n"
+          "            <th>Length</th>\n"
+          "            <th>#Trans</th>\n"
+          "            <th>Comparisons</th>\n"
+          "          </tr>\n"
+          "        </thead>\n"
+          "        <tbody>\n",
+          compclass, compclass, compclass);
+}
+
 static void compare_report_html_comp_class_summary(AgnCompClassDesc *summ,
                                                    GtUword num_comparisons,
                                                    const char *label,
+                                                   const char *compkey,
                                                    const char *desc,
                                                    FILE *outstream)
 {
   GtUword numclass     = summ->comparison_count;
-  float perc_class     = 100.0 * (float)numclass /
-                         (float)num_comparisons;
+  float perc_class     = 100.0 * (float)numclass / (float)num_comparisons;
   float mean_len       = (float)summ->total_length /
                          (float)summ->comparison_count;
   float mean_refr_exon = (float)summ->refr_exon_count /
@@ -296,11 +370,21 @@ static void compare_report_html_comp_class_summary(AgnCompClassDesc *summ,
   float mean_pred_cds  = (float)summ->pred_cds_length / 3 /
                          (float)summ->comparison_count;
 
+  if(summ->comparison_count > 0)
+  {
+    fprintf(outstream, "        <tr><td><a href=\"%s.html\">(+)</a> %s ",
+            compkey, label);
+  }
+  else
+  {
+    fprintf(outstream, "        <tr><td>(+) %s ", label);
+  }
+
   fprintf(outstream,
-          "        <tr><td>%s <span class=\"tooltip\">"
+          "<span class=\"tooltip\">"
           "<span class=\"small_tooltip\">[?]</span>"
           "<span class=\"tooltip_text\">%s</span></span></td>"
-          "<td>%lu (%.1f%%)</tr>\n", label, desc, numclass, perc_class);
+          "<td>%lu (%.1f%%)</tr>\n", desc, numclass, perc_class);
 
   if(numclass == 0)
     return;
@@ -335,6 +419,7 @@ static void compare_report_html_free(GtNodeVisitor *nv)
   gt_str_array_delete(rpt->seqids);
   gt_hashmap_delete(rpt->seqdata);
   gt_hashmap_delete(rpt->seqlocusdata);
+  gt_hashmap_delete(rpt->compclassdata);
   gt_str_delete(rpt->summary_title);
 }
 
@@ -619,24 +704,178 @@ static void compare_report_html_pair_structure(FILE *outstream,
   fputs("        </table>\n\n", outstream);
 }
 
+
+
+static void compare_report_html_print_compclassfiles(AgnCompareReportHTML *rpt)
+{
+  GtArray *compclassdata;
+  GtUword i;
+  
+  compclassdata = gt_hashmap_get(rpt->compclassdata, "perfect");
+  if(gt_array_size(compclassdata) > 0)
+  {
+    char filename[AGN_MAX_FILENAME_SIZE];
+    sprintf(filename, "%s/perfectmatches.html", rpt->outdir);
+    FILE *outstream = fopen(filename, "w");
+    if(!outstream)
+    {
+      fprintf(stderr, "error: unable to open %s\n", filename);
+      exit(1);
+    }
+    compare_report_html_compclass_header(outstream, "perfect matches");
+
+    for(i = 0; i < gt_array_size(compclassdata); i++)
+    {
+      SeqfileLocusData *data = gt_array_get(compclassdata, i);
+      compare_report_html_print_locus_to_seqfile(data, true, outstream);
+    }
+    compare_report_html_seqfile_footer(outstream);
+    fclose(outstream);
+  }
+  
+  compclassdata = gt_hashmap_get(rpt->compclassdata, "mislabeled");
+  if(gt_array_size(compclassdata) > 0)
+  {
+    char filename[AGN_MAX_FILENAME_SIZE];
+    sprintf(filename, "%s/mislabeled.html", rpt->outdir);
+    FILE *outstream = fopen(filename, "w");
+    if(!outstream)
+    {
+      fprintf(stderr, "error: unable to open %s\n", filename);
+      exit(1);
+    }
+    compare_report_html_compclass_header(outstream, "perfect matches with "
+                                         "mislabeled UTRs");
+
+    for(i = 0; i < gt_array_size(compclassdata); i++)
+    {
+      SeqfileLocusData *data = gt_array_get(compclassdata, i);
+      compare_report_html_print_locus_to_seqfile(data, true, outstream);
+    }
+    compare_report_html_seqfile_footer(outstream);
+    fclose(outstream);
+  }
+  
+  compclassdata = gt_hashmap_get(rpt->compclassdata, "cds");
+  if(gt_array_size(compclassdata) > 0)
+  {
+    char filename[AGN_MAX_FILENAME_SIZE];
+    sprintf(filename, "%s/cdsmatches.html", rpt->outdir);
+    FILE *outstream = fopen(filename, "w");
+    if(!outstream)
+    {
+      fprintf(stderr, "error: unable to open %s\n", filename);
+      exit(1);
+    }
+    compare_report_html_compclass_header(outstream, "CDS matches");
+
+    for(i = 0; i < gt_array_size(compclassdata); i++)
+    {
+      SeqfileLocusData *data = gt_array_get(compclassdata, i);
+      compare_report_html_print_locus_to_seqfile(data, true, outstream);
+    }
+    compare_report_html_seqfile_footer(outstream);
+    fclose(outstream);
+  }
+  
+  compclassdata = gt_hashmap_get(rpt->compclassdata, "exon");
+  if(gt_array_size(compclassdata) > 0)
+  {
+    char filename[AGN_MAX_FILENAME_SIZE];
+    sprintf(filename, "%s/exonmatches.html", rpt->outdir);
+    FILE *outstream = fopen(filename, "w");
+    if(!outstream)
+    {
+      fprintf(stderr, "error: unable to open %s\n", filename);
+      exit(1);
+    }
+    compare_report_html_compclass_header(outstream, "exon matches");
+
+    for(i = 0; i < gt_array_size(compclassdata); i++)
+    {
+      SeqfileLocusData *data = gt_array_get(compclassdata, i);
+      compare_report_html_print_locus_to_seqfile(data, true, outstream);
+    }
+    compare_report_html_seqfile_footer(outstream);
+    fclose(outstream);
+  }
+  
+  compclassdata = gt_hashmap_get(rpt->compclassdata, "utr");
+  if(gt_array_size(compclassdata) > 0)
+  {
+    char filename[AGN_MAX_FILENAME_SIZE];
+    sprintf(filename, "%s/utrmatches.html", rpt->outdir);
+    FILE *outstream = fopen(filename, "w");
+    if(!outstream)
+    {
+      fprintf(stderr, "error: unable to open %s\n", filename);
+      exit(1);
+    }
+    compare_report_html_compclass_header(outstream, "UTR matches");
+
+    for(i = 0; i < gt_array_size(compclassdata); i++)
+    {
+      SeqfileLocusData *data = gt_array_get(compclassdata, i);
+      compare_report_html_print_locus_to_seqfile(data, true, outstream);
+    }
+    compare_report_html_seqfile_footer(outstream);
+    fclose(outstream);
+  }
+  
+  compclassdata = gt_hashmap_get(rpt->compclassdata, "nonmatch");
+  if(gt_array_size(compclassdata) > 0)
+  {
+    char filename[AGN_MAX_FILENAME_SIZE];
+    sprintf(filename, "%s/nonmatches.html", rpt->outdir);
+    FILE *outstream = fopen(filename, "w");
+    if(!outstream)
+    {
+      fprintf(stderr, "error: unable to open %s\n", filename);
+      exit(1);
+    }
+    compare_report_html_compclass_header(outstream, "non-matches");
+
+    for(i = 0; i < gt_array_size(compclassdata); i++)
+    {
+      SeqfileLocusData *data = gt_array_get(compclassdata, i);
+      compare_report_html_print_locus_to_seqfile(data, true, outstream);
+    }
+    compare_report_html_seqfile_footer(outstream);
+    fclose(outstream);
+  }
+}
+
 static void
 compare_report_html_print_locus_to_seqfile(SeqfileLocusData *data,
-                                           FILE *outstream)
+                                           bool printseqid, FILE *outstream)
 {
   char sstart[64], send[64], slength[64];
   agn_sprintf_comma(data->lrange.start, sstart);
   agn_sprintf_comma(data->lrange.end, send);
   agn_sprintf_comma(gt_range_length(&data->lrange), slength);
+  if(printseqid)
+  {
+    fprintf(outstream,
+            "        <tr>\n"
+            "          <td><a href=\"%s/%lu-%lu.html\">(+)</a></td>\n"
+            "          <td>%s</td>\n",
+            data->seqid, data->lrange.start, data->lrange.end, data->seqid);
+  }
+  else
+  {
+    fprintf(outstream,
+            "        <tr>\n"
+            "          <td><a href=\"%lu-%lu.html\">(+)</a></td>\n",
+            data->lrange.start, data->lrange.end);
+  }
+
   fprintf(outstream,
-          "        <tr>\n"
-          "          <td><a href=\"%lu-%lu.html\">(+)</a></td>\n"
           "          <td>%s</td>\n"
           "          <td>%s</td>\n"
           "          <td>%s</td>\n"
           "          <td>%lu / %lu</td>\n"
           "          <td>\n",
-          data->lrange.start, data->lrange.end, sstart, send, slength,
-          data->refrtrans, data->predtrans);
+          sstart, send, slength, data->refrtrans, data->predtrans);
   if(data->numperfect > 0)
   {
     fprintf(outstream,
@@ -739,7 +978,7 @@ static void compare_report_html_print_seqfiles(AgnCompareReportHTML *rpt)
     for(j = 0; j < gt_array_size(sld); j++)
     {
       SeqfileLocusData *data = gt_array_get(sld, j);
-      compare_report_html_print_locus_to_seqfile(data, outstream);
+      compare_report_html_print_locus_to_seqfile(data, false, outstream);
     }
     compare_report_html_seqfile_footer(outstream);
     fclose(outstream);
@@ -756,6 +995,7 @@ compare_report_html_save_seq_locus_data(AgnCompareReportHTML *rpt,
   GtUword i;
 
   seqid = gt_genome_node_get_seqid(locus);
+  snprintf(data.seqid, 64, "%s", gt_str_get(seqid));
   data.lrange = gt_genome_node_get_range(locus);
   data.refrtrans = agn_locus_num_refr_mrnas(locus);
   data.predtrans = agn_locus_num_pred_mrnas(locus);
@@ -772,23 +1012,51 @@ compare_report_html_save_seq_locus_data(AgnCompareReportHTML *rpt,
   {
     AgnCliquePair *pair = *(AgnCliquePair **)gt_array_get(pairs2report, i);
     AgnCompClassification cls = agn_clique_pair_classify(pair);
-    switch(cls)
-    {
-      case AGN_COMP_CLASS_PERFECT_MATCH: data.numperfect++;    break;
-      case AGN_COMP_CLASS_MISLABELED:    data.nummislabeled++; break;
-      case AGN_COMP_CLASS_CDS_MATCH:     data.numcdsmatch++;   break;
-      case AGN_COMP_CLASS_EXON_MATCH:    data.numexonmatch++;  break;
-      case AGN_COMP_CLASS_UTR_MATCH:     data.numutrmatch++;   break;
-      case AGN_COMP_CLASS_NON_MATCH:     data.numnonmatch++;   break;
-      case AGN_COMP_CLASS_UNCLASSIFIED:       /* nothing */    break;
-      default:                                                 break;
-    }
+    if     (cls == AGN_COMP_CLASS_PERFECT_MATCH) data.numperfect++;
+    else if(cls == AGN_COMP_CLASS_MISLABELED)    data.nummislabeled++;
+    else if(cls == AGN_COMP_CLASS_CDS_MATCH)     data.numcdsmatch++;
+    else if(cls == AGN_COMP_CLASS_EXON_MATCH)    data.numexonmatch++;
+    else if(cls == AGN_COMP_CLASS_UTR_MATCH)     data.numutrmatch++;
+    else if(cls == AGN_COMP_CLASS_NON_MATCH)     data.numnonmatch++;
+    else if(cls == AGN_COMP_CLASS_UNCLASSIFIED)  agn_assert(false);
+    else agn_assert(false);
   }
 
   seqlocusdata = gt_hashmap_get(rpt->seqlocusdata, gt_str_get(seqid));
   gt_array_add(seqlocusdata, data);
-}
 
+  GtArray *ccdata;
+  if(data.numperfect > 0)
+  {
+    ccdata = gt_hashmap_get(rpt->compclassdata, "perfect");
+    gt_array_add(ccdata, data);
+  }
+  if(data.nummislabeled > 0)
+  {
+    ccdata = gt_hashmap_get(rpt->compclassdata, "mislabeled");
+    gt_array_add(ccdata, data);
+  }
+  if(data.numcdsmatch > 0)
+  {
+    ccdata = gt_hashmap_get(rpt->compclassdata, "cds");
+    gt_array_add(ccdata, data);
+  }
+  if(data.numexonmatch > 0)
+  {
+    ccdata = gt_hashmap_get(rpt->compclassdata, "exon");
+    gt_array_add(ccdata, data);
+  }
+  if(data.numutrmatch > 0)
+  {
+    ccdata = gt_hashmap_get(rpt->compclassdata, "utr");
+    gt_array_add(ccdata, data);
+  }
+  if(data.numnonmatch > 0)
+  {
+    ccdata = gt_hashmap_get(rpt->compclassdata, "nonmatch");
+    gt_array_add(ccdata, data);
+  }
+}
 
 static void compare_report_html_seqfile_header(FILE *outstream,
                                                const char *seqid)
@@ -902,37 +1170,38 @@ static void compare_report_html_summary_body(AgnCompareReportHTML *rpt,
 {
   AgnComparisonData *data = &rpt->data;
 
-  fprintf(outstream, "      <h2>Comparisons</h2>\n"
-                     "      <table class=\"comparisons\">\n"
-                     "        <tr><th>Total comparisons</th><th>%lu</th></tr>\n",
+  fprintf(outstream,"      <h2>Comparisons</h2>\n"
+                    "      <table class=\"comparisons\">\n"
+                    "        <tr><th>Total comparisons</th><th>%lu</th></tr>\n",
           data->info.num_comparisons);
   compare_report_html_comp_class_summary(
       &data->summary.perfect_matches, data->info.num_comparisons,
-      "perfect matches", "Prediction transcripts (exons, coding sequences, and"
-      "UTRs) line up perfectly with reference transcripts.", outstream);
+      "perfect matches", "perfectmatches", "Prediction transcripts (exons, "
+      "coding sequences, and UTRs) line up perfectly with reference "
+      "transcripts.", outstream);
   compare_report_html_comp_class_summary(
       &data->summary.perfect_mislabeled, data->info.num_comparisons,
-      "perfect matches with mislabeled UTRs", "5'/3' orientation of UTRs is "
-      "reversed between reference and prediction, but a perfect match in all "
-      "other aspects.", outstream);
+      "perfect matches with mislabeled UTRs", "mislabeled", "5'/3' orientation "
+      "of UTRs is reversed between reference and prediction, but a perfect "
+      "match in all other aspects.", outstream);
   compare_report_html_comp_class_summary(
       &data->summary.cds_matches, data->info.num_comparisons,
-      "CDS structure matches", "Not a perfect match, but prediction coding "
-      "sequence(s) line up perfectly with reference coding sequence(s).",
-      outstream);
+      "CDS structure matches", "cdsmatches", "Not a perfect match, but "
+      "prediction coding sequence(s) line up perfectly with reference coding "
+      "sequence(s).", outstream);
   compare_report_html_comp_class_summary(
       &data->summary.exon_matches, data->info.num_comparisons,
-      "exon structure matches", "Not a perfect match or CDS match, but "
-      "prediction exon structure is identical to reference exon structure.",
-      outstream);
+      "exon structure matches", "exonmatches", "Not a perfect match or CDS "
+      "match, but prediction exon structure is identical to reference exon "
+      "structure.", outstream);
   compare_report_html_comp_class_summary(
       &data->summary.utr_matches, data->info.num_comparisons,
-      "UTR structure matches", "Not a perfect match, CDS match, or exon "
-      "structure match, but prediction UTRs line up perfectly with reference "
-      "UTRs.", outstream);
+      "UTR structure matches", "utrmatches", "Not a perfect match, CDS match, "
+      "or exon structure match, but prediction UTRs line up perfectly with "
+      "reference UTRs.", outstream);
   compare_report_html_comp_class_summary(
       &data->summary.non_matches, data->info.num_comparisons, "non-matches",
-      "Differences in CDS, exon, and UTR structure.", outstream);
+      "nonmatches", "Differences in CDS, exon, and UTR structure.", outstream);
   fputs("      </table>\n\n", outstream);
 
   compare_report_html_summary_struc(outstream, &data->stats.cds_struc_stats,
@@ -1030,7 +1299,7 @@ static void compare_report_html_summary_headmatter(AgnCompareReportHTML *rpt,
             seqid, seqid, seqdat->info.refr_genes, seqdat->info.pred_genes,
             seqdat->info.num_loci);
   }
-  fputs("        </tbody>\n\n"
+  fputs("        </tbody>\n"
         "      </table>\n\n", outstream);
 
   compare_report_html_summary_annot(&data->info, outstream);

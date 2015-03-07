@@ -22,36 +22,36 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 typedef struct AgnRepoVisitor AgnRepoVisitor;
 
 /**
- * @class Create a stream that will initialize a new repo.
+ * @function Create a stream that will initialize a new repo.
  */
 GtNodeStream *agn_repo_stream_new(GtNodeStream *instream, const char *path,
                                   GtError *error);
 
 /**
- * @class Open a stream to write to an existing repo.
+ * @function Open a stream to write to an existing repo.
  */
 GtNodeStream *agn_repo_stream_open(GtNodeStream *instream, const char *path,
                                    GtError *error);
 
 /**
- * @class Create a stream that will remove existing annotations from the repo
+ * @function Create a stream that will remove existing annotations from the repo
  * before filling it in with new annotations.
  */
 GtNodeStream *agn_repo_stream_open_clean(GtNodeStream *instream,
                                          const char *path, GtError *error);
 
 /**
- * @class Constructor: create a visitor that will initialize a new repo.
+ * @function Constructor: create a visitor that will initialize a new repo.
  */
 GtNodeVisitor *agn_repo_visitor_new(const char *path, GtError *error);
 
 /**
- * @class Constructor: create a visitor to write to an existing repo.
+ * @function Constructor: create a visitor to write to an existing repo.
  */
 GtNodeVisitor *agn_repo_visitor_open(const char *path, GtError *error);
 
 /**
- * @class Constructor: create a visitor that will remove existing annotations
+ * @function Constructor: create a visitor that will remove existing annotations
  * from the repo before filling it in with new annotations.
  */
 GtNodeVisitor *agn_repo_visitor_open_clean(const char *path, GtError *error);

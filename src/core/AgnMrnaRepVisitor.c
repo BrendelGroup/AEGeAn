@@ -140,6 +140,7 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
     }
 
     // Find the longest mRNA
+    const char *longest_id = NULL;
     GtFeatureNode *longest_mrna = NULL;
     GtUword longest_length = 0;
     for(j = 0; j < gt_array_size(mrnas); j++)
@@ -147,9 +148,12 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
       GtGenomeNode **mrna = gt_array_get(mrnas, j);
       GtFeatureNode *mrnafn = gt_feature_node_cast(*mrna);
       GtUword length = agn_mrna_cds_length(mrnafn);
-      if(longest_length == 0 || length > longest_length)
+      const char *mid = gt_feature_node_get_attribute(mrnafn, "ID");
+      bool preempt = (length == longest_length && strcmp(mid, longest_id) < 0);
+      if(longest_length == 0 || length > longest_length || preempt)
       {
         longest_mrna = mrnafn;
+        longest_id = gt_feature_node_get_attribute(mrnafn, "ID");
         longest_length = length;
       }
     }

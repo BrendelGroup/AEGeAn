@@ -19,9 +19,11 @@ AEGeAn Toolkit: integrated genome analysis
    :maxdepth: 1
    
    install
+   gff3
    parseval
    canon
    locuspocus
+   gaeval
    loci
    citing
    api
@@ -54,9 +56,6 @@ graphics capabilities available from the GenomeTools library
   defined as the smallest genomic region that contains all genes that overlap
   with any other genes in that region. This definition can be useful when
   comparing two sets of gene predictions.
-
-* **VAnG** (Validation of Annotated Genomes) is a prototype program for
-  validating GFF3 files against a schema.
 
 * Additional tools are under development and will be released once they are a
   bit more stable.

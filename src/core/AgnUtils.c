@@ -148,27 +148,19 @@ void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
   gt_feature_node_remove_leaf(root, fn);
 }
 
+GtUword agn_mrna_3putr_length(GtFeatureNode *mrna)
+{
+  return agn_typecheck_feature_combined_length(mrna, agn_typecheck_utr3p);
+}
+
+GtUword agn_mrna_5putr_length(GtFeatureNode *mrna)
+{
+  return agn_typecheck_feature_combined_length(mrna, agn_typecheck_utr5p);
+}
+
 GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
 {
-  GtUword totallength = 0;
-  const char *cdsid = NULL;
-  GtArray *cds_segments = agn_typecheck_select(mrna, agn_typecheck_cds);
-  while(gt_array_size(cds_segments) > 0)
-  {
-    GtGenomeNode **segment = gt_array_pop(cds_segments);
-    GtFeatureNode *segmentfn = gt_feature_node_cast(*segment);
-    const char *fid = gt_feature_node_get_attribute(segmentfn, "ID");
-    if(fid)
-    {
-      if(cdsid == NULL)
-        cdsid = fid;
-      else
-        agn_assert(strcmp(cdsid, fid) == 0);
-    }
-    totallength += gt_genome_node_get_length(*segment);
-  }
-  gt_array_delete(cds_segments);
-  return totallength;
+  return agn_typecheck_feature_combined_length(mrna, agn_typecheck_cds);
 }
 
 GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)

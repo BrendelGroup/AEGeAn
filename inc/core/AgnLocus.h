@@ -250,7 +250,7 @@ GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src);
         agn_locus_gene_num(LC, DEFAULTSOURCE)
 
 /**
- * Return the locus' position in the format `seqid_start-end`.
+ * @function Return the locus' position in the format `seqid_start-end`.
  */
 GtStr *agn_locus_get_position(AgnLocus *locus);
 

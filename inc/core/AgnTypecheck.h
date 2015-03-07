@@ -1,12 +1,13 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
 online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
+
 #ifndef AEGEAN_TYPECHECK
 #define AEGEAN_TYPECHECK
 
@@ -32,6 +33,13 @@ GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *));
  * @function Returns true if the given feature is an exon; false otherwise.
  */
 bool agn_typecheck_exon(GtFeatureNode *fn);
+
+/**
+ * @function Traverse the feature graph starting at `root` and add up the length
+ * of all features matching the given selection function `func`.
+ */
+GtUword agn_typecheck_feature_combined_length(GtFeatureNode *root,
+                                              bool (*func)(GtFeatureNode *));
 
 /**
  * @function Returns true if the given feature is a gene; false otherwise.

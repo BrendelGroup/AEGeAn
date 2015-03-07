@@ -1,0 +1,31 @@
+##gff-version   3
+##sequence-region   seq 1 10000
+seq	nano	EST_match	50	250	.	-	.	.
+seq	nano	mRNA	100	500	.	+	.	ID=mRNA1;gaeval_coverage=0.252;gaeval_integrity=0.076
+seq	nano	exon	100	500	.	+	.	Parent=mRNA1
+###
+seq	nano	EST_match	400	550	.	+	.	.
+seq	nano	mRNA	750	1525	.	-	.	ID=mRNA2;gaeval_coverage=0.473;gaeval_integrity=0.742
+seq	nano	exon	750	900	.	-	.	Parent=mRNA2
+seq	AEGeAn::GAEVAL	intron	901	1049	.	-	.	Parent=mRNA2
+seq	nano	exon	1050	1125	.	-	.	Parent=mRNA2
+seq	AEGeAn::GAEVAL	intron	1126	1249	.	-	.	Parent=mRNA2
+seq	nano	exon	1250	1525	.	-	.	Parent=mRNA2
+###
+seq	nano	EST_match	800	900	.	-	.	ID=EST_match1
+seq	nano	EST_match	1050	1075	.	-	.	ID=EST_match1
+###
+seq	nano	EST_match	1070	1125	.	-	.	ID=EST_match2
+seq	nano	EST_match	1250	1310	.	-	.	ID=EST_match2
+###
+seq	nano	EST_match	1900	3050	.	+	.	ID=EST_match3
+seq	nano	EST_match	4000	5500	.	+	.	ID=EST_match3
+###
+seq	nano	mRNA	2000	5000	.	+	.	ID=mRNA3;gaeval_coverage=1.000;gaeval_integrity=0.300
+seq	nano	exon	2000	3000	.	+	.	Parent=mRNA3
+seq	AEGeAn::GAEVAL	intron	3001	3999	.	+	.	Parent=mRNA3
+seq	nano	exon	4000	5000	.	+	.	Parent=mRNA3
+###
+seq	nano	EST_match	2500	3050	.	+	.	ID=EST_match4
+seq	nano	EST_match	4000	5700	.	+	.	ID=EST_match4
+###

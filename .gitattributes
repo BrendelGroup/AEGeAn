@@ -1,0 +1,5 @@
+inc/core/*.h linguist-language=C
+src/*/*.h linguist-language=C
+docs linguist-documentation
+data/share/vendor linguist-vendored
+*.html linguist-vendored

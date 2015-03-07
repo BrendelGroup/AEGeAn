@@ -292,21 +292,21 @@ Group7.16	OGS	mRNA	75757	79210	1	-	.	ID=mRNA4
 Group7.16	OGS	three_prime_UTR	75757	75834	1	-	.	Parent=mRNA4
 Group7.16	OGS	exon	75757	76028	1	-	.	Parent=mRNA4
 Group7.16	OGS	stop_codon	75835	75837	.	-	.	Parent=mRNA4
-Group7.16	OGS	CDS	75835	76028	.	-	0	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	CDS	75835	76028	.	-	2	ID=CDS4;Parent=mRNA4
 Group7.16	OGS	intron	76029	76285	.	-	.	Parent=mRNA4
-Group7.16	OGS	CDS	76286	76370	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	CDS	76286	76370	.	-	0	ID=CDS4;Parent=mRNA4
 Group7.16	OGS	exon	76286	76370	1	-	.	Parent=mRNA4
 Group7.16	OGS	intron	76371	77075	.	-	.	Parent=mRNA4
-Group7.16	OGS	CDS	77076	77278	.	-	0	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	CDS	77076	77278	.	-	2	ID=CDS4;Parent=mRNA4
 Group7.16	OGS	exon	77076	77278	1	-	.	Parent=mRNA4
 Group7.16	OGS	intron	77279	77348	.	-	.	Parent=mRNA4
-Group7.16	OGS	CDS	77349	77436	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	CDS	77349	77436	.	-	0	ID=CDS4;Parent=mRNA4
 Group7.16	OGS	exon	77349	77436	1	-	.	Parent=mRNA4
 Group7.16	OGS	intron	77437	78118	.	-	.	Parent=mRNA4
-Group7.16	OGS	CDS	78119	78631	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	CDS	78119	78631	.	-	0	ID=CDS4;Parent=mRNA4
 Group7.16	OGS	exon	78119	78631	1	-	.	Parent=mRNA4
 Group7.16	OGS	intron	78632	78903	.	-	.	Parent=mRNA4
-Group7.16	OGS	CDS	78904	79047	.	-	1	ID=CDS4;Parent=mRNA4
+Group7.16	OGS	CDS	78904	79047	.	-	0	ID=CDS4;Parent=mRNA4
 Group7.16	OGS	exon	78904	79210	1	-	.	Parent=mRNA4
 Group7.16	OGS	start_codon	79045	79047	.	-	.	Parent=mRNA4
 Group7.16	OGS	five_prime_UTR	79048	79210	1	-	.	Parent=mRNA4
@@ -317,21 +317,21 @@ Group7.16	NCBI	mRNA	75713	79494	.	-	.	ID=mRNA4;Name=XM_623919.3;Dbxref=GeneID:55
 Group7.16	NCBI	three_prime_UTR	75713	75834	.	-	.	Parent=mRNA4
 Group7.16	NCBI	exon	75713	76028	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
 Group7.16	NCBI	stop_codon	75835	75837	.	-	.	Parent=mRNA4
-Group7.16	NCBI	CDS	75835	76028	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	CDS	75835	76028	.	-	2	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
 Group7.16	NCBI	intron	76029	76285	.	-	.	Parent=mRNA4
 Group7.16	NCBI	exon	76286	76370	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
-Group7.16	NCBI	CDS	76286	76370	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	CDS	76286	76370	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
 Group7.16	NCBI	intron	76371	77075	.	-	.	Parent=mRNA4
 Group7.16	NCBI	exon	77076	77278	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
-Group7.16	NCBI	CDS	77076	77278	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	CDS	77076	77278	.	-	2	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
 Group7.16	NCBI	intron	77279	77348	.	-	.	Parent=mRNA4
 Group7.16	NCBI	exon	77349	77436	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
-Group7.16	NCBI	CDS	77349	77436	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	CDS	77349	77436	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
 Group7.16	NCBI	intron	77437	78118	.	-	.	Parent=mRNA4
 Group7.16	NCBI	exon	78119	78631	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
-Group7.16	NCBI	CDS	78119	78631	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	CDS	78119	78631	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
 Group7.16	NCBI	intron	78632	78903	.	-	.	Parent=mRNA4
-Group7.16	NCBI	CDS	78904	79047	.	-	1	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
+Group7.16	NCBI	CDS	78904	79047	.	-	0	ID=CDS4;Parent=mRNA4;Name=XP_623922.2;Dbxref=GeneID:551524,Genbank:XP_623922.2,BEEBASE:GB46286;gbkey=CDS;gene=LOC551524;product=zinc carboxypeptidase A 1-like isoform X2;protein_id=XP_623922.2
 Group7.16	NCBI	exon	78904	79055	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
 Group7.16	NCBI	start_codon	79045	79047	.	-	.	Parent=mRNA4
 Group7.16	NCBI	five_prime_UTR	79048	79055	.	-	.	Parent=mRNA4
@@ -417,15 +417,15 @@ Group7.16	OGS	mRNA	104797	107359	1	-	.	ID=mRNA6
 Group7.16	OGS	three_prime_UTR	104797	105353	1	-	.	Parent=mRNA6
 Group7.16	OGS	exon	104797	105898	1	-	.	Parent=mRNA6
 Group7.16	OGS	stop_codon	105354	105356	.	-	.	Parent=mRNA6
-Group7.16	OGS	CDS	105354	105898	.	-	0	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	CDS	105354	105898	.	-	2	ID=CDS6;Parent=mRNA6
 Group7.16	OGS	intron	105899	106079	.	-	.	Parent=mRNA6
-Group7.16	OGS	CDS	106080	106328	.	-	0	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	CDS	106080	106328	.	-	2	ID=CDS6;Parent=mRNA6
 Group7.16	OGS	exon	106080	106328	1	-	.	Parent=mRNA6
 Group7.16	OGS	intron	106329	106539	.	-	.	Parent=mRNA6
-Group7.16	OGS	CDS	106540	106664	.	-	2	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	CDS	106540	106664	.	-	1	ID=CDS6;Parent=mRNA6
 Group7.16	OGS	exon	106540	106664	1	-	.	Parent=mRNA6
 Group7.16	OGS	intron	106665	106765	.	-	.	Parent=mRNA6
-Group7.16	OGS	CDS	106766	107160	.	-	1	ID=CDS6;Parent=mRNA6
+Group7.16	OGS	CDS	106766	107160	.	-	0	ID=CDS6;Parent=mRNA6
 Group7.16	OGS	exon	106766	107359	1	-	.	Parent=mRNA6
 Group7.16	OGS	start_codon	107158	107160	.	-	.	Parent=mRNA6
 Group7.16	OGS	five_prime_UTR	107161	107359	1	-	.	Parent=mRNA6
@@ -436,15 +436,15 @@ Group7.16	NCBI	mRNA	105315	107360	.	-	.	ID=mRNA6;Name=XM_006562491.1;Dbxref=Gene
 Group7.16	NCBI	three_prime_UTR	105315	105353	.	-	.	Parent=mRNA6
 Group7.16	NCBI	exon	105315	105898	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
 Group7.16	NCBI	stop_codon	105354	105356	.	-	.	Parent=mRNA6
-Group7.16	NCBI	CDS	105354	105898	.	-	0	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	CDS	105354	105898	.	-	2	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
 Group7.16	NCBI	intron	105899	106079	.	-	.	Parent=mRNA6
 Group7.16	NCBI	exon	106080	106328	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
-Group7.16	NCBI	CDS	106080	106328	.	-	0	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	CDS	106080	106328	.	-	2	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
 Group7.16	NCBI	intron	106329	106539	.	-	.	Parent=mRNA6
 Group7.16	NCBI	exon	106540	106664	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
-Group7.16	NCBI	CDS	106540	106664	.	-	2	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	CDS	106540	106664	.	-	1	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
 Group7.16	NCBI	intron	106665	106765	.	-	.	Parent=mRNA6
-Group7.16	NCBI	CDS	106766	107160	.	-	1	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
+Group7.16	NCBI	CDS	106766	107160	.	-	0	ID=CDS6;Parent=mRNA6;Name=XP_006562554.1;Dbxref=GeneID:102655754,Genbank:XP_006562554.1;gbkey=CDS;gene=LOC102655754;product=enolase-like;protein_id=XP_006562554.1
 Group7.16	NCBI	exon	106766	107360	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
 Group7.16	NCBI	start_codon	107158	107160	.	-	.	Parent=mRNA6
 Group7.16	NCBI	five_prime_UTR	107161	107360	.	-	.	Parent=mRNA6
