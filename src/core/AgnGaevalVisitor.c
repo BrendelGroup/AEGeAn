@@ -98,7 +98,7 @@ static bool gaeval_visitor_typecheck_gap(GtFeatureNode *fn);
  * @function Used to bombine the coverage from individual alignments into a
  * single aggregate coverage.
  */
-static void gaeval_visitor_union(GtArray *cov1, GtArray *cov2);
+static GtArray *gaeval_visitor_union(GtArray *cov1, GtArray *cov2);
 
 /**
  * @function Procedure for processing feature nodes (the only node of interest
@@ -256,9 +256,14 @@ static double gaeval_visitor_calculate_coverage(AgnGaevalVisitor *v,
   GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)genemodel);
   GtRange mrna_range = gt_genome_node_get_range((GtGenomeNode *)genemodel);
   GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
-  gt_feature_index_get_features_for_range(v->alignments, overlapping,
-                                          gt_str_get(seqid), &mrna_range,
-                                          error);
+  bool hasseqid;
+  gt_feature_index_has_seqid(v->alignments, &hasseqid, gt_str_get(seqid),error);
+  if(hasseqid)
+  {
+    gt_feature_index_get_features_for_range(v->alignments, overlapping,
+                                            gt_str_get(seqid), &mrna_range,
+                                            error);
+  }
 
   GtArray *exon_coverage = gt_array_new( sizeof(GtRange) );
   GtUword i;
@@ -269,8 +274,10 @@ static double gaeval_visitor_calculate_coverage(AgnGaevalVisitor *v,
                                                       (GtGenomeNode*)alignment);
     if(covered_parts != NULL)
     {
-      gaeval_visitor_union(exon_coverage, covered_parts);
+      GtArray *temp = gaeval_visitor_union(exon_coverage, covered_parts);
       gt_array_delete(covered_parts);
+      gt_array_delete(exon_coverage);
+      exon_coverage = temp;
     }
   }
   double coverage = gaeval_visitor_coverage_resolve(genemodel, exon_coverage);
@@ -290,9 +297,15 @@ static double gaeval_visitor_calculate_integrity(AgnGaevalVisitor *v,
   GtStr *seqid = gt_genome_node_get_seqid((GtGenomeNode *)genemodel);
   GtRange mrna_range = gt_genome_node_get_range((GtGenomeNode *)genemodel);
   GtArray *overlapping = gt_array_new( sizeof(GtFeatureNode *) );
-  gt_feature_index_get_features_for_range(v->alignments, overlapping,
-                                          gt_str_get(seqid), &mrna_range,
-                                          error);
+  bool hasseqid;
+  gt_feature_index_has_seqid(v->alignments, &hasseqid, gt_str_get(seqid),error);
+  if(hasseqid)
+  {
+    gt_feature_index_get_features_for_range(v->alignments, overlapping,
+                                            gt_str_get(seqid), &mrna_range,
+                                            error);
+  }
+
   GtArray *gaps = gt_array_new( sizeof(GtFeatureNode *) );
   while(gt_array_size(overlapping) > 0)
   {
@@ -404,13 +417,22 @@ gaeval_visitor_intersect(GtGenomeNode *genemodel, GtGenomeNode *alignment)
       GtRange alnrange = gt_genome_node_get_range((GtGenomeNode *) tempaln);
       GtRange intr = gaeval_visitor_range_intersect(&exonrange, &alnrange);
       if(gt_range_compare(&intr, &nullrange) != 0)
-      {
         gt_array_add(covered_parts, intr);
-      }
     }
     gt_feature_node_iterator_delete(aniter);
   }
   gt_array_delete(exons);
+
+  for(i = 0; i < gt_array_size(covered_parts); i++)
+  {
+    GtRange *r1 = gt_array_get(covered_parts, i);
+    GtUword j;
+    for(j = i+1; j < gt_array_size(covered_parts); j++)
+    {
+      GtRange *r2 = gt_array_get(covered_parts, j);
+      agn_assert(gt_range_overlap(r1, r2) == false);
+    }
+  }
 
   return covered_parts;
 }
@@ -464,33 +486,36 @@ static bool gaeval_visitor_typecheck_gap(GtFeatureNode *fn)
   return gt_feature_node_has_type(fn, "match_gap");
 }
 
-static void gaeval_visitor_union(GtArray *cov1, GtArray *cov2)
+static GtArray *gaeval_visitor_union(GtArray *cov1, GtArray *cov2)
 {
   agn_assert(cov1 && cov2);
-
-  GtUword i, j;
-  for(i = 0; i < gt_array_size(cov2); i++)
-  {
-    GtRange *range2 = gt_array_get(cov2, i);
-    bool overlaps = false;
-    for(j = 0; j < gt_array_size(cov1); j++)
-    {
-      GtRange *range1 = gt_array_get(cov1, j);
-      if(gt_range_overlap(range1, range2))
-      {
-        GtRange joined = gt_range_join(range1, range2);
-        *range1 = joined;
-        overlaps = true;
-        break;
-      }
-    }
-    if(overlaps == false)
-    {
-      gt_array_add(cov1, *range2);
-    }
-  }
+  gt_array_add_array(cov1, cov2);
   if(gt_array_size(cov1) > 1)
     gt_array_sort(cov1, (GtCompare)gt_range_compare);
+
+  GtArray *runion = gt_array_new(sizeof(GtRange));
+  if(gt_array_size(cov1) == 0)
+    return runion;
+  GtRange *rng = gt_array_get(cov1, 0);
+  gt_array_add(runion, *rng);
+  GtRange *prev = gt_array_get(runion, 0);
+  if(gt_array_size(cov1) == 1)
+    return runion;
+
+  GtUword i;
+  for(i = 1; i < gt_array_size(cov1); i++)
+  {
+    rng = gt_array_get(cov1, i);
+    if(gt_range_overlap(rng, prev))
+      *prev = gt_range_join(rng, prev);
+    else
+    {
+      gt_array_add(runion, *rng);
+      prev = gt_array_get(runion, gt_array_size(runion) - 1);
+    }
+  }
+  
+  return runion;
 }
 
 static int
@@ -830,18 +855,19 @@ static void gv_test_union(AgnUnitTest *test)
   GtRange rng02 = {11525, 14070};
   gt_array_add(r2, rng01);
   gt_array_add(r2, rng02);
-  gaeval_visitor_union(r1, r2);
-  bool test1 = gt_array_size(r1) == 2;
+  GtArray *ru = gaeval_visitor_union(r1, r2);
+  bool test1 = gt_array_size(ru) == 2;
   if(test1)
   {
-    GtRange *temp1 = gt_array_get(r1, 0);
-    GtRange *temp2 = gt_array_get(r1, 1);
+    GtRange *temp1 = gt_array_get(ru, 0);
+    GtRange *temp2 = gt_array_get(ru, 1);
     test1 = gt_range_compare(temp1, &rng01) == 0 &&
             gt_range_compare(temp2, &rng02) == 0;
   }
   agn_unit_test_result(test, "union (1)", test1);
   gt_array_delete(r1);
   gt_array_delete(r2);
+  gt_array_delete(ru);
 
   r1 = gt_array_new( sizeof(GtRange) );
   r2 = gt_array_new( sizeof(GtRange) );
@@ -853,12 +879,12 @@ static void gv_test_union(AgnUnitTest *test)
   gt_array_add(r1, rng04);
   gt_array_add(r2, rng05);
   gt_array_add(r2, rng06);
-  gaeval_visitor_union(r1, r2);
-  bool test2 = gt_array_size(r1) == 2;
+  ru = gaeval_visitor_union(r1, r2);
+  bool test2 = gt_array_size(ru) == 2;
   if(test2)
   {
-    GtRange *temp1 = gt_array_get(r1, 0);
-    GtRange *temp2 = gt_array_get(r1, 1);
+    GtRange *temp1 = gt_array_get(ru, 0);
+    GtRange *temp2 = gt_array_get(ru, 1);
     GtRange testr1 = { 200, 500 };
     GtRange testr2 = { 700, 900 };
     test2 = gt_range_compare(temp1, &testr1) == 0 &&
@@ -867,6 +893,7 @@ static void gv_test_union(AgnUnitTest *test)
   agn_unit_test_result(test, "union (2)", test2);
   gt_array_delete(r1);
   gt_array_delete(r2);
+  gt_array_delete(ru);
 
   r1 = gt_array_new( sizeof(GtRange) );
   r2 = gt_array_new( sizeof(GtRange) );
@@ -880,14 +907,14 @@ static void gv_test_union(AgnUnitTest *test)
   gt_array_add(r2, rng09);
   gt_array_add(r2, rng10);
   gt_array_add(r2, rng11);
-  gaeval_visitor_union(r1, r2);
-  bool test3 = gt_array_size(r1) == 3;
+  ru = gaeval_visitor_union(r1, r2);
+  bool test3 = gt_array_size(ru) == 3;
 
   if(test3)
   {
-    GtRange *temp1 = gt_array_get(r1, 0);
-    GtRange *temp2 = gt_array_get(r1, 1);
-    GtRange *temp3 = gt_array_get(r1, 2);
+    GtRange *temp1 = gt_array_get(ru, 0);
+    GtRange *temp2 = gt_array_get(ru, 1);
+    GtRange *temp3 = gt_array_get(ru, 2);
     GtRange testr1 = { 100, 150 };
     GtRange testr2 = { 200, 500 };
     GtRange testr3 = { 700, 900 };
@@ -898,4 +925,5 @@ static void gv_test_union(AgnUnitTest *test)
   agn_unit_test_result(test, "union (3)", test3);
   gt_array_delete(r1);
   gt_array_delete(r2);
+  gt_array_delete(ru);
 }
