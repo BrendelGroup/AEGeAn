@@ -13,8 +13,11 @@ env:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
-  - git clone https://github.com/genometools/genometools.git
-  - cd genometools && make && sudo make install && cd -
+  - wget http://genometools.org/pub/binary_distributions/gt-1.5.5-Linux_x86_64-64bit-complete.tar.gz
+  - tar xzf gt-1.5.5-Linux_x86_64-64bit-complete.tar.gz
+  - sudo cp -r gt-1.5.5-Linux_x86_64-64bit-complete/bin/* /usr/local/bin/
+  - sudo cp -r gt-1.5.5-Linux_x86_64-64bit-complete/include/genometools /usr/local/include/
+  - sudo cp -r gt-1.5.5-Linux_x86_64-64bit-complete/lib/* /usr/local/lib/
   - sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/genometools-x86_64.conf'
   - sudo ldconfig
 addons:
@@ -26,5 +29,7 @@ addons:
     build_command_prepend: make clean
     build_command: make test
     branch_pattern: covscan
-install: sudo make install
+install:
+  - sudo make install
+  - sudo ldconfig
 script: make test
