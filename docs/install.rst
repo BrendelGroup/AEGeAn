@@ -23,7 +23,7 @@ For the impatient
     sudo ldconfig
 
     # Download, compile, and install the  AEGeAn Toolkit
-    curl https://github.com/standage/AEGeAn/archive/v0.12.0.tar.gz > AEGeAn-0.13.0.tar.gz
+    curl https://github.com/standage/AEGeAn/archive/v0.13.0.tar.gz > AEGeAn-0.13.0.tar.gz
     tar xzf AEGeAn-0.13.0.tar.gz
     cd AEGeAn-0.13.0
     make test
