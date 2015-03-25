@@ -11,9 +11,9 @@ For the impatient
     sudo apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
 
     # Download, compile, and install the GenomeTools package
-    curl -O http://genometools.org/pub/genometools-unstable.tar.gz
-    tar xzf genometools-unstable.tar.gz
-    cd genometools-unstable
+    curl -O http://genometools.org/pub/genometools-1.5.5.tar.gz
+    tar xzf genometools-1.5.5.tar.gz
+    cd genometools-1.5.5
     make 64bit=yes
     sudo make 64bit=yes install
     cd ..
