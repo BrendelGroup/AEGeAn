@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Simplified and corrected GAEVAL interval merging function.
+- Fixed locus parsing issues resulting from incorrect sorting of input when pseudonodes involved.
 
 ## [0.12.2] - 2015-03-06
 

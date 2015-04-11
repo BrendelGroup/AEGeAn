@@ -286,10 +286,6 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = gt_sort_stream_new(last_stream);
-  gt_queue_add(streams, current_stream);
-  last_stream = current_stream;
-
   if(options.pseudofix)
   {
     current_stream = agn_pseudogene_fix_stream_new(last_stream);
@@ -303,6 +299,10 @@ int main(int argc, char **argv)
   last_stream = current_stream;
 
   current_stream = agn_filter_stream_new(last_stream, options.filter);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = gt_sort_stream_new(last_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
