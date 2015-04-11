@@ -1,0 +1,915 @@
+##gff-version   3
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227
+##feature-ontology ftp://ftp.flybase.org/releases/FB2014_04/precomputed_files/ontologies/so.obo.zip
+##genome-build FlyBase r6.01
+##sequence-region   2L 16629691 16729691
+2L	FlyBase	exon_junction	16634776	16652743	.	+	.	ID=FBsf0000184974;Name=Dmel:r6:2L:16634776:16652743:+;exonA=2L:16634767..16634776:+;exonB=2L:16652743..16652752:+;read_count=modENCODE_mRNA-Seq_U_junctions:41
+###
+2L	FlyBase	transposable_element_insertion_site	16636726	16636726	.	-	.	ID=FBti0131557;Name=Mi{MIC}CG42389[MI01789];affected_genes=FBgn0259735;causes_alleles=FBal0247141;derived_cyto_location=36A7;derived_comput_cyto_location=36A7;flanking_sequence=HR235271
+###
+2L	FlyBase	chromosome_band	16637043	16658116	.	+	.	ID=band-36A8_chromosome_band;Name=band-36A8
+###
+2L	FlyBase	breakpoint	16638995	16638995	.	.	.	ID=Df(2L)dac-4:bk2_breakpoint;Name=Df(2L)dac-4:bk2;reported_genomic_loc=2L_r5:16638995..16638995
+###
+2L	FlyBase	transposable_element_insertion_site	16645800	16645800	.	-	.	ID=FBti0143864;Name=PBac{681.P.FSVS-1}CG42389[CPTI001586];Alias=CPTI-001586;affected_genes=FBgn0014446,FBgn0259735;causes_alleles=FBal0261983,FBal0262032;derived_comput_cyto_location=36A8
+###
+2L	FlyBase	transposable_element_insertion_site	16645863	16645863	.	-	.	ID=FBti0051157;Name=PBac{WH}CG42389[f03314];Alias=PBac{WH}f03314,PBac{WH}CG31738[f03314];affected_genes=FBgn0259735;causes_alleles=FBal0186266;derived_cyto_location=36A8;derived_comput_cyto_location=36A8;flanking_sequence=CZ485858,CZ485859
+###
+2L	FlyBase	transposable_element_insertion_site	16646179	16646179	.	-	.	ID=FBti0048735;Name=PBac{RB}CG42389[e04238];Alias=PBac{RB}e04238;Dbxref=GB:CZ481982;affected_genes=FBgn0259735;causes_alleles=FBal0225370;derived_cyto_location=36A8;derived_comput_cyto_location=36A8;flanking_sequence=CZ481982
+###
+2L	FlyBase	exon_junction	16652912	16657499	.	+	.	ID=FBsf0000124943;Name=Dmel:r6:2L:16652912:16657499:+;exonA=2L:16652843..16652912:+;exonB=2L:16657499..16657567:+;read_count=BCM_1_RNAseq_junctions:64,modENCODE_mRNA-Seq_U_junctions:3609
+###
+2L	FlyBase	transposable_element_insertion_site	16654343	16654343	.	-	.	ID=FBti0101686;Name=Mi{ET1}CG42389[MB05860];Alias=Mi{ET1}CG31738[MB05860];affected_genes=FBgn0259735;causes_alleles=FBal0217677;derived_cyto_location=36A8;derived_comput_cyto_location=36A8;flanking_sequence=FI142709
+###
+2L	FlyBase	transposable_element_insertion_site	16654459	16654459	.	-	.	ID=FBti0051145;Name=PBac{WH}CG42389[f03298];Alias=PBac{WH}f03298,PBac{WH}CG31738[f03298];affected_genes=FBgn0259735;causes_alleles=FBal0186267;derived_cyto_location=36A8;derived_comput_cyto_location=36A8;flanking_sequence=CZ485841
+###
+2L	FlyBase	protein	16657397	16661775	.	+	.	ID=FBpp0289282;Name=CG42389-PG;Derives_from=FBtr0300005;Alias=FBpp0080439,CG31738-PA;Dbxref=FlyBase_Annotation_IDs:CG42389-PG,REFSEQ:NP_723981,GB_protein:AAF53547;derived_molecular_weight=153287.5;derived_isoelectric_point=7.96
+###
+2L	FlyBase	exon_junction	16657429	16657499	.	+	.	ID=FBsf0000124128;Name=Dmel:r6:2L:16657429:16657499:+;exonA=2L:16657351..16657429:+;exonB=2L:16657499..16657579:+;read_count=BCM_1_RNAseq_junctions:65,modENCODE_mRNA-Seq_U_junctions:619
+###
+2L	FlyBase	exon_junction	16657952	16658024	.	+	.	ID=FBsf0000133393;Name=Dmel:r6:2L:16657952:16658024:+;exonA=2L:16657861..16657952:+;exonB=2L:16658024..16658094:+;read_count=BCM_1_RNAseq_junctions:139,modENCODE_mRNA-Seq_U_junctions:4380
+###
+2L	FlyBase	chromosome_band	16658117	16669463	.	+	.	ID=band-36A9_chromosome_band;Name=band-36A9
+###
+2L	FlyBase	gene	16663454	16676701	.	-	.	ID=FBgn0032593;Name=Trpgamma;fullname=Transient receptor potential cation channel gamma;Alias=dTRPgamma,TRPgamma,dTRPg,trp-gamma,CG5996,trpgamma,DmTRPgamma,Trp-gamma;Ontology_term=SO:0000010,SO:0000087,GO:0006816,GO:0050908,GO:0005262,GO:0005515,GO:0016028,GO:0006812,GO:0005261,GO:0009416,GO:0070588,GO:0034703;Dbxref=FlyBase:FBan0005996,FlyBase_Annotation_IDs:CG5996,GB_protein:AAN10950,GB_protein:AAF53548,GB:AJ277967,GB_protein:CAB96204,GB:AJ277968,GB_protein:CAB96205,UniProt/Swiss-Prot:Q9VJJ7,INTERPRO:IPR002110,INTERPRO:IPR002153,INTERPRO:IPR004729,INTERPRO:IPR005821,INTERPRO:IPR013555,INTERPRO:IPR020683,GB_protein:ACL83036,OrthoDB7_Drosophila:EOG7ND6NH,OrthoDB7_Diptera:EOG7DG7V6,EntrezGene:34991,UniProt/TrEMBL:B7YZW4,OrthoDB7_Insecta:EOG7520DJ,OrthoDB7_Arthropoda:EOG78Q6PN,OrthoDB7_Metazoa:EOG776SP6,InterologFinder:34991,FlyAtlas:CG5996-RA,GenomeRNAi:34991,SignaLink:Q9VJJ7;gbunit=AE014134;derived_computed_cyto=36A9-36A10
+2L	FlyBase	mRNA	16663454	16676701	.	-	.	ID=FBtr0335144;Parent=FBgn0032593;Name=Trpgamma-RD;Alias=trpgamma-RD;Dbxref=REFSEQ:NM_001144358,FlyBase_Annotation_IDs:CG5996-RD;score_text=Weakly Supported;score=3
+2L	FlyBase	three_prime_UTR	16663454	16664885	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	exon	16663454	16665110	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16664886	16665110	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	intron	16665111	16665161	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16665162	16665280	.	-	2	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16665342	16665617	.	-	2	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	intron	16665618	16665918	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16665919	16666281	.	-	2	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	exon	16665919	16666281	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	intron	16666282	16666355	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16666356	16666581	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16666650	16666844	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16666916	16667111	.	-	1	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16667168	16667284	.	-	1	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16667453	16667721	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16667778	16668073	.	-	2	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16668143	16668377	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16668436	16668618	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16668681	16669013	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16669070	16669438	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	CDS	16669499	16669663	.	-	0	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16669664	16669677	.	-	.	Parent=FBtr0335144;parent_type=mRNA
+2L	FlyBase	mRNA	16664542	16676701	.	-	.	ID=FBtr0080945;Parent=FBgn0032593;Name=Trpgamma-RA;Alias=CG5996-RA,trpgamma-RA;Dbxref=FlyBase_Annotation_IDs:CG5996-RA,REFSEQ:NM_135958;score_text=Weakly Supported;score=3
+2L	FlyBase	intron	16669678	16671768	.	-	.	Parent=FBtr0080945;parent_type=mRNA
+2L	FlyBase	exon	16671769	16671811	.	-	.	Parent=FBtr0080945;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16671769	16671811	.	-	.	Parent=FBtr0080945;parent_type=mRNA
+2L	FlyBase	intron	16671812	16675422	.	-	.	Parent=FBtr0080945;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16675423	16675552	.	-	.	Parent=FBtr0080945;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16676571	16676701	.	-	.	Parent=FBtr0080945;parent_type=mRNA
+2L	FlyBase	mRNA	16664542	16676701	.	-	.	ID=FBtr0080946;Parent=FBgn0032593;Name=Trpgamma-RB;Alias=CG5996-RB,trpgamma-RB;Dbxref=FlyBase_Annotation_IDs:CG5996-RB,REFSEQ:NM_165169;score_text=Weakly Supported;score=3
+2L	FlyBase	three_prime_UTR	16664542	16664885	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16664542	16665110	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16664886	16665110	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16665111	16665161	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16665162	16665280	.	-	2	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16665162	16665280	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16665281	16665341	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16665342	16665617	.	-	2	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16665342	16665617	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16665618	16665918	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16665919	16666284	.	-	2	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16665919	16666284	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16666285	16666355	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16666356	16666581	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16666356	16666581	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16666582	16666649	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16666650	16666844	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16666650	16666844	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16666845	16666915	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16666916	16667111	.	-	1	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16666916	16667111	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16667112	16667167	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16667168	16667284	.	-	1	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16667168	16667284	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16667285	16667452	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16667453	16667721	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16667453	16667721	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16667722	16667777	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16667778	16668073	.	-	2	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16667778	16668073	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16668074	16668142	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16668143	16668377	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16668143	16668377	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16668378	16668435	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16668436	16668618	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16668436	16668618	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16668619	16668680	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16668681	16669013	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16668681	16669013	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16669014	16669069	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	CDS	16669070	16669420	.	-	0	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16669070	16669438	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16669421	16669438	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16669439	16669498	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16669499	16669677	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16669499	16669677	.	-	.	Parent=FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16669678	16675422	.	-	.	Parent=FBtr0335144,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16675423	16675552	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16675423	16675552	.	-	.	Parent=FBtr0335144,FBtr0080946;parent_type=mRNA
+2L	FlyBase	intron	16675553	16676570	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	exon	16676571	16676701	.	-	.	Parent=FBtr0335144,FBtr0080945,FBtr0080946;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16676571	16676701	.	-	.	Parent=FBtr0335144,FBtr0080946;parent_type=mRNA
+###
+2L	FlyBase	transposable_element_insertion_site	16663972	16663972	.	-	.	ID=FBti0075367;Name=Mi{ET1}MB01460;derived_cyto_location=36A9;derived_comput_cyto_location=36A9;flanking_sequence=ED827894
+###
+2L	FlyBase	protein	16664889	16669420	.	-	.	ID=FBpp0080498;Name=Trpgamma-PA;Derives_from=FBtr0080945;Alias=trpgamma-PA,CG5996-PA;Dbxref=FlyBase_Annotation_IDs:CG5996-PA,REFSEQ:NP_609802,GB_protein:AAF53548;derived_molecular_weight=127108.0;derived_isoelectric_point=8.01
+###
+2L	FlyBase	protein	16664889	16669420	.	-	.	ID=FBpp0080499;Name=Trpgamma-PB;Derives_from=FBtr0080946;Alias=CG5996-PB,trpgamma-PB;Dbxref=FlyBase_Annotation_IDs:CG5996-PB,REFSEQ:NP_723983,GB_protein:AAN10950;derived_molecular_weight=127108.0;derived_isoelectric_point=8.01
+###
+2L	FlyBase	protein	16664889	16669663	.	-	.	ID=FBpp0307143;Name=Trpgamma-PD;Derives_from=FBtr0335144;Alias=trpgamma-PD;Dbxref=REFSEQ:NP_001137830,GB_protein:ACL83036,FlyBase_Annotation_IDs:CG5996-PD;derived_molecular_weight=133545.4;derived_isoelectric_point=8.57
+###
+2L	FlyBase	exon_junction	16665110	16665162	.	-	.	ID=FBsf0000130204;Name=Dmel:r6:2L:16665110:16665162:-;exonA=2L:16665052..16665110:-;exonB=2L:16665162..16665215:-;read_count=BCM_1_RNAseq_junctions:8,modENCODE_mRNA-Seq_U_junctions:221
+###
+2L	FlyBase	exon_junction	16665280	16665342	.	-	.	ID=FBsf0000106560;Name=Dmel:r6:2L:16665280:16665342:-;exonA=2L:16665223..16665280:-;exonB=2L:16665342..16665391:-;read_count=BCM_1_RNAseq_junctions:9,modENCODE_mRNA-Seq_U_junctions:309
+###
+2L	FlyBase	exon_junction	16665280	16667778	.	-	.	ID=FBsf0000130405;Name=Dmel:r6:2L:16665280:16667778:-;exonA=2L:16665261..16665280:-;exonB=2L:16667778..16667798:-;read_count=BCM_1_RNAseq_junctions:0
+###
+2L	FlyBase	exon_junction	16665617	16665919	.	-	.	ID=FBsf0000115401;Name=Dmel:r6:2L:16665617:16665919:-;exonA=2L:16665551..16665617:-;exonB=2L:16665919..16665983:-;read_count=BCM_1_RNAseq_junctions:9,modENCODE_mRNA-Seq_U_junctions:246
+###
+2L	FlyBase	transposable_element	16665658	16665715	.	-	.	ID=FBti0061378;Name=INE-1{}3317;Alias=INE-1#601,TE61378;derived_cyto_location=36A9-36A9;derived_comput_cyto_location=36A9
+###
+2L	FlyBase	exon_junction	16666281	16666356	.	-	.	ID=FBsf0000183277;Name=Dmel:r6:2L:16666281:16666356:-;exonA=2L:16666272..16666281:-;exonB=2L:16666356..16666365:-;read_count=modENCODE_mRNA-Seq_U_junctions:37
+###
+2L	FlyBase	exon_junction	16666284	16666356	.	-	.	ID=FBsf0000140782;Name=Dmel:r6:2L:16666284:16666356:-;exonA=2L:16666218..16666284:-;exonB=2L:16666356..16666387:-;read_count=BCM_1_RNAseq_junctions:6,modENCODE_mRNA-Seq_U_junctions:93
+###
+2L	FlyBase	exon_junction	16666581	16666650	.	-	.	ID=FBsf0000133822;Name=Dmel:r6:2L:16666581:16666650:-;exonA=2L:16666522..16666581:-;exonB=2L:16666650..16666693:-;read_count=BCM_1_RNAseq_junctions:6,modENCODE_mRNA-Seq_U_junctions:198
+###
+2L	FlyBase	exon_junction	16666844	16666916	.	-	.	ID=FBsf0000130447;Name=Dmel:r6:2L:16666844:16666916:-;exonA=2L:16666778..16666844:-;exonB=2L:16666916..16666925:-;read_count=BCM_1_RNAseq_junctions:1,modENCODE_mRNA-Seq_U_junctions:149
+###
+2L	FlyBase	exon_junction	16667111	16667168	.	-	.	ID=FBsf0000107483;Name=Dmel:r6:2L:16667111:16667168:-;exonA=2L:16667051..16667111:-;exonB=2L:16667168..16667237:-;read_count=BCM_1_RNAseq_junctions:3,modENCODE_mRNA-Seq_U_junctions:100
+###
+2L	FlyBase	exon_junction	16667284	16667453	.	-	.	ID=FBsf0000129921;Name=Dmel:r6:2L:16667284:16667453:-;exonA=2L:16667259..16667284:-;exonB=2L:16667453..16667518:-;read_count=BCM_1_RNAseq_junctions:2,modENCODE_mRNA-Seq_U_junctions:126
+###
+2L	FlyBase	exon_junction	16667721	16667778	.	-	.	ID=FBsf0000138636;Name=Dmel:r6:2L:16667721:16667778:-;exonA=2L:16667655..16667721:-;exonB=2L:16667778..16667818:-;read_count=BCM_1_RNAseq_junctions:3,modENCODE_mRNA-Seq_U_junctions:149
+###
+2L	FlyBase	exon_junction	16668073	16668143	.	-	.	ID=FBsf0000125833;Name=Dmel:r6:2L:16668073:16668143:-;exonA=2L:16668046..16668073:-;exonB=2L:16668143..16668190:-;read_count=BCM_1_RNAseq_junctions:1,modENCODE_mRNA-Seq_U_junctions:132
+###
+2L	FlyBase	exon_junction	16668377	16668436	.	-	.	ID=FBsf0000103919;Name=Dmel:r6:2L:16668377:16668436:-;exonA=2L:16668310..16668377:-;exonB=2L:16668436..16668494:-;read_count=BCM_1_RNAseq_junctions:4,modENCODE_mRNA-Seq_U_junctions:187
+###
+2L	FlyBase	exon_junction	16668618	16668681	.	-	.	ID=FBsf0000108212;Name=Dmel:r6:2L:16668618:16668681:-;exonA=2L:16668606..16668618:-;exonB=2L:16668681..16668746:-;read_count=BCM_1_RNAseq_junctions:3,modENCODE_mRNA-Seq_U_junctions:189
+###
+2L	FlyBase	exon_junction	16669013	16669070	.	-	.	ID=FBsf0000143607;Name=Dmel:r6:2L:16669013:16669070:-;exonA=2L:16668954..16669013:-;exonB=2L:16669070..16669134:-;read_count=BCM_1_RNAseq_junctions:17,modENCODE_mRNA-Seq_U_junctions:197
+###
+2L	FlyBase	exon_junction	16669438	16669499	.	-	.	ID=FBsf0000108343;Name=Dmel:r6:2L:16669438:16669499:-;exonA=2L:16669385..16669438:-;exonB=2L:16669499..16669567:-;read_count=BCM_1_RNAseq_junctions:14,modENCODE_mRNA-Seq_U_junctions:105
+###
+2L	FlyBase	chromosome_band	16669464	16700364	.	+	.	ID=band-36A10_chromosome_band;Name=band-36A10
+###
+2L	FlyBase	exon_junction	16669677	16671769	.	-	.	ID=FBsf0000120289;Name=Dmel:r6:2L:16669677:16671769:-;exonA=2L:16669634..16669677:-;exonB=2L:16671769..16671808:-;read_count=BCM_1_RNAseq_junctions:2
+###
+2L	FlyBase	exon_junction	16669677	16675423	.	-	.	ID=FBsf0000126196;Name=Dmel:r6:2L:16669677:16675423:-;exonA=2L:16669654..16669677:-;exonB=2L:16675423..16675474:-;read_count=BCM_1_RNAseq_junctions:1,modENCODE_mRNA-Seq_U_junctions:26
+###
+2L	FlyBase	exon_junction	16671811	16675423	.	-	.	ID=FBsf0000149865;Name=Dmel:r6:2L:16671811:16675423:-;exonA=2L:16671792..16671811:-;exonB=2L:16675423..16675443:-;read_count=BCM_1_RNAseq_junctions:0,modENCODE_mRNA-Seq_U_junctions:29
+###
+2L	FlyBase	rescue_fragment	16674209	16684110	.	+	.	ID=her[+t10]_rescue_fragment;Name=her[+t10];related_allele=FBal0086547;evidence=experimental;linked_to=HpaI-HpaI_rfrag
+###
+2L	FlyBase	transposable_element_insertion_site	16675200	16675200	.	-	.	ID=FBti0113560;Name=Mi{ET1}Trpgamma[MB06664];Alias=Mi{ET1}trpgamma[MB06664];affected_genes=FBgn0032593;causes_alleles=FBal0218080;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=FI187841
+###
+2L	FlyBase	exon_junction	16675552	16676571	.	-	.	ID=FBsf0000100498;Name=Dmel:r6:2L:16675552:16676571:-;exonA=2L:16675523..16675552:-;exonB=2L:16676571..16676616:-;read_count=BCM_1_RNAseq_junctions:1
+###
+2L	FlyBase	gene	16677185	16679691	.	+	.	ID=FBgn0001185;Name=her;fullname=hermaphrodite;Alias=FBgn0005174,lethal(2)maternal,l(2)mat,CG4694,lethal (2) maternal,FBgn 1185;Ontology_term=SO:0000010,SO:0000087,GO:0007530,GO:0003700,GO:0005634,GO:0006357,GO:0007541,GO:0019101,GO:0045944,GO:0007548,GO:0003677,GO:0022008,GO:0046872;Dbxref=FlyBase:FBan0004694,FlyBase_Annotation_IDs:CG4694,GB_protein:AAF53549,GB:AA951895,GB:AC005133,GB:AC006214,GB:AC093097,GB:AF025540,GB_protein:AAC14018,GB:AW943150,GB:AY058630,GB_protein:AAL13859,GB:CZ485829,UniProt/TrEMBL:Q9VJJ6,INTERPRO:IPR007087,INTERPRO:IPR015880,GB_protein:AGB93041,OrthoDB7_Drosophila:EOG77DWR5,EntrezGene:34992,BDGP_clone:LD32783,UniProt/TrEMBL:O61373,InterologFinder:34992,BIOGRID:61000,FlyAtlas:CG4694-RA,Fly-FISH:CG4694,GenomeRNAi:34992,INTERACTIVEFLY:/dbzhnsky/hermph1.htm;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	breakpoint	16674400	16677191	.	+	.	ID=Df(2L)her[8]:bk1_breakpoint;Parent=FBgn0001185;Name=Df(2L)her[8]:bk1;evidence=experimental;linked_to=EcoRV-EcoRV_rfrag
+2L	FlyBase	mRNA	16677185	16679383	.	+	.	ID=FBtr0080883;Parent=FBgn0001185;Name=her-RA;Dbxref=FlyBase_Annotation_IDs:CG4694-RA,REFSEQ:NM_057224;score_text=Strongly Supported;score=15
+2L	FlyBase	intron	16678582	16678642	.	+	.	Parent=FBtr0080883;parent_type=mRNA
+2L	FlyBase	CDS	16678643	16678975	.	+	0	Parent=FBtr0080883;parent_type=mRNA
+2L	FlyBase	exon	16678643	16679383	.	+	.	Parent=FBtr0080883;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16678976	16679383	.	+	.	Parent=FBtr0080883;parent_type=mRNA
+2L	FlyBase	mRNA	16677185	16679691	.	+	.	ID=FBtr0335138;Parent=FBgn0001185;Name=her-RB;Dbxref=REFSEQ:NM_001273577,FlyBase_Annotation_IDs:CG4694-RB;score_text=Strongly Supported;score=15
+2L	FlyBase	five_prime_UTR	16677185	16677382	.	+	.	Parent=FBtr0080883,FBtr0335138;parent_type=mRNA
+2L	FlyBase	exon	16677185	16678249	.	+	.	Parent=FBtr0080883,FBtr0335138;parent_type=mRNA
+2L	FlyBase	CDS	16677383	16678249	.	+	0	Parent=FBtr0080883,FBtr0335138;parent_type=mRNA
+2L	FlyBase	intron	16678250	16678317	.	+	.	Parent=FBtr0080883,FBtr0335138;parent_type=mRNA
+2L	FlyBase	CDS	16678318	16678581	.	+	0	Parent=FBtr0080883,FBtr0335138;parent_type=mRNA
+2L	FlyBase	exon	16678318	16678581	.	+	.	Parent=FBtr0080883,FBtr0335138;parent_type=mRNA
+2L	FlyBase	intron	16678582	16678642	.	+	.	Parent=FBtr0335138;parent_type=mRNA
+2L	FlyBase	CDS	16678643	16678975	.	+	0	Parent=FBtr0335138;parent_type=mRNA
+2L	FlyBase	exon	16678643	16679691	.	+	.	Parent=FBtr0335138;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16678976	16679691	.	+	.	Parent=FBtr0335138;parent_type=mRNA
+2L	FlyBase	gene	16680054	16699926	.	+	.	ID=FBgn0261278;Name=grp;fullname=grapes;Alias=FBgn0011598,FBgn0004632,FBgn0024213,FBgn0040478,FBgn0069054,FBgn0021840,Grapes,CG17161,Grp,CHK1/Grapes,Chk1,CHK1,dChk1,lemp,last empress,1C,Protein kinase-like 36A,Checkpoint kinase 1,Pk?1,Pk36A,Chk1/Grapes,DmChk1,grps,checkpoint kinase 1,Grp/DChk1,chk1,lethal (2) k15102,l(2)k15102,grp(chk),Dchk1;Ontology_term=SO:0000010,SO:0000087,GO:0006468,GO:0004674,GO:0000077,GO:0007348,GO:0005634,GO:0007049,GO:0004672,GO:0007050,GO:0001700,GO:0007444,GO:0007093,GO:0009314,GO:0016321,GO:0051299,GO:0007349,GO:0051225,SO:0000704,GO:0007095,GO:0005524,GO:0033314,GO:0042060;Dbxref=GB_protein:AAF53551,GB_protein:AAN10952,GB_protein:AAF53552,GB_protein:AAN10953,EntrezGene:34993,GB_protein:AAN10952.1,FlyBase:FBan0017161,GB_protein:AAF53552.2,GB_protein:AAF53551.2,FlyBase_Annotation_IDs:CG17161,GB:AC005133,GB:AC006214,GB:AF057041,GB_protein:AAC13566,GB:AI516426,GB:AI516821,GB:AI944721,GB:AQ024960,GB:AQ024988,GB:AQ025028,GB:AQ073387,GB:AQ073508,GB:AQ073692,GB:AQ073724,GB:AQ073736,GB:AW943628,GB:AY051961,GB_protein:AAK93385,GB:AZ300924,GB:BZ286410,GB:CL526126,GB:CL943523,GB:CZ467001,GB:CZ467018,GB:CZ469594,GB:CZ469595,GB:CZ470220,GB:CZ473024,GB:CZ475799,GB:CZ477991,GB:CZ480020,GB:CZ485912,GB:CZ486156,GB:CZ489622,GB:CZ489623,UniProt/Swiss-Prot:O61661,INTERPRO:IPR000719,INTERPRO:IPR002290,INTERPRO:IPR008271,INTERPRO:IPR011009,INTERPRO:IPR017441,GB:AQ026086,UniProt/TrEMBL:Q59DY7,GB_protein:AGB93043,OrthoDB7_Drosophila:EOG7TNBBB,OrthoDB7_Diptera:EOG7PPGQ6,OrthoDB7_Insecta:EOG7J1KZQ,OrthoDB7_Arthropoda:EOG74Z4N0,OrthoDB7_Metazoa:EOG712TWF,apodroso:11139-grp[k15102],InterologFinder:34993,BIOGRID:61001,Fly-FISH:CG17161,GenomeRNAi:34993,INTERACTIVEFLY:/newgene/grape1.htm,SignaLink:O61661;gbunit=AE014134;derived_computed_cyto=36A10-36A11
+2L	FlyBase	breakpoint	16677317	16679475	.	+	.	ID=In(2L)her[mat-1]:bk1_breakpoint;Parent=FBgn0001185,FBgn0261278;Name=In(2L)her[mat-1]:bk1;evidence=experimental;linked_to=EcoRV-XbaI_rfrag
+2L	FlyBase	mRNA	16680054	16699926	.	+	.	ID=FBtr0080884;Parent=FBgn0261278;Name=grp-RB;Alias=CG17161-RB;Dbxref=FlyBase_Annotation_IDs:CG17161-RB,REFSEQ:NM_165171;score_text=Moderately Supported;score=7
+2L	FlyBase	CDS	16691089	16691192	.	+	0	Parent=FBtr0080884;parent_type=mRNA
+2L	FlyBase	mRNA	16680054	16699926	.	+	.	ID=FBtr0080885;Parent=FBgn0261278;Name=grp-RC;Alias=CG17161-RC;Dbxref=FlyBase_Annotation_IDs:CG17161-RC,REFSEQ:NM_165172;score_text=Moderately Supported;score=7
+2L	FlyBase	five_prime_UTR	16680054	16680276	.	+	.	Parent=FBtr0080885;parent_type=mRNA
+2L	FlyBase	intron	16680277	16684497	.	+	.	Parent=FBtr0080885;parent_type=mRNA
+2L	FlyBase	exon	16684498	16684607	.	+	.	Parent=FBtr0080885;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16684498	16684607	.	+	.	Parent=FBtr0080885;parent_type=mRNA
+2L	FlyBase	intron	16684608	16690901	.	+	.	Parent=FBtr0080885;parent_type=mRNA
+2L	FlyBase	mRNA	16680054	16699926	.	+	.	ID=FBtr0339514;Parent=FBgn0261278;Name=grp-RF;Dbxref=FlyBase_Annotation_IDs:CG17161-RF,REFSEQ:NM_001273579;score_text=Moderately Supported;score=7
+2L	FlyBase	exon	16680054	16680276	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16680054	16680276	.	+	.	Parent=FBtr0080884,FBtr0339514;parent_type=mRNA
+2L	FlyBase	intron	16680277	16690901	.	+	.	Parent=FBtr0080884,FBtr0339514;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16690902	16691192	.	+	.	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	intron	16691193	16696584	.	+	.	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16696585	16696598	.	+	.	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	CDS	16696599	16696762	.	+	0	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	CDS	16697501	16697643	.	+	1	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	CDS	16698139	16698348	.	+	2	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	CDS	16698962	16699641	.	+	2	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16699642	16699926	.	+	.	Parent=FBtr0339514;parent_type=mRNA
+2L	FlyBase	mRNA	16685390	16699926	.	+	.	ID=FBtr0080886;Parent=FBgn0261278;Name=grp-RA;Alias=CG17161-RA;Dbxref=FlyBase_Annotation_IDs:CG17161-RA,REFSEQ:NM_057663;score_text=Strongly Supported;score=15
+2L	FlyBase	exon	16685390	16685941	.	+	.	Parent=FBtr0080886;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16685390	16685941	.	+	.	Parent=FBtr0080886;parent_type=mRNA
+2L	FlyBase	intron	16685942	16690901	.	+	.	Parent=FBtr0080886;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16690902	16691088	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	exon	16690902	16691192	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886;parent_type=mRNA
+2L	FlyBase	CDS	16691089	16691192	.	+	0	Parent=FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	intron	16691193	16691900	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	CDS	16691901	16692124	.	+	1	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	exon	16691901	16692124	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	intron	16692125	16696584	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	CDS	16696585	16696762	.	+	2	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	CDS	16697501	16697643	.	+	1	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	CDS	16698139	16698348	.	+	2	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	CDS	16698962	16699641	.	+	2	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16699642	16699926	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0080886;parent_type=mRNA
+2L	FlyBase	breakpoint	16689568	16691720	.	+	.	ID=Df(2L)her[8]:bk2_breakpoint;Parent=FBgn0001185,FBgn0261278;Name=Df(2L)her[8]:bk2;evidence=experimental;linked_to=HpaI-EcoRI_rfrag
+2L	FlyBase	breakpoint	16689568	16691720	.	+	.	ID=In(2L)her[mat-1]:bk2_breakpoint;Parent=FBgn0001185,FBgn0261278;Name=In(2L)her[mat-1]:bk2;evidence=experimental;linked_to=HpaI-EcoRI_rfrag
+2L	FlyBase	mRNA	16695524	16699926	.	+	.	ID=FBtr0100459;Parent=FBgn0261278;Name=grp-RD;Dbxref=FlyBase_Annotation_IDs:CG17161-RD,REFSEQ:NM_165173;score_text=Moderately Supported;score=7
+2L	FlyBase	exon	16695524	16695676	.	+	.	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16695524	16695676	.	+	.	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	intron	16695677	16696584	.	+	.	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16696585	16696598	.	+	.	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	exon	16696585	16696762	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	CDS	16696599	16696762	.	+	0	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	intron	16696763	16697500	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	CDS	16697501	16697643	.	+	1	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	exon	16697501	16697643	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	intron	16697644	16698138	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	CDS	16698139	16698348	.	+	2	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	exon	16698139	16698348	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	intron	16698349	16698961	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	CDS	16698962	16699641	.	+	2	Parent=FBtr0100459;parent_type=mRNA
+2L	FlyBase	exon	16698962	16699926	.	+	.	Parent=FBtr0080884,FBtr0080885,FBtr0339514,FBtr0080886,FBtr0100459;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16699642	16699926	.	+	.	Parent=FBtr0100459;parent_type=mRNA
+###
+2L	FlyBase	protein	16677383	16678972	.	+	.	ID=FBpp0080440;Name=her-PA;Derives_from=FBtr0080883;Alias=CG4694-PA;Dbxref=FlyBase_Annotation_IDs:CG4694-PA,REFSEQ:NP_476572,GB_protein:AAF53549;derived_molecular_weight=56961.4;derived_isoelectric_point=7.93
+###
+2L	FlyBase	protein	16677383	16678972	.	+	.	ID=FBpp0307137;Name=her-PB;Derives_from=FBtr0335138;Dbxref=REFSEQ:NP_001260506,GB_protein:AGB93041,FlyBase_Annotation_IDs:CG4694-PB;derived_molecular_weight=56961.4;derived_isoelectric_point=7.93
+###
+2L	FlyBase	gene	16678240	16678335	.	+	.	ID=FBgn0262191;Name=mir-2497;fullname=mir-2497 stem loop;Alias=dme-mir-2497,CR42898;Ontology_term=SO:0000571,SO:0000087;Dbxref=MIR:MI0011586,EntrezGene:12798235,FlyBase_Annotation_IDs:CR42898,GenomeRNAi:12798235;derived_computed_cyto=36A10-36A10
+2L	FlyBase	pre_miRNA	16678240	16678335	.	+	.	ID=FBtr0304212;Parent=FBgn0262191;Name=mir-2497-RM;Alias=CR42898-RM;Dbxref=REFSEQ:NR_047964,FlyBase_Annotation_IDs:CR42898-RM,MIR:MI0011586
+###
+2L	FlyBase	exon_junction	16678249	16678318	.	+	.	ID=FBsf0000132195;Name=Dmel:r6:2L:16678249:16678318:+;exonA=2L:16678181..16678249:+;exonB=2L:16678318..16678373:+;read_count=BCM_1_RNAseq_junctions:60,modENCODE_mRNA-Seq_U_junctions:1374
+###
+2L	FlyBase	miRNA	16678250	16678274	.	+	.	ID=FBtr0304213;Name=mir-2497-RA;Derives_from=FBtr0304212;Alias=CR42898-RA;Dbxref=REFSEQ:NR_047965,FlyBase_Annotation_IDs:CR42898-RA,MIR:MIMAT0012208
+###
+2L	FlyBase	miRNA	16678296	16678317	.	+	.	ID=FBtr0304214;Name=mir-2497-RB;Derives_from=FBtr0304212;Alias=CR42898-RB;Dbxref=REFSEQ:NR_047966,FlyBase_Annotation_IDs:CR42898-RB,MIR:MIMAT0012209
+###
+2L	FlyBase	exon_junction	16678581	16678643	.	+	.	ID=FBsf0000141201;Name=Dmel:r6:2L:16678581:16678643:+;exonA=2L:16678513..16678581:+;exonB=2L:16678643..16678713:+;read_count=BCM_1_RNAseq_junctions:48,modENCODE_mRNA-Seq_U_junctions:2132
+###
+2L	FlyBase	transposable_element	16679128	16679231	.	-	.	ID=FBti0060535;Name=INE-1{}2474;Alias=INE-1#100848,TE60535;derived_cyto_location=36A10-36A10;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	transposable_element	16679479	16679590	.	-	.	ID=FBti0061379;Name=INE-1{}3318;Alias=INE-1#602,TE61379;derived_cyto_location=36A10-36A10;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	transposable_element_insertion_site	16679862	16679862	.	+	.	ID=FBti0042214;Name=PBac{WH}her[f03287];Alias=PBac{WH}her[f03287],PBac{WH}f03287;affected_genes=FBgn0001185;causes_alleles=FBal0159161;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ485829
+###
+2L	FlyBase	transposable_element_insertion_site	16679981	16679981	.	.	.	ID=FBti0106072;Name=P{GSV6}GS14275;Alias=14275;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB317524
+###
+2L	FlyBase	gene	16680054	16681653	.	+	.	ID=FBgn0267347;Name=squ;fullname=squash;Alias=FBgn0002652,FBgn0032594,FBgn0069054,FBgn0020558,Squash,CG4711,mat(2)cellHK35,mat(2)cell-A,SQU,adjacent-to-grapes,atg;Ontology_term=SO:0000010,SO:0000087,GO:0046843,GO:0048477,GO:0043186,GO:0031047,SO:0000704;Dbxref=OrthoDB7_Drosophila:EOG7NSPNP,GB_protein:AGB93042,GB_protein:AAS64715.1,FlyBase_Annotation_IDs:CG4711,GB_protein:AAS64715,GB:AQ024988,UniProt/TrEMBL:Q7KT57,GB_protein:AFH03718,EntrezGene:2768920;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	mRNA	16680054	16681653	.	+	.	ID=FBtr0080887;Parent=FBgn0267347;Name=squ-RA;Alias=CG4711-RA;Dbxref=FlyBase_Annotation_IDs:CG4711-RA,REFSEQ:NM_206000;score_text=Strongly Supported;score=15
+2L	FlyBase	intron	16680277	16680449	.	+	.	Parent=FBtr0080887;parent_type=mRNA
+2L	FlyBase	exon	16680450	16680650	.	+	.	Parent=FBtr0080887;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16680450	16680650	.	+	.	Parent=FBtr0080887;parent_type=mRNA
+2L	FlyBase	intron	16680651	16680705	.	+	.	Parent=FBtr0080887;parent_type=mRNA
+2L	FlyBase	mRNA	16680054	16681653	.	+	.	ID=FBtr0335140;Parent=FBgn0267347;Name=squ-RC;Dbxref=REFSEQ:NM_001273578,FlyBase_Annotation_IDs:CG4711-RC;score_text=Moderately Supported;score=7
+2L	FlyBase	exon	16680054	16680276	.	+	.	Parent=FBtr0080887,FBtr0335140;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16680054	16680276	.	+	.	Parent=FBtr0080887,FBtr0335140;parent_type=mRNA
+2L	FlyBase	intron	16680277	16680705	.	+	.	Parent=FBtr0335140;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16680706	16680718	.	+	.	Parent=FBtr0080887,FBtr0335140;parent_type=mRNA
+2L	FlyBase	CDS	16680719	16681444	.	+	0	Parent=FBtr0080887,FBtr0335140;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16681445	16681653	.	+	.	Parent=FBtr0080887,FBtr0335140;parent_type=mRNA
+2L	FlyBase	mRNA	16680570	16681653	.	+	.	ID=FBtr0305565;Parent=FBgn0267347;Name=squ-RB;Dbxref=REFSEQ:NM_001259115,FlyBase_Annotation_IDs:CG4711-RB;score_text=Strongly Supported;score=15
+2L	FlyBase	exon	16680570	16680650	.	+	.	Parent=FBtr0305565;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16680570	16680650	.	+	.	Parent=FBtr0305565;parent_type=mRNA
+2L	FlyBase	intron	16680651	16680705	.	+	.	Parent=FBtr0305565;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16680706	16680718	.	+	.	Parent=FBtr0305565;parent_type=mRNA
+2L	FlyBase	exon	16680706	16681653	.	+	.	Parent=FBtr0080887,FBtr0335140,FBtr0305565;parent_type=mRNA
+2L	FlyBase	CDS	16680719	16681444	.	+	0	Parent=FBtr0305565;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16681445	16681653	.	+	.	Parent=FBtr0305565;parent_type=mRNA
+###
+2L	FlyBase	transposable_element_insertion_site	16680064	16680064	.	+	.	ID=FBti0024198;Name=P{SUPor-P}grp[KG08033];Alias=KG08033,P{SUPor-P}KG08033;affected_genes=FBgn0001185,FBgn0261278;causes_alleles=FBal0217312;curated_cytological_location=36A6;derived_cyto_location=36A6;derived_comput_cyto_location=36A10;flanking_sequence=BZ286276
+###
+2L	FlyBase	transposable_element_insertion_site	16680064	16680064	.	.	.	ID=FBti0103111;Name=P{GSV7}GS21047;Alias=21047;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB322392
+###
+2L	FlyBase	transposable_element_insertion_site	16680064	16680064	.	.	.	ID=FBti0112110;Name=P{GSV7}GS22048;Alias=22048;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB323054
+###
+2L	FlyBase	breakpoint	16680071	16680071	.	.	.	ID=Df(2L)ED1092:bk2_breakpoint;Name=Df(2L)ED1092:bk2;reported_genomic_loc=2L_r5:16680071..16680071
+###
+2L	FlyBase	transposable_element_insertion_site	16680071	16680071	.	+	.	ID=FBti0028594;Name=P{RS3}grp[CB-5471-3];Alias=P{RS3}CB-5471-3;Dbxref=GB:AJ545656;affected_genes=FBgn0261278;causes_alleles=FBal0226806;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ545656
+###
+2L	FlyBase	exon_junction	16680276	16680450	.	+	.	ID=FBsf0000108275;Name=Dmel:r6:2L:16680276:16680450:+;exonA=2L:16680225..16680276:+;exonB=2L:16680450..16680514:+;read_count=BCM_1_RNAseq_junctions:9,modENCODE_mRNA-Seq_U_junctions:102
+###
+2L	FlyBase	exon_junction	16680276	16680706	.	+	.	ID=FBsf0000140252;Name=Dmel:r6:2L:16680276:16680706:+;exonA=2L:16680257..16680276:+;exonB=2L:16680706..16680726:+;read_count=BCM_1_RNAseq_junctions:0,modENCODE_mRNA-Seq_EXTRA_junctions:25
+###
+2L	FlyBase	exon_junction	16680276	16684498	.	+	.	ID=FBsf0000109500;Name=Dmel:r6:2L:16680276:16684498:+;exonA=2L:16680257..16680276:+;exonB=2L:16684498..16684518:+;read_count=BCM_1_RNAseq_junctions:0,modENCODE_mRNA-Seq_U_junctions:226
+###
+2L	FlyBase	exon_junction	16680276	16690902	.	+	.	ID=FBsf0000125152;Name=Dmel:r6:2L:16680276:16690902:+;exonA=2L:16680218..16680276:+;exonB=2L:16690902..16690959:+;read_count=BCM_1_RNAseq_junctions:62,modENCODE_mRNA-Seq_U_junctions:4523
+###
+2L	FlyBase	transposable_element_insertion_site	16680388	16680388	.	-	.	ID=FBti0064933;Name=PBac{PB}grp[c01229];Alias=PBac{PB}grp[c01229]a,PBac{PB}c01229a;affected_genes=FBgn0261278;causes_alleles=FBal0179589;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ467001
+###
+2L	FlyBase	transposable_element_insertion_site	16680388	16680388	.	-	.	ID=FBti0064939;Name=PBac{PB}grp[c01254];Alias=PBac{PB}grp[c01254]b,PBac{PB}grp[c01254],PBac{PB}c01254b;affected_genes=FBgn0261278;causes_alleles=FBal0179588;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ467018
+###
+2L	FlyBase	transposable_element_insertion_site	16680527	16680527	.	.	.	ID=FBti0108992;Name=P{GSV2}GS50686;Alias=50686;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB324194
+###
+2L	FlyBase	transposable_element_insertion_site	16680534	16680534	.	+	.	ID=FBti0059377;Name=P{RS5}grp[5-HA-2860];Alias=P{RS5}5-HA-2860;Dbxref=GB:AJ622215;affected_genes=FBgn0261278;causes_alleles=FBal0226811;derived_cyto_location=36A10,36A10-36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ622215
+###
+2L	FlyBase	transposable_element_insertion_site	16680542	16680542	.	.	.	ID=FBti0104332;Name=P{GSV7}GS20289;Alias=20289;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB321931
+###
+2L	FlyBase	transposable_element_insertion_site	16680547	16680547	.	.	.	ID=FBti0104286;Name=P{GSV7}GS20411;Alias=20411;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB321978
+###
+2L	FlyBase	transposable_element_insertion_site	16680554	16680554	.	+	.	ID=FBti0035879;Name=P{GawB}grp[NP4260];Alias=P{GawB}NP4260-5-1,P{GawB}NP4260;Dbxref=GB:AG216918;affected_genes=FBgn0261278;causes_alleles=FBal0226794;derived_comput_cyto_location=36A10;flanking_sequence=AG216918
+###
+2L	FlyBase	transposable_element_insertion_site	16680561	16680561	.	.	.	ID=FBti0108880;Name=P{GSV6}GS16894;Alias=16894;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB320568,AB320567
+###
+2L	FlyBase	transposable_element_insertion_site	16680561	16680561	.	.	.	ID=FBti0110728;Name=P{GSV7}GS22767;Alias=22767;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB323529
+###
+2L	FlyBase	exon_junction	16680650	16680706	.	+	.	ID=FBsf0000099350;Name=Dmel:r6:2L:16680650:16680706:+;exonA=2L:16680581..16680650:+;exonB=2L:16680706..16680771:+;read_count=BCM_1_RNAseq_junctions:218,modENCODE_mRNA-Seq_U_junctions:1625
+###
+2L	FlyBase	protein	16680719	16681441	.	+	.	ID=FBpp0099829;Name=squ-PA;Derives_from=FBtr0080887;Dbxref=FlyBase_Annotation_IDs:CG4711-PA,REFSEQ:NP_995722,GB_protein:AAS64715;derived_molecular_weight=27556.7;derived_isoelectric_point=5.45
+###
+2L	FlyBase	protein	16680719	16681441	.	+	.	ID=FBpp0294016;Name=squ-PB;Derives_from=FBtr0305565;Dbxref=REFSEQ:NP_001246044,GB_protein:AFH03718,FlyBase_Annotation_IDs:CG4711-PB;derived_molecular_weight=27556.7;derived_isoelectric_point=5.45
+###
+2L	FlyBase	protein	16680719	16681441	.	+	.	ID=FBpp0307139;Name=squ-PC;Derives_from=FBtr0335140;Dbxref=REFSEQ:NP_001260507,GB_protein:AGB93042,FlyBase_Annotation_IDs:CG4711-PC;derived_molecular_weight=27556.7;derived_isoelectric_point=5.45
+###
+2L	FlyBase	transposable_element_insertion_site	16680751	16680751	.	+	.	ID=FBti0007727;Name=P{EP}grp[EP921];Alias=P{EP}grp[EP921],P{EP}EP921,ep(2)0921,EP(2)0921;affected_genes=FBgn0261278,FBgn0267347;causes_alleles=FBal0152697,FBal0130241;derived_cyto_location=36A6-36A6;curated_cytological_location=36A10-36A11;derived_comput_cyto_location=36A10;flanking_sequence=AQ024988
+###
+2L	FlyBase	point_mutation	16681017	16681017	.	+	.	ID=squ[HE47]_point_mutation;Name=squ[HE47];related_allele=FBal0032777;reported_pr_change=W100@;pr_change=W100@ | squ-PA%3B W100@ | squ-PB%3B W100@ | squ-PC;na_change=G16681017A
+###
+2L	FlyBase	point_mutation	16681050	16681050	.	+	.	ID=squ[PP32]_point_mutation;Name=squ[PP32];related_allele=FBal0032778;na_change=T16681050A;reported_pr_change=L111@;pr_change=L111@ | squ-PA%3B L111@ | squ-PB%3B L111@ | squ-PC
+###
+2L	FlyBase	gene	16681819	16684008	.	-	.	ID=FBgn0051807;Name=CG31807;Ontology_term=SO:0000010,SO:0000087,GO:0008270,GO:0005634,GO:0004842,GO:0016567;Dbxref=FlyBase:FBan0031807,FlyBase_Annotation_IDs:CG31807,GB_protein:AAN10951,UniProt/TrEMBL:Q8IP15,INTERPRO:IPR001841,OrthoDB7_Drosophila:EOG75R3QB,EntrezGene:318953,INTERPRO:IPR013083,OrthoDB7_Insecta:EOG7H7N1R,OrthoDB7_Arthropoda:EOG7HTVX3,OrthoDB7_Metazoa:EOG7XM2XD,FlyAtlas:CG31807-RA,GenomeRNAi:318953;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	mRNA	16681819	16682402	.	-	.	ID=FBtr0080944;Parent=FBgn0051807;Name=CG31807-RA;Dbxref=FlyBase_Annotation_IDs:CG31807-RA,REFSEQ:NM_165170;score_text=Strongly Supported;score=11
+2L	FlyBase	three_prime_UTR	16681819	16681898	.	-	.	Parent=FBtr0080944;parent_type=mRNA
+2L	FlyBase	exon	16681819	16682402	.	-	.	Parent=FBtr0080944;parent_type=mRNA
+2L	FlyBase	CDS	16681899	16682366	.	-	0	Parent=FBtr0080944;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16682367	16682402	.	-	.	Parent=FBtr0080944;parent_type=mRNA
+2L	FlyBase	mRNA	16681819	16684008	.	-	.	ID=FBtr0344410;Parent=FBgn0051807;Name=CG31807-RB;Dbxref=FlyBase_Annotation_IDs:CG31807-RB;score_text=Weakly Supported;score=3
+2L	FlyBase	three_prime_UTR	16681819	16681898	.	-	.	Parent=FBtr0344410;parent_type=mRNA
+2L	FlyBase	exon	16681819	16682350	.	-	.	Parent=FBtr0344410;parent_type=mRNA
+2L	FlyBase	CDS	16681899	16682327	.	-	0	Parent=FBtr0344410;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16682328	16682350	.	-	.	Parent=FBtr0344410;parent_type=mRNA
+2L	FlyBase	intron	16682351	16683609	.	-	.	Parent=FBtr0344410;parent_type=mRNA
+2L	FlyBase	exon	16683610	16684008	.	-	.	Parent=FBtr0344410;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16683610	16684008	.	-	.	Parent=FBtr0344410;parent_type=mRNA
+###
+2L	FlyBase	protein	16681902	16682327	.	-	.	ID=FBpp0310778;Name=CG31807-PB;Derives_from=FBtr0344410;Dbxref=GB_protein:AHN54497,FlyBase_Annotation_IDs:CG31807-PB;derived_molecular_weight=16921.6;derived_isoelectric_point=6.35
+###
+2L	FlyBase	protein	16681902	16682366	.	-	.	ID=FBpp0080497;Name=CG31807-PA;Derives_from=FBtr0080944;Dbxref=FlyBase_Annotation_IDs:CG31807-PA,REFSEQ:NP_723984,GB_protein:AAN10951;derived_molecular_weight=18450.4;derived_isoelectric_point=7.39
+###
+2L	FlyBase	exon_junction	16682364	16683610	.	+	.	ID=FBsf0000100789;Name=Dmel:r6:2L:16682364:16683610:+;exonA=2L:16682331..16682364:+;exonB=2L:16683610..16683637:+;read_count=BCM_1_RNAseq_junctions:2
+###
+2L	FlyBase	gene	16682503	16683290	.	+	.	ID=FBgn0053552;Name=CG33552;Ontology_term=SO:0000010,SO:0000087,GO:0005634,GO:0004842,GO:0016567,GO:0008270;Dbxref=FlyBase_Annotation_IDs:CG33552,GB_protein:AAX53594,UniProt/TrEMBL:Q59DY8,INTERPRO:IPR001841,INTERPRO:IPR013083,OrthoDB7_Drosophila:EOG77MN83,EntrezGene:3346220,OrthoDB7_Insecta:EOG7H7N1R,OrthoDB7_Arthropoda:EOG7HTVX3,OrthoDB7_Metazoa:EOG7XM2XD,GenomeRNAi:3346220;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	mRNA	16682503	16683290	.	+	.	ID=FBtr0091522;Parent=FBgn0053552;Name=CG33552-RA;Dbxref=FlyBase_Annotation_IDs:CG33552-RA,REFSEQ:NM_001014488;score_text=Moderately Supported;score=6
+2L	FlyBase	five_prime_UTR	16682503	16682618	.	+	.	Parent=FBtr0091522;parent_type=mRNA
+2L	FlyBase	exon	16682503	16683290	.	+	.	Parent=FBtr0091522;parent_type=mRNA
+2L	FlyBase	CDS	16682619	16683092	.	+	0	Parent=FBtr0091522;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16683093	16683290	.	+	.	Parent=FBtr0091522;parent_type=mRNA
+###
+2L	FlyBase	protein	16682619	16683089	.	+	.	ID=FBpp0090973;Name=CG33552-PA;Derives_from=FBtr0091522;Dbxref=FlyBase_Annotation_IDs:CG33552-PA,REFSEQ:NP_001014488,GB_protein:AAX53594;derived_molecular_weight=18403.6;derived_isoelectric_point=10.09
+###
+2L	FlyBase	transposable_element_insertion_site	16682677	16682677	.	-	.	ID=FBti0041354;Name=PBac{RB}grp[e00087];Alias=PBac{RB}grp[e00087],PBac{RB}e00087;affected_genes=FBgn0053552,FBgn0261278;causes_alleles=FBal0159175,FBal0240221;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ477991
+###
+2L	FlyBase	transposable_element_insertion_site	16682729	16682729	.	.	.	ID=FBti0109808;Name=P{GSV6}GS16487;Alias=16487;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB320104,AB320103
+###
+2L	FlyBase	transposable_element_insertion_site	16682746	16682746	.	+	.	ID=FBti0126426;Name=PBac{SAstopDsRed}LL06829;Alias=LL06829;derived_comput_cyto_location=36A10;flanking_sequence=FI278543
+###
+2L	FlyBase	transposable_element_insertion_site	16683022	16683300	.	.	.	ID=FBti0049566;Name=PBac{WH}grp[f00841];Alias=PBac{WH}f00841;Dbxref=GB:CZ483325;affected_genes=FBgn0261278;causes_alleles=FBal0226788;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ483325
+###
+2L	FlyBase	transposable_element_insertion_site	16683296	16683297	.	+	.	ID=FBti0068163;Name=PBac{WH}grp[f06887];Alias=PBac{WH}grp[f06887],PBac{WH}f06887;affected_genes=FBgn0261278;causes_alleles=FBal0179580;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ489622,CZ489623
+###
+2L	FlyBase	transposable_element_insertion_site	16683300	16683300	.	-	.	ID=FBti0051184;Name=PBac{WH}grp[f03358];Alias=PBac{WH}grp[f03358],PBac{WH}f03358;affected_genes=FBgn0261278;causes_alleles=FBal0179582;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ485912
+###
+2L	FlyBase	transposable_element_insertion_site	16683381	16683381	.	-	.	ID=FBti0067610;Name=PBac{WH}grp[f03577];Alias=PBac{WH}f03577;affected_genes=FBgn0261278;causes_alleles=FBal0179581;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ486156
+###
+2L	FlyBase	transposable_element_insertion_site	16683411	16684029	.	.	.	ID=FBti0036229;Name=P{GawB}grp[NP4781];Alias=FBti0036230,P{GawB}NP4781-3-1,P{GawB}NP4781-5-1,P{GawB}NP4781;Dbxref=GB:AG218789;affected_genes=FBgn0261278;causes_alleles=FBal0226797;derived_comput_cyto_location=36A10;flanking_sequence=AG218789,AG215911
+###
+2L	FlyBase	transposable_element_insertion_site	16683492	16683492	.	-	.	ID=FBti0045141;Name=PBac{PB}grp[c04899];Alias=PBac{PB}c04899,PBac{PB}grp[c04899];affected_genes=FBgn0261278;causes_alleles=FBal0179587;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ469594,CZ469595
+###
+2L	FlyBase	transposable_element_insertion_site	16683706	16683706	.	.	.	ID=FBti0112591;Name=P{GSV6}GS15683;Alias=15683;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB319112
+###
+2L	FlyBase	transposable_element_insertion_site	16683766	16683766	.	.	.	ID=FBti0108308;Name=P{GSV6}GS13640;Alias=13640;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB316747,AB316746
+###
+2L	FlyBase	transposable_element_insertion_site	16683773	16683773	.	.	.	ID=FBti0109873;Name=P{GSV6}GS13390;Alias=13390;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB316417,AB316416
+###
+2L	FlyBase	transposable_element_insertion_site	16683920	16683920	.	+	.	ID=FBti0100170;Name=P{PTT-GB}grp[CB04894];Alias=CB04894;affected_genes=FBgn0014446,FBgn0261278;causes_alleles=FBal0211553,FBal0211988;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	transposable_element_insertion_site	16683921	16683921	.	.	.	ID=FBti0110606;Name=P{GSV2}GS7032;Alias=7032;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB309962
+###
+2L	FlyBase	transposable_element_insertion_site	16684197	16684197	.	+	.	ID=FBti0047563;Name=PBac{RB}grp[e02195];Alias=PBac{RB}e02195,PBac{RB}grp[e02195];affected_genes=FBgn0261278;causes_alleles=FBal0179583;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ480020
+###
+2L	FlyBase	transposable_element_insertion_site	16684224	16684224	.	.	.	ID=FBti0064339;Name=P{GSV1}grp[GS2133];Alias=P{GS}grp[GS2133];affected_genes=FBgn0261278;causes_alleles=FBal0175654;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB308963,AB308962
+###
+2L	FlyBase	exon_junction	16684607	16690902	.	+	.	ID=FBsf0000143878;Name=Dmel:r6:2L:16684607:16690902:+;exonA=2L:16684588..16684607:+;exonB=2L:16690902..16690922:+;read_count=BCM_1_RNAseq_junctions:0,modENCODE_mRNA-Seq_U_junctions:255
+###
+2L	FlyBase	transposable_element_insertion_site	16684784	16684784	.	.	.	ID=FBti0108758;Name=P{GSV2}GS50823;Alias=50823;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB324299
+###
+2L	FlyBase	transposable_element_insertion_site	16684835	16684835	.	.	.	ID=FBti0111422;Name=P{GSV7}GS22538;Alias=22538;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB323379
+###
+2L	FlyBase	transposable_element_insertion_site	16684866	16684866	.	+	.	ID=FBti0028097;Name=P{RS3}grp[CB-0413-3];Alias=P{RS3}CB-0413-3;Dbxref=GB:AJ546122;affected_genes=FBgn0261278;causes_alleles=FBal0226801;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ546122
+###
+2L	FlyBase	transposable_element_insertion_site	16684882	16684882	.	-	.	ID=FBti0072183;Name=P{wHy}grp[DG02808];Alias=P{wHy}grp[DG02808];affected_genes=FBgn0261278;causes_alleles=FBal0179591;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=ET634429
+###
+2L	FlyBase	breakpoint	16684883	16684883	.	.	.	ID=Df(2L)ED1102:bk2_breakpoint;Name=Df(2L)ED1102:bk2;reported_genomic_loc=2L_r5:16684883..16684883
+###
+2L	FlyBase	breakpoint	16684883	16684883	.	.	.	ID=Df(2L)ED8350:bk2_breakpoint;Name=Df(2L)ED8350:bk2;reported_genomic_loc=2L_r5:16684883..16684883
+###
+2L	FlyBase	transposable_element_insertion_site	16684883	16684883	.	+	.	ID=FBti0028096;Name=P{RS3}grp[CB-0412-3];Alias=P{RS3}CB-0412-3;Dbxref=GB:AJ546121;affected_genes=FBgn0261278;causes_alleles=FBal0226787;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ546121
+###
+2L	FlyBase	transposable_element_insertion_site	16684966	16685065	.	+	.	ID=FBti0034290;Name=P{GawB}grp[NP1225];Alias=P{GawB}NP1225-5-1,P{GawB}NP1225;affected_genes=FBgn0261278;causes_alleles=FBal0226790;derived_comput_cyto_location=36A10;flanking_sequence=AG217591
+###
+2L	FlyBase	transposable_element_insertion_site	16685141	16685141	.	+	.	ID=FBti0066004;Name=PBac{PB}grp[c05746];Alias=PBac{PB}grp[c05746]a,PBac{PB}c05746a;affected_genes=FBgn0261278;causes_alleles=FBal0179586;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ470220
+###
+2L	FlyBase	transposable_element_insertion_site	16685176	16685176	.	+	.	ID=FBti0014473;Name=P{PZ}grp[02257];Alias=P{PZ}grp[02257];affected_genes=FBgn0261278;causes_alleles=FBal0031422;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	breakpoint	16685211	16685211	.	.	.	ID=Df(2L)Exel6039:bk1_breakpoint;Name=Df(2L)Exel6039:bk1;reported_genomic_loc=2L_r5:16685211..16685211
+###
+2L	FlyBase	transposable_element_insertion_site	16685224	16685224	.	.	.	ID=FBti0076902;Name=P{GSV6}grp[GS10582];Alias=10582;affected_genes=FBgn0261278;causes_alleles=FBal0194417;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB312675,AB312674
+###
+2L	FlyBase	transposable_element_insertion_site	16685230	16685230	.	+	.	ID=FBti0033575;Name=P{GawB}grp[NP0269];Alias=P{GawB}NP0269-5-1,P{GawB}NP0269;Dbxref=GB:AG215288;affected_genes=FBgn0261278;causes_alleles=FBal0226789;derived_comput_cyto_location=36A10;flanking_sequence=AG215288
+###
+2L	FlyBase	transposable_element_insertion_site	16685245	16685245	.	-	.	ID=FBti0035548;Name=P{GawB}grp[NP3606];Alias=P{GawB}NP3606-5-1,P{GawB}NP3606;Dbxref=GB:AG216588;affected_genes=FBgn0261278;causes_alleles=FBal0226793;derived_comput_cyto_location=36A10;flanking_sequence=AG216588
+###
+2L	FlyBase	transposable_element_insertion_site	16685264	16685264	.	+	.	ID=FBti0069781;Name=P{XP}grp[d07543];Alias=P{XP}grp[d07543],P{XP}d07543;affected_genes=FBgn0261278;causes_alleles=FBal0179584;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ475799
+###
+2L	FlyBase	transposable_element_insertion_site	16685270	16685270	.	-	.	ID=FBti0034983;Name=P{GawB}grp[NP2668];Alias=P{GawB}NP2668-5-1,P{GawB}NP2668;Dbxref=GB:AG216458;affected_genes=FBgn0261278;causes_alleles=FBal0226791;derived_comput_cyto_location=36A10;flanking_sequence=AG216458
+###
+2L	FlyBase	transposable_element_insertion_site	16685272	16685272	.	+	.	ID=FBti0036507;Name=P{GawB}grp[NP5294];Alias=P{GawB}NP5294-5-1,P{GawB}NP5294;Dbxref=GB:AG218119;affected_genes=FBgn0261278;causes_alleles=FBal0226799;derived_comput_cyto_location=36A10;flanking_sequence=AG218119
+###
+2L	FlyBase	transposable_element_insertion_site	16685277	16685277	.	+	.	ID=FBti0015068;Name=P{}grp[4];affected_genes=FBgn0261278;causes_alleles=FBal0061381;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	breakpoint	16685279	16685279	.	.	.	ID=Df(2L)ED1143:bk1_breakpoint;Name=Df(2L)ED1143:bk1;reported_genomic_loc=2L_r5:16685279..16685279
+###
+2L	FlyBase	breakpoint	16685279	16685279	.	.	.	ID=Df(2L)ED1161:bk1_breakpoint;Name=Df(2L)ED1161:bk1;reported_genomic_loc=2L_r5:16685279..16685279
+###
+2L	FlyBase	transposable_element_insertion_site	16685279	16685279	.	-	.	ID=FBti0028134;Name=P{RS3}grp[CB-0483-3];Alias=P{RS3}CB-0483-3;Dbxref=GB:AJ547431;affected_genes=FBgn0261278;causes_alleles=FBal0226802;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ547431
+###
+2L	FlyBase	transposable_element_insertion_site	16685279	16685279	.	-	.	ID=FBti0069752;Name=P{XP}grp[d07447];Alias=P{XP}d07447;Dbxref=GB:CZ475740;affected_genes=FBgn0261278;causes_alleles=FBal0226812;derived_comput_cyto_location=36A10;flanking_sequence=CZ475740
+###
+2L	FlyBase	transposable_element_insertion_site	16685280	16685280	.	-	.	ID=FBti0011242;Name=P{EP}grp[EP2566];Alias=P{EP}grp[EP2566],EP(2)2566,P{EP}EP2566;affected_genes=FBgn0261278;causes_alleles=FBal0130244;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A10;flanking_sequence=AQ073692
+###
+2L	FlyBase	transposable_element_insertion_site	16685320	16685320	.	.	.	ID=FBti0103896;Name=P{GSV6}GS15065;Alias=15065;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB318379
+###
+2L	FlyBase	transposable_element_insertion_site	16685320	16685381	.	.	.	ID=FBti0025896;Name=P{lacW}l(2)SH1469[SH1469];Alias=P{lacW}l(2)SH1469[SH1469];Dbxref=GB:AB082501;affected_genes=FBgn0065437,FBgn0261278;causes_alleles=FBal0143674;derived_cyto_location=36A3-36A4;derived_comput_cyto_location=36A10;flanking_sequence=AB082501
+###
+2L	FlyBase	transposable_element_insertion_site	16685346	16685346	.	.	.	ID=FBti0106657;Name=P{GSV6}GS11141;Alias=11141;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB313428,AB313427
+###
+2L	FlyBase	transposable_element_insertion_site	16685347	16685347	.	-	.	ID=FBti0007768;Name=P{EP}grp[EP1106];Alias=P{EP}grp[EP1106],P{EP}EP1106,ep(2)1106,EP(2)1106;affected_genes=FBgn0261278;causes_alleles=FBal0130248;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A10;flanking_sequence=AQ025028
+###
+2L	FlyBase	transposable_element_insertion_site	16685357	16685357	.	+	.	ID=FBti0011290;Name=P{EP}grp[EP2623];Alias=P{EP}grp[EP2623],EP(2)2623,P{EP}EP2623;affected_genes=FBgn0261278;causes_alleles=FBal0130242;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A10;flanking_sequence=AQ073736
+###
+2L	FlyBase	transposable_element_insertion_site	16685359	16685359	.	.	.	ID=FBti0076903;Name=P{GSV6}grp[GS14006];Alias=14006;affected_genes=FBgn0261278;causes_alleles=FBal0194418;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB317267,AB317266
+###
+2L	FlyBase	transposable_element_insertion_site	16685360	16685360	.	+	.	ID=FBti0024118;Name=P{EPgy2}grp[EY00450];Alias=EY00450,P{EPgy2}grp[EY00450];affected_genes=FBgn0261278;causes_alleles=FBal0147111;derived_cyto_location=36A7;derived_comput_cyto_location=36A10;flanking_sequence=BZ286410
+###
+2L	FlyBase	transposable_element_insertion_site	16685360	16685360	.	+	.	ID=FBti0036239;Name=P{GawB}grp[NP4791];Alias=FBti0036240,P{GawB}NP4791-5-1,P{GawB}NP4791-5-2,P{GawB}NP4791;Dbxref=GB:AG217320,GB:AG216803;affected_genes=FBgn0261278;causes_alleles=FBal0226798;derived_comput_cyto_location=36A10;flanking_sequence=AG216803,AG217320
+###
+2L	FlyBase	transposable_element_insertion_site	16685360	16685360	.	.	.	ID=FBti0105807;Name=P{GSV6}GS9715;Alias=9715;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB311559,AB311558
+###
+2L	FlyBase	transposable_element_insertion_site	16685366	16685366	.	+	.	ID=FBti0028789;Name=P{RS3}grp[CB-5812-3];Alias=P{RS3}CB-5812-3;Dbxref=GB:AJ545707;affected_genes=FBgn0261278;causes_alleles=FBal0226807;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ545707
+###
+2L	FlyBase	transposable_element_insertion_site	16685367	16685367	.	-	.	ID=FBti0036207;Name=P{GawB}grp[NP4755];Alias=P{GawB}NP4755-5-1,P{GawB}NP4755;Dbxref=GB:AG217060;affected_genes=FBgn0261278;causes_alleles=FBal0226796;derived_comput_cyto_location=36A10;flanking_sequence=AG217060
+###
+2L	FlyBase	transposable_element_insertion_site	16685375	16685375	.	+	.	ID=FBti0035883;Name=P{GawB}grp[NP4265];Alias=P{GawB}NP4265-5-1,P{GawB}NP4265;Dbxref=GB:AG218230;affected_genes=FBgn0261278;causes_alleles=FBal0226795;derived_comput_cyto_location=36A10;flanking_sequence=AG218230
+###
+2L	FlyBase	transposable_element_insertion_site	16685375	16685375	.	+	.	ID=FBti0054984;Name=P{XP}grp[d02837];Alias=P{XP}d02837,P{XP}grp[d02837];affected_genes=FBgn0261278;causes_alleles=FBal0179585;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ473024
+###
+2L	FlyBase	transposable_element_insertion_site	16685375	16685375	.	.	.	ID=FBti0111269;Name=P{GSV6}GS12956;Alias=12956;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB315824
+###
+2L	FlyBase	transposable_element_insertion_site	16685377	16685377	.	.	.	ID=FBti0102549;Name=P{GSV1}GS15;Alias=15;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB308545
+###
+2L	FlyBase	transposable_element_insertion_site	16685378	16685378	.	+	.	ID=FBti0014471;Name=P{PZ}grp[06034];Alias=P{PZ}grp[06034];affected_genes=FBgn0261278;causes_alleles=FBal0031420;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	transposable_element_insertion_site	16685379	16685379	.	.	.	ID=FBti0102156;Name=P{GSV6}GS15478;Alias=15478;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB318864,AB318863
+###
+2L	FlyBase	transposable_element_insertion_site	16685379	16685379	.	.	.	ID=FBti0113490;Name=P{GSV1}GS2024;Alias=2024;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB308809,AB308808
+###
+2L	FlyBase	transposable_element_insertion_site	16685382	16685382	.	-	.	ID=FBti0011054;Name=P{EP}grp[EP2343];Alias=P{EP}grp[EP2343],EP(2)2343,P{EP}EP2343;affected_genes=FBgn0261278;causes_alleles=FBal0130245;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A10;flanking_sequence=AQ073508
+###
+2L	FlyBase	transposable_element_insertion_site	16685387	16685387	.	-	.	ID=FBti0010929;Name=P{EP}grp[EP2196];Alias=P{EP}grp[EP2196],EP(2)2196,P{EP}EP2196;affected_genes=FBgn0261278;causes_alleles=FBal0130246;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A10;flanking_sequence=AQ073387
+###
+2L	FlyBase	breakpoint	16685396	16685396	.	.	.	ID=Df(2L)ED1109:bk2_breakpoint;Name=Df(2L)ED1109:bk2;reported_genomic_loc=2L_r5:16685396..16685396
+###
+2L	FlyBase	breakpoint	16685396	16685396	.	.	.	ID=Df(2L)ED8352:bk2_breakpoint;Name=Df(2L)ED8352:bk2;reported_genomic_loc=2L_r5:16685396..16685396
+###
+2L	FlyBase	transposable_element_insertion_site	16685396	16685396	.	+	.	ID=FBti0028504;Name=P{RS3}grp[CB-5305-3];Alias=P{RS3}CB-5305-3;Dbxref=GB:AJ545610;affected_genes=FBgn0261278;causes_alleles=FBal0226805;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ545610
+###
+2L	FlyBase	transposable_element_insertion_site	16685396	16685396	.	.	.	ID=FBti0112967;Name=P{GSV1}GS2129;Alias=2129;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB308956,AB308955
+###
+2L	FlyBase	transposable_element_insertion_site	16685526	16685526	.	.	.	ID=FBti0112193;Name=P{GSV6}GS15868;Alias=15868;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB319355
+###
+2L	FlyBase	transposable_element_insertion_site	16685598	16685598	.	.	.	ID=FBti0105138;Name=P{GSV6}GS11514;Alias=11514;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB313971
+###
+2L	FlyBase	transposable_element_insertion_site	16685613	16685613	.	-	.	ID=FBti0144026;Name=PBac{602.P.SVS-1}grp[CPTI000640];Alias=CPTI-000640;affected_genes=FBgn0014446,FBgn0261278;causes_alleles=FBal0262291,FBal0262343;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	transposable_element_insertion_site	16685614	16685614	.	+	.	ID=FBti0037642;Name=PBac{5HPw[+]}grp[A196];Alias=PBac{5HPw[+]}A196;affected_genes=FBgn0261278;causes_alleles=FBal0217015;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=DX575675,DX575122,DX575123
+###
+2L	FlyBase	transposable_element_insertion_site	16685625	16685625	.	.	.	ID=FBti0107171;Name=P{GSV6}GS17228;Alias=17228;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB320885,AB320884
+###
+2L	FlyBase	breakpoint	16685727	16685727	.	.	.	ID=Df(2L)ED1146:bk1_breakpoint;Name=Df(2L)ED1146:bk1;reported_genomic_loc=2L_r5:16685727..16685727
+###
+2L	FlyBase	breakpoint	16685727	16685727	.	.	.	ID=Df(2L)ED1164:bk1_breakpoint;Name=Df(2L)ED1164:bk1;reported_genomic_loc=2L_r5:16685727..16685727
+###
+2L	FlyBase	transposable_element_insertion_site	16685727	16685727	.	-	.	ID=FBti0028182;Name=P{RS3}grp[CB-0581-3];Alias=P{RS3}CB-0581-3;Dbxref=GB:AJ547455;affected_genes=FBgn0261278;causes_alleles=FBal0226803;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ547455
+###
+2L	FlyBase	transposable_element_insertion_site	16685837	16685837	.	.	.	ID=FBti0112024;Name=P{GSV7}grp[GS22185];Alias=22185,P{GSV7}GS22185,GS-grp;affected_genes=FBgn0261278;causes_alleles=FBal0295638;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB323143
+###
+2L	FlyBase	exon_junction	16685941	16690902	.	+	.	ID=FBsf0000100291;Name=Dmel:r6:2L:16685941:16690902:+;exonA=2L:16685897..16685941:+;exonB=2L:16690902..16690947:+;read_count=BCM_1_RNAseq_junctions:14,modENCODE_mRNA-Seq_U_junctions:1709
+###
+2L	FlyBase	breakpoint	16686357	16689573	.	+	.	ID=Df(2L)H20:bk1_breakpoint;Name=Df(2L)H20:bk1;evidence=experimental;linked_to=EcoRI-HpaI_rfrag
+###
+2L	FlyBase	transposable_element_insertion_site	16686542	16686542	.	+	.	ID=FBti0132702;Name=Mi{MIC}grp[MI02105];affected_genes=FBgn0261278;causes_alleles=FBal0249270;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=HR807073
+###
+2L	FlyBase	transposable_element_insertion_site	16686940	16686940	.	.	.	ID=FBti0108303;Name=P{GSV6}GS13645;Alias=13645;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB316753,AB316752
+###
+2L	FlyBase	transposable_element_insertion_site	16689166	16689166	.	+	.	ID=FBti0038238;Name=P{GT1}grp[BG00940];Alias=P{GT1}grp[BG00940],BG00940;affected_genes=FBgn0261278;causes_alleles=FBal0151881;derived_cyto_location=36A10_r5;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	exon_junction	16690152	16690902	.	+	.	ID=FBsf0000177909;Name=Dmel:r6:2L:16690152:16690902:+;exonA=2L:16690143..16690152:+;exonB=2L:16690902..16690911:+;read_count=modENCODE_mRNA-Seq_U_junctions:10
+###
+2L	FlyBase	transposable_element_insertion_site	16690352	16690352	.	.	.	ID=FBti0077019;Name=P{GSV3}grp[GS6056];Alias=6056;affected_genes=FBgn0261278;causes_alleles=FBal0194956;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB309853
+###
+2L	FlyBase	transposable_element_insertion_site	16690391	16690391	.	+	.	ID=FBti0114368;Name=P{CaryP}attP14;Alias=attP14,P{CaryP}grp[attP14];affected_genes=FBgn0261278;derived_cyto_location=36A10;derived_comput_cyto_location=36A10
+###
+2L	FlyBase	transposable_element_insertion_site	16690396	16690396	.	-	.	ID=FBti0011278;Name=P{EP}grp[EP2610];Alias=P{EP}grp[EP2610],EP(2)2610,P{EP}EP2610;affected_genes=FBgn0261278;causes_alleles=FBal0130243;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A10;flanking_sequence=AQ073724
+###
+2L	FlyBase	transposable_element_insertion_site	16690454	16690454	.	-	.	ID=FBti0021087;Name=P{EP}grp[EP2044];Alias=EP(2)2044,P{EP}grp[EP2044];affected_genes=FBgn0261278;causes_alleles=FBal0130247;derived_cyto_location=52F6-52F6;derived_comput_cyto_location=36A10;flanking_sequence=AZ300924
+###
+2L	FlyBase	transposable_element_insertion_site	16690459	16690459	.	-	.	ID=FBti0059111;Name=P{RS5}grp[5-HA-2654];Alias=P{RS5}5-HA-2654;Dbxref=GB:AJ622493;affected_genes=FBgn0261278;causes_alleles=FBal0226810;derived_cyto_location=36A10,36A10-36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ622493
+###
+2L	FlyBase	transposable_element_insertion_site	16690462	16690462	.	.	.	ID=FBti0109609;Name=P{GSV2}GS50296;Alias=50296;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB323941
+###
+2L	FlyBase	transposable_element_insertion_site	16690466	16690466	.	.	.	ID=FBti0109800;Name=P{GSV6}GS16497;Alias=16497;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB320117
+###
+2L	FlyBase	transposable_element_insertion_site	16690472	16690472	.	-	.	ID=FBti0035115;Name=P{GawB}grp[NP3042];Alias=P{GawB}NP3042-5-1,P{GawB}NP3042;Dbxref=GB:AG217148;affected_genes=FBgn0261278;causes_alleles=FBal0226792;derived_comput_cyto_location=36A10;flanking_sequence=AG217148
+###
+2L	FlyBase	transposable_element_insertion_site	16690486	16690486	.	.	.	ID=FBti0111691;Name=P{GSV6}GS12846;Alias=12846;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB315687
+###
+2L	FlyBase	transposable_element_insertion_site	16690489	16690489	.	.	.	ID=FBti0108598;Name=P{GSV3}GS8033;Alias=8033;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB310561
+###
+2L	FlyBase	transposable_element_insertion_site	16690494	16690494	.	-	.	ID=FBti0057030;Name=P{XP}grp[d10141];Alias=P{XP}d10141;affected_genes=FBgn0261278;causes_alleles=FBal0226813;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CZ477123,CZ477124
+###
+2L	FlyBase	transposable_element_insertion_site	16690507	16690507	.	-	.	ID=FBti0028371;Name=P{RS3}grp[CB-5051-3];Alias=P{RS3}CB-5051-3;Dbxref=GB:AJ546882;affected_genes=FBgn0261278;causes_alleles=FBal0226804;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ546882
+###
+2L	FlyBase	breakpoint	16690514	16690514	.	.	.	ID=Df(2L)ED1123:bk2_breakpoint;Name=Df(2L)ED1123:bk2;reported_genomic_loc=2L_r5:16690514..16690514
+###
+2L	FlyBase	transposable_element_insertion_site	16690514	16690514	.	+	.	ID=FBti0029845;Name=P{RS5}grp[5-HA-2006];Alias=P{RS5}5-HA-2006;Dbxref=GB:AJ545259;affected_genes=FBgn0261278;causes_alleles=FBal0226809;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ545259
+###
+2L	FlyBase	transposable_element_insertion_site	16690517	16690616	.	+	.	ID=FBti0037450;Name=P{GawB}grp[NP7402];Alias=P{GawB}NP7402-5-1,P{GawB}NP7402;affected_genes=FBgn0261278;causes_alleles=FBal0226800;derived_comput_cyto_location=36A10;flanking_sequence=AG217621
+###
+2L	FlyBase	transposable_element_insertion_site	16690519	16690519	.	.	.	ID=FBti0110399;Name=P{GSV6}GS13289;Alias=13289;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB316262,AB316261
+###
+2L	FlyBase	transposable_element_insertion_site	16690529	16690529	.	+	.	ID=FBti0007634;Name=P{EP}grp[EP587];Alias=P{EP}grp[EP587],P{EP}EP587,ep(2)0587,P{EP}grp[EP0587],EP(2)587;affected_genes=FBgn0261278;causes_alleles=FBal0119242;derived_cyto_location=36A7-36A7;curated_cytological_location=36A10-36A11;derived_comput_cyto_location=36A10;flanking_sequence=AQ024960
+###
+2L	FlyBase	transposable_element_insertion_site	16690530	16690530	.	-	.	ID=FBti0058963;Name=P{RS3}grp[CB-6650-3];Alias=P{RS3}CB-6650-3;Dbxref=GB:AJ622650;affected_genes=FBgn0261278;causes_alleles=FBal0226808;derived_cyto_location=36A10,36A10-36A10;derived_comput_cyto_location=36A10;flanking_sequence=AJ622650
+###
+2L	FlyBase	transposable_element_insertion_site	16690530	16690530	.	.	.	ID=FBti0106311;Name=P{GSV6}GS9563;Alias=9563;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB311376,AB311375
+###
+2L	FlyBase	transposable_element_insertion_site	16690538	16690538	.	.	.	ID=FBti0108102;Name=P{GSV6}GS10787;Alias=10787;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB312958,AB312957
+###
+2L	FlyBase	transposable_element_insertion_site	16690538	16690538	.	.	.	ID=FBti0108103;Name=P{GSV6}GS10786;Alias=10786;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB312956,AB312955
+###
+2L	FlyBase	transposable_element_insertion_site	16690554	16690554	.	+	.	ID=FBti0072182;Name=P{wHy}grp[DG25208];Alias=P{wHy}grp[DG25208];affected_genes=FBgn0261278;causes_alleles=FBal0179590;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=ET634667
+###
+2L	FlyBase	transposable_element_insertion_site	16690622	16690622	.	.	.	ID=FBti0105001;Name=P{GSV6}GS14686;Alias=14686;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB317943
+###
+2L	FlyBase	transposable_element_insertion_site	16690629	16690629	.	.	.	ID=FBti0109574;Name=P{GSV2}GS50352;Alias=50352;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB323976
+###
+2L	FlyBase	transposable_element_insertion_site	16690637	16690637	.	.	.	ID=FBti0111780;Name=P{GSV6}GS12744;Alias=12744;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB315557
+###
+2L	FlyBase	transposable_element_insertion_site	16690655	16690655	.	+	.	ID=FBti0057800;Name=P{EPgy2}grp[EY11888];Alias=P{EPgy2}grp[EY11888],P{EPgy2}EY11888;affected_genes=FBgn0261278;causes_alleles=FBal0159176;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CL943523
+###
+2L	FlyBase	transposable_element_insertion_site	16690655	16690655	.	.	.	ID=FBti0076901;Name=P{GSV2}grp[GS5044];Alias=5044;affected_genes=FBgn0261278;causes_alleles=FBal0194416;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB309537,AB309536
+###
+2L	FlyBase	transposable_element_insertion_site	16690663	16690663	.	+	.	ID=FBti0006390;Name=P{lacW}grp[k15102];Alias=P{lacW}l(2)k15102[k15102];affected_genes=FBgn0014447,FBgn0261278;causes_alleles=FBal0064085,FBal0084234;curated_cytological_location=36A10-36A11;derived_comput_cyto_location=36A10;flanking_sequence=AQ026086
+###
+2L	FlyBase	transposable_element_insertion_site	16690677	16690677	.	.	.	ID=FBti0106914;Name=P{GSV2}GS51748;Alias=51748;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=AB324772
+###
+2L	FlyBase	exon_junction	16690751	16690902	.	+	.	ID=FBsf0000185558;Name=Dmel:r6:2L:16690751:16690902:+;exonA=2L:16690742..16690751:+;exonB=2L:16690902..16690911:+;read_count=modENCODE_mRNA-Seq_U_junctions:37
+###
+2L	FlyBase	exon_junction	16690808	16690902	.	+	.	ID=FBsf0000181512;Name=Dmel:r6:2L:16690808:16690902:+;exonA=2L:16690799..16690808:+;exonB=2L:16690902..16690911:+;read_count=modENCODE_mRNA-Seq_U_junctions:31
+###
+2L	FlyBase	transposable_element_insertion_site	16691056	16691056	.	+	.	ID=FBti0124830;Name=PBac{SAstopDsRed}LL01447;Alias=LL01447;derived_cyto_location=36A10_r5;derived_comput_cyto_location=36A10;flanking_sequence=ET180064
+###
+2L	FlyBase	protein	16691089	16699638	.	+	.	ID=FBpp0080441;Name=grp-PB;Derives_from=FBtr0080884;Alias=CG17161-PB;Dbxref=FlyBase_Annotation_IDs:CG17161-PB,REFSEQ:NP_723985,GB_protein:AAN10952;derived_molecular_weight=57832.6;derived_isoelectric_point=8.20
+###
+2L	FlyBase	protein	16691089	16699638	.	+	.	ID=FBpp0080442;Name=grp-PC;Derives_from=FBtr0080885;Alias=CG17161-PC;Dbxref=FlyBase_Annotation_IDs:CG17161-PC,REFSEQ:NP_723986,GB_protein:AAF53551;derived_molecular_weight=57832.6;derived_isoelectric_point=8.20
+###
+2L	FlyBase	protein	16691089	16699638	.	+	.	ID=FBpp0080443;Name=grp-PA;Derives_from=FBtr0080886;Alias=CG17161-PA;Dbxref=FlyBase_Annotation_IDs:CG17161-PA,REFSEQ:NP_477011,GB_protein:AAF53552;derived_molecular_weight=57832.6;derived_isoelectric_point=8.20
+###
+2L	FlyBase	exon_junction	16691192	16691901	.	+	.	ID=FBsf0000120186;Name=Dmel:r6:2L:16691192:16691901:+;exonA=2L:16691130..16691192:+;exonB=2L:16691901..16691956:+;read_count=BCM_1_RNAseq_junctions:335,modENCODE_mRNA-Seq_U_junctions:7990
+###
+2L	FlyBase	exon_junction	16691192	16696585	.	+	.	ID=FBsf0000122493;Name=Dmel:r6:2L:16691192:16696585:+;exonA=2L:16691149..16691192:+;exonB=2L:16696585..16696633:+;read_count=BCM_1_RNAseq_junctions:5,modENCODE_mRNA-Seq_U_junctions:124
+###
+2L	FlyBase	exon_junction	16691192	16697501	.	+	.	ID=FBsf0000124250;Name=Dmel:r6:2L:16691192:16697501:+;exonA=2L:16691173..16691192:+;exonB=2L:16697501..16697521:+;read_count=BCM_1_RNAseq_junctions:1
+###
+2L	FlyBase	exon_junction	16692124	16696585	.	+	.	ID=FBsf0000113388;Name=Dmel:r6:2L:16692124:16696585:+;exonA=2L:16692080..16692124:+;exonB=2L:16696585..16696637:+;read_count=BCM_1_RNAseq_junctions:48,modENCODE_mRNA-Seq_U_junctions:6794
+###
+2L	FlyBase	transposable_element_insertion_site	16692375	16692375	.	+	.	ID=FBti0038935;Name=P{EPgy2}grp[EY09600];Alias=P{EPgy2}grp[EY09600],P{EPgy2}EY09600a,P{EPgy2}grp[EY09600]a,P{EPgy2}EY09600;affected_genes=FBgn0261278;causes_alleles=FBal0159177;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=CL526126
+###
+2L	FlyBase	transposable_element_insertion_site	16695400	16695400	.	+	.	ID=FBti0114018;Name=Mi{ET1}grp[MB08323];affected_genes=FBgn0261278;causes_alleles=FBal0218815;derived_cyto_location=36A10;derived_comput_cyto_location=36A10;flanking_sequence=FI276868
+###
+2L	FlyBase	exon_junction	16695676	16696585	.	+	.	ID=FBsf0000139516;Name=Dmel:r6:2L:16695676:16696585:+;exonA=2L:16695657..16695676:+;exonB=2L:16696585..16696605:+;read_count=BCM_1_RNAseq_junctions:0
+###
+2L	FlyBase	exon_junction	16696362	16696438	.	-	.	ID=FBsf0000134584;Name=Dmel:r6:2L:16696362:16696438:-;exonA=2L:16696340..16696362:-;exonB=2L:16696438..16696466:-;read_count=BCM_1_RNAseq_junctions:2
+###
+2L	FlyBase	protein	16696599	16699638	.	+	.	ID=FBpp0099886;Name=grp-PD;Derives_from=FBtr0100459;Dbxref=FlyBase_Annotation_IDs:CG17161-PD,REFSEQ:NP_723987,GB_protein:AAN10953;derived_molecular_weight=45332.4;derived_isoelectric_point=8.54
+###
+2L	FlyBase	protein	16696599	16699638	.	+	.	ID=FBpp0308597;Name=grp-PF;Derives_from=FBtr0339514;Dbxref=FlyBase_Annotation_IDs:CG17161-PF,REFSEQ:NP_001260508,GB_protein:AGB93043;derived_molecular_weight=45332.4;derived_isoelectric_point=8.54
+###
+2L	FlyBase	exon_junction	16696762	16697501	.	+	.	ID=FBsf0000116205;Name=Dmel:r6:2L:16696762:16697501:+;exonA=2L:16696691..16696762:+;exonB=2L:16697501..16697568:+;read_count=BCM_1_RNAseq_junctions:45,modENCODE_mRNA-Seq_U_junctions:8284
+###
+2L	FlyBase	exon_junction	16696769	16697501	.	+	.	ID=FBsf0000128953;Name=Dmel:r6:2L:16696769:16697501:+;exonA=2L:16696723..16696769:+;exonB=2L:16697501..16697536:+;read_count=BCM_1_RNAseq_junctions:4,modENCODE_mRNA-Seq_U_junctions:325
+###
+2L	FlyBase	gene	16697344	16697761	.	-	.	ID=FBgn0266310;Name=CR44975;Ontology_term=SO:0000011,SO:0000087,SO:0000077;Dbxref=FlyBase_Annotation_IDs:CR44975;derived_computed_cyto=36A10-36A10
+2L	FlyBase	ncRNA	16697344	16697761	.	-	.	ID=FBtr0344039;Parent=FBgn0266310;Name=CR44975-RA;Dbxref=FlyBase_Annotation_IDs:CR44975-RA;score_text=Weakly Supported;score=0
+2L	FlyBase	exon	16697344	16697761	.	-	.	Parent=FBtr0344039;parent_type=ncRNA
+###
+2L	FlyBase	point_mutation	16697560	16697560	.	+	.	ID=grp[Z5170]_point_mutation;Name=grp[Z5170];related_allele=FBal0197285;na_change=C16697560T;reported_na_change=C?T;reported_pr_change=P189L;pr_change=P189L | grp-PA%3B P189L | grp-PB%3B P189L | grp-PC%3B P75L | grp-PD%3B P75L | grp-PF
+###
+2L	FlyBase	exon_junction	16697643	16698139	.	+	.	ID=FBsf0000128191;Name=Dmel:r6:2L:16697643:16698139:+;exonA=2L:16697596..16697643:+;exonB=2L:16698139..16698193:+;read_count=BCM_1_RNAseq_junctions:83,modENCODE_mRNA-Seq_U_junctions:8486
+###
+2L	FlyBase	exon_junction	16697643	16698962	.	+	.	ID=FBsf0000171938;Name=Dmel:r6:2L:16697643:16698962:+;exonA=2L:16697634..16697643:+;exonB=2L:16698962..16698971:+;read_count=modENCODE_mRNA-Seq_U_junctions:33
+###
+2L	FlyBase	gene	16697924	16698015	.	+	.	ID=FBgn0262430;Name=mir-9c;fullname=mir-9c stem loop;Alias=FBgn0067678,CR33564,FBgn0262278,miR-9c,dme-mir-9c,9c,CR42985,CR33564,miR-9,mir-9c,mir-9C,mir-9,MiR-9c;Ontology_term=SO:0000571,SO:0000087,GO:0007281;Dbxref=EntrezGene:12798236,MIR:MI0000413,FlyBase_Annotation_IDs:CR42985,GenomeRNAi:12798236;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	pre_miRNA	16697924	16698015	.	+	.	ID=FBtr0304398;Parent=FBgn0262430;Name=mir-9c-RM;Alias=CR42985-RM;Dbxref=REFSEQ:NR_047967,MIR:MI0000413,FlyBase_Annotation_IDs:CR42985-RM
+###
+2L	FlyBase	miRNA	16697936	16697957	.	+	.	ID=FBtr0304399;Name=mir-9c-RA;Derives_from=FBtr0304398;Alias=CR42985-RA;Dbxref=REFSEQ:NR_047968,FlyBase_Annotation_IDs:CR42985-RA,MIR:MIMAT0000392
+###
+2L	FlyBase	exon_junction	16698348	16698962	.	+	.	ID=FBsf0000123067;Name=Dmel:r6:2L:16698348:16698962:+;exonA=2L:16698302..16698348:+;exonB=2L:16698962..16699012:+;read_count=BCM_1_RNAseq_junctions:76,modENCODE_mRNA-Seq_U_junctions:10710
+###
+2L	FlyBase	gene	16698404	16698488	.	+	.	ID=FBgn0262386;Name=mir-306;fullname=mir-306 stem loop;Alias=FBgn0067699,CR33609,FBgn0067698,CR33610,FBgn0262207,miR-306,dme-mir-306,306,CR42914,CR33609,mir-306,MiR-306,CR33610,mir-306*,miR-306S,mir-306S,miR-306-star,dme-miR-306;Ontology_term=SO:0000571,SO:0000087;Dbxref=EntrezGene:12798237,MIR:MI0000414,EntrezGene:3772536,FlyBase_Annotation_IDs:CR42914,GenomeRNAi:12798237;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	pre_miRNA	16698404	16698488	.	+	.	ID=FBtr0304247;Parent=FBgn0262386;Name=mir-306-RM;Alias=CR42914-RM;Dbxref=REFSEQ:NR_047969,MIR:MI0000414,FlyBase_Annotation_IDs:CR42914-RM
+###
+2L	FlyBase	miRNA	16698418	16698439	.	+	.	ID=FBtr0304248;Name=mir-306-RA;Derives_from=FBtr0304247;Alias=CR42914-RA;Dbxref=REFSEQ:NR_047970,FlyBase_Annotation_IDs:CR42914-RA,MIR:MIMAT0000393
+###
+2L	FlyBase	miRNA	16698455	16698476	.	+	.	ID=FBtr0304249;Name=mir-306-RB;Derives_from=FBtr0304247;Alias=CR42914-RB;Dbxref=REFSEQ:NR_047971,FlyBase_Annotation_IDs:CR42914-RB,MIR:MIMAT0000394
+###
+2L	FlyBase	gene	16698554	16698650	.	+	.	ID=FBgn0262452;Name=mir-79;fullname=mir-79 stem loop;Alias=FBgn0067337,CR33570,FBgn0262312,dme-mir-79,miR-79,79,CR43019,CR33570,mir-79,MiR-79;Ontology_term=SO:0000571,SO:0000087;Dbxref=EntrezGene:12798238,MIR:MI0000374,FlyBase_Annotation_IDs:CR43019,GenomeRNAi:12798238;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	pre_miRNA	16698554	16698650	.	+	.	ID=FBtr0304470;Parent=FBgn0262452;Name=mir-79-RM;Alias=CR43019-RM;Dbxref=REFSEQ:NR_047972,MIR:MI0000374,FlyBase_Annotation_IDs:CR43019-RM
+###
+2L	FlyBase	miRNA	16698613	16698634	.	+	.	ID=FBtr0304471;Name=mir-79-RA;Derives_from=FBtr0304470;Alias=CR43019-RA;Dbxref=REFSEQ:NR_047973,FlyBase_Annotation_IDs:CR43019-RA,MIR:MIMAT0000352
+###
+2L	FlyBase	gene	16698744	16698834	.	+	.	ID=FBgn0262413;Name=mir-9b;fullname=mir-9b stem loop;Alias=FBgn0067679,CR33563,FBgn0262253,miR-9b,dme-mir-9b,9b,CR42960,CR33563,miR-9,mir-9b,mir-9B,mir-9,pri-miR-9b,miRNA-9b,miR9b;Ontology_term=SO:0000571,SO:0000087;Dbxref=EntrezGene:12798246,MIR:MI0000415,FlyBase_Annotation_IDs:CR42960,GenomeRNAi:12798246;gbunit=AE014134;derived_computed_cyto=36A10-36A10
+2L	FlyBase	pre_miRNA	16698744	16698834	.	+	.	ID=FBtr0304345;Parent=FBgn0262413;Name=mir-9b-RM;Alias=CR42960-RM;Dbxref=REFSEQ:NR_047974,MIR:MI0000415,FlyBase_Annotation_IDs:CR42960-RM
+###
+2L	FlyBase	miRNA	16698758	16698780	.	+	.	ID=FBtr0304346;Name=mir-9b-RA;Derives_from=FBtr0304345;Alias=CR42960-RA;Dbxref=REFSEQ:NR_047975,FlyBase_Annotation_IDs:CR42960-RA,MIR:MIMAT0000395
+###
+2L	FlyBase	gene	16699921	16700825	.	-	.	ID=FBgn0263744;Name=CR43669;Alias=FBgn0051782,CG31782;Ontology_term=SO:0000087,SO:0000042,SO:0000011;Dbxref=FlyBase_Annotation_IDs:CR43669,GB:CZ489545,GenomeRNAi:14462787;derived_computed_cyto=36A10-36A11
+2L	FlyBase	pseudogene	16699921	16700825	.	-	.	ID=FBtr0310393;Parent=FBgn0263744;Name=CR43669-RA;Dbxref=FlyBase_Annotation_IDs:CR43669-RA;score_text=Moderately Supported;score=8
+2L	FlyBase	exon	16699921	16700648	.	-	.	Parent=FBtr0310393;parent_type=pseudogene
+2L	FlyBase	intron	16700649	16700708	.	-	.	Parent=FBtr0310393;parent_type=pseudogene
+2L	FlyBase	exon	16700709	16700825	.	-	.	Parent=FBtr0310393;parent_type=pseudogene
+###
+2L	FlyBase	transposable_element_insertion_site	16700075	16700075	.	-	.	ID=FBti0124831;Name=PBac{SAstopDsRed}LL00424;Alias=LL00424;derived_cyto_location=36A10_r5;derived_comput_cyto_location=36A10;flanking_sequence=ET180065
+###
+2L	FlyBase	chromosome_band	16700365	16720500	.	+	.	ID=band-36A11_chromosome_band;Name=band-36A11
+###
+2L	FlyBase	transposable_element_insertion_site	16700439	16700439	.	+	.	ID=FBti0053162;Name=PBac{WH}CR43669[f06818];Alias=PBac{WH}f06818,PBac{WH}CG31782[f06818];causes_alleles=FBal0186255;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ489545
+###
+2L	FlyBase	exon_junction	16700648	16700709	.	-	.	ID=FBsf0000176426;Name=Dmel:r6:2L:16700648:16700709:-;exonA=2L:16700639..16700648:-;exonB=2L:16700709..16700718:-;read_count=modENCODE_mRNA-Seq_U_junctions:28
+###
+2L	FlyBase	transposable_element_insertion_site	16700774	16700774	.	-	.	ID=FBti0025125;Name=P{EPgy2}CR43669[EY00118];Alias=EY00118,P{EPgy2}EY00118,P{EPgy2}CG31782[EY00118];causes_alleles=FBal0221883;derived_cyto_location=36A7;derived_comput_cyto_location=36A11;flanking_sequence=BZ748755
+###
+2L	FlyBase	gene	16700940	16703197	.	-	.	ID=FBgn0263745;Name=CR43670;Alias=FBgn0051782,FBgn0062488,CG31782,BcDNA:GM06363;Ontology_term=SO:0000087,SO:0000042,SO:0000011;Dbxref=FlyBase_Annotation_IDs:CR43670,GB:CZ478551,GB:CZ481758,GB:CZ481759,BDGP_clone:GM06363,GenomeRNAi:14462788;derived_computed_cyto=36A11-36A11
+2L	FlyBase	pseudogene	16700940	16703197	.	-	.	ID=FBtr0310392;Parent=FBgn0263745;Name=CR43670-RA;Dbxref=FlyBase_Annotation_IDs:CR43670-RA;score_text=Strongly Supported;score=9
+2L	FlyBase	exon	16700940	16702898	.	-	.	Parent=FBtr0310392;parent_type=pseudogene
+2L	FlyBase	intron	16702899	16702972	.	-	.	Parent=FBtr0310392;parent_type=pseudogene
+2L	FlyBase	exon	16702973	16703096	.	-	.	Parent=FBtr0310392;parent_type=pseudogene
+2L	FlyBase	intron	16703097	16703148	.	-	.	Parent=FBtr0310392;parent_type=pseudogene
+2L	FlyBase	exon	16703149	16703197	.	-	.	Parent=FBtr0310392;parent_type=pseudogene
+###
+2L	FlyBase	transposable_element_insertion_site	16701142	16701142	.	.	.	ID=FBti0106130;Name=P{GSV6}GS11303;Alias=11303;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB313673
+###
+2L	FlyBase	transposable_element_insertion_site	16702358	16702358	.	-	.	ID=FBti0046593;Name=PBac{RB}CR43670[e00695];Alias=PBac{RB}e00695,PBac{RB}CG31782[e00695];causes_alleles=FBal0186259;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ478551
+###
+2L	FlyBase	transposable_element_insertion_site	16702538	16702538	.	+	.	ID=FBti0067069;Name=PBac{RB}CR43670[e04000];Alias=PBac{RB}CG31782[e04000],PBac{RB}e04000;causes_alleles=FBal0186257;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ481758,CZ481759
+###
+2L	FlyBase	exon_junction	16702898	16702973	.	-	.	ID=FBsf0000131730;Name=Dmel:r6:2L:16702898:16702973:-;exonA=2L:16702844..16702898:-;exonB=2L:16702973..16703026:-;read_count=BCM_1_RNAseq_junctions:13,modENCODE_mRNA-Seq_U_junctions:395
+###
+2L	FlyBase	exon_junction	16702898	16703149	.	-	.	ID=FBsf0000110124;Name=Dmel:r6:2L:16702898:16703149:-;exonA=2L:16702844..16702898:-;exonB=2L:16703149..16703194:-;read_count=BCM_1_RNAseq_junctions:19
+###
+2L	FlyBase	exon_junction	16702918	16702973	.	-	.	ID=FBsf0000170685;Name=Dmel:r6:2L:16702918:16702973:-;exonA=2L:16702909..16702918:-;exonB=2L:16702973..16702982:-;read_count=modENCODE_mRNA-Seq_U_junctions:11
+###
+2L	FlyBase	exon_junction	16703096	16703149	.	-	.	ID=FBsf0000108797;Name=Dmel:r6:2L:16703096:16703149:-;exonA=2L:16703046..16703096:-;exonB=2L:16703149..16703199:-;read_count=BCM_1_RNAseq_junctions:37,modENCODE_mRNA-Seq_U_junctions:529
+###
+2L	FlyBase	exon_junction	16703112	16703186	.	+	.	ID=FBsf0000184366;Name=Dmel:r6:2L:16703112:16703186:+;exonA=2L:16703103..16703112:+;exonB=2L:16703186..16703195:+;read_count=modENCODE_mRNA-Seq_U_junctions:27
+###
+2L	FlyBase	transposable_element_insertion_site	16703771	16703911	.	+	.	ID=FBti0047369;Name=PBac{RB}e01885;Alias=PBac{RB}e01885,PBac{RB}CG31782[e01885];derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ479701,CZ479702
+###
+2L	FlyBase	gene	16704286	16716195	.	-	.	ID=FBgn0062978;Name=CG31808;Alias=FBgn0051808,CR31808,RE70695,BcDNA:RE70695,MRE33,CR31808,mRNA-like ncRNA in embryogenesis 33;Ontology_term=SO:0000010,SO:0000087;Dbxref=FlyBase:FBan0031808,FlyBase_Annotation_IDs:CG31808,GB:AY118418,GB:BI487180,UniProt/TrEMBL:F9VMG5,OrthoDB7_Drosophila:EOG7DG8ZX,GB_protein:ADV37071,GB_protein:ADV37072,EntrezGene:10178782,BDGP_clone:RE70695,BIOGRID:533350,Fly-FISH:CR31808,GenomeRNAi:10178782;gbunit=AE014134;derived_computed_cyto=36A11-36A11
+2L	FlyBase	mRNA	16704286	16716195	.	-	.	ID=FBtr0303445;Parent=FBgn0062978;Name=CG31808-RC;Alias=CR31808-RC;Dbxref=REFSEQ:NM_001201893,FlyBase_Annotation_IDs:CG31808-RC;score_text=Strongly Supported;score=11
+2L	FlyBase	three_prime_UTR	16704286	16705521	.	-	.	Parent=FBtr0303445;parent_type=mRNA
+2L	FlyBase	exon	16704286	16705789	.	-	.	Parent=FBtr0303445;parent_type=mRNA
+2L	FlyBase	CDS	16705522	16705692	.	-	0	Parent=FBtr0303445;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16705693	16705789	.	-	.	Parent=FBtr0303445;parent_type=mRNA
+2L	FlyBase	intron	16705790	16715770	.	-	.	Parent=FBtr0303445;parent_type=mRNA
+2L	FlyBase	exon	16715771	16716195	.	-	.	Parent=FBtr0303445;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16715771	16716195	.	-	.	Parent=FBtr0303445;parent_type=mRNA
+###
+2L	FlyBase	protein	16705525	16705692	.	-	.	ID=FBpp0292500;Name=CG31808-PC;Derives_from=FBtr0303445;Alias=CR31808-PC;Dbxref=FlyBase_Annotation_IDs:CG31808-PC,REFSEQ:NP_001188822,GB_protein:ADV37071;derived_molecular_weight=6492.5;derived_isoelectric_point=11.55
+###
+2L	FlyBase	exon_junction	16705789	16715771	.	-	.	ID=FBsf0000126434;Name=Dmel:r6:2L:16705789:16715771:-;exonA=2L:16705721..16705789:-;exonB=2L:16715771..16715832:-;read_count=BCM_1_RNAseq_junctions:274,modENCODE_mRNA-Seq_U_junctions:17995
+###
+2L	FlyBase	transposable_element_insertion_site	16712099	16712099	.	-	.	ID=FBti0143296;Name=Mi{MIC}CG31808[MI03239];Alias=Mi{MIC}CG31782[MI03239];affected_genes=FBgn0062978;causes_alleles=FBal0260564;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=JM113972
+###
+2L	FlyBase	transposable_element_insertion_site	16715671	16715671	.	.	.	ID=FBti0104652;Name=P{GSV6}GS11621;Alias=11621;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB314112,AB314111
+###
+2L	FlyBase	transposable_element_insertion_site	16715883	16715883	.	.	.	ID=FBti0108006;Name=P{GSV6}GS13735;Alias=13735;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB316895,AB316894
+###
+2L	FlyBase	gene	16715891	16719635	.	+	.	ID=FBgn0086907;Name=Cyt-c-d;fullname=Cytochrome c distal;Alias=FBgn0000408,FBgn0011213,cytochrome c,cyt-c-d,Cytochrome c,cytochrome C,Cytochrome C,bln,Cytc,bs30f07.y1,cyt.c,DC3,CytC1,pDMc02,blanks,CytC-1,Cyt-c1,CG13263,ms(2)04445,Cytc-d,dc3,cytochrome-c-d,cyt c-d,cyt c,cytochrome c distal,Cyt c,CytC,Cyt C;Ontology_term=SO:0000010,SO:0000087,GO:0006119,GO:0009055,GO:0005743,GO:0045155,GO:0006919,GO:0007291,GO:0005739,GO:0005759,GO:0046669,GO:0020037,GO:0005506;Dbxref=GB_protein:AAF53553,FlyBase:FBan0013263,FlyBase_Annotation_IDs:CG13263,GB:AC005133,GB:AC006214,GB:AC093097,GB:AI257298,GB:AI260241,GB:AI297936,GB:AI945170,GB:AI945264,GB:AI945421,GB:AI946469,GB:AI946785,GB:AQ026408,GB:AQ073476,GB:AQ074057,GB:AW944049,GB:BT006002,GB_protein:AAO67367,GB:CZ472088,GB:CZ476437,GB:CZ486452,GB:CZ486453,GB:X01761,GB_protein:CAA25901,MITODROME:MTDROME13263,UniProt/Swiss-Prot:P04657,INTERPRO:IPR002327,INTERPRO:IPR009056,GB_protein:AGB93044,UniProt/TrEMBL:M9PD22,OrthoDB7_Drosophila:EOG7S8519,EntrezGene:34995,INTERPRO:IPR003088,BDGP_clone:LP05614,OrthoDB7_Metazoa:EOG761BWX,InterologFinder:34995,BIOGRID:61002,GenomeRNAi:34995,INTERACTIVEFLY:/sturtevant/cytochrome1.htm;gbunit=AE014134;derived_computed_cyto=36A11-36A11
+2L	FlyBase	mRNA	16715891	16719635	.	+	.	ID=FBtr0080888;Parent=FBgn0086907;Name=Cyt-c-d-RA;Dbxref=FlyBase_Annotation_IDs:CG13263-RA,REFSEQ:NM_057816;score_text=Strongly Supported;score=15
+2L	FlyBase	exon	16715891	16716217	.	+	.	Parent=FBtr0080888;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16715891	16716217	.	+	.	Parent=FBtr0080888;parent_type=mRNA
+2L	FlyBase	intron	16716218	16719125	.	+	.	Parent=FBtr0080888;parent_type=mRNA
+2L	FlyBase	mRNA	16715961	16719635	.	+	.	ID=FBtr0335141;Parent=FBgn0086907;Name=Cyt-c-d-RB;Dbxref=REFSEQ:NM_001273580,FlyBase_Annotation_IDs:CG13263-RB;score_text=Strongly Supported;score=15
+2L	FlyBase	exon	16715961	16716217	.	+	.	Parent=FBtr0335141;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16715961	16716217	.	+	.	Parent=FBtr0335141;parent_type=mRNA
+2L	FlyBase	intron	16716218	16719125	.	+	.	Parent=FBtr0335141;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16719126	16719134	.	+	.	Parent=FBtr0080888,FBtr0335141;parent_type=mRNA
+2L	FlyBase	exon	16719126	16719635	.	+	.	Parent=FBtr0080888,FBtr0335141;parent_type=mRNA
+2L	FlyBase	CDS	16719135	16719452	.	+	0	Parent=FBtr0080888,FBtr0335141;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16719453	16719635	.	+	.	Parent=FBtr0080888,FBtr0335141;parent_type=mRNA
+###
+2L	FlyBase	transposable_element_insertion_site	16716109	16716109	.	-	.	ID=FBti0055717;Name=P{XP}Cyt-c-d[d05040];Alias=P{XP}d05040;Dbxref=GB:CZ474282;affected_genes=FBgn0086907;causes_alleles=FBal0222827;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ474282
+###
+2L	FlyBase	transposable_element_insertion_site	16716109	16716109	.	.	.	ID=FBti0112406;Name=P{GSV2}GS5010;Alias=5010;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB309497,AB309496
+###
+2L	FlyBase	transposable_element_insertion_site	16716131	16716131	.	+	.	ID=FBti0011023;Name=P{EP}Cyt-c-d[EP2305];Alias=EP(2)2305,P{EP}Cyt-c-d[EP2305],P{EP}EP2305;affected_genes=FBgn0086907;causes_alleles=FBal0131274;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A11;flanking_sequence=AQ073476
+###
+2L	FlyBase	transposable_element_insertion_site	16716141	16716141	.	-	.	ID=FBti0070043;Name=P{XP}Cyt-c-d[d08846];Alias=P{XP}Cyt-c-d[d08846],P{XP}d08846;affected_genes=FBgn0086907;causes_alleles=FBal0184227;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ476437
+###
+2L	FlyBase	transposable_element_insertion_site	16716141	16716141	.	-	.	ID=FBti0100014;Name=P{PTT-GB}CB03345;Alias=CB03345,P{PTT-GB}CG31782[CB03345];affected_genes=FBgn0014446;causes_alleles=FBal0211397;derived_comput_cyto_location=36A11
+###
+2L	FlyBase	transposable_element_insertion_site	16716142	16716142	.	-	.	ID=FBti0010802;Name=P{EP}Cyt-c-d[EP2049];Alias=EP(2)2049,P{EP}Cyt-c-d[EP2049],P{EP}EP2049;affected_genes=FBgn0086907;causes_alleles=FBal0131275;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A11;flanking_sequence=AQ074057
+###
+2L	FlyBase	transposable_element_insertion_site	16716142	16716142	.	-	.	ID=FBti0054403;Name=P{XP}Cyt-c-d[d01204];Alias=P{XP}Cyt-c-d[d01204],P{XP}d01204;affected_genes=FBgn0086907;causes_alleles=FBal0184228;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ472088
+###
+2L	FlyBase	transposable_element_insertion_site	16716217	16716217	.	+	.	ID=FBti0003426;Name=P{PZ}Cyt-c-d[bln1];Alias=FBti0000211,FBti0058486,P{PZ}bln[1],P{PZ}Cyt-c-d[bln-1],P1763,P{ry[+t7.2]%3DPZ}bln[1],P{PZ}ms(2)04445[04445];affected_genes=FBgn0086907,FBgn0062978,FBgn0014447;causes_alleles=FBal0156813,FBal0040914,FBal0027976;curated_cytological_location=36A1-36B6;derived_comput_cyto_location=36A11;flanking_sequence=AQ026408
+###
+2L	FlyBase	exon_junction	16716217	16719126	.	+	.	ID=FBsf0000122929;Name=Dmel:r6:2L:16716217:16719126:+;exonA=2L:16716170..16716217:+;exonB=2L:16719126..16719196:+;read_count=BCM_1_RNAseq_junctions:194,modENCODE_mRNA-Seq_U_junctions:8467
+###
+2L	FlyBase	breakpoint	16716542	16716542	.	.	.	ID=Df(2L)BSC325:bk1_breakpoint;Name=Df(2L)BSC325:bk1;reported_genomic_loc=2L_r5:16716542..16716542
+###
+2L	FlyBase	transposable_element_insertion_site	16716549	16716549	.	.	.	ID=FBti0106799;Name=P{GSV6}GS9434;Alias=9434;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB311223
+###
+2L	FlyBase	transposable_element_insertion_site	16717489	16717489	.	-	.	ID=FBti0051480;Name=PBac{WH}Cyt-c-d[f03856];Alias=PBac{WH}f03856,PBac{WH}Cyt-c-d[f03856];affected_genes=FBgn0086907;causes_alleles=FBal0184226;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ486452,CZ486453
+###
+2L	FlyBase	protein	16719135	16719449	.	+	.	ID=FBpp0080445;Name=Cyt-c-d-PA;Derives_from=FBtr0080888;Alias=CG13263-PA;Dbxref=FlyBase_Annotation_IDs:CG13263-PA,REFSEQ:NP_477164,GB_protein:AAF53553;derived_molecular_weight=11369.1;derived_isoelectric_point=9.95
+###
+2L	FlyBase	protein	16719135	16719449	.	+	.	ID=FBpp0307140;Name=Cyt-c-d-PB;Derives_from=FBtr0335141;Dbxref=REFSEQ:NP_001260509,GB_protein:AGB93044,FlyBase_Annotation_IDs:CG13263-PB;derived_molecular_weight=11369.1;derived_isoelectric_point=9.95
+###
+2L	FlyBase	point_mutation	16719320	16719320	.	+	.	ID=Cyt-c-d[Z21091]_point_mutation;Name=Cyt-c-d[Z21091];related_allele=FBal0191544;evidence=experimental;na_change=G16719320A;reported_pr_change=W62@;pr_change=W62@ | Cyt-c-d-PA%3B W62@ | Cyt-c-d-PB
+###
+2L	FlyBase	transposable_element_insertion_site	16719504	16719504	.	.	.	ID=FBti0124832;Name=PBac{SAstopDsRed}LL03961;Alias=LL03961;derived_cyto_location=36A11_r5;derived_comput_cyto_location=36A11;flanking_sequence=ET180066
+###
+2L	FlyBase	breakpoint	16719873	16719873	.	.	.	ID=Df(2L)glu-17C:bk1_breakpoint;Name=Df(2L)glu-17C:bk1;reported_genomic_loc=2L_r5:16719873..16719873
+###
+2L	FlyBase	transposable_element_insertion_site	16719920	16719920	.	+	.	ID=FBti0028404;Name=P{RS3}Cyt-c-p[CB-5108-3];Alias=P{RS3}CB-5108-3;Dbxref=GB:AJ545576;affected_genes=FBgn0000409;causes_alleles=FBal0226108;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AJ545576
+###
+2L	FlyBase	gene	16719932	16722644	.	+	.	ID=FBgn0000409;Name=Cyt-c-p;fullname=Cytochrome c proximal;Alias=cytochrome c,cyt-c-p,Cytochrome c,cytochrome C,cytochrome c DC4,Cytochrome C,CG17903,Cyt-c2,Cytc,cyt-c2,cyt.c,DC4,DMc01,pDMc01,CytC-2,Cytc-p,dc4,cytochrome-c-p,cyt c-p,cyt c,Cyt c,CytC,Cytochrome-c-proximal,Cyt C;Ontology_term=SO:0000010,SO:0000087,GO:0006119,GO:0009055,GO:0005743,GO:0045155,GO:0005739,GO:0005759,GO:0020037,GO:0005506;Dbxref=FlyBase:FBan0017903,FlyBase_Annotation_IDs:CG17903,GB_protein:AAF53554,GB:AA817556,GB:AC005133,GB:AC006214,GB:AC093097,GB:AY071701,GB_protein:AAL49323,GB:BI611107,GB:BZ592574,GB:CZ473575,GB:CZ483936,GB:M11381,GB_protein:AAA28437,GB:X01760,GB_protein:CAA25900,MITODROME:MTDROME17903,UniProt/Swiss-Prot:P84029,INTERPRO:IPR002327,INTERPRO:IPR009056,OrthoDB7_Drosophila:EOG7BGW65,OrthoDB7_Diptera:EOG7Q8Q5R,EntrezGene:34996,INTERPRO:IPR003088,BDGP_clone:RH17228,OrthoDB7_Insecta:EOG7RRS83,OrthoDB7_Arthropoda:EOG7XQ9NG,OrthoDB7_Metazoa:EOG761BWX,apodroso:11115-cyt-c-p[k13905],InterologFinder:34996,BIOGRID:61003,FlyAtlas:CG17903-RA,GenomeRNAi:34996,INTERACTIVEFLY:/sturtevant/cytochrome1.htm;gbunit=AE014134;derived_computed_cyto=36A11-36A12
+2L	FlyBase	mRNA	16719932	16722644	.	+	.	ID=FBtr0080889;Parent=FBgn0000409;Name=Cyt-c-p-RA;Dbxref=FlyBase_Annotation_IDs:CG17903-RA,REFSEQ:NM_057828;score_text=Strongly Supported;score=15
+2L	FlyBase	exon	16719932	16719976	.	+	.	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16719932	16719976	.	+	.	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	intron	16719977	16722008	.	+	.	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16722009	16722049	.	+	.	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	exon	16722009	16722644	.	+	.	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	CDS	16722050	16722376	.	+	0	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16722377	16722644	.	+	.	Parent=FBtr0080889;parent_type=mRNA
+2L	FlyBase	mRNA	16722011	16722644	.	+	.	ID=FBtr0344849;Parent=FBgn0000409;Name=Cyt-c-p-RB;Dbxref=FlyBase_Annotation_IDs:CG17903-RB;score_text=Strongly Supported;score=15
+2L	FlyBase	five_prime_UTR	16722011	16722049	.	+	.	Parent=FBtr0344849;parent_type=mRNA
+2L	FlyBase	exon	16722011	16722644	.	+	.	Parent=FBtr0344849;parent_type=mRNA
+2L	FlyBase	CDS	16722050	16722376	.	+	0	Parent=FBtr0344849;parent_type=mRNA
+2L	FlyBase	three_prime_UTR	16722377	16722644	.	+	.	Parent=FBtr0344849;parent_type=mRNA
+###
+2L	FlyBase	transposable_element_insertion_site	16719970	16719970	.	.	.	ID=FBti0102383;Name=P{GSV6}GS12096;Alias=12096;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB314753,AB314752
+###
+2L	FlyBase	exon_junction	16719976	16722009	.	+	.	ID=FBsf0000147859;Name=Dmel:r6:2L:16719976:16722009:+;exonA=2L:16719928..16719976:+;exonB=2L:16722009..16722075:+;read_count=BCM_1_RNAseq_junctions:1235,modENCODE_mRNA-Seq_U_junctions:145919
+###
+2L	FlyBase	transposable_element_insertion_site	16719977	16719977	.	.	.	ID=FBti0107522;Name=P{GSV6}GS9248;Alias=9248;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB311002,AB311001
+###
+2L	FlyBase	transposable_element_insertion_site	16719978	16719978	.	+	.	ID=FBti0006420;Name=P{lacW}l(2)k13905[k13905];Alias=P{lacW}l(2)k13905[k13905];affected_genes=FBgn0021867,FBgn0014447;causes_alleles=FBal0084282,FBal0064115;curated_cytological_location=36A10-36A11;derived_comput_cyto_location=36A11;flanking_sequence=AQ026073
+###
+2L	FlyBase	transposable_element_insertion_site	16720163	16720163	.	.	.	ID=FBti0107261;Name=P{GSV6}GS13928;Alias=13928;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=AB317173,AB317172
+###
+2L	FlyBase	transposable_element_insertion_site	16720357	16720423	.	-	.	ID=FBti0071045;Name=P{lacW}Cyt-c-p[SH2195];Alias=l(2)SH2 2195,P{lacW}SH2195;affected_genes=FBgn0000409;causes_alleles=FBal0226109;derived_comput_cyto_location=36A11;flanking_sequence=AB082794
+###
+2L	FlyBase	transposable_element_insertion_site	16720420	16720420	.	+	.	ID=FBti0049979;Name=PBac{WH}Cyt-c-p[f01464];Alias=PBac{WH}Cyt-c-p[f01464],PBac{WH}f01464;affected_genes=FBgn0000409;causes_alleles=FBal0184224;derived_cyto_location=36A11;derived_comput_cyto_location=36A11;flanking_sequence=CZ483936
+###
+2L	FlyBase	breakpoint	16720775	16720775	.	.	.	ID=Df(2L)ED13216:bk1_breakpoint;Name=Df(2L)ED13216:bk1;reported_genomic_loc=2L_r5:16720775..16720775
+###
+2L	FlyBase	transposable_element_insertion_site	16720775	16720775	.	-	.	ID=FBti0029481;Name=P{RS5}Cyt-c-p[5-HA-1262];Alias=P{RS5}5-HA-1262;Dbxref=GB:AJ546361;affected_genes=FBgn0000409;causes_alleles=FBal0226111;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=AJ546361
+###
+2L	FlyBase	transposable_element_insertion_site	16720845	16721264	.	.	.	ID=FBti0058321;Name=P{lacW}Cyt-c-p[SH1590];Alias=P{lacW}CG31782[SH1590],P{lacW}SH1590;Dbxref=GB:BZ592574;affected_genes=FBgn0000409;causes_alleles=FBal0160646;derived_comput_cyto_location=36A12;flanking_sequence=BZ592574
+###
+2L	FlyBase	breakpoint	16721250	16721250	.	.	.	ID=Df(2L)ED1131:bk2_breakpoint;Name=Df(2L)ED1131:bk2;reported_genomic_loc=2L_r5:16721250..16721250
+###
+2L	FlyBase	transposable_element_insertion_site	16721250	16721250	.	+	.	ID=FBti0028730;Name=P{RS3}Cyt-c-p[CB-5719-3];Alias=P{RS3}CB-5719-3;Dbxref=GB:AJ546292;affected_genes=FBgn0000409;causes_alleles=FBal0226110;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=AJ546292
+###
+2L	FlyBase	transposable_element_insertion_site	16721257	16721257	.	+	.	ID=FBti0055331;Name=P{XP}Cyt-c-p[d03812];Alias=P{XP}Cyt-c-p[d03812],P{XP}d03812;affected_genes=FBgn0000409;causes_alleles=FBal0184225;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=CZ473575
+###
+2L	FlyBase	protein	16722050	16722373	.	+	.	ID=FBpp0080446;Name=Cyt-c-p-PA;Derives_from=FBtr0080889;Alias=CG17903-PA;Dbxref=FlyBase_Annotation_IDs:CG17903-PA,REFSEQ:NP_477176,GB_protein:AAF53554;derived_molecular_weight=11734.5;derived_isoelectric_point=10.18
+###
+2L	FlyBase	protein	16722050	16722373	.	+	.	ID=FBpp0311164;Name=Cyt-c-p-PB;Derives_from=FBtr0344849;Dbxref=FlyBase_Annotation_IDs:CG17903-PB,GB_protein:AHN54498;derived_molecular_weight=11734.5;derived_isoelectric_point=10.18
+###
+2L	FlyBase	transposable_element	16722808	16722852	.	+	.	ID=FBti0061380;Name=INE-1{}3319;Alias=INE-1#604,TE61380;derived_cyto_location=36A12-36A12;derived_comput_cyto_location=36A12
+###
+2L	FlyBase	gene	16722883	16727826	.	-	.	ID=FBgn0027779;Name=VhaSFD;fullname=Vacuolar H[+]-ATPase SFD subunit;Alias=vhaSFD,144191_at,V-ATPase,CG17332,V-ATPase H-subunit,V1 H subunit,Vacuolar H+-ATPase SFD subunit,V-ATPase subunit H,ATP6V1H;Ontology_term=SO:0000010,SO:0000087,GO:0000221,GO:0008340,GO:0033227,GO:0005886,GO:0046961,GO:0015991,GO:0033181;Dbxref=FlyBase:FBan0017332,FlyBase_Annotation_IDs:CG17332,GB_protein:AAN10957,GB_protein:AAF53555,GB_protein:AAF53556,GB:AA439742,GB:AF159457,GB_protein:AAD47254,GB:AI534532,GB:AY052122,GB_protein:AAK93546,UniProt/Swiss-Prot:Q9V3J1,INTERPRO:IPR004908,INTERPRO:IPR011987,INTERPRO:IPR011989,INTERPRO:IPR016024,GB_protein:AGB93045,UniProt/TrEMBL:M9PDK5,OrthoDB7_Drosophila:EOG7R8FKX,OrthoDB7_Diptera:EOG7G51XG,EntrezGene:34997,BDGP_clone:SD07421,OrthoDB7_Insecta:EOG7QS2T6,OrthoDB7_Arthropoda:EOG796JWN,OrthoDB7_Metazoa:EOG7CCBQQ,InterologFinder:34997,BIOGRID:61004,FlyAtlas:CG17332-RA,GenomeRNAi:34997;gbunit=AE014134;derived_computed_cyto=36A12-36A12
+2L	FlyBase	mRNA	16722883	16727826	.	-	.	ID=FBtr0335143;Parent=FBgn0027779;Name=VhaSFD-RE;Dbxref=REFSEQ:NM_001273581,FlyBase_Annotation_IDs:CG17332-RE;score_text=Strongly Supported;score=11
+2L	FlyBase	three_prime_UTR	16722883	16723818	.	-	.	Parent=FBtr0335143;parent_type=mRNA
+2L	FlyBase	exon	16722883	16723897	.	-	.	Parent=FBtr0335143;parent_type=mRNA
+2L	FlyBase	CDS	16723819	16723897	.	-	1	Parent=FBtr0335143;parent_type=mRNA
+2L	FlyBase	intron	16723898	16724057	.	-	.	Parent=FBtr0335143;parent_type=mRNA
+2L	FlyBase	mRNA	16723232	16727826	.	-	.	ID=FBtr0080940;Parent=FBgn0027779;Name=VhaSFD-RA;Alias=CG17332-RA;Dbxref=FlyBase_Annotation_IDs:CG17332-RA,REFSEQ:NM_078861;score_text=Strongly Supported;score=11
+2L	FlyBase	mRNA	16723232	16727826	.	-	.	ID=FBtr0080941;Parent=FBgn0027779;Name=VhaSFD-RB;Alias=CG17332-RB;Dbxref=FlyBase_Annotation_IDs:CG17332-RB,REFSEQ:NM_165177;score_text=Strongly Supported;score=11
+2L	FlyBase	three_prime_UTR	16723232	16723818	.	-	.	Parent=FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	exon	16723232	16723897	.	-	.	Parent=FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	CDS	16723819	16723897	.	-	1	Parent=FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	intron	16723898	16724057	.	-	.	Parent=FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	CDS	16724058	16724171	.	-	1	Parent=FBtr0335143,FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	exon	16724058	16724171	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	intron	16724172	16724231	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941;parent_type=mRNA
+2L	FlyBase	intron	16724994	16725891	.	-	.	Parent=FBtr0080941;parent_type=mRNA
+2L	FlyBase	CDS	16725892	16726113	.	-	0	Parent=FBtr0080941;parent_type=mRNA
+2L	FlyBase	exon	16725892	16726113	.	-	.	Parent=FBtr0080941;parent_type=mRNA
+2L	FlyBase	intron	16726114	16727009	.	-	.	Parent=FBtr0080941;parent_type=mRNA
+2L	FlyBase	mRNA	16723232	16727826	.	-	.	ID=FBtr0080942;Parent=FBgn0027779;Name=VhaSFD-RD;Alias=CG17332-RD;Dbxref=FlyBase_Annotation_IDs:CG17332-RD,REFSEQ:NM_165178;score_text=Weakly Supported;score=3
+2L	FlyBase	three_prime_UTR	16723232	16723992	.	-	.	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	exon	16723232	16724001	.	-	.	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	CDS	16723993	16724001	.	-	0	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	intron	16724002	16724068	.	-	.	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	CDS	16724069	16724171	.	-	1	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	exon	16724069	16724171	.	-	.	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	intron	16724172	16724231	.	-	.	Parent=FBtr0080942;parent_type=mRNA
+2L	FlyBase	CDS	16724232	16724794	.	-	0	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	exon	16724232	16724794	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	intron	16724795	16724858	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	CDS	16724859	16724993	.	-	0	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	exon	16724859	16724993	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	intron	16724994	16727009	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080942;parent_type=mRNA
+2L	FlyBase	CDS	16727010	16727488	.	-	2	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	exon	16727010	16727488	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	intron	16727489	16727629	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	CDS	16727630	16727666	.	-	0	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	exon	16727630	16727826	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+2L	FlyBase	five_prime_UTR	16727667	16727826	.	-	.	Parent=FBtr0335143,FBtr0080940,FBtr0080941,FBtr0080942;parent_type=mRNA
+###
+2L	FlyBase	protein	16723822	16727666	.	-	.	ID=FBpp0080494;Name=VhaSFD-PA;Derives_from=FBtr0080940;Alias=CG17332-PA;Dbxref=FlyBase_Annotation_IDs:CG17332-PA,REFSEQ:NP_523585,GB_protein:AAF53555;derived_molecular_weight=53733.4;derived_isoelectric_point=6.59
+###
+2L	FlyBase	protein	16723822	16727666	.	-	.	ID=FBpp0080495;Name=VhaSFD-PB;Derives_from=FBtr0080941;Alias=CG17332-PB;Dbxref=FlyBase_Annotation_IDs:CG17332-PB,REFSEQ:NP_723992,GB_protein:AAF53556;derived_molecular_weight=62071.6;derived_isoelectric_point=6.69
+###
+2L	FlyBase	protein	16723822	16727666	.	-	.	ID=FBpp0307142;Name=VhaSFD-PE;Derives_from=FBtr0335143;Dbxref=REFSEQ:NP_001260510,GB_protein:AGB93045,FlyBase_Annotation_IDs:CG17332-PE;derived_molecular_weight=53733.4;derived_isoelectric_point=6.59
+###
+2L	FlyBase	exon_junction	16723897	16724058	.	-	.	ID=FBsf0000122337;Name=Dmel:r6:2L:16723897:16724058:-;exonA=2L:16723818..16723897:-;exonB=2L:16724058..16724140:-;read_count=BCM_1_RNAseq_junctions:656,modENCODE_mRNA-Seq_U_junctions:21926
+###
+2L	FlyBase	protein	16723996	16727666	.	-	.	ID=FBpp0080496;Name=VhaSFD-PD;Derives_from=FBtr0080942;Alias=CG17332-PD;Dbxref=FlyBase_Annotation_IDs:CG17332-PD,REFSEQ:NP_723993,GB_protein:AAN10957;derived_molecular_weight=50727.0;derived_isoelectric_point=6.51
+###
+2L	FlyBase	exon_junction	16724001	16724069	.	-	.	ID=FBsf0000107591;Name=Dmel:r6:2L:16724001:16724069:-;exonA=2L:16723941..16724001:-;exonB=2L:16724069..16724122:-;read_count=BCM_1_RNAseq_junctions:9,modENCODE_mRNA-Seq_U_junctions:612
+###
+2L	FlyBase	exon_junction	16724171	16724232	.	-	.	ID=FBsf0000121774;Name=Dmel:r6:2L:16724171:16724232:-;exonA=2L:16724079..16724171:-;exonB=2L:16724232..16724320:-;read_count=BCM_1_RNAseq_junctions:479,modENCODE_mRNA-Seq_U_junctions:38994
+###
+2L	FlyBase	exon_junction	16724794	16724859	.	-	.	ID=FBsf0000106725;Name=Dmel:r6:2L:16724794:16724859:-;exonA=2L:16724716..16724794:-;exonB=2L:16724859..16724934:-;read_count=BCM_1_RNAseq_junctions:503,modENCODE_mRNA-Seq_U_junctions:28946
+###
+2L	FlyBase	miRNA	16724795	16724817	.	-	.	ID=FBtr0304428;Name=mir-1006-RA;Derives_from=FBtr0304427;Alias=CR42999-RA;Dbxref=REFSEQ:NR_047977,FlyBase_Annotation_IDs:CR42999-RA,MIR:MIMAT0005019
+###
+2L	FlyBase	gene	16724795	16724858	.	-	.	ID=FBgn0262438;Name=mir-1006;fullname=mir-1006 stem loop;Alias=FBgn0250802,FBgn0262292,miR-1006,dme-mir-1006,CR42999;Ontology_term=SO:0000087,SO:0000571,GO:0035278;Dbxref=MIR:MI0005867,EntrezGene:12798247,FlyBase_Annotation_IDs:CR42999,GenomeRNAi:12798247;derived_computed_cyto=36A12-36A12
+2L	FlyBase	pre_miRNA	16724795	16724858	.	-	.	ID=FBtr0304427;Parent=FBgn0262438;Name=mir-1006-RM;Alias=CR42999-RM;Dbxref=REFSEQ:NR_047976,FlyBase_Annotation_IDs:CR42999-RM,MIR:MI0005867
+###
+2L	FlyBase	exon_junction	16724993	16725892	.	-	.	ID=FBsf0000103080;Name=Dmel:r6:2L:16724993:16725892:-;exonA=2L:16724946..16724993:-;exonB=2L:16725892..16725942:-;read_count=BCM_1_RNAseq_junctions:32,modENCODE_mRNA-Seq_U_junctions:3353
+###
+2L	FlyBase	exon_junction	16724993	16727010	.	-	.	ID=FBsf0000105754;Name=Dmel:r6:2L:16724993:16727010:-;exonA=2L:16724948..16724993:-;exonB=2L:16727010..16727063:-;read_count=BCM_1_RNAseq_junctions:29,modENCODE_mRNA-Seq_U_junctions:20699
+###
+2L	FlyBase	exon_junction	16726113	16727010	.	-	.	ID=FBsf0000104890;Name=Dmel:r6:2L:16726113:16727010:-;exonA=2L:16726049..16726113:-;exonB=2L:16727010..16727055:-;read_count=BCM_1_RNAseq_junctions:4,modENCODE_mRNA-Seq_U_junctions:2406
+###
+2L	FlyBase	transposable_element_insertion_site	16727467	16727487	.	-	.	ID=FBti0027854;Name=P{PTT-GA}VhaSFD[G00259];Alias=vhaSFD-GFP,G259,P{PTT-GA}VhaSFD[G00259],P{PTT-GA}VhaSFD[G259],vhaSFD::eGFP,vhaSFD:GFP;affected_genes=FBgn0027779,FBgn0014446;causes_alleles=FBal0147323,FBal0148394;derived_cyto_location=36A6;derived_comput_cyto_location=36A12
+###
+2L	FlyBase	breakpoint	16727482	16727482	.	.	.	ID=Df(2L)Exel7066:bk2_breakpoint;Name=Df(2L)Exel7066:bk2;reported_genomic_loc=2L_r5:16727482..16727482
+###
+2L	FlyBase	transposable_element_insertion_site	16727482	16727482	.	-	.	ID=FBti0055205;Name=P{XP}VhaSFD[d03439];Alias=P{XP}d03439;affected_genes=FBgn0027779;causes_alleles=FBal0222823;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=CZ473366,CZ473367
+###
+2L	FlyBase	exon_junction	16727488	16727630	.	-	.	ID=FBsf0000129627;Name=Dmel:r6:2L:16727488:16727630:-;exonA=2L:16727403..16727488:-;exonB=2L:16727630..16727709:-;read_count=BCM_1_RNAseq_junctions:805,modENCODE_mRNA-Seq_U_junctions:22585
+###
+2L	FlyBase	transposable_element_insertion_site	16727500	16727500	.	.	.	ID=FBti0110477;Name=P{GSV6}GS13199;Alias=13199;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=AB316129
+###
+2L	FlyBase	transposable_element_insertion_site	16727698	16727698	.	-	.	ID=FBti0027332;Name=P{EPgy2}VhaSFD[EY04644];Alias=FBti0033291,EY04644,P{EPgy2}VhaSFD[EY04644],P{EPgy2}EY04644;affected_genes=FBgn0027779;causes_alleles=FBal0155711;derived_cyto_location=36A7;derived_comput_cyto_location=36A12;flanking_sequence=CC060351
+###
+2L	FlyBase	transposable_element_insertion_site	16727792	16727792	.	-	.	ID=FBti0010945;Name=P{EP}VhaSFD[EP2215];Alias=P{EP}CG31782[EP2215],EP(2)2215,P{EP}EP2215;affected_genes=FBgn0027779;causes_alleles=FBal0155712;derived_cyto_location=36A7-36A7;derived_comput_cyto_location=36A12;flanking_sequence=AQ073403
+###
+2L	FlyBase	transposable_element_insertion_site	16727795	16727795	.	.	.	ID=FBti0103129;Name=P{GSV7}GS21023;Alias=21023;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=AB322374
+###
+2L	FlyBase	transposable_element_insertion_site	16727876	16727876	.	.	.	ID=FBti0109538;Name=P{GSV2}GS50397;Alias=50397;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=AB324012
+###
+2L	FlyBase	gene	16728035	16729681	.	-	.	ID=FBgn0263746;Name=CR43671;Alias=FBgn0051782,CG31782;Ontology_term=SO:0000087,SO:0000042,SO:0000011;Dbxref=FlyBase_Annotation_IDs:CR43671,GB:CZ482442,GenomeRNAi:14462789;derived_computed_cyto=36A12-36A12
+2L	FlyBase	pseudogene	16728035	16729681	.	-	.	ID=FBtr0310391;Parent=FBgn0263746;Name=CR43671-RA;Dbxref=FlyBase_Annotation_IDs:CR43671-RA;score_text=Strongly Supported;score=9
+2L	FlyBase	exon	16728035	16729681	.	-	.	Parent=FBtr0310391;parent_type=pseudogene
+###
+2L	FlyBase	transposable_element_insertion_site	16728196	16728283	.	-	.	ID=FBti0026285;Name=P{lacW}l(2)SH0359[SH0359];Alias=P{lacW}l(2)SH0359[SH0359];affected_genes=FBgn0065826;causes_alleles=FBal0144063;derived_cyto_location=36A6;derived_comput_cyto_location=36A12;flanking_sequence=AB082012
+###
+2L	FlyBase	breakpoint	16728375	16728375	.	.	.	ID=Df(2L)Exel7067:bk1_breakpoint;Name=Df(2L)Exel7067:bk1;reported_genomic_loc=2L_r5:16728375..16728375
+###
+2L	FlyBase	transposable_element_insertion_site	16728375	16728375	.	-	.	ID=FBti0048982;Name=PBac{RB}CR43671[e04667];Alias=PBac{RB}e04667,PBac{RB}CG31782[e04667];causes_alleles=FBal0186256;derived_cyto_location=36A12;derived_comput_cyto_location=36A12;flanking_sequence=CZ482442
+###
