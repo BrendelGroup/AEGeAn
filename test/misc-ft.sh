@@ -47,6 +47,8 @@ printf "        | %-36s | %s\n" "A. mellifera pseudo" $result
 rm $tempfile
 
 
+
+echo "    AEGeAn::tidygff3"
 $memcheckcmd \
 bin/tidygff3 < data/gff3/ador-except-in.gff3 > $tempfile
 
