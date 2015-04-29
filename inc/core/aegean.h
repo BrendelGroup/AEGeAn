@@ -8,6 +8,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
 
+#include "AgnAttributeFilterStream.h"
 #include "AgnCliquePair.h"
 #include "AgnCompareReportHTML.h"
 #include "AgnCompareReportText.h"

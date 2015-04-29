@@ -6,6 +6,21 @@ types implemented by the GenomeTools library. For data types beginning with
 ``Gt``, see the GenomeTools API documentation at
 http://genometools.org/libgenometools.html.
 
+Class AgnFilterStream
+---------------------
+
+.. c:type:: AgnFilterStream
+
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_attribute_filter_stream_new(GtNodeStream *in_stream, GtHashmap *filters)
+
+  Class constructor. The keys of the `filters` hashmap should be the attribute keys/value pairs (such as `partial=true` or `pseudo=true`) to test each feature node against. The values associated with each key in the hashmap can be any non-NULL value. Any feature node having an attribute key/value pair matching an entry in the hashmap will be discarded.
+
+.. c:function:: bool agn_filter_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnCliquePair
 -------------------
 

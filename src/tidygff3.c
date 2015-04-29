@@ -33,6 +33,18 @@ int main(int argc, char **argv)
   gt_queue_add(streams, stream);
   last_stream = stream;
 
+  GtHashmap *filters = gt_hashmap_new(GT_HASH_STRING, (GtFree)gt_free_func,
+                                      NULL);
+  char *filter;
+  filter = gt_cstr_dup("exception=unclassified transcription discrepancy");
+  gt_hashmap_add(filters, filter, filter);
+  filter = gt_cstr_dup("exception=unclassified translation discrepancy");
+  gt_hashmap_add(filters, filter, filter);
+  stream = agn_attribute_filter_stream_new(last_stream, filters);
+  gt_queue_add(streams, stream);
+  last_stream = stream;
+  gt_hashmap_delete(filters);
+
   GtHashmap *types = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
   GtStr *source = gt_str_new_cstr("AEGeAn::tidygff3");
   gt_hashmap_add(types, gt_cstr_dup("mRNA"), gt_cstr_dup("gene"));
