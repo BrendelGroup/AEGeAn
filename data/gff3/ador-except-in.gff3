@@ -1,0 +1,159 @@
+##gff-version   3
+##sequence-region   NW_003789177.1 1 1704272
+NW_003789177.1	RefSeq	region	1	1704272	.	+	.	Dbxref=taxon:7463;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;note=haploid drones;sex=male
+NW_003789177.1	RefSeq	gene	9674	16314	.	+	.	ID=gene1;Name=LOC100866670;Dbxref=GeneID:100866670;gbkey=Gene;gene=LOC100866670;partial=true
+NW_003789177.1	RefSeq	mRNA	9674	16314	.	+	.	ID=mRNA1;Parent=gene1;Name=XM_003689613.1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	exon	9674	9931	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	CDS	9674	9931	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	exon	11942	12139	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	CDS	11942	12139	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	exon	13616	13841	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	CDS	13616	13841	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	exon	13907	14071	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	CDS	13907	14071	.	+	2	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	exon	14319	14416	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	CDS	14319	14416	.	+	2	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	exon	15432	15707	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+NW_003789177.1	RefSeq	CDS	15432	15707	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	CDS	16007	16099	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_003689661.1;Dbxref=GeneID:100866670,Genbank:XP_003689661.1;gbkey=CDS;product=glutamate receptor%2C ionotropic kainate 2-like;protein_id=XP_003689661.1
+NW_003789177.1	RefSeq	exon	16007	16314	.	+	.	Parent=mRNA1;Dbxref=GeneID:100866670,Genbank:XM_003689613.1;gbkey=mRNA;gene=LOC100866670;product=glutamate receptor%2C ionotropic kainate 2-like;transcript_id=XM_003689613.1
+###
+NW_003789177.1	RefSeq	gene	21462	22591	.	+	.	ID=gene2;Name=LOC100865288;Dbxref=GeneID:100865288;gbkey=Gene;gene=LOC100865288
+NW_003789177.1	RefSeq	transcript	21462	22591	.	+	.	ID=transcript1;Parent=gene2;Name=XR_142458.1;Dbxref=GeneID:100865288,Genbank:XR_142458.1;gbkey=misc_RNA;product=uncharacterized LOC100865288;transcript_id=XR_142458.1
+NW_003789177.1	RefSeq	exon	21462	21811	.	+	.	Parent=transcript1;Dbxref=GeneID:100865288,Genbank:XR_142458.1;gbkey=misc_RNA;product=uncharacterized LOC100865288;transcript_id=XR_142458.1
+NW_003789177.1	RefSeq	exon	22556	22591	.	+	.	Parent=transcript1;Dbxref=GeneID:100865288,Genbank:XR_142458.1;gbkey=misc_RNA;product=uncharacterized LOC100865288;transcript_id=XR_142458.1
+###
+NW_003789177.1	RefSeq	gene	28387	159655	.	-	.	ID=gene3;Name=LOC100866790;Dbxref=GeneID:100866790;gbkey=Gene;gene=LOC100866790
+NW_003789177.1	RefSeq	mRNA	28387	159655	.	-	.	ID=mRNA2;Parent=gene3;Name=XM_003689614.1;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	exon	28387	28418	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	CDS	28387	28418	.	-	2	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	exon	28571	28811	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	CDS	28571	28811	.	-	0	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	exon	29154	29336	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	CDS	29154	29336	.	-	0	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	exon	34275	34445	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	CDS	34275	34445	.	-	0	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	exon	135127	135156	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	CDS	135127	135156	.	-	0	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	exon	157931	157996	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+NW_003789177.1	RefSeq	CDS	157931	157996	.	-	0	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	CDS	158917	159411	.	-	0	ID=CDS2;Parent=mRNA2;Name=XP_003689662.1;Dbxref=GeneID:100866790,Genbank:XP_003689662.1;gbkey=CDS;product=sestrin-1-like;protein_id=XP_003689662.1
+NW_003789177.1	RefSeq	exon	158917	159655	.	-	.	Parent=mRNA2;Dbxref=GeneID:100866790,Genbank:XM_003689614.1;gbkey=mRNA;gene=LOC100866790;product=sestrin-1-like;transcript_id=XM_003689614.1
+###
+NW_003789177.1	RefSeq	gene	141074	141562	.	-	.	ID=gene4;Name=LOC100871799;Dbxref=GeneID:100871799;gbkey=Gene;gene=LOC100871799
+NW_003789177.1	RefSeq	mRNA	141074	141562	.	-	.	ID=mRNA3;Parent=gene4;Name=XM_003689653.1;Dbxref=GeneID:100871799,Genbank:XM_003689653.1;gbkey=mRNA;gene=LOC100871799;product=uncharacterized LOC100871799;transcript_id=XM_003689653.1
+NW_003789177.1	RefSeq	exon	141074	141472	.	-	.	Parent=mRNA3;Dbxref=GeneID:100871799,Genbank:XM_003689653.1;gbkey=mRNA;gene=LOC100871799;product=uncharacterized LOC100871799;transcript_id=XM_003689653.1
+NW_003789177.1	RefSeq	CDS	141200	141463	.	-	0	Parent=mRNA3;Name=XP_003689701.1;Dbxref=GeneID:100871799,Genbank:XP_003689701.1;gbkey=CDS;product=uncharacterized protein LOC100871799;protein_id=XP_003689701.1
+NW_003789177.1	RefSeq	exon	141503	141562	.	-	.	Parent=mRNA3;Dbxref=GeneID:100871799,Genbank:XM_003689653.1;gbkey=mRNA;gene=LOC100871799;product=uncharacterized LOC100871799;transcript_id=XM_003689653.1
+###
+NW_003789177.1	RefSeq	gene	163046	182657	.	-	.	ID=gene5;Name=LOC100868713;Dbxref=GeneID:100868713;gbkey=Gene;gene=LOC100868713
+NW_003789177.1	RefSeq	mRNA	163046	182657	.	-	.	ID=mRNA4;Parent=gene5;Name=XM_003689628.1;Dbxref=GeneID:100868713,Genbank:XM_003689628.1;gbkey=mRNA;gene=LOC100868713;product=uncharacterized LOC100868713;transcript_id=XM_003689628.1
+NW_003789177.1	RefSeq	exon	163046	163234	.	-	.	Parent=mRNA4;Dbxref=GeneID:100868713,Genbank:XM_003689628.1;gbkey=mRNA;gene=LOC100868713;product=uncharacterized LOC100868713;transcript_id=XM_003689628.1
+NW_003789177.1	RefSeq	CDS	163082	163234	.	-	0	ID=CDS3;Parent=mRNA4;Name=XP_003689676.1;Dbxref=GeneID:100868713,Genbank:XP_003689676.1;gbkey=CDS;product=uncharacterized protein LOC100868713;protein_id=XP_003689676.1
+NW_003789177.1	RefSeq	CDS	182578	182595	.	-	0	ID=CDS3;Parent=mRNA4;Name=XP_003689676.1;Dbxref=GeneID:100868713,Genbank:XP_003689676.1;gbkey=CDS;product=uncharacterized protein LOC100868713;protein_id=XP_003689676.1
+NW_003789177.1	RefSeq	exon	182578	182657	.	-	.	Parent=mRNA4;Dbxref=GeneID:100868713,Genbank:XM_003689628.1;gbkey=mRNA;gene=LOC100868713;product=uncharacterized LOC100868713;transcript_id=XM_003689628.1
+###
+NW_003789177.1	RefSeq	gene	183200	187896	.	-	.	ID=gene6;Name=LOC100866908;Dbxref=GeneID:100866908;gbkey=Gene;gene=LOC100866908
+NW_003789177.1	RefSeq	mRNA	183200	187896	.	-	.	ID=mRNA5;Parent=gene6;Name=XM_003689615.1;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	exon	183200	184406	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	184317	184406	.	-	0	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	184496	184629	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	184496	184629	.	-	2	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	184709	184848	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	184709	184848	.	-	1	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	184934	185092	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	184934	185092	.	-	1	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	185198	185310	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	185198	185310	.	-	0	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	185389	185708	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	185389	185708	.	-	2	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	186870	187088	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	186870	187088	.	-	2	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	187284	187437	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	187284	187437	.	-	0	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+NW_003789177.1	RefSeq	exon	187867	187896	.	-	.	Parent=mRNA5;Dbxref=GeneID:100866908,Genbank:XM_003689615.1;gbkey=mRNA;gene=LOC100866908;product=hexokinase-2-like;transcript_id=XM_003689615.1
+NW_003789177.1	RefSeq	CDS	187867	187896	.	-	0	ID=CDS4;Parent=mRNA5;Name=XP_003689663.1;Dbxref=GeneID:100866908,Genbank:XP_003689663.1;gbkey=CDS;product=hexokinase-2-like;protein_id=XP_003689663.1
+###
+NW_003789177.1	RefSeq	gene	189601	193612	.	-	.	ID=gene7;Name=LOC100869654;Dbxref=GeneID:100869654;gbkey=Gene;gene=LOC100869654
+NW_003789177.1	RefSeq	transcript	189601	193612	.	-	.	ID=transcript2;Parent=gene7;Name=XR_142461.1;Dbxref=GeneID:100869654,Genbank:XR_142461.1;gbkey=misc_RNA;product=uncharacterized LOC100869654;transcript_id=XR_142461.1
+NW_003789177.1	RefSeq	exon	189601	189695	.	-	.	Parent=transcript2;Dbxref=GeneID:100869654,Genbank:XR_142461.1;gbkey=misc_RNA;product=uncharacterized LOC100869654;transcript_id=XR_142461.1
+NW_003789177.1	RefSeq	exon	189863	190336	.	-	.	Parent=transcript2;Dbxref=GeneID:100869654,Genbank:XR_142461.1;gbkey=misc_RNA;product=uncharacterized LOC100869654;transcript_id=XR_142461.1
+NW_003789177.1	RefSeq	exon	193393	193612	.	-	.	Parent=transcript2;Dbxref=GeneID:100869654,Genbank:XR_142461.1;gbkey=misc_RNA;product=uncharacterized LOC100869654;transcript_id=XR_142461.1
+###
+NW_003789177.1	RefSeq	gene	194627	198640	.	-	.	ID=gene8;Name=LOC100869612;Dbxref=GeneID:100869612;gbkey=Gene;gene=LOC100869612
+NW_003789177.1	RefSeq	mRNA	194627	198640	.	-	.	ID=mRNA6;Parent=gene8;Name=XM_003689557.1;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	exon	194627	194745	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	194627	194745	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	195191	195295	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	195191	195295	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	195365	195725	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	195365	195725	.	-	1	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	195811	195922	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	195811	195922	.	-	2	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	195991	196138	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	195991	196138	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	196213	196399	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	196213	196399	.	-	1	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	196478	196664	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	196478	196664	.	-	2	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	196749	196905	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	196749	196905	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	197183	197414	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	197183	197414	.	-	1	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	197519	197736	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	197519	197736	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	197845	198040	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	197845	198040	.	-	1	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	198123	198298	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	198123	198298	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	198380	198430	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	198380	198430	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+NW_003789177.1	RefSeq	exon	198506	198640	.	-	.	Parent=mRNA6;Dbxref=GeneID:100869612,Genbank:XM_003689557.1;exception=unclassified transcription discrepancy;gbkey=mRNA;gene=LOC100869612;product=intraflagellar transport protein 88 homolog;transcript_id=XM_003689557.1
+NW_003789177.1	RefSeq	CDS	198506	198640	.	-	0	ID=CDS5;Parent=mRNA6;Name=XP_003689605.1;Dbxref=GeneID:100869612,Genbank:XP_003689605.1;exception=unclassified translation discrepancy;gbkey=CDS;product=LOW QUALITY PROTEIN: intraflagellar transport protein 88 homolog;protein_id=XP_003689605.1
+###
+NW_003789177.1	RefSeq	match	194627	194745	.	-	.	ID=match1;Target=XM_003689557.1 2267 2385 +
+NW_003789177.1	RefSeq	match	195191	195295	.	-	.	ID=match1;Target=XM_003689557.1 2162 2266 +
+NW_003789177.1	RefSeq	match	195365	195725	.	-	.	ID=match1;Target=XM_003689557.1 1801 2161 +
+NW_003789177.1	RefSeq	match	195811	195922	.	-	.	ID=match1;Target=XM_003689557.1 1689 1800 +
+NW_003789177.1	RefSeq	match	195991	196138	.	-	.	ID=match1;Target=XM_003689557.1 1541 1688 +
+NW_003789177.1	RefSeq	match	196213	196399	.	-	.	ID=match1;Target=XM_003689557.1 1354 1540 +
+NW_003789177.1	RefSeq	match	196478	196664	.	-	.	ID=match1;Target=XM_003689557.1 1167 1353 +
+NW_003789177.1	RefSeq	match	196749	196905	.	-	.	ID=match1;Target=XM_003689557.1 1009 1166 +;Gap=M30 I1 M127
+NW_003789177.1	RefSeq	match	197183	197414	.	-	.	ID=match1;Target=XM_003689557.1 777 1008 +
+NW_003789177.1	RefSeq	match	197519	197736	.	-	.	ID=match1;Target=XM_003689557.1 559 776 +
+NW_003789177.1	RefSeq	match	197845	198040	.	-	.	ID=match1;Target=XM_003689557.1 363 558 +
+NW_003789177.1	RefSeq	match	198123	198298	.	-	.	ID=match1;Target=XM_003689557.1 187 362 +
+NW_003789177.1	RefSeq	match	198380	198430	.	-	.	ID=match1;Target=XM_003689557.1 136 186 +
+NW_003789177.1	RefSeq	match	198506	198640	.	-	.	ID=match1;Target=XM_003689557.1 1 135 +
+###
+NW_003789177.1	RefSeq	gene	199106	204278	.	+	.	ID=gene9;Name=LOC100870766;Dbxref=GeneID:100870766;gbkey=Gene;gene=LOC100870766
+NW_003789177.1	RefSeq	mRNA	199106	204278	.	+	.	ID=mRNA7;Parent=gene9;Name=XM_003689565.1;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	exon	199106	199137	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	199132	199137	.	+	0	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	199506	199674	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	199506	199674	.	+	0	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	199777	200009	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	199777	200009	.	+	2	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	200112	200253	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	200112	200253	.	+	0	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	200377	200508	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	200377	200508	.	+	2	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	201403	201560	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	201403	201560	.	+	2	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	201635	201777	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	201635	201777	.	+	0	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	201860	202058	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	201860	202058	.	+	1	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	202152	202254	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	202152	202254	.	+	0	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	202337	202564	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	202337	202564	.	+	2	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	202654	202771	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	202654	202771	.	+	2	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	202933	203145	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	202933	203145	.	+	1	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	203234	203378	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+NW_003789177.1	RefSeq	CDS	203234	203378	.	+	1	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	CDS	203473	203649	.	+	0	ID=CDS6;Parent=mRNA7;Name=XP_003689613.1;Dbxref=GeneID:100870766,Genbank:XP_003689613.1;gbkey=CDS;product=centaurin-gamma-1A-like;protein_id=XP_003689613.1
+NW_003789177.1	RefSeq	exon	203473	204278	.	+	.	Parent=mRNA7;Dbxref=GeneID:100870766,Genbank:XM_003689565.1;gbkey=mRNA;gene=LOC100870766;product=centaurin-gamma-1A-like;transcript_id=XM_003689565.1
+###

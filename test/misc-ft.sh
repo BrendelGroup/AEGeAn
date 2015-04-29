@@ -45,3 +45,16 @@ if [[ $status == 0 ]]; then
 fi
 printf "        | %-36s | %s\n" "A. mellifera pseudo" $result
 rm $tempfile
+
+
+$memcheckcmd \
+bin/tidygff3 < data/gff3/ador-except-in.gff3 > $tempfile
+
+diff $tempfile data/gff3/ador-except-out.gff3 > /dev/null
+status=$?
+result="FAIL"
+if [[ $status == 0 ]]; then
+  result="PASS"
+fi
+printf "        | %-36s | %s\n" "A. dorsata exception" $result
+rm $tempfile

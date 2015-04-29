@@ -51,11 +51,6 @@ static void attribute_filter_stream_free(GtNodeStream *ns);
 static int attribute_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                                         GtError *error);
 
-/**
- * @function Generate data for unit testing.
- */
-static void attribute_filter_stream_test_data(GtQueue *queue);
-
 
 //------------------------------------------------------------------------------
 // Method implementations
@@ -150,15 +145,4 @@ static int attribute_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   }
 
   return 0;
-}
-
-bool agn_attribute_filter_stream_unit_test(AgnUnitTest *test)
-{
-  attribute_filter_stream_test_data(NULL);
-  return false;
-}
-
-static void attribute_filter_stream_test_data(GtQueue *queue)
-{
-  
 }

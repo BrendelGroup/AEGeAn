@@ -17,10 +17,6 @@ Class AgnFilterStream
 
   Class constructor. The keys of the `filters` hashmap should be the attribute keys/value pairs (such as `partial=true` or `pseudo=true`) to test each feature node against. The values associated with each key in the hashmap can be any non-NULL value. Any feature node having an attribute key/value pair matching an entry in the hashmap will be discarded.
 
-.. c:function:: bool agn_filter_stream_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
 Class AgnCliquePair
 -------------------
 

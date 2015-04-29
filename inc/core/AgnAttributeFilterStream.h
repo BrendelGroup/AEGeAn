@@ -32,9 +32,4 @@ typedef struct AgnAttributeFilterStream AgnAttributeFilterStream;
 GtNodeStream* agn_attribute_filter_stream_new(GtNodeStream *in_stream,
                                               GtHashmap *filters);
 
-/**
- * @function Run unit tests for this class. Returns true if all tests passed.
- */
-bool agn_filter_stream_unit_test(AgnUnitTest *test);
-
 #endif
