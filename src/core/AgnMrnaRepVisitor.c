@@ -14,6 +14,20 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
 
+#define mrna_rep_visitor_cast(GV)\
+        gt_node_visitor_cast(mrna_rep_visitor_class(), GV)
+
+
+//------------------------------------------------------------------------------
+// Data structure definition
+//------------------------------------------------------------------------------
+
+struct AgnMrnaRepVisitor
+{
+  const GtNodeVisitor parent_instance;
+  char *parenttype;
+};
+
 
 //------------------------------------------------------------------------------
 // Prototypes for private functions
@@ -23,6 +37,11 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
  * @function Implement the interface to the GtNodeVisitor class.
  */
 static const GtNodeVisitorClass *mrna_rep_visitor_class();
+
+/**
+ * @function Release memory.
+ */
+static void mrna_rep_visitor_free(GtNodeVisitor *nv);
 
 /**
  * @function Generate data for unit testing.
@@ -48,9 +67,19 @@ GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in)
   return ns;
 }
 
-GtNodeVisitor *agn_mrna_rep_visitor_new(GtLogger *logger)
+GtNodeVisitor *agn_mrna_rep_visitor_new()
 {
-  return gt_node_visitor_create(mrna_rep_visitor_class());
+  GtNodeVisitor *nv = gt_node_visitor_create(mrna_rep_visitor_class());
+  AgnMrnaRepVisitor *v = mrna_rep_visitor_cast(nv);
+  v->parenttype = gt_cstr_dup("gene");
+  return nv;
+}
+
+void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v,
+                                          const char *type)
+{
+  gt_free(v->parenttype);
+  v->parenttype = gt_cstr_dup(type);
 }
 
 bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
@@ -84,11 +113,18 @@ static const GtNodeVisitorClass *mrna_rep_visitor_class()
   static const GtNodeVisitorClass *nvc = NULL;
   if(!nvc)
   {
-    nvc = gt_node_visitor_class_new(sizeof (GtNodeVisitor), NULL, NULL,
+    nvc = gt_node_visitor_class_new(sizeof (AgnMrnaRepVisitor),
+                                    mrna_rep_visitor_free, NULL,
                                     mrna_rep_visit_feature_node, NULL, NULL,
                                     NULL);
   }
   return nvc;
+}
+
+static void mrna_rep_visitor_free(GtNodeVisitor *nv)
+{
+  AgnMrnaRepVisitor *v = mrna_rep_visitor_cast(nv);
+  gt_free(v->parenttype);
 }
 
 static void mrna_rep_visitor_test_data(GtQueue *queue)
@@ -125,9 +161,10 @@ static int
 mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
 {
   gt_error_check(error);
+  AgnMrnaRepVisitor *v = mrna_rep_visitor_cast(nv);
 
   GtUword i,j;
-  GtArray *genes = agn_typecheck_select(fn, agn_typecheck_gene);
+  GtArray *genes = agn_typecheck_select_str(fn, v->parenttype);
   for(i = 0; i < gt_array_size(genes); i++)
   {
     GtGenomeNode **gene = gt_array_get(genes, i);

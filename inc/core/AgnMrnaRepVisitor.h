@@ -33,6 +33,14 @@ GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in);
 GtNodeVisitor *agn_mrna_rep_visitor_new();
 
 /**
+ * @function By default, the representative mRNA for each gene will be reported.
+ * Use this function to specify an alternative top-level feature to gene (such
+ * as locus).
+ */
+void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v,
+                                          const char *type);
+
+/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test);
