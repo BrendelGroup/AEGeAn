@@ -17,6 +17,7 @@ typedef struct
   bool infer_introns;
   FILE *outstream;
   bool fix_pseudogenes;
+  bool locus_parent;
 } PmrnaOptions;
 
 static void print_usage(FILE *outstream)
@@ -29,6 +30,8 @@ static void print_usage(FILE *outstream)
 "    -i|--introns        flag indicating that introns are declared explicitly\n"
 "                        and do not need to be inferred from exon features;\n"
 "                        default is to infer introns\n"
+"    -l|--locus          report a single representative mRNA for each locus\n"
+"                        instead of each gene\n"
 "    -p|--pseudogenes    disable pseudogene detection and correction\n\n");
 }
 
@@ -36,12 +39,13 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hip";
+  const char *optstr = "hilp";
   const struct option pmrna_options[] =
   {
-    { "help",        no_argument,       NULL, 'h' },
-    { "introns",     no_argument,       NULL, 'i' },
-    { "pseudogenes", no_argument,       NULL, 'o' },
+    { "help",        no_argument, NULL, 'h' },
+    { "introns",     no_argument, NULL, 'i' },
+    { "locus",       no_argument, NULL, 'l' },
+    { "pseudogenes", no_argument, NULL, 'o' },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex);
       opt != -1;
@@ -56,6 +60,9 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
       case 'i':
         options->infer_introns = false;
         break;
+      case 'l':
+        options->locus_parent = true;
+        break;
       case 'p':
         options->fix_pseudogenes = false;
         break;
@@ -68,7 +75,7 @@ int main(int argc, char **argv)
   GtError *error;
   GtNodeStream *stream, *last_stream;
   GtQueue *streams;
-  PmrnaOptions options = { true, NULL, true };
+  PmrnaOptions options = { true, NULL, true, false };
   parse_options(argc, argv, &options);
 
   //----------
@@ -97,7 +104,10 @@ int main(int argc, char **argv)
     last_stream = stream;
   }
 
-  stream = agn_mrna_rep_stream_new(last_stream);
+  GtNodeVisitor *nv = agn_mrna_rep_visitor_new();
+  if(options.locus_parent)
+    agn_mrna_rep_visitor_set_parent_type((AgnMrnaRepVisitor *)nv, "locus");
+  stream = gt_visitor_stream_new(last_stream, nv);
   gt_queue_add(streams, stream);
   last_stream = stream;
 
