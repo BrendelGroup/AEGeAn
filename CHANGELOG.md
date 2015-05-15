@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Ability to access ParsEval locus reports by category (perfect match, CDS match, etc).
+- Delta option for ParsEval.
 
 ### Fixed
 - Simplified and corrected GAEVAL interval merging function.

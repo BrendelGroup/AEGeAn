@@ -21,7 +21,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "a:df:ghko:pr:st:Vvwx:y:";
+  const char *optstr = "a:df:ghkl:o:pr:st:Vvwx:y:";
   const struct option parseval_options[] =
   {
     { "datashare",  required_argument, NULL, 'a' },
@@ -30,6 +30,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     { "printgff3",  no_argument,       NULL, 'g' },
     { "help",       no_argument,       NULL, 'h' },
     { "makefilter", no_argument,       NULL, 'k' },
+    { "delta",      required_argument, NULL, 'l' },
     { "outfile",    required_argument, NULL, 'o' },
     { "png",        no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
@@ -81,6 +82,15 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 
       case 'k':
         options->makefilter = true;
+        break;
+
+      case 'l':
+        if(sscanf(optarg, "%ld", &options->delta) == EOF)
+        {
+          fprintf(stderr, "error: could not convert delta '%s' to an "
+                          "integer\n", optarg);
+          exit(1);
+        }
         break;
 
       case 'o':
@@ -318,6 +328,8 @@ void pe_print_usage(FILE *outstream)
 "  Basic options:\n"
 "    -d|--debug:                 Print debugging messages\n"
 "    -h|--help:                  Print help message and exit\n"
+"    -l|--delta: INT             Extend gene loci by this many nucleotides;\n"
+"                                default is 0\n"
 "    -V|--verbose:               Print verbose warning messages\n"
 "    -v|--version:               Print version number and exit\n\n"
 "  Output options:\n"
@@ -369,4 +381,5 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->filters = gt_array_new( sizeof(AgnLocusFilter) );
   options->verbose = false;
   options->max_transcripts = 32;
+  options->delta = 0;
 }

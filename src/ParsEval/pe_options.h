@@ -49,6 +49,7 @@ struct ParsEvalOptions
   GtArray *filters;
   bool verbose;
   int max_transcripts;
+  GtUword delta;
 };
 typedef struct ParsEvalOptions ParsEvalOptions;
 

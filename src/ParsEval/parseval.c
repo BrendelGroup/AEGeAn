@@ -63,7 +63,7 @@ int main(int argc, char **argv)
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
-  current_stream = agn_locus_stream_new(last_stream, 0);
+  current_stream = agn_locus_stream_new(last_stream, options.delta);
   agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
   agn_locus_stream_label_pairwise((AgnLocusStream *)current_stream,
                                   options.refrfile, options.predfile);
