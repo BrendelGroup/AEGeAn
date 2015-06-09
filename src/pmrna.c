@@ -18,6 +18,7 @@ typedef struct
   FILE *outstream;
   bool fix_pseudogenes;
   bool locus_parent;
+  FILE *mapstream;
 } PmrnaOptions;
 
 static void print_usage(FILE *outstream)
@@ -32,6 +33,7 @@ static void print_usage(FILE *outstream)
 "                        default is to infer introns\n"
 "    -l|--locus          report a single representative mRNA for each locus\n"
 "                        instead of each gene\n"
+"    -m|--map: FILE      write each gene/mRNA mapping to the specified file\n"
 "    -p|--pseudogenes    disable pseudogene detection and correction\n\n");
 }
 
@@ -39,13 +41,14 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hilp";
+  const char *optstr = "hilm:p";
   const struct option pmrna_options[] =
   {
-    { "help",        no_argument, NULL, 'h' },
-    { "introns",     no_argument, NULL, 'i' },
-    { "locus",       no_argument, NULL, 'l' },
-    { "pseudogenes", no_argument, NULL, 'o' },
+    { "help",        no_argument,       NULL, 'h' },
+    { "introns",     no_argument,       NULL, 'i' },
+    { "locus",       no_argument,       NULL, 'l' },
+    { "map",         required_argument, NULL, 'm' },
+    { "pseudogenes", no_argument,       NULL, 'o' },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex);
       opt != -1;
@@ -63,6 +66,14 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
       case 'l':
         options->locus_parent = true;
         break;
+      case 'm':
+        options->mapstream = fopen(optarg, "w");
+        if(options->mapstream == NULL)
+        {
+          fprintf(stderr, "error: could not create mapfile '%s'", optarg);
+          exit(1);
+        }
+        break;
       case 'p':
         options->fix_pseudogenes = false;
         break;
@@ -75,7 +86,7 @@ int main(int argc, char **argv)
   GtError *error;
   GtNodeStream *stream, *last_stream;
   GtQueue *streams;
-  PmrnaOptions options = { true, NULL, true, false };
+  PmrnaOptions options = { true, NULL, true, false, NULL };
   parse_options(argc, argv, &options);
 
   //----------
@@ -104,7 +115,7 @@ int main(int argc, char **argv)
     last_stream = stream;
   }
 
-  GtNodeVisitor *nv = agn_mrna_rep_visitor_new();
+  GtNodeVisitor *nv = agn_mrna_rep_visitor_new(options.mapstream);
   if(options.locus_parent)
     agn_mrna_rep_visitor_set_parent_type((AgnMrnaRepVisitor *)nv, "locus");
   stream = gt_visitor_stream_new(last_stream, nv);
@@ -134,6 +145,8 @@ int main(int argc, char **argv)
     gt_node_stream_delete(stream);
   }
   gt_queue_delete(streams);
+  if(options.mapstream != NULL)
+    fclose(options.mapstream);
   gt_lib_clean();
   return had_err;
 }

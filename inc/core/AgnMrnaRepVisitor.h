@@ -25,12 +25,13 @@ typedef struct AgnMrnaRepVisitor AgnMrnaRepVisitor;
 /**
  * @function Constructor for a node stream based on this node visitor.
  */
-GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in);
+GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream);
 
 /**
- * @function Constructor for the node visitor.
+ * @function Constructor for the node visitor. If `mapstream` is not NULL, each
+ * gene/mRNA rep pair will be written to `mapstream`.
  */
-GtNodeVisitor *agn_mrna_rep_visitor_new();
+GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream);
 
 /**
  * @function By default, the representative mRNA for each gene will be reported.
