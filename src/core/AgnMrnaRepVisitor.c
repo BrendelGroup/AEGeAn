@@ -171,9 +171,16 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
   {
     GtGenomeNode **gene = gt_array_get(genes, i);
     GtFeatureNode *genefn = gt_feature_node_cast(*gene);
+    const char *gid = gt_feature_node_get_attribute(genefn, "ID");
     GtArray *mrnas = agn_typecheck_select(genefn, agn_typecheck_mrna);
     if(gt_array_size(mrnas) <= 1)
     {
+      if(v->mapstream != NULL && gt_array_size(mrnas) == 1)
+      {
+        GtFeatureNode **mrna = gt_array_pop(mrnas);
+        const char *mid = gt_feature_node_get_attribute(*mrna, "ID");
+        fprintf(v->mapstream, "%s\t%s\n", gid, mid);
+      }
       gt_array_delete(mrnas);
       continue;
     }
@@ -197,10 +204,7 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
       }
     }
     if(v->mapstream != NULL)
-    {
-      const char *gid = gt_feature_node_get_attribute(genefn, "ID");
       fprintf(v->mapstream, "%s\t%s\n", gid, longest_id);
-    }
 
     // Now, remove all other mRNAs
     for(j = 0; j < gt_array_size(mrnas); j++)
