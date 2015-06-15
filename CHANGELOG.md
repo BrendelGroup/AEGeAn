@@ -3,9 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased][unreleased]
+## [0.13.1] - 2015-06-15
 
 ### Added
+- Ability to filter based on feature attribute key/value pairs.
+- Ability to specify arbitrary parent types for mRNA rep stream, and corresponding `--locus` flag for the `pmrna` program.
+- The `map` option for mRNA rep visitor and `pmrna`.
 - Ability to access ParsEval locus reports by category (perfect match, CDS match, etc).
 - Delta option for ParsEval.
 
