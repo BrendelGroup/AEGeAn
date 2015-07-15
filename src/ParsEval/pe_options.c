@@ -32,7 +32,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     { "makefilter", no_argument,       NULL, 'k' },
     { "delta",      required_argument, NULL, 'l' },
     { "outfile",    required_argument, NULL, 'o' },
-    { "png",        no_argument,       NULL, 'p' },
+    { "nopng",      no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
     { "summary",    no_argument,       NULL, 's' },
     { "maxtrans",   required_argument, NULL, 't' },
@@ -98,12 +98,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
         break;
 
       case 'p':
-        options->graphics = true;
-#ifdef WITHOUT_CAIRO
-        fputs("error: AEGeAn was compiled without graphics support. Please "
-              "recompile to enable this feature.\n", stderr);
-        exit(1);
-#endif
+        options->graphics = false;
         break;
 
       case 'r':
@@ -161,6 +156,15 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 
   // For debugging
   // pe_option_print(options, stderr);
+  
+#ifdef WITHOUT_CAIRO
+  if(options->graphics)
+  {
+    fputs("error: AEGeAn was compiled without graphics support. Please "
+          "recompile to enable this feature.\n", stderr);
+    exit(1);
+  }
+#endif
 
   if(options->makefilter)
   {
@@ -287,12 +291,6 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
   }
   else
   {
-    if(options->graphics)
-    {
-      fputs("warning: will only generate PNG graphics when outformat='html'; "
-            "ignoring\n\n", stderr);
-      options->graphics = false;
-    }
     if(options->outfilename)
     {
       options->outfile = fopen(options->outfilename, "w");
@@ -345,8 +343,8 @@ void pe_print_usage(FILE *outstream)
 "                                comparison\n"
 "    -o|--outfile: FILENAME      File/directory to which output will be\n"
 "                                written; default is the terminal (STDOUT)\n"
-"    -p|--png:                   Generate individual PNG graphics for each\n"
-"                                gene locus (HTML mode only)\n"
+"    -p|--nopng:                 In HTML output mode, skip generation of PNG\n"
+"                                graphics for each gene locus\n"
 "    -s|--summary:               Only print summary statistics, do not print\n"
 "                                individual comparisons\n"
 "    -w|--overwrite:             Force overwrite of any existing output files\n"
@@ -369,7 +367,7 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->outfilename = NULL;
   options->gff3 = true;
   options->summary_only = false;
-  options->graphics = false;
+  options->graphics = true;
   options->refrfile = NULL;
   options->predfile = NULL;
   options->refrlabel = NULL;

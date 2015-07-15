@@ -590,13 +590,17 @@ Class AgnMrnaRepVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in)
+.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream)
 
   Constructor for a node stream based on this node visitor.
 
-.. c:function:: GtNodeVisitor *agn_mrna_rep_visitor_new()
+.. c:function:: GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream)
 
-  Constructor for the node visitor.
+  Constructor for the node visitor. If `mapstream` is not NULL, each gene/mRNA rep pair will be written to `mapstream`.
+
+.. c:function:: void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v, const char *type)
+
+  By default, the representative mRNA for each gene will be reported. Use this function to specify an alternative top-level feature to gene (such as locus).
 
 .. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
@@ -759,6 +763,10 @@ Functions for testing feature types. See the `AgnTypecheck module header <https:
 .. c:function:: GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
 
   Gather the children of a given feature that have a certain type. Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
+
+.. c:function:: GtArray *agn_typecheck_select_str(GtFeatureNode *fn, const char *)
+
+  Gather the children of a given feature that have a certain type. Type is tested by comparing `type` to the type of `fn`.
 
 .. c:function:: bool agn_typecheck_start_codon(GtFeatureNode *fn)
 
