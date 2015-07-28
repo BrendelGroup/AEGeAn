@@ -14,9 +14,13 @@ with open("VERSION", "r") as vfile:
   semverstr = vfile.read().replace('\n', '')
   semver, stability = semverstr.split(' ')
 
-logproc = subprocess.Popen(["git", "log"], stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-logout, logerr = logproc.communicate()
+try:
+  logproc = subprocess.Popen(["git", "log"], stdout=subprocess.PIPE,
+                                             stderr=subprocess.PIPE)
+  logout, logerr = logproc.communicate()
+except:
+  logerr = True
+
 if logerr:
   sha1 = ""
   sha1slug = ""
@@ -28,7 +32,7 @@ else:
   sha1 = sha1match.group(1)
   sha1slug = sha1[:10]
   link = "https://github.com/standage/AEGeAn/tree/"+ sha1
-  
+
   yearmatch = re.search("Date:\s+.+(\d{4}) ", logout)
   assert yearmatch, "could not find year of latest commit"
   year = yearmatch.group(1)
