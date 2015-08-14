@@ -53,7 +53,7 @@ rm $tempfile ${tempfile}.orig
 $memcheckcmd \
 bin/parseval --datashare=data/share/ \
              --outformat=html \
-             --png --outfile=$tempfile \
+             --outfile=$tempfile \
              --overwrite \
              --refrlabel=OGS \
              --predlabel=NCBI \
