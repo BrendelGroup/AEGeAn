@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [Unreleased][unreleased]
+### Changed
+- Replaced ParsEval's `--png` option with a `--nopng` option, made graphics the default for HTML output mode
+
 ## [0.13.1] - 2015-06-15
 
 ### Added
