@@ -350,6 +350,11 @@ static double gaeval_visitor_calculate_integrity(AgnGaevalVisitor *v,
   gt_array_delete(gaps);
   gt_array_delete(introns);
 
+fprintf(stderr, "structure_score=%.4lf\n", structure_score);
+fprintf(stderr, "coverage=%.4lf\n", coverage);
+fprintf(stderr, "utr5p_score=%.4lf\n", utr5p_score);
+fprintf(stderr, "utr3p_score=%.4lf\n", utr3p_score);
+
   double integrity = (v->params.alpha   * structure_score) +
                      (v->params.beta    * coverage)        +
                      (v->params.gamma   * utr5p_score)     +

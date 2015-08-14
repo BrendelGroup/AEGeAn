@@ -672,10 +672,14 @@ static void compare_report_html_pair_structure(FILE *outstream,
   {
     fprintf(outstream,
             "          <tr><td>reference %s</td><td>%lu</td></tr>\n"
-            "          <tr><td>prediction %s</td><td>%lu</td></tr>\n"
-            "          <tr><th class=\"left-align\" colspan=\"2\">%s structures"
-            " match perfectly!</th></tr>\n",
-            units, stats->correct, units, stats->correct, units);
+            "          <tr><td>prediction %s</td><td>%lu</td></tr>\n",
+            units, stats->correct, units, stats->correct);
+    if(stats->correct != 0)
+    {
+      fprintf(outstream, 
+              "          <tr><th class=\"left-align\" colspan=\"2\">%s"
+              " structure match perfectly!</th></tr>\n", units);
+    }
   }
   else
   {

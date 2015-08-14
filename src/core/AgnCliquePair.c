@@ -95,7 +95,10 @@ AgnCompClassification agn_clique_pair_classify(AgnCliquePair *pair)
     if(pair->stats.exon_struc_stats.missing == 0 &&
        pair->stats.exon_struc_stats.wrong   == 0)
     {
-      return AGN_COMP_CLASS_MISLABELED;
+      if(pair->stats.utr_nuc_stats.fp > 0)
+        return AGN_COMP_CLASS_MISLABELED;
+      else
+        return AGN_COMP_CLASS_CDS_MATCH;
     }
     else
     {
@@ -364,10 +367,17 @@ static void clique_pair_comparative_analysis(AgnCliquePair *pair)
     // UTR nucleotide counts
     bool refr_utr = char_is_utric(refr_vector[i]);
     bool pred_utr = char_is_utric(pred_vector[i]);
-    if(refr_utr && pred_utr)        pair->stats.utr_nuc_stats.tp++;
-    else if(refr_utr && !pred_utr)  pair->stats.utr_nuc_stats.fn++;
-    else if(!refr_utr && pred_utr)  pair->stats.utr_nuc_stats.fp++;
-    else if(!refr_utr && !pred_utr) pair->stats.utr_nuc_stats.tn++;
+    bool same_utr_type = refr_vector[i] == pred_vector[i];
+    if(refr_utr && pred_utr)
+    {
+      if(same_utr_type)
+        pair->stats.utr_nuc_stats.tp++;
+      else
+        pair->stats.utr_nuc_stats.fp++;
+    }
+    else if(refr_utr && !pred_utr)            pair->stats.utr_nuc_stats.fn++;
+    else if(!refr_utr && pred_utr)            pair->stats.utr_nuc_stats.fp++;
+    else if(!refr_utr && !pred_utr)           pair->stats.utr_nuc_stats.tn++;
 
     // Overall matches
     if(refr_vector[i] == pred_vector[i])
