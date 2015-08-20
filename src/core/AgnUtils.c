@@ -136,7 +136,7 @@ bool agn_feature_overlap_check(GtArray *feats)
 GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn)
 {
   GtRange cds_range = {0,0};
-  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
   GtFeatureNode *child;
   for(child = gt_feature_node_iterator_next(iter);
       child != NULL;
