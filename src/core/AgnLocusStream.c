@@ -272,7 +272,17 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
   if(stream->prev_locus && gt_str_cmp(seqid, prev_seqid) == 0)
   {
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
-    if(prev_range.end + stream->delta >= locusrange.start)
+    if(prev_range.end >= locusrange.start)
+    {
+      GtUword overlap = locusrange.start - prev_range.end - 1;
+      char ovrlp[16];
+      sprintf(ovrlp, "%lu", overlap);
+      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
+                                    "right_overlap", ovrlp);
+      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
+                                    ovrlp);
+    }
+    else if(prev_range.end + stream->delta >= locusrange.start)
     {
       GtUword overlap = locusrange.start - prev_range.end - 1;
       char ovrlp[16];
@@ -387,17 +397,12 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
       break;
     }
 
-    GtStr *newseqid = gt_genome_node_get_seqid(*gn);
-    GtRange newrange = gt_genome_node_get_range(*gn);
     GtUword i;
     bool overlap = false;
     for(i = 0; i < gt_array_size(current_locus); i++)
     {
       GtGenomeNode **oldfeature = gt_array_get(current_locus, i);
-      GtStr *oldseqid = gt_genome_node_get_seqid(*oldfeature);
-      GtRange oldrange = gt_genome_node_get_range(*oldfeature);
-      if(gt_str_cmp(newseqid, oldseqid) == 0 &&
-         gt_range_overlap(&newrange, &oldrange))
+      if(agn_overlap_ilocus(*gn, *oldfeature, 37, true))
       {
         overlap = true;
         break;
