@@ -288,7 +288,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
     if(prev_range.end >= locusrange.start)
     {
-      GtUword overlap = locusrange.start - prev_range.end - 1;
+      GtUword overlap = prev_range.end - locusrange.start + 1;
       char ovrlp[16];
       sprintf(ovrlp, "%lu", overlap);
       gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
