@@ -1,0 +1,12 @@
+##gff-version   3
+##sequence-region   NC_007077.3 8815135 8822332
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build Amel_4.5
+#!genome-build-accession NCBI_Assembly:GCF_000002195.4
+#!annotation-date 7 January 2014
+#!annotation-source NCBI Apis mellifera Annotation Release 102
+NC_007077.3	AEGeAn::LocusPocus	locus	8815135	8818420	.	.	.	ID=locus1;gene=1;mRNA=1;right_overlap=261
+###
+NC_007077.3	AEGeAn::LocusPocus	locus	8818160	8822332	.	.	.	ID=locus2;left_overlap=261;gene=1;mRNA=1
+###
