@@ -380,7 +380,6 @@ int main(int argc, char **argv)
 
 
   // Free memory and terminate
-  free_option_memory(&options);
   while(gt_queue_size(streams) > 0)
   {
     current_stream = gt_queue_get(streams);
@@ -389,6 +388,7 @@ int main(int argc, char **argv)
   gt_queue_delete(streams);
   gt_logger_delete(logger);
   gt_error_delete(error);
+  free_option_memory(&options);
   gt_lib_clean();
   return 0;
 }
