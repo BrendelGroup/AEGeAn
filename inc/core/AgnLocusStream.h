@@ -27,6 +27,12 @@ typedef struct AgnLocusStream AgnLocusStream;
 
 
 /**
+ * @function When possible, use coding sequences instead of UTRs when
+ * determining overlap between genes.
+ */
+void agn_locus_stream_by_cds(AgnLocusStream *stream);
+
+/**
  * @function Use the given filenames to label the direct children of each iLocus
  * as a 'reference' feature or a 'prediction' feature, to facilitate pairwise
  * comparison. Note that these labels carry no connotation as to the relative
@@ -57,6 +63,12 @@ void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode);
  * Use this function to override the default ID format.
  */
 void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format);
+
+/**
+ * @function Set the minimum overlap (in bp) required between two features to
+ * group them together in the same iLocus (default is 1 bp).
+ */
+void agn_locus_stream_set_overlap(AgnLocusStream *stream, GtUword minoverlap);
 
 /**
  * @function By default, the locus stream will produce loci containing features

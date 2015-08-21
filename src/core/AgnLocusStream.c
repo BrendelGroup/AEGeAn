@@ -40,6 +40,8 @@ struct AgnLocusStream
   GtStr *idformat;
   char *refrfile;
   char *predfile;
+  GtUword minoverlap;
+  bool by_cds;
 };
 
 //------------------------------------------------------------------------------
@@ -120,6 +122,11 @@ static void locus_stream_unit_test_loci(AgnUnitTest *test);
 // Method definitions
 //------------------------------------------------------------------------------
 
+void agn_locus_stream_by_cds(AgnLocusStream *stream)
+{
+  stream->by_cds = true;
+}
+
 void agn_locus_stream_label_pairwise(AgnLocusStream *stream,
                                      const char *refrfile, const char *predfile)
 {
@@ -149,6 +156,8 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
   stream->idformat = gt_str_new_cstr("locus%lu");
   stream->refrfile = NULL;
   stream->predfile = NULL;
+  stream->minoverlap = 1;
+  stream->by_cds = false;
   return ns;
 }
 
@@ -163,6 +172,11 @@ void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
   agn_assert(stream && format);
   gt_str_delete(stream->idformat);
   stream->idformat = gt_str_new_cstr(format);
+}
+
+void agn_locus_stream_set_overlap(AgnLocusStream *stream, GtUword minoverlap)
+{
+  stream->minoverlap = minoverlap;
 }
 
 void agn_locus_stream_skip_empty_loci(AgnLocusStream *stream)
@@ -402,11 +416,10 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     for(i = 0; i < gt_array_size(current_locus); i++)
     {
       GtGenomeNode **oldfeature = gt_array_get(current_locus, i);
-      if(agn_overlap_ilocus(*gn, *oldfeature, 37, true))
-      {
-        overlap = true;
+      overlap = agn_overlap_ilocus(*gn, *oldfeature, stream->minoverlap,
+                                   stream->by_cds);
+      if(overlap)
         break;
-      }
     }
     if(overlap || gt_array_size(current_locus) == 0)
     {

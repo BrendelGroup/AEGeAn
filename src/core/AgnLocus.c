@@ -863,7 +863,7 @@ void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end)
   if(start > end)
   {
     GtStr *seqid = gt_genome_node_get_seqid(locus);
-    fprintf(stderr, "%s %lu %lu\n", gt_str_get(seqid), start, end);
+    fprintf(stderr, "DEBUG %s %lu %lu\n", gt_str_get(seqid), start, end);
   }
   agn_assert(start <= end);
   GtRange range = { start, end };

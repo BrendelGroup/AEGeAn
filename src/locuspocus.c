@@ -29,6 +29,8 @@ typedef struct
   bool pseudofix;
   bool verbose;
   bool skipempty;
+  bool by_cds;
+  GtUword minoverlap;
 } LocusPocusOptions;
 
 // Set default values for program
@@ -49,6 +51,8 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->pseudofix = false;
   options->verbose = false;
   options->skipempty = false;
+  options->by_cds = false;
+  options->minoverlap = 1;
 }
 
 static void free_option_memory(LocusPocusOptions *options)
@@ -79,6 +83,12 @@ static void print_usage(FILE *outstream)
 "    -l|--delta: INT        when parsing interval loci, use the following\n"
 "                           delta to extend gene loci and include potential\n"
 "                           regulatory regions; default is 500\n"
+"    -r|--overlap: INT      specify the minimum overlap (in bp) required to\n"
+"                           group two genes together in the same locus;\n"
+"                           default is 1\n"
+"    -c|--cds               when applicable, use coding sequence rather than\n"
+"                           untranslated regions when determining gene\n"
+"                           overlap\n"
 "    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
 "                           iLoci at either end of the sequence\n"
 "    -e|--endsonly          report only empty iLoci at the ends of sequences\n"
@@ -118,10 +128,11 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "def:g:hI:l:o:p:st:uVvy";
+  const char *optstr = "cdef:g:hI:l:o:p:r:st:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
+    { "cds",       no_argument,       NULL, 'c' },
     { "debug",     no_argument,       NULL, 'd' },
     { "endsonly",  no_argument,       NULL, 'e' },
     { "filter",    required_argument, NULL, 'f' },
@@ -131,6 +142,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "delta",     required_argument, NULL, 'l' },
     { "outfile",   required_argument, NULL, 'o' },
     { "parent",    required_argument, NULL, 'p' },
+    { "overlap",   required_argument, NULL, 'r' },
     { "skipends",  no_argument,       NULL, 's' },
     { "transmap",  required_argument, NULL, 't' },
     { "pseudo",    no_argument,       NULL, 'u' },
@@ -144,6 +156,9 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
   {
     switch(opt)
     {
+      case 'c':
+        options->by_cds = 1;
+        break;
       case 'd':
         options->debug = 1;
         break;
@@ -211,6 +226,13 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         {
           gt_hashmap_add(options->type_parents, gt_cstr_dup(key),
                          gt_cstr_dup(value));
+        }
+        break;
+      case 'r':
+        if(sscanf(optarg, "%lu", &options->minoverlap) == EOF)
+        {
+          gt_error_set(error, "could not convert overlap '%s' to an integer",
+                       optarg);
         }
         break;
       case 's':
@@ -310,6 +332,8 @@ int main(int argc, char **argv)
   agn_locus_stream_set_source((AgnLocusStream *)current_stream,
                               "AEGeAn::LocusPocus");
   agn_locus_stream_set_endmode((AgnLocusStream*)current_stream,options.endmode);
+  agn_locus_stream_set_overlap((AgnLocusStream*)current_stream,
+                               options.minoverlap);
   if(options.idformat != NULL)
   {
     agn_locus_stream_set_idformat((AgnLocusStream *)current_stream,
@@ -318,6 +342,10 @@ int main(int argc, char **argv)
   if(options.skipempty)
   {
     agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
+  }
+  if(options.by_cds)
+  {
+    agn_locus_stream_by_cds((AgnLocusStream *)current_stream);
   }
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
