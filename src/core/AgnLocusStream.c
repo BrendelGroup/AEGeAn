@@ -519,18 +519,16 @@ static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
   GtRange range_a = gt_genome_node_get_range(gene_a);
   GtRange range_b = gt_genome_node_get_range(gene_b);
   GtFeatureNode *outer, *inner;
-  GtRange outer_range, inner_range;
+  GtRange inner_range;
   if(gt_range_contains(&range_a, &range_b))
   {
     outer = gt_feature_node_cast(gene_a);
-    outer_range = range_a;
     inner = gt_feature_node_cast(gene_b);
     inner_range = range_b;
   }
   else if(gt_range_contains(&range_b, &range_a))
   {
     outer = gt_feature_node_cast(gene_b);
-    outer_range = range_b;
     inner = gt_feature_node_cast(gene_a);
     inner_range = range_a;
   }
