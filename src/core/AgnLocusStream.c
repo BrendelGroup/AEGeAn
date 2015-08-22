@@ -561,6 +561,7 @@ static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
   gt_feature_node_add_attribute((GtFeatureNode *)inner_locus, "intron_gene",
                                 "true");
   AgnLocus *templocus = NULL;
+  GtRange locusrange = gt_genome_node_get_range(*locus);
   if(gt_queue_size(stream->locusqueue) > 0)
     templocus = gt_queue_get(stream->locusqueue);
   gt_queue_add(stream->locusqueue, inner_locus);
@@ -568,6 +569,7 @@ static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
     gt_queue_add(stream->locusqueue, templocus);
   AgnLocus *outer_locus = agn_locus_new(seqid);
   agn_locus_add_feature(outer_locus, outer);
+  agn_locus_set_range(outer_locus, locusrange.start, locusrange.end);
   //gt_genome_node_delete(*locus);
   *locus = outer_locus;
 }

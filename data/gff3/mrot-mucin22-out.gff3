@@ -1,0 +1,16 @@
+##gff-version   3
+##sequence-region   NW_003798699.1 1104357 1115540
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build MROT_1.0
+#!genome-build-accession NCBI_Assembly:GCF_000220905.1
+#!annotation-date 7 April 2015
+#!annotation-source NCBI Megachile rotundata Annotation Release 101
+NW_003798699.1	AEGeAn::LocusPocus	locus	1104357	1104437	.	.	.	ID=locus1;fragment=true
+###
+NW_003798699.1	AEGeAn::LocusPocus	locus	1104438	1115236	.	.	.	ID=locus2;gene=1;mRNA=5
+###
+NW_003798699.1	AEGeAn::LocusPocus	locus	1105064	1113543	.	.	.	ID=locus3;intron_gene=true;gene=1;mRNA=4
+###
+NW_003798699.1	AEGeAn::LocusPocus	locus	1115237	1115540	.	.	.	ID=locus4;fragment=true
+###

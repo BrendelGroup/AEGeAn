@@ -85,3 +85,16 @@ if [ $status == 0 ]; then
 fi
 printf "        | %-36s | %s\n" "M. rotundata CST (intron gene)" $result
 rm ${temp}
+
+$memcheckcmd bin/locuspocus --delta=50 --introngenes --outfile=${temp} data/gff3/mrot-mucin22.gff3 > /dev/null 2>&1
+if [ $? != 0 ]; then
+  exit 1
+fi
+diff ${temp} data/gff3/mrot-mucin22-out.gff3 > /dev/null 2>&1
+status=$?
+result="FAIL"
+if [ $status == 0 ]; then
+  result="PASS"
+fi
+printf "        | %-36s | %s\n" "M. rotundata musin 22 (intron gene)" $result
+rm ${temp}
