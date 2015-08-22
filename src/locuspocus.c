@@ -30,6 +30,7 @@ typedef struct
   bool verbose;
   bool skipempty;
   bool by_cds;
+  bool introngenes;
   GtUword minoverlap;
 } LocusPocusOptions;
 
@@ -52,6 +53,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->verbose = false;
   options->skipempty = false;
   options->by_cds = false;
+  options->introngenes = false;
   options->minoverlap = 1;
 }
 
@@ -89,6 +91,8 @@ static void print_usage(FILE *outstream)
 "    -c|--cds               when applicable, use coding sequence rather than\n"
 "                           untranslated regions when determining gene\n"
 "                           overlap\n"
+"    -i|--introngenes       create distinct iloci for genes contained\n"
+"                           completely within the introns of another gene\n"
 "    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
 "                           iLoci at either end of the sequence\n"
 "    -e|--endsonly          report only empty iLoci at the ends of sequences\n"
@@ -128,27 +132,28 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "cdef:g:hI:l:o:p:r:st:uVvy";
+  const char *optstr = "cdef:g:hiI:l:o:p:r:st:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
-    { "cds",       no_argument,       NULL, 'c' },
-    { "debug",     no_argument,       NULL, 'd' },
-    { "endsonly",  no_argument,       NULL, 'e' },
-    { "filter",    required_argument, NULL, 'f' },
-    { "genemap",   required_argument, NULL, 'g' },
-    { "help",      no_argument,       NULL, 'h' },
-    { "idformat",  required_argument, NULL, 'I' },
-    { "delta",     required_argument, NULL, 'l' },
-    { "outfile",   required_argument, NULL, 'o' },
-    { "parent",    required_argument, NULL, 'p' },
-    { "overlap",   required_argument, NULL, 'r' },
-    { "skipends",  no_argument,       NULL, 's' },
-    { "transmap",  required_argument, NULL, 't' },
-    { "pseudo",    no_argument,       NULL, 'u' },
-    { "version",   no_argument,       NULL, 'v' },
-    { "verbose",   no_argument,       NULL, 'V' },
-    { "skipempty", no_argument,       NULL, 'y' },
+    { "cds",         no_argument,       NULL, 'c' },
+    { "debug",       no_argument,       NULL, 'd' },
+    { "endsonly",    no_argument,       NULL, 'e' },
+    { "filter",      required_argument, NULL, 'f' },
+    { "genemap",     required_argument, NULL, 'g' },
+    { "help",        no_argument,       NULL, 'h' },
+    { "introngenes", no_argument,       NULL, 'i' },
+    { "idformat",    required_argument, NULL, 'I' },
+    { "delta",       required_argument, NULL, 'l' },
+    { "outfile",     required_argument, NULL, 'o' },
+    { "parent",      required_argument, NULL, 'p' },
+    { "overlap",     required_argument, NULL, 'r' },
+    { "skipends",    no_argument,       NULL, 's' },
+    { "transmap",    required_argument, NULL, 't' },
+    { "pseudo",      no_argument,       NULL, 'u' },
+    { "version",     no_argument,       NULL, 'v' },
+    { "verbose",     no_argument,       NULL, 'V' },
+    { "skipempty",   no_argument,       NULL, 'y' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -195,6 +200,9 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
       case 'h':
         print_usage(stdout);
         exit(0);
+        break;
+      case 'i':
+        options->introngenes = true;
         break;
       case 'I':
         if(options->idformat != NULL)
@@ -329,24 +337,18 @@ int main(int argc, char **argv)
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, options.delta);
-  agn_locus_stream_set_source((AgnLocusStream *)current_stream,
-                              "AEGeAn::LocusPocus");
-  agn_locus_stream_set_endmode((AgnLocusStream*)current_stream,options.endmode);
-  agn_locus_stream_set_overlap((AgnLocusStream*)current_stream,
-                               options.minoverlap);
+  AgnLocusStream *ls = (AgnLocusStream *)current_stream;
+  agn_locus_stream_set_source(ls, "AEGeAn::LocusPocus");
+  agn_locus_stream_set_endmode(ls, options.endmode);
+  agn_locus_stream_set_overlap(ls, options.minoverlap);
   if(options.idformat != NULL)
-  {
-    agn_locus_stream_set_idformat((AgnLocusStream *)current_stream,
-                                  options.idformat);
-  }
+    agn_locus_stream_set_idformat(ls, options.idformat);
   if(options.skipempty)
-  {
-    agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
-  }
+    agn_locus_stream_skip_empty_loci(ls);
   if(options.by_cds)
-  {
-    agn_locus_stream_by_cds((AgnLocusStream *)current_stream);
-  }
+    agn_locus_stream_by_cds(ls);
+  if(options.introngenes)
+    agn_locus_stream_parse_intron_genes(ls);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

@@ -567,6 +567,10 @@ Class AgnLocusStream
 
   Calculate iLoci from a node stream which may or may not include data from multiple sources. Extend each iLocus boundary as far as possible without overlapping a gene from another iLocus, or by `delta` nucleotides, whichever is shorter.
 
+.. c:function:: void agn_locus_stream_parse_intron_genes(AgnLocusStream *stream)
+
+  Create a distinct iLocus for genes contained completely within the introns of other genes.
+
 .. c:function:: void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode)
 
   Terminal iLoci or 'end loci' are empty iLoci at either end of a sequence. To exclude terminal iLoci from the output, set `endmode` < 0. To output only terminal iLoci, set `endmode` > 0. By default (`endmode == 0`), terminal iLoci are reported along with all other iLoci.

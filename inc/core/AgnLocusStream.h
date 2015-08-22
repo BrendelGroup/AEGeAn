@@ -50,6 +50,12 @@ void agn_locus_stream_label_pairwise(AgnLocusStream *stream,
 GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta);
 
 /**
+ * @function Create a distinct iLocus for genes contained completely within
+ * the introns of other genes.
+ */
+void agn_locus_stream_parse_intron_genes(AgnLocusStream *stream);
+
+/**
  * @function Terminal iLoci or 'end loci' are empty iLoci at either end of a
  * sequence. To exclude terminal iLoci from the output, set `endmode` < 0. To
  * output only terminal iLoci, set `endmode` > 0. By default (`endmode == 0`),

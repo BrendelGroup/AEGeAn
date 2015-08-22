@@ -159,6 +159,8 @@ agn-test:	all
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --verbose data/gff3/dmel-pseudofeat-sort-test-in.gff3 2> >(grep -v 'not unique')
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null data/gff3/amel-plap.gff3
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --cds data/gff3/amel-lsm.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --introngenes data/gff3/mrot-cst.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --introngenes --delta=5 data/gff3/mrot-cst.gff3
 		@ $(MEMCHECK) bin/tidygff3 < data/gff3/grape-refr.gff3 > /dev/null
 		@ echo AEGeAn Functional Tests
 		@ test/AT1G05320.sh $(MEMCHECKFT)

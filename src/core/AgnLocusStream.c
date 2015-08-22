@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -16,6 +16,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnInferParentStream.h"
 #include "AgnLocusStream.h"
 #include "AgnLocus.h"
+#include "AgnTypecheck.h"
 
 #define locus_stream_cast(GS)\
         gt_node_stream_cast(locus_stream_class(), GS)
@@ -42,6 +43,7 @@ struct AgnLocusStream
   char *predfile;
   GtUword minoverlap;
   bool by_cds;
+  bool intron_genes;
 };
 
 //------------------------------------------------------------------------------
@@ -75,6 +77,12 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
  * @function Destructor: release instance data.
  */
 static void locus_stream_free(GtNodeStream *ns);
+
+/**
+ * @function Handle genes completely within the introns of other genes.
+ */
+static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
+                                             AgnLocus **locus);
 
 /**
  * @function Mint an ID for the given locus, tally counts of children and
@@ -158,7 +166,13 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
   stream->predfile = NULL;
   stream->minoverlap = 1;
   stream->by_cds = false;
+  stream->intron_genes = false;
   return ns;
+}
+
+void agn_locus_stream_parse_intron_genes(AgnLocusStream *stream)
+{
+  stream->intron_genes = true;
 }
 
 void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode)
@@ -457,6 +471,7 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     stream->prev_locus = locus;
     if(gt_queue_size(stream->locusqueue) > 0)
       locus = gt_queue_get(stream->locusqueue);
+    locus_stream_handle_intron_genes(stream, &locus);
     locus_stream_mint(stream, locus);
     *gn = locus;
   }
@@ -478,6 +493,83 @@ static void locus_stream_free(GtNodeStream *ns)
   gt_str_delete(stream->idformat);
   gt_free(stream->refrfile);
   gt_free(stream->predfile);
+}
+
+static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
+                                             AgnLocus **locus)
+{
+  if(!stream->intron_genes || *locus == NULL)
+    return;
+
+  GtFeatureNode *fn = gt_feature_node_try_cast(*locus);
+  GtUword mrna_count = agn_typecheck_count(fn, agn_typecheck_mrna);
+  if(mrna_count == 0)
+    return;
+
+  GtArray *genes = agn_locus_get_genes(*locus);
+  if(gt_array_size(genes) != 2)
+  {
+    gt_array_delete(genes);
+    return;
+  }
+
+  GtGenomeNode *gene_a = *(GtGenomeNode **)gt_array_get(genes, 0);
+  GtGenomeNode *gene_b = *(GtGenomeNode **)gt_array_get(genes, 1);
+  gt_array_delete(genes);
+  GtRange range_a = gt_genome_node_get_range(gene_a);
+  GtRange range_b = gt_genome_node_get_range(gene_b);
+  GtFeatureNode *outer, *inner;
+  GtRange outer_range, inner_range;
+  if(gt_range_contains(&range_a, &range_b))
+  {
+    outer = gt_feature_node_cast(gene_a);
+    outer_range = range_a;
+    inner = gt_feature_node_cast(gene_b);
+    inner_range = range_b;
+  }
+  else if(gt_range_contains(&range_b, &range_a))
+  {
+    outer = gt_feature_node_cast(gene_b);
+    outer_range = range_b;
+    inner = gt_feature_node_cast(gene_a);
+    inner_range = range_a;
+  }
+  else
+  {
+    return;
+  }
+
+  GtArray *exons = agn_typecheck_select(outer, agn_typecheck_exon);
+  GtUword i;
+  bool overlap = false;
+  for(i = 0; i < gt_array_size(exons); i++)
+  {
+    GtGenomeNode **exon = gt_array_get(exons, i);
+    GtRange exonrange = gt_genome_node_get_range(*exon);
+    overlap = gt_range_contains(&inner_range, &exonrange);
+    if(overlap)
+      break;
+  }
+  gt_array_delete(exons);
+  if(overlap)
+    return;
+
+
+  GtStr *seqid = gt_genome_node_get_seqid(*locus);
+  AgnLocus *inner_locus = agn_locus_new(seqid);
+  agn_locus_add_feature(inner_locus, inner);
+  gt_feature_node_add_attribute((GtFeatureNode *)inner_locus, "intron_gene",
+                                "true");
+  AgnLocus *templocus = NULL;
+  if(gt_queue_size(stream->locusqueue) > 0)
+    templocus = gt_queue_get(stream->locusqueue);
+  gt_queue_add(stream->locusqueue, inner_locus);
+  if(templocus)
+    gt_queue_add(stream->locusqueue, templocus);
+  AgnLocus *outer_locus = agn_locus_new(seqid);
+  agn_locus_add_feature(outer_locus, outer);
+  //gt_genome_node_delete(*locus);
+  *locus = outer_locus;
 }
 
 static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
@@ -558,6 +650,7 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   if(gt_queue_size(stream->locusqueue) > 0)
   {
     *gn = gt_queue_get(stream->locusqueue);
+    locus_stream_handle_intron_genes(stream, gn);
     locus_stream_mint(stream, *gn);
     return 0;
   }
