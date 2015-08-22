@@ -568,7 +568,9 @@ static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
   AgnLocus *outer_locus = agn_locus_new(seqid);
   agn_locus_add_feature(outer_locus, outer);
   agn_locus_set_range(outer_locus, locusrange.start, locusrange.end);
-  //gt_genome_node_delete(*locus);
+  gt_genome_node_ref((GtGenomeNode *)outer);
+  gt_genome_node_ref((GtGenomeNode *)inner);
+  gt_genome_node_delete(*locus);
   *locus = outer_locus;
 }
 
