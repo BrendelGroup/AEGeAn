@@ -468,10 +468,14 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     if(stream->delta > 0)
       locus_stream_extend(stream, locus);
 
-    stream->prev_locus = locus;
     if(gt_queue_size(stream->locusqueue) > 0)
       locus = gt_queue_get(stream->locusqueue);
-    locus_stream_handle_intron_genes(stream, &locus);
+    AgnLocus **locusp = &locus;
+    locus_stream_handle_intron_genes(stream, locusp);
+    locus = *locusp;
+    if(stream->prev_locus)
+      gt_genome_node_delete(stream->prev_locus);
+    stream->prev_locus = gt_genome_node_ref(locus);
     locus_stream_mint(stream, locus);
     *gn = locus;
   }
@@ -493,6 +497,8 @@ static void locus_stream_free(GtNodeStream *ns)
   gt_str_delete(stream->idformat);
   gt_free(stream->refrfile);
   gt_free(stream->predfile);
+  if(stream->prev_locus)
+    gt_genome_node_delete(stream->prev_locus);
 }
 
 static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
@@ -663,6 +669,8 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     {
       *gn = stream->buffer;
       stream->buffer = NULL;
+      if(stream->prev_locus)
+        gt_genome_node_delete(stream->prev_locus);
       stream->prev_locus = NULL;
       return locus_stream_rn_handler(stream, gn, error);
     }
