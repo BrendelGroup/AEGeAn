@@ -282,6 +282,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                           locusrange.end);
       if(stream->endmode >= 0 && !stream->skip_empty)
       {
+fprintf(stderr, "DEBUG seqrange=%s[%lu, %lu] locusrange=%s[%lu, %lu]\n", gt_str_get(seqid), seqrange.start, seqrange.end, gt_str_get(seqid), locusrange.start, locusrange.end);
         AgnLocus *emptylocus = agn_locus_new(seqid);
         agn_locus_set_range(emptylocus, seqrange.start,
                             locusrange.start - stream->delta - 1);
@@ -300,8 +301,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
   if(stream->prev_locus && gt_str_cmp(seqid, prev_seqid) == 0)
   {
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
+fprintf(stderr, "DEBUG prev_range=%s[%lu, %lu] locusrange=%s[%lu, %lu]\n", gt_str_get(seqid), prev_range.start, prev_range.end, gt_str_get(seqid), locusrange.start, locusrange.end);
     if(prev_range.end >= locusrange.start)
     {
+fprintf(stderr, "DEBUG a\n");
       GtUword overlap = prev_range.end - locusrange.start + 1;
       char ovrlp[16];
       sprintf(ovrlp, "%lu", overlap);
@@ -312,6 +315,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     }
     else if(prev_range.end + stream->delta >= locusrange.start)
     {
+fprintf(stderr, "DEBUG b\n");
       GtUword overlap = locusrange.start - prev_range.end - 1;
       char ovrlp[16];
       sprintf(ovrlp, "%lu", overlap);
@@ -326,6 +330,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     }
     else if(prev_range.end + (2*stream->delta) >= locusrange.start)
     {
+fprintf(stderr, "DEBUG c\n");
       GtUword overlap = prev_range.end-locusrange.start+(2*stream->delta)+1;
       char ovrlp[16];
       sprintf(ovrlp, "%lu", overlap);
@@ -341,12 +346,14 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     }
     else if(prev_range.end + (3*stream->delta) >= locusrange.start)
     {
+fprintf(stderr, "DEBUG d\n");
       GtUword midpoint = (prev_range.end + locusrange.start) / 2;
       agn_locus_set_range(stream->prev_locus, prev_range.start, midpoint);
       agn_locus_set_range(locus, midpoint + 1, locusrange.end);
     }
     else
     {
+fprintf(stderr, "DEBUG e [%lu, %lu] [%lu, %lu]\n", prev_range.start, prev_range.end, locusrange.start, locusrange.end);
       agn_locus_set_range(stream->prev_locus, prev_range.start,
                           prev_range.end + stream->delta);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
@@ -359,9 +366,11 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                             prev_range.end + stream->delta + 1,
                             locusrange.start - stream->delta - 1);
         gt_queue_add(stream->locusqueue, emptylocus);
+fprintf(stderr, "DEBUG empty [%lu, %lu]\n", gt_genome_node_get_start(emptylocus), gt_genome_node_get_end(emptylocus));
       }
     }
   }
+fprintf(stderr, "DEBUG enqueue [%lu, %lu]\n", gt_genome_node_get_start(locus), gt_genome_node_get_end(locus));
   gt_queue_add(stream->locusqueue, locus);
 
   // Handle terminal loci
@@ -468,14 +477,33 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     if(stream->delta > 0)
       locus_stream_extend(stream, locus);
 
+    if(stream->prev_locus == NULL)
+    {
+      stream->prev_locus = gt_genome_node_ref(locus);
+fprintf(stderr, "DEBUG save1 prev_locus=%s[%lu, %lu]\n", gt_str_get(seqid), gt_genome_node_get_start(stream->prev_locus), gt_genome_node_get_end(stream->prev_locus));
+    }
+    else
+    {
+fprintf(stderr, "DEBUG cmp %lu vs %lu\n", gt_genome_node_get_end(locus), gt_genome_node_get_end(stream->prev_locus));
+      if(gt_str_cmp(seqid, gt_genome_node_get_seqid(stream->prev_locus)) ||
+         gt_genome_node_get_end(locus) >
+         gt_genome_node_get_end(stream->prev_locus))
+      {
+        gt_genome_node_delete(stream->prev_locus);
+        stream->prev_locus = gt_genome_node_ref(locus);
+fprintf(stderr, "DEBUG save2 prev_locus=%s[%lu, %lu]\n", gt_str_get(seqid), gt_genome_node_get_start(stream->prev_locus), gt_genome_node_get_end(stream->prev_locus));
+      }
+    }
+
     if(gt_queue_size(stream->locusqueue) > 0)
+    {
       locus = gt_queue_get(stream->locusqueue);
+GtRange rng = gt_genome_node_get_range(locus);
+fprintf(stderr, "DEBUG get [%lu, %lu]\n", rng.start, rng.end);
+    }
     AgnLocus **locusp = &locus;
     locus_stream_handle_intron_genes(stream, locusp);
     locus = *locusp;
-    if(stream->prev_locus)
-      gt_genome_node_delete(stream->prev_locus);
-    stream->prev_locus = gt_genome_node_ref(locus);
     locus_stream_mint(stream, locus);
     *gn = locus;
   }
@@ -578,6 +606,7 @@ static void locus_stream_handle_intron_genes(AgnLocusStream *stream,
   gt_genome_node_ref((GtGenomeNode *)inner);
   gt_genome_node_delete(*locus);
   *locus = outer_locus;
+fprintf(stderr, "DEBUG ERROR!\n");
 }
 
 static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
@@ -658,6 +687,9 @@ static int locus_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   if(gt_queue_size(stream->locusqueue) > 0)
   {
     *gn = gt_queue_get(stream->locusqueue);
+GtStr *seqid = gt_genome_node_get_seqid(*gn);
+GtRange rng = gt_genome_node_get_range(*gn);
+fprintf(stderr, "DEBUG next %s[%lu, %lu]\n", gt_str_get(seqid), rng.start, rng.end);
     locus_stream_handle_intron_genes(stream, gn);
     locus_stream_mint(stream, *gn);
     return 0;
