@@ -63,7 +63,7 @@ static const GtNodeStreamClass *locus_refine_stream_class(void);
  * @function FIXME
  */
 static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
-                                       GtArray *iloci);
+                                       GtArray *iloci, AgnLocus *orig);
 
 /**
  * @function Destructor: release instance data.
@@ -137,17 +137,17 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
   {
     GtGenomeNode *locus = gt_queue_get(queue);
     GtRange locusrange = gt_genome_node_get_range(locus);
-    test1 = test1 && locusrange.start == 1916358 && locusrange.end == 1918366;
+    test1 = test1 && locusrange.start == 1915858 && locusrange.end == 1918866;
     gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
-    test1 = test1 && locusrange.start == 1916852 && locusrange.end == 1926823;
+    test1 = test1 && locusrange.start == 1916352 && locusrange.end == 1927323;
     gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
-    test1 = test1 && locusrange.start == 1918657 && locusrange.end == 1920655;
+    test1 = test1 && locusrange.start == 1918157 && locusrange.end == 1921155;
     gt_genome_node_delete(locus);
   }
   agn_unit_test_result(test, "Atta cephalotes (syndrome)", test1);
@@ -160,12 +160,12 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
   {
     GtGenomeNode *locus = gt_queue_get(queue);
     GtRange locusrange = gt_genome_node_get_range(locus);
-    test2 = test2 && locusrange.start == 10152 && locusrange.end == 18811;
+    test2 = test2 && locusrange.start == 9652 && locusrange.end == 19311;
     gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
-    test2 = test2 && locusrange.start == 11905 && locusrange.end == 17646;
+    test2 = test2 && locusrange.start == 11405 && locusrange.end == 18146;
     gt_genome_node_delete(locus);
   }
   agn_unit_test_result(test, "Megachile rotundata CST (intron)", test2);
@@ -312,12 +312,18 @@ static const GtNodeStreamClass *locus_refine_stream_class(void)
 }
 
 static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
-                                       GtArray *iloci)
+                                       GtArray *iloci, AgnLocus *orig)
 {
+  GtRange origrange = gt_genome_node_get_range(orig);
+
   GtUword i;
   for(i = 0; i < gt_array_size(iloci); i++)
   {
     GtGenomeNode **gn = gt_array_get(iloci, i);
+    GtRange gnrange = gt_genome_node_get_range(*gn);
+    agn_locus_set_range(*gn, gnrange.start - stream->delta,
+                        gnrange.end + stream->delta);
+    agn_assert(gt_range_contains(&origrange, &gnrange));
     gt_queue_add(stream->locusqueue, *gn);
   }
   return;
@@ -344,7 +350,7 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
 
   GtArray *bins = locus_refine_stream_bin_features(stream, locus);
   GtArray *iloci = locus_refine_stream_resolve_bins(stream, bins);
-  locus_refine_stream_extend(stream, iloci);
+  locus_refine_stream_extend(stream, iloci, gn);
 
   gt_genome_node_delete(gn);
   gt_array_delete(iloci);
