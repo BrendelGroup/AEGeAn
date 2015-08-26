@@ -10,8 +10,11 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 #include <string.h>
 #include "core/queue_api.h"
-#include "AgnLocusRefineStream.h"
+#include "extended/sort_stream_api.h"
+#include "AgnGeneStream.h"
 #include "AgnLocus.h"
+#include "AgnLocusStream.h"
+#include "AgnLocusRefineStream.h"
 #include "AgnTypecheck.h"
 #include "AgnUtils.h"
 
@@ -91,6 +94,12 @@ static int locus_refine_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 static GtArray *locus_refine_stream_resolve_bins(AgnLocusRefineStream *stream,
                                                  GtArray *bins);
 
+/**
+ * @function FIXME
+ */
+static void locus_refine_stream_test_data(const char *filename, GtQueue *queue,
+                                          GtUword delta);
+
 //------------------------------------------------------------------------------
 // Method definitions
 //------------------------------------------------------------------------------
@@ -120,9 +129,45 @@ void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream,
   gt_queue_delete(stream->locusqueue);
 }
 
-bool agn_locus_refine_stream_unit_test(GT_UNUSED AgnUnitTest *test)
+bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
 {
-  return false;
+  GtQueue *queue = gt_queue_new();
+  locus_refine_stream_test_data("data/gff3/acep-syndrome.gff3", queue, 500);
+  bool test1 = gt_queue_size(queue) == 3;
+  if(test1)
+  {
+    GtGenomeNode *locus = gt_queue_get(queue);
+    GtRange locusrange = gt_genome_node_get_range(locus);
+    test1 = test1 && locusrange.start == 1916358 && locusrange.end == 1918366;
+    
+    locus = gt_queue_get(queue);
+    locusrange = gt_genome_node_get_range(locus);
+    test1 = test1 && locusrange.start == 1916852 && locusrange.end == 1926823;
+    
+    locus = gt_queue_get(queue);
+    locusrange = gt_genome_node_get_range(locus);
+    test1 = test1 && locusrange.start == 1918657 && locusrange.end == 1920655;
+  }
+  agn_unit_test_result(test, "Atta cephalotes (syndrome)", test1);
+  gt_queue_delete(queue);
+
+  queue = gt_queue_new();
+  locus_refine_stream_test_data("data/gff3/mrot-cst.gff3", queue, 500);
+  bool test2 = gt_queue_size(queue) == 2;
+  if(test2)
+  {
+    GtGenomeNode *locus = gt_queue_get(queue);
+    GtRange locusrange = gt_genome_node_get_range(locus);
+    test2 = test2 && locusrange.start == 10152 && locusrange.end == 18811;
+    
+    locus = gt_queue_get(queue);
+    locusrange = gt_genome_node_get_range(locus);
+    test2 = test2 && locusrange.start == 11905 && locusrange.end == 17646;
+  }
+  agn_unit_test_result(test, "Megachile rotundata CST (intron)", test2);
+  gt_queue_delete(queue);
+
+  return agn_unit_test_success(test);
 }
 
 static
@@ -234,6 +279,7 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   GtStr *seqid = gt_genome_node_get_seqid(*gn1);
   AgnLocus *locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, fn1);
+  gt_genome_node_ref(*gn1);
   gt_array_add(iloci, locus);
   for(i = 1; i < gt_array_size(bin); i++)
   {
@@ -241,6 +287,7 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
     GtFeatureNode *fn_i = gt_feature_node_cast(*gn_i);
     locus = agn_locus_new(seqid);
     agn_locus_add_feature(locus, fn_i);
+    gt_genome_node_ref(*gn_i);
     gt_feature_node_add_attribute((GtFeatureNode *)locus, "effective_length",
                                   "0");
     gt_array_add(iloci, locus);
@@ -263,6 +310,12 @@ static const GtNodeStreamClass *locus_refine_stream_class(void)
 static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
                                        GtArray *iloci)
 {
+  GtUword i;
+  for(i = 0; i < gt_array_size(iloci); i++)
+  {
+    GtGenomeNode **gn = gt_array_get(iloci, i);
+    gt_queue_add(stream->locusqueue, *gn);
+  }
   return;
 }
 
@@ -388,6 +441,7 @@ static int locus_refine_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   if(gt_feature_node_try_cast(*gn))
   {
     locus_refine_stream_handler(stream, *gn);
+    agn_assert(gt_queue_size(stream->locusqueue) > 0);
     *gn = gt_queue_get(stream->locusqueue);
     locus_refine_stream_mint(stream, *gn);
   }
@@ -440,7 +494,68 @@ static GtArray *locus_refine_stream_resolve_bins(AgnLocusRefineStream *stream,
   if(gt_array_size(iloci) > 1)
   {
     gt_array_sort(iloci, (GtCompare)agn_genome_node_compare);
-    gt_array_reverse(iloci);
+    //gt_array_reverse(iloci);
   }
   return iloci;
+}
+
+static void locus_refine_stream_test_data(const char *filename, GtQueue *queue,
+                                          GtUword delta)
+{
+  GtNodeStream *current_stream, *last_stream;
+  GtQueue *streams = gt_queue_new();
+
+  current_stream = gt_gff3_in_stream_new_unsorted(1, &filename);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = gt_sort_stream_new(last_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  GtLogger *logger = gt_logger_new(true, "", stderr);
+  current_stream = agn_gene_stream_new(last_stream, logger);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_locus_stream_new(last_stream, delta);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  current_stream = agn_locus_refine_stream_new(last_stream, delta, 1, true);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  GtError *error = gt_error_new();
+  GtArray *loci = gt_array_new( sizeof(AgnLocus *) );
+  current_stream = gt_array_out_stream_new(last_stream, loci, error);
+  agn_assert(!gt_error_is_set(error));
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  int result = gt_node_stream_pull(last_stream, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "error loading unit test data: %s\n", gt_error_get(error));
+    exit(1);
+  }
+
+  gt_array_reverse(loci);
+  while(gt_array_size(loci) > 0)
+  {
+    AgnLocus **locus = gt_array_pop(loci);
+    gt_queue_add(queue, *locus);
+  }
+
+  while(gt_queue_size(streams) > 0)
+  {
+    GtNodeStream *ns = gt_queue_get(streams);
+    gt_node_stream_delete(ns);
+  }
+  gt_queue_delete(streams);
+  gt_logger_delete(logger);
+  gt_error_delete(error);
+  gt_array_delete(loci);
 }
