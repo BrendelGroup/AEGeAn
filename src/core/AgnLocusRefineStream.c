@@ -126,7 +126,6 @@ void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream,
   agn_assert(stream && format);
   gt_str_delete(stream->idformat);
   stream->idformat = gt_str_new_cstr(format);
-  gt_queue_delete(stream->locusqueue);
 }
 
 bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
@@ -139,14 +138,17 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
     GtGenomeNode *locus = gt_queue_get(queue);
     GtRange locusrange = gt_genome_node_get_range(locus);
     test1 = test1 && locusrange.start == 1916358 && locusrange.end == 1918366;
+    gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
     test1 = test1 && locusrange.start == 1916852 && locusrange.end == 1926823;
+    gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
     test1 = test1 && locusrange.start == 1918657 && locusrange.end == 1920655;
+    gt_genome_node_delete(locus);
   }
   agn_unit_test_result(test, "Atta cephalotes (syndrome)", test1);
   gt_queue_delete(queue);
@@ -159,10 +161,12 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
     GtGenomeNode *locus = gt_queue_get(queue);
     GtRange locusrange = gt_genome_node_get_range(locus);
     test2 = test2 && locusrange.start == 10152 && locusrange.end == 18811;
+    gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
     test2 = test2 && locusrange.start == 11905 && locusrange.end == 17646;
+    gt_genome_node_delete(locus);
   }
   agn_unit_test_result(test, "Megachile rotundata CST (intron)", test2);
   gt_queue_delete(queue);
@@ -325,6 +329,7 @@ static void locus_refine_stream_free(GtNodeStream *ns)
   AgnLocusRefineStream *stream = locus_refine_stream_cast(ns);
   gt_node_stream_delete(stream->in_stream);
   gt_str_delete(stream->idformat);
+  gt_queue_delete(stream->locusqueue);
 }
 
 static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
