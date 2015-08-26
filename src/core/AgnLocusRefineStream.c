@@ -133,11 +133,16 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
   GtQueue *queue = gt_queue_new();
   locus_refine_stream_test_data("data/gff3/acep-syndrome.gff3", queue, 500);
   bool test1 = gt_queue_size(queue) == 3;
+  bool test1a = false;
   if(test1)
   {
     GtGenomeNode *locus = gt_queue_get(queue);
     GtRange locusrange = gt_genome_node_get_range(locus);
     test1 = test1 && locusrange.start == 1915858 && locusrange.end == 1918866;
+    const char *elen = gt_feature_node_get_attribute((GtFeatureNode *)locus,
+                                                     "effective_length");
+    if(elen)
+      test1a = strcmp(elen, "11466") == 0;
     gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
@@ -150,17 +155,23 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
     test1 = test1 && locusrange.start == 1918157 && locusrange.end == 1921155;
     gt_genome_node_delete(locus);
   }
-  agn_unit_test_result(test, "Atta cephalotes (syndrome)", test1);
+  agn_unit_test_result(test, "Atta cephalotes (syndrome): coords", test1);
+  agn_unit_test_result(test, "Atta cephalotes (syndrome): elen", test1a);
   gt_queue_delete(queue);
 
   queue = gt_queue_new();
   locus_refine_stream_test_data("data/gff3/mrot-cst.gff3", queue, 500);
   bool test2 = gt_queue_size(queue) == 2;
+  bool test2a = false;
   if(test2)
   {
     GtGenomeNode *locus = gt_queue_get(queue);
     GtRange locusrange = gt_genome_node_get_range(locus);
     test2 = test2 && locusrange.start == 9652 && locusrange.end == 19311;
+    const char *elen = gt_feature_node_get_attribute((GtFeatureNode *)locus,
+                                                     "effective_length");
+    if(elen)
+      test2a = strcmp(elen, "9660") == 0;
     gt_genome_node_delete(locus);
     
     locus = gt_queue_get(queue);
@@ -168,7 +179,8 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
     test2 = test2 && locusrange.start == 11405 && locusrange.end == 18146;
     gt_genome_node_delete(locus);
   }
-  agn_unit_test_result(test, "Megachile rotundata CST (intron)", test2);
+  agn_unit_test_result(test, "Megachile rotundata CST: coords", test2);
+  agn_unit_test_result(test, "Megachile rotundata CST: elen", test2a);
   gt_queue_delete(queue);
 
   return agn_unit_test_success(test);
@@ -292,8 +304,8 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
     locus = agn_locus_new(seqid);
     agn_locus_add_feature(locus, fn_i);
     gt_genome_node_ref(*gn_i);
-    gt_feature_node_add_attribute((GtFeatureNode *)locus, "effective_length",
-                                  "0");
+    gt_feature_node_add_attribute((GtFeatureNode *)locus, "intron_gene",
+                                  "true");
     gt_array_add(iloci, locus);
   }
   return true;
@@ -314,16 +326,36 @@ static const GtNodeStreamClass *locus_refine_stream_class(void)
 static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
                                        GtArray *iloci, AgnLocus *orig)
 {
+  GtFeatureNode *origfn = gt_feature_node_cast(orig);
   GtRange origrange = gt_genome_node_get_range(orig);
+  GtUword origro = 0;
+  const char *rostr = gt_feature_node_get_attribute(origfn, "right_overlap");
+  if(rostr)
+    origro = atol(rostr);
 
   GtUword i;
   for(i = 0; i < gt_array_size(iloci); i++)
   {
     GtGenomeNode **gn = gt_array_get(iloci, i);
+    GtFeatureNode *fn = gt_feature_node_cast(*gn);
     GtRange gnrange = gt_genome_node_get_range(*gn);
-    agn_locus_set_range(*gn, gnrange.start - stream->delta,
-                        gnrange.end + stream->delta);
+    if(origrange.start + stream->delta > gnrange.start)
+      gnrange.start = origrange.start;
+    else
+      gnrange.start -= stream->delta;
+    if(gnrange.end + stream->delta > origrange.end)
+      gnrange.end = origrange.end;
+    else
+      gnrange.end += stream->delta;
+    
+    agn_locus_set_range(*gn, gnrange.start, gnrange.end);
     agn_assert(gt_range_contains(&origrange, &gnrange));
+    if(i == 0)
+    {
+      char lenstr[32];
+      sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+      gt_feature_node_add_attribute(fn, "effective_length", lenstr);
+    }
     gt_queue_add(stream->locusqueue, *gn);
   }
   return;
@@ -363,7 +395,8 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
   return 0;
 }
 
-static void locus_refine_stream_mint(AgnLocusRefineStream *stream, AgnLocus *locus)
+static void locus_refine_stream_mint(AgnLocusRefineStream *stream,
+                                     AgnLocus *locus)
 {
   agn_assert(stream);
   stream->count++;
