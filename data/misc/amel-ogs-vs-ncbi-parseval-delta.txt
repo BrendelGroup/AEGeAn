@@ -622,7 +622,7 @@ Group7.16	NCBI	three_prime_UTR	108272	108280	.	+	.	Parent=mRNA5
      |--------------------------
 
 |-------------------------------------------------
-|---- Locus: seqid=Group7.16 range=110154-117228
+|---- Locus: seqid=Group7.16 range=110154-117415
 |-------------------------------------------------
 |
 |  reference genes:
@@ -736,7 +736,7 @@ Group7.16	NCBI	three_prime_UTR	116436	116906	.	+	.	Parent=mRNA7
      |--------------------------
 
 |-------------------------------------------------
-|---- Locus: seqid=Group7.16 range=116916-120307
+|---- Locus: seqid=Group7.16 range=116729-120307
 |-------------------------------------------------
 |
 |  reference genes:
@@ -816,7 +816,7 @@ Group7.16	NCBI	five_prime_UTR	119661	119778	.	-	.	Parent=mRNA8
      |    Annotation edit distance:      --        
      |
      |  Nucleotide-level comparison      CDS        UTRs       Overall   
-     |    Matching coefficient:          0.991      0.790      0.790
+     |    Matching coefficient:          0.992      0.801      0.801
      |    Correlation coefficient:       0.924      --         --        
      |    Sensitivity:                   0.861      --         --        
      |    Specificity:                   1.000      0.000      --        
@@ -994,7 +994,7 @@ Executing command:      bin/parseval --refrlabel=OGS --predlabel=NCBI --delta=50
     perfect matches........................0 (0.0%)
     perfect matches with mislabeled UTRs...0 (0.0%)
     CDS structure matches..................4 (50.0%)
-      avg. length..........................9651.50 bp
+      avg. length..........................9698.25 bp
       avg. # refr exons....................5.75
       avg. # pred exons....................6.00
       avg. refr CDS length.................455.25 aa
@@ -1002,7 +1002,7 @@ Executing command:      bin/parseval --refrlabel=OGS --predlabel=NCBI --delta=50
     exon structure matches.................0 (0.0%)
     UTR structure matches..................0 (0.0%)
     non-matches............................4 (50.0%)
-      avg. length..........................14698.25 bp
+      avg. length..........................14745.00 bp
       avg. # refr exons....................6.50
       avg. # pred exons....................6.25
       avg. refr CDS length.................398.25 aa
@@ -1045,7 +1045,7 @@ Executing command:      bin/parseval --refrlabel=OGS --predlabel=NCBI --delta=50
     Annotation edit distance...............1.000
 
   Nucleotide-level comparison      CDS          UTRs         Overall   
-    Matching coefficient:          0.996        0.966        0.818
+    Matching coefficient:          0.996        0.967        0.819
     Correlation coefficient:       0.978        0.431        --        
     Sensitivity:                   0.976        0.371        --        
     Specificity:                   0.984        0.540        --        

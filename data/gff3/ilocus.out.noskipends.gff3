@@ -98,27 +98,27 @@ seq15	AEGeAn::LocusPocus	locus	601	1300	.	.	.	ID=locus36;gene=1;mRNA=1
 ###
 seq15	AEGeAn::LocusPocus	locus	1301	1500	.	.	.	ID=locus37;fragment=true
 ###
-seq16	AEGeAn::LocusPocus	locus	1	799	.	.	.	ID=locus38;gene=1;mRNA=1
+seq16	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus38;gene=1;mRNA=1
 ###
-seq16	AEGeAn::LocusPocus	locus	601	1300	.	.	.	ID=locus39;gene=1;mRNA=1
+seq16	AEGeAn::LocusPocus	locus	600	1300	.	.	.	ID=locus39;gene=1;mRNA=1
 ###
 seq16	AEGeAn::LocusPocus	locus	1301	1500	.	.	.	ID=locus40;fragment=true
 ###
-seq17	AEGeAn::LocusPocus	locus	1	605	.	.	.	ID=locus41;gene=1;mRNA=1
+seq17	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus41;gene=1;mRNA=1
 ###
-seq17	AEGeAn::LocusPocus	locus	601	1200	.	.	.	ID=locus42;gene=1;mRNA=1
+seq17	AEGeAn::LocusPocus	locus	406	1200	.	.	.	ID=locus42;gene=1;mRNA=1
 ###
 seq17	AEGeAn::LocusPocus	locus	1201	1500	.	.	.	ID=locus43;fragment=true
 ###
-seq18	AEGeAn::LocusPocus	locus	1	601	.	.	.	ID=locus44;gene=1;mRNA=1
+seq18	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus44;gene=1;mRNA=1
 ###
-seq18	AEGeAn::LocusPocus	locus	601	1200	.	.	.	ID=locus45;gene=1;mRNA=1
+seq18	AEGeAn::LocusPocus	locus	402	1200	.	.	.	ID=locus45;gene=1;mRNA=1
 ###
 seq18	AEGeAn::LocusPocus	locus	1201	1500	.	.	.	ID=locus46;fragment=true
 ###
-seq19	AEGeAn::LocusPocus	locus	1	600	.	.	.	ID=locus47;gene=1;mRNA=1
+seq19	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus47;gene=1;mRNA=1
 ###
-seq19	AEGeAn::LocusPocus	locus	601	1200	.	.	.	ID=locus48;gene=1;mRNA=1
+seq19	AEGeAn::LocusPocus	locus	401	1200	.	.	.	ID=locus48;gene=1;mRNA=1
 ###
 seq19	AEGeAn::LocusPocus	locus	1201	1500	.	.	.	ID=locus49;fragment=true
 ###
