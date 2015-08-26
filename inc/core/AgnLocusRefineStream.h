@@ -43,6 +43,13 @@ void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream,
                                           const char *format);
 
 /**
+ * @function Set the source value to be used for all iLoci created by this
+ * stream. Default value is 'AEGeAn::AgnLocusStream'.
+ */
+void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream,
+                                        const char *source);
+
+/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_locus_refine_stream_unit_test(AgnUnitTest *test);

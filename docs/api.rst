@@ -563,6 +563,10 @@ Class AgnLocusRefineStream
 
   Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
 
+.. c:function:: void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream, const char *source)
+
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
+
 .. c:function:: bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.

@@ -33,6 +33,7 @@ struct AgnLocusRefineStream
   GtUword minoverlap;
   bool by_cds;
   GtStr *idformat;
+  GtStr *source;
   GtUword count;
   GtQueue *locusqueue;
 };
@@ -115,6 +116,7 @@ GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream,
   stream->minoverlap = minoverlap;
   stream->by_cds = by_cds;
   stream->idformat = gt_str_new_cstr("locus%lu");
+  stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
   stream->count = 0;
   stream->locusqueue = gt_queue_new();
   return ns;
@@ -126,6 +128,14 @@ void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream,
   agn_assert(stream && format);
   gt_str_delete(stream->idformat);
   stream->idformat = gt_str_new_cstr(format);
+}
+
+void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream,
+                                        const char *source)
+{
+  agn_assert(stream && source);
+  gt_str_delete(stream->source);
+  stream->source = gt_str_new_cstr(source);
 }
 
 bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
@@ -356,6 +366,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
       gt_feature_node_add_attribute(fn, "effective_length", lenstr);
     }
+    gt_feature_node_set_source(fn, stream->source);
     gt_queue_add(stream->locusqueue, *gn);
   }
   return;
@@ -367,6 +378,7 @@ static void locus_refine_stream_free(GtNodeStream *ns)
   AgnLocusRefineStream *stream = locus_refine_stream_cast(ns);
   gt_node_stream_delete(stream->in_stream);
   gt_str_delete(stream->idformat);
+  gt_str_delete(stream->source);
   gt_queue_delete(stream->locusqueue);
 }
 
