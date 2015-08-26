@@ -548,6 +548,25 @@ Class AgnLocusMapVisitor
 
   Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
 
+Class AgnLocusRefineStream
+--------------------------
+
+.. c:type:: AgnLocusRefineStream
+
+  Implements the ``GtNodeStream`` interface. By default the ``AgnLocusStream`` class will group any and all overlapping features of interest together in the same iLocus. The ``AgnLocusRefineStream`` class can be used to post-process ``AgnLocusStream`` output to accommodate a more flexible handling of overlapping features, such as requiring CDS overlap for grouping genes together or creating distinct iLoci for genes within the introns of other genes. See the `AgnLocusRefineStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusRefineStream.h>`_.
+
+.. c:function:: GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream, GtUword delta, GtUword minoverlap, bool by_cds)
+
+  Class constructor.
+
+.. c:function:: void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream, const char *format)
+
+  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
+
+.. c:function:: bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnLocusStream
 --------------------
 
@@ -850,6 +869,14 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 
   Copy the sequence regions from ``refrsrc`` and ``predsrc`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
 
+.. c:function:: GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn)
+
+  Traverse the given feature and its subfeatures and find the range occupied by coding sequence, or {0,0} if there is no coding sequence.
+
+.. c:function:: GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
+
+  Return an array of the given feature node's direct children.
+
 .. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 
   Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
@@ -857,6 +884,10 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 .. c:function:: bool agn_feature_overlap_check(GtArray *feats)
 
   Returns true if any of the features in ``feats`` overlaps, false otherwise.
+
+.. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
+
+  Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
 
 .. c:function:: GtUword agn_mrna_3putr_length(GtFeatureNode *mrna)
 
@@ -874,9 +905,9 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 
   If a top-level feature ``top`` contains a multifeature child (with multi representative ``rep``), use this function to get the complete range of the multifeature.
 
-.. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
+.. c:function:: bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2, GtUword minoverlap, bool by_cds)
 
-  Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
+  Determine if two features overlap such that they should be assigned to the same iLocus. Specify the minimum overlap (in bp) required and whether the location of the feature's coding sequence (CDS) should be used or not.
 
 .. c:function:: void agn_print_version(const char *progname, FILE *outstream)
 
