@@ -274,12 +274,21 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
     if(prev_range.end + stream->delta >= locusrange.start)
     {
-      agn_locus_set_range(stream->prev_locus, prev_range.start,
-                          prev_range.end + stream->delta);
+      GtUword newend = prev_range.end + stream->delta;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
+
       GtUword newstart = locusrange.start - stream->delta;
       if(seqrange.start + stream->delta > locusrange.start)
         newstart = seqrange.start;
       agn_locus_set_range(locus, newstart, locusrange.end);
+
+      GtUword overlap = newend - newstart + 1;
+      char ovrlp[16];
+      sprintf(ovrlp, "%lu", overlap);
+      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
+                                    "right_overlap", ovrlp);
+      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
+                                    ovrlp);
     }
     else if(prev_range.end + (2*stream->delta) >= locusrange.start)
     {
@@ -287,6 +296,14 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                           prev_range.end + stream->delta);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
+
+      GtUword overlap = prev_range.end-locusrange.start+(2*stream->delta)+1;
+      char ovrlp[16];
+      sprintf(ovrlp, "%lu", overlap);
+      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
+                                    "right_overlap", ovrlp);
+      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
+                                    ovrlp);
     }
     else if(prev_range.end + (3*stream->delta) >= locusrange.start)
     {
