@@ -83,5 +83,5 @@ result="FAIL"
 if [ $status == 0 ]; then
   result="PASS"
 fi
-printf "        | %-36s | %s\n" "Megachile rotundata CST (intron gene)" $result
+printf "        | %-36s | %s\n" "Megachile rotundata CST (intron)" $result
 rm ${temp}

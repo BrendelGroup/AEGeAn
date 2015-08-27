@@ -409,10 +409,10 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
       }
-      const char *codingstr = "true";
+      const char *typestr = "piLocus";
       if(coding_status == false)
-        codingstr = "false";
-      gt_feature_node_add_attribute(fn, "coding", codingstr);
+        typestr = "niLocus";
+      gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
     }
   }
 
@@ -430,13 +430,13 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     bool cds1 = agn_locus_num_mrnas(*gn1) > 0;
     if(cds1 == true)
     {
-      gt_feature_node_add_attribute(fn1, "coding", "true");
-      gt_feature_node_add_attribute(fn2, "coding", "false");
+      gt_feature_node_add_attribute(fn1, "iLocus_type", "piLocus");
+      gt_feature_node_add_attribute(fn2, "iLocus_type", "niLocus");
     }
     else
     {
-      gt_feature_node_add_attribute(fn1, "coding", "false");
-      gt_feature_node_add_attribute(fn2, "coding", "true");
+      gt_feature_node_add_attribute(fn1, "iLocus_type", "niLocus");
+      gt_feature_node_add_attribute(fn2, "iLocus_type", "piLocus");
     }
 
     // One gene contains the other
@@ -478,7 +478,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
       }
-      gt_feature_node_add_attribute(fn, "complex", "true");
+      gt_feature_node_add_attribute(fn, "iLocus_type", "complex");
     }
   }
 
@@ -503,6 +503,12 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
   GtFeatureNode *locus = gt_feature_node_cast(gn);
   if(gt_feature_node_number_of_children(locus) < 2)
   {
+    if(gt_feature_node_number_of_children(locus) == 0)
+      gt_feature_node_add_attribute(locus, "iLocus_type", "iiLocus");
+    else if(agn_locus_num_mrnas(gn) > 0)
+      gt_feature_node_add_attribute(locus, "iLocus_type", "piLocus");
+    else
+      gt_feature_node_add_attribute(locus, "iLocus_type", "niLocus");
     gt_queue_add(stream->locusqueue, locus);
     return 0;
   }
