@@ -327,9 +327,36 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
   if(rostr)
     origro = atol(rostr);
 
+  GtUword numloci = gt_array_size(iloci);
+  agn_assert(numloci > 1);
+
   GtUword i;
-  for(i = 0; i < gt_array_size(iloci); i++)
+  for(i = 0; i < numloci; i++)
   {
+    /*GtGenomeNode **gn1 = gt_array_get(iloci, i - 1);
+    GtGenomeNode **gn2 = gt_array_get(iloci, i);
+
+    GtFeatureNode *fn1 = gt_feature_node_cast(*gn1);
+    GtFeatureNode *fn2 = gt_feature_node_cast(*gn2);
+
+    GtRange rng1 = gt_genome_node_get_range(*gn1);
+    GtRange rng2 = gt_genome_node_get_range(*gn2);
+
+    if(i == 1)
+      agn_assert(origro < gt_range_length(&rng1));
+
+    if(gt_range_contains(&rng1, &rng2))
+    {
+      agn_assert(gt_feature_node_has_attribute(fn2, "intron_gene"));
+      
+    }
+
+    bool iscoding1 = agn_locus_num_mrnas(*gn1);
+    bool iscoding2 = agn_locus_num_mrnas(*gn2);
+    if(iscoding1 == iscoding2)*/
+
+    
+    
     GtGenomeNode **gn = gt_array_get(iloci, i);
     GtFeatureNode *fn = gt_feature_node_cast(*gn);
     GtRange gnrange = gt_genome_node_get_range(*gn);
@@ -344,15 +371,117 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     
     agn_locus_set_range(*gn, gnrange.start, gnrange.end);
     agn_assert(gt_range_contains(&origrange, &gnrange));
-    if(i == 0)
-    {
-      char lenstr[32];
-      sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
-      gt_feature_node_add_attribute(fn, "effective_length", lenstr);
-    }
     gt_feature_node_set_source(fn, stream->source);
     gt_queue_add(stream->locusqueue, *gn);
   }
+
+  // Determine whether all of the iLoci are coding or if all are non-coding.
+  // If so, that makes our job easier. If not, we only handle the simple case
+  // of one coding gene and one non-coding gene
+  bool coding_status;
+  bool same_coding_status;
+  for(i = 0; i < numloci; i++)
+  {
+    GtGenomeNode **gn = gt_array_get(iloci, i);
+    if(i == 0)
+      coding_status = agn_locus_num_mrnas(*gn) > 0;
+    else
+    {
+      bool test_status = agn_locus_num_mrnas(*gn) > 0;
+      same_coding_status = coding_status == test_status;
+      if(!same_coding_status)
+        break;
+    }
+  }
+
+  // If the iLoci are all coding or all non-coding, just assign their collective
+  // length (sans overlap from previous unrefined iLocus) to the first refined
+  // iLocus.
+  if(same_coding_status)
+  {
+    for(i = 0; i < numloci; i++)
+    {
+      GtGenomeNode **gn = gt_array_get(iloci, i);
+      GtFeatureNode *fn = gt_feature_node_cast(*gn);
+      if(i == 0)
+      {
+        char lenstr[32];
+        sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+        gt_feature_node_add_attribute(fn, "effective_length", lenstr);
+      }
+      const char *codingstr = "true";
+      if(coding_status == false)
+        codingstr = "false";
+      gt_feature_node_add_attribute(fn, "coding", codingstr);
+    }
+  }
+
+  // If there is a single coding iLocus and a single non-coding iLocus, an
+  // effective length is assigned to each.
+  else if(numloci == 2)
+  {
+    GtGenomeNode **gn1 = gt_array_get(iloci, 0);
+    GtGenomeNode **gn2 = gt_array_get(iloci, 1);
+    GtRange rng1 = gt_genome_node_get_range(*gn1);
+    GtRange rng2 = gt_genome_node_get_range(*gn2);
+    GtFeatureNode *fn1 = gt_feature_node_cast(*gn1);
+    GtFeatureNode *fn2 = gt_feature_node_cast(*gn2);
+
+    bool cds1 = agn_locus_num_mrnas(*gn1) > 0;
+    if(cds1 == true)
+    {
+      gt_feature_node_add_attribute(fn1, "coding", "true");
+      gt_feature_node_add_attribute(fn2, "coding", "false");
+    }
+    else
+    {
+      gt_feature_node_add_attribute(fn1, "coding", "false");
+      gt_feature_node_add_attribute(fn2, "coding", "true");
+    }
+
+    // One gene contains the other
+    if(gt_range_contains(&rng1, &rng2))
+    {
+      char lenstr[32];
+      sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+      gt_feature_node_add_attribute(fn1, "effective_length", lenstr);
+      gt_feature_node_add_attribute(fn2, "effective_length", "0");
+    }
+    
+    // The genes overlap
+    else
+    {
+      agn_assert(origro < gt_range_length(&rng1));
+      GtUword overlap = rng1.end - rng2.start + 1;
+      GtUword elen1 = gt_range_length(&rng1) - origro;
+      GtUword elen2 = gt_range_length(&rng2) - overlap;
+      char lenstr1[32];
+      char lenstr2[32];
+      sprintf(lenstr1, "%lu", elen1);
+      sprintf(lenstr2, "%lu", elen2);
+      gt_feature_node_add_attribute(fn1, "effective_length", lenstr1);
+      gt_feature_node_add_attribute(fn2, "effective_length", lenstr2);
+    }
+  }
+
+  // If there are three or more iLoci with a mix of coding and non-coding iLoci,
+  // assign an effective length to the first and label it complex.
+  else
+  {
+    for(i = 0; i < numloci; i++)
+    {
+      GtGenomeNode **gn = gt_array_get(iloci, i);
+      GtFeatureNode *fn = gt_feature_node_cast(*gn);
+      if(i == 0)
+      {
+        char lenstr[32];
+        sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+        gt_feature_node_add_attribute(fn, "effective_length", lenstr);
+      }
+      gt_feature_node_add_attribute(fn, "complex", "true");
+    }
+  }
+
   return;
 }
 

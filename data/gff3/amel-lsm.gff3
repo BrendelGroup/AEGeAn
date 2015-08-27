@@ -1,21 +1,19 @@
 ##gff-version   3
-##sequence-region   NC_007079.3 8269827 8273328
+##sequence-region   NC_007079.3 8269827 8273178
 #!gff-spec-version 1.20
 #!processor NCBI annotwriter
 #!genome-build Amel_4.5
 #!genome-build-accession NCBI_Assembly:GCF_000002195.4
 #!annotation-date 7 January 2014
 #!annotation-source NCBI Apis mellifera Annotation Release 102
-NC_007079.3	AEGeAn::LocusPocus	locus	8269827	8271256	.	.	.	ID=locus1;gene=1;mRNA=1;right_overlap=18446744073709551357
-NC_007079.3	Gnomon	gene	8270327	8271256	.	+	.	ID=gene1;Parent=locus1;Name=LOC724241;Dbxref=BEEBASE:GB54296,GeneID:724241;gbkey=Gene;gene=LOC724241
+NC_007079.3	Gnomon	gene	8270327	8271256	.	+	.	ID=gene1;Name=LOC724241;Dbxref=BEEBASE:GB54296,GeneID:724241;gbkey=Gene;gene=LOC724241
 NC_007079.3	Gnomon	mRNA	8270327	8271256	.	+	.	ID=mRNA1;Parent=gene1;Name=XM_001120034.3;Dbxref=GeneID:724241,Genbank:XM_001120034.3,BEEBASE:GB54296;gbkey=mRNA;gene=LOC724241;product=LSM domain-containing protein 1-A-like;transcript_id=XM_001120034.3
 NC_007079.3	Gnomon	exon	8270327	8270461	.	+	.	Parent=mRNA1;Dbxref=GeneID:724241,Genbank:XM_001120034.3,BEEBASE:GB54296;gbkey=mRNA;gene=LOC724241;product=LSM domain-containing protein 1-A-like;transcript_id=XM_001120034.3
 NC_007079.3	Gnomon	CDS	8270402	8270461	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_001120034.1;Dbxref=GeneID:724241,Genbank:XP_001120034.1,BEEBASE:GB54296;gbkey=CDS;gene=LOC724241;product=LSM domain-containing protein 1-like;protein_id=XP_001120034.1
 NC_007079.3	Gnomon	CDS	8270881	8271132	.	+	0	ID=CDS1;Parent=mRNA1;Name=XP_001120034.1;Dbxref=GeneID:724241,Genbank:XP_001120034.1,BEEBASE:GB54296;gbkey=CDS;gene=LOC724241;product=LSM domain-containing protein 1-like;protein_id=XP_001120034.1
 NC_007079.3	Gnomon	exon	8270881	8271256	.	+	.	Parent=mRNA1;Dbxref=GeneID:724241,Genbank:XM_001120034.3,BEEBASE:GB54296;gbkey=mRNA;gene=LOC724241;product=LSM domain-containing protein 1-A-like;transcript_id=XM_001120034.3
 ###
-NC_007079.3	AEGeAn::LocusPocus	locus	8270998	8273328	.	.	.	ID=locus2;left_overlap=18446744073709551357;gene=1;mRNA=1
-NC_007079.3	Gnomon	gene	8270998	8272678	.	-	.	ID=gene2;Parent=locus2;Name=LOC100576140;Dbxref=BEEBASE:GB54223,GeneID:100576140;gbkey=Gene;gene=LOC100576140
+NC_007079.3	Gnomon	gene	8270998	8272678	.	-	.	ID=gene2;Name=LOC100576140;Dbxref=BEEBASE:GB54223,GeneID:100576140;gbkey=Gene;gene=LOC100576140
 NC_007079.3	Gnomon	mRNA	8270998	8272678	.	-	.	ID=mRNA2;Parent=gene2;Name=XM_003250432.2;Dbxref=GeneID:100576140,Genbank:XM_003250432.2,BEEBASE:GB54223;gbkey=mRNA;gene=LOC100576140;product=uncharacterized LOC100576140;transcript_id=XM_003250432.2
 NC_007079.3	Gnomon	exon	8270998	8271421	.	-	.	Parent=mRNA2;Dbxref=GeneID:100576140,Genbank:XM_003250432.2,BEEBASE:GB54223;gbkey=mRNA;gene=LOC100576140;product=uncharacterized LOC100576140;transcript_id=XM_003250432.2
 NC_007079.3	Gnomon	CDS	8271366	8271421	.	-	2	ID=CDS2;Parent=mRNA2;Name=XP_003250480.1;Dbxref=GeneID:100576140,Genbank:XP_003250480.1,BEEBASE:GB54223;gbkey=CDS;gene=LOC100576140;product=uncharacterized protein LOC100576140;protein_id=XP_003250480.1
