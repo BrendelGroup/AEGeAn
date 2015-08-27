@@ -253,84 +253,55 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   agn_assert(bin);
   agn_assert(iloci);
 
-  agn_assert(gt_array_size(bin) > 1);
+  GtUword numgenes = gt_array_size(bin);
+  agn_assert(numgenes > 1);
+  if(numgenes > 2)
+    return false;
+
   gt_array_sort(bin, (GtCompare)agn_genome_node_compare);
   GtGenomeNode **gn1 = gt_array_get(bin, 0);
+  GtGenomeNode **gn2 = gt_array_get(bin, 1);
+  GtRange range1 = gt_genome_node_get_range(*gn1);
+  GtRange range2 = gt_genome_node_get_range(*gn2);
+  if(!gt_range_contains(&range1, &range2))
+    return false;
+
   GtFeatureNode *fn1 = gt_feature_node_cast(*gn1);
+  GtFeatureNode *fn2 = gt_feature_node_cast(*gn2);
   GtArray *exons = agn_typecheck_select(fn1, agn_typecheck_exon);
   if(gt_array_size(exons) <= 1)
   {
     gt_array_delete(exons);
     return false;
   }
-
-  // First, see whether any intron from the first gene contains all other genes
-  GtUword i, j;
+  
+  GtUword i;
   bool overlap = false;
   for(i = 0; i < gt_array_size(exons); i++)
   {
     GtGenomeNode **exon = gt_array_get(exons, i);
     GtRange exonrange = gt_genome_node_get_range(*exon);
-    for(j = 1; j < gt_array_size(bin); j++)
-    {
-      GtGenomeNode **gn = gt_array_get(bin, j);
-      GtRange feature_range = gt_genome_node_get_range(*gn);
-      overlap = gt_range_overlap(&exonrange, &feature_range);
-      if(overlap)
-        break;
-    }
-    if(overlap == false)
+    overlap = gt_range_overlap(&exonrange, &range2);
+    if(overlap)
       break;
   }
   gt_array_delete(exons);
   if(overlap)
-  {
     return false;
-  }
 
-  // If so, next check for overlap between intron genes
-  overlap = false;
-  for(i = 1; i < gt_array_size(bin); i++)
-  {
-    GtGenomeNode **gn_i = gt_array_get(bin, i);
-    GtRange range_i = gt_genome_node_get_range(*gn_i);
-    for(j = i + 1; j < gt_array_size(bin); j++)
-    {
-      GtGenomeNode **gn_j = gt_array_get(bin, j);
-      GtRange range_j = gt_genome_node_get_range(*gn_j);
-      if(gt_range_overlap(&range_i, &range_j))
-      {
-        overlap = true;
-        break;
-      }
-    }
-    if(overlap)
-      break;
-  }
-  if(overlap)
-  {
-    return false;
-  }
-
-  // If one gene has an intron containing all the other genes, and the genes
-  // within the intron do not overlap, then we can create a distinct iLocus
-  // for each gene.
   GtStr *seqid = gt_genome_node_get_seqid(*gn1);
   AgnLocus *locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, fn1);
   gt_genome_node_ref(*gn1);
   gt_array_add(iloci, locus);
-  for(i = 1; i < gt_array_size(bin); i++)
-  {
-    GtGenomeNode **gn_i = gt_array_get(bin, i);
-    GtFeatureNode *fn_i = gt_feature_node_cast(*gn_i);
-    locus = agn_locus_new(seqid);
-    agn_locus_add_feature(locus, fn_i);
-    gt_genome_node_ref(*gn_i);
-    gt_feature_node_add_attribute((GtFeatureNode *)locus, "intron_gene",
-                                  "true");
-    gt_array_add(iloci, locus);
-  }
+
+  locus = agn_locus_new(seqid);
+  agn_locus_add_feature(locus, fn2);
+  gt_feature_node_add_attribute((GtFeatureNode *)locus, "intron_gene",
+                                "true");
+  gt_genome_node_ref(*gn2);
+  gt_array_add(iloci, locus);
+
   return true;
 }
 
