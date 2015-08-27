@@ -36,6 +36,7 @@ struct AgnLocusRefineStream
   GtStr *source;
   GtUword count;
   GtQueue *locusqueue;
+  GtGenomeNode *cache;
 };
 
 //------------------------------------------------------------------------------
@@ -76,6 +77,13 @@ static void locus_refine_stream_free(GtNodeStream *ns);
  */
 static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
                                        GtGenomeNode *gn);
+
+/**
+ * @function FIXME
+ */
+static void
+locus_refine_stream_mark_for_deletion(AgnLocusRefineStream *stream,
+                                      GtGenomeNode *gn);
 
 /**
  * @function Mint an ID for the given locus, tally counts of children and
@@ -119,6 +127,7 @@ GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream,
   stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
   stream->count = 0;
   stream->locusqueue = gt_queue_new();
+  stream->cache = NULL;
   return ns;
 }
 
@@ -275,7 +284,9 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   }
   gt_array_delete(exons);
   if(overlap)
+  {
     return false;
+  }
 
   // If so, next check for overlap between intron genes
   overlap = false;
@@ -297,7 +308,9 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
       break;
   }
   if(overlap)
+  {
     return false;
+  }
 
   // If one gene has an intron containing all the other genes, and the genes
   // within the intron do not overlap, then we can create a distinct iLocus
@@ -380,6 +393,8 @@ static void locus_refine_stream_free(GtNodeStream *ns)
   gt_str_delete(stream->idformat);
   gt_str_delete(stream->source);
   gt_queue_delete(stream->locusqueue);
+  if(stream->cache != NULL)
+    gt_genome_node_delete(stream->cache);
 }
 
 static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
@@ -396,7 +411,7 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
   GtArray *iloci = locus_refine_stream_resolve_bins(stream, bins);
   locus_refine_stream_extend(stream, iloci, gn);
 
-  gt_genome_node_delete(gn);
+  locus_refine_stream_mark_for_deletion(stream, gn);
   gt_array_delete(iloci);
   while(gt_array_size(bins) > 0)
   {
@@ -405,6 +420,15 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
   }
   gt_array_delete(bins);
   return 0;
+}
+
+static void
+locus_refine_stream_mark_for_deletion(AgnLocusRefineStream *stream,
+                                      GtGenomeNode *gn)
+{
+  if(stream->cache != NULL)
+    gt_genome_node_delete(stream->cache);
+  stream->cache = gn;
 }
 
 static void locus_refine_stream_mint(AgnLocusRefineStream *stream,
