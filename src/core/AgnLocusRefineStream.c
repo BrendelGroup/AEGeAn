@@ -328,35 +328,11 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     origro = atol(rostr);
 
   GtUword numloci = gt_array_size(iloci);
-  agn_assert(numloci > 1);
+  agn_assert(numloci > 0);
 
   GtUword i;
   for(i = 0; i < numloci; i++)
   {
-    /*GtGenomeNode **gn1 = gt_array_get(iloci, i - 1);
-    GtGenomeNode **gn2 = gt_array_get(iloci, i);
-
-    GtFeatureNode *fn1 = gt_feature_node_cast(*gn1);
-    GtFeatureNode *fn2 = gt_feature_node_cast(*gn2);
-
-    GtRange rng1 = gt_genome_node_get_range(*gn1);
-    GtRange rng2 = gt_genome_node_get_range(*gn2);
-
-    if(i == 1)
-      agn_assert(origro < gt_range_length(&rng1));
-
-    if(gt_range_contains(&rng1, &rng2))
-    {
-      agn_assert(gt_feature_node_has_attribute(fn2, "intron_gene"));
-      
-    }
-
-    bool iscoding1 = agn_locus_num_mrnas(*gn1);
-    bool iscoding2 = agn_locus_num_mrnas(*gn2);
-    if(iscoding1 == iscoding2)*/
-
-    
-    
     GtGenomeNode **gn = gt_array_get(iloci, i);
     GtFeatureNode *fn = gt_feature_node_cast(*gn);
     GtRange gnrange = gt_genome_node_get_range(*gn);
@@ -379,7 +355,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
   // If so, that makes our job easier. If not, we only handle the simple case
   // of one coding gene and one non-coding gene
   bool coding_status;
-  bool same_coding_status;
+  bool same_coding_status = true;
   for(i = 0; i < numloci; i++)
   {
     GtGenomeNode **gn = gt_array_get(iloci, i);
@@ -393,6 +369,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         break;
     }
   }
+  
+  // FIXME Assertion above is wrong. Need to compute effective length and provide iLocus_type for single iLoci as well
 
   // If the iLoci are all coding or all non-coding, just assign their collective
   // length (sans overlap from previous unrefined iLocus) to the first refined
@@ -414,6 +392,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         typestr = "niLocus";
       gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
     }
+    if(numloci == 1)
+      return;
   }
 
   // If there is a single coding iLocus and a single non-coding iLocus, an
