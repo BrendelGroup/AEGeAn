@@ -370,8 +370,6 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     }
   }
   
-  // FIXME Assertion above is wrong. Need to compute effective length and provide iLocus_type for single iLoci as well
-
   // If the iLoci are all coding or all non-coding, just assign their collective
   // length (sans overlap from previous unrefined iLocus) to the first refined
   // iLocus.
@@ -393,7 +391,12 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
     }
     if(numloci == 1)
+    {
+      char lenstr[32];
+      sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+      gt_feature_node_add_attribute(origfn, "effective_length", lenstr);
       return;
+    }
   }
 
   // If there is a single coding iLocus and a single non-coding iLocus, an
@@ -431,10 +434,10 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     // The genes overlap
     else
     {
-      agn_assert(origro < gt_range_length(&rng1));
+      agn_assert(origro < gt_range_length(&rng2));
       GtUword overlap = rng1.end - rng2.start + 1;
-      GtUword elen1 = gt_range_length(&rng1) - origro;
-      GtUword elen2 = gt_range_length(&rng2) - overlap;
+      GtUword elen1 = gt_range_length(&rng1) - overlap;
+      GtUword elen2 = gt_range_length(&rng2) - origro;
       char lenstr1[32];
       char lenstr2[32];
       sprintf(lenstr1, "%lu", elen1);
@@ -483,6 +486,15 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
   GtFeatureNode *locus = gt_feature_node_cast(gn);
   if(gt_feature_node_number_of_children(locus) < 2)
   {
+    GtRange rng = gt_genome_node_get_range(gn);
+    char lenstr[32];
+    GtUword ro = 0;
+    const char *rostr = gt_feature_node_get_attribute(locus, "right_overlap");
+    if(rostr != NULL)
+      ro = atol(rostr);
+    sprintf(lenstr, "%lu", gt_range_length(&rng) - ro);
+    gt_feature_node_add_attribute(locus, "effective_length", lenstr);
+
     if(gt_feature_node_number_of_children(locus) == 0)
       gt_feature_node_add_attribute(locus, "iLocus_type", "iiLocus");
     else if(agn_locus_num_mrnas(gn) > 0)

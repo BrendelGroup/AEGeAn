@@ -16,6 +16,7 @@ def run_locuspocus(infile, outfile, delta, debug=False):
   command  = "locuspocus --verbose"
   command += " --delta %d" % delta
   command += " --outfile %s.lp" % outfile
+  command += " --cds"
   command += " %s" % infile
   if debug:
     print >> sys.stderr, "command: %s" % command

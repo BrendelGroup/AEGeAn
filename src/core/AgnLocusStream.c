@@ -275,6 +275,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     if(prev_range.end + stream->delta >= locusrange.start)
     {
       GtUword newend = prev_range.end + stream->delta;
+      if(newend > seqrange.end)
+        newend = seqrange.end;
       agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
 
       GtUword newstart = locusrange.start - stream->delta;
@@ -292,8 +294,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     }
     else if(prev_range.end + (2*stream->delta) >= locusrange.start)
     {
-      agn_locus_set_range(stream->prev_locus, prev_range.start,
-                          prev_range.end + stream->delta);
+      GtUword newend = prev_range.end + stream->delta;
+      if(newend > seqrange.end)
+        newend = seqrange.end;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
 
@@ -313,8 +317,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     }
     else
     {
-      agn_locus_set_range(stream->prev_locus, prev_range.start,
-                          prev_range.end + stream->delta);
+      GtUword newend = prev_range.end + stream->delta;
+      if(newend > seqrange.end)
+        newend = seqrange.end;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
 
