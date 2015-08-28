@@ -10,7 +10,7 @@ import argparse
 import re
 import sys
 
-def parse_gff3(fp):
+def parse_gff3(fp, feattypes=['gene']):
   """
   Process entire (sorted) GFF3 file. Store lengths of sequences as reported by
   `##sequence-region` pragmas, and then discard lengths of sequences with
@@ -29,8 +29,11 @@ def parse_gff3(fp):
       assert start == 1, "assumption: start == 1: %s" % line
       seqlens[seqid] = end - start + 1
     elif len(line.split("\t")) == 9:
-      seqid = line.split("\t")[0]
-      seqlens.pop(seqid, None)
+      fields = line.split("\t")
+      seqid = fields[0]
+      ftype = fields[2]
+      if ftype in feattypes:
+        seqlens.pop(seqid, None)
 
   for seqid in sorted(seqlens.keys()):
     yield seqid, seqlens[seqid]
