@@ -486,7 +486,16 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
       }
-      gt_feature_node_add_attribute(fn, "iLocus_type", "complex");
+      const char *type = "complex";
+      if(agn_locus_num_genes(*gn) == 1)
+      {
+        if(agn_locus_num_mrnas(*gn) > 0)
+          type = "piLocus";
+        else
+          type = "niLocus";
+
+      }
+      gt_feature_node_add_attribute(fn, "iLocus_type", type);
     }
   }
 
