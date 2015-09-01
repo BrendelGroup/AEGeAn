@@ -36,7 +36,7 @@ struct AgnLocusRefineStream
   GtStr *source;
   GtUword count;
   GtQueue *locusqueue;
-  GtGenomeNode *cache;
+  AgnLocus *cache;
 };
 
 //------------------------------------------------------------------------------
@@ -351,6 +351,31 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     gt_queue_add(stream->locusqueue, *gn);
   }
 
+  // Close any remaining gaps
+  GtGenomeNode **llocus = gt_array_get(iloci, 0);
+  GtGenomeNode **rlocus = gt_array_get(iloci, numloci-1);
+  GtRange lrange = gt_genome_node_get_range(*llocus);
+  GtRange rrange = gt_genome_node_get_range(*rlocus);
+  if(numloci > 1)
+  {
+    for(i = numloci - 1; i > 0; i--)
+    {
+      GtGenomeNode **testlocus = gt_array_get(iloci, i-1);
+      GtRange testrange = gt_genome_node_get_range(*testlocus);
+      if(testrange.end > rrange.end)
+      {
+        rlocus = testlocus;
+        rrange = testrange;
+      }
+    }
+  }
+
+  if(lrange.start > origrange.start)
+    agn_locus_set_range(*llocus, origrange.start, lrange.end);
+
+  if(rrange.end < origrange.end)
+    agn_locus_set_range(*rlocus, rrange.start, origrange.end);
+
   // Determine whether all of the iLoci are coding or if all are non-coding.
   // If so, that makes our job easier. If not, we only handle the simple case
   // of one coding gene and one non-coding gene
@@ -490,7 +515,16 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         sprintf(exceptstr, "complex-overlap-%lu", numloci);
         gt_feature_node_add_attribute(fn, "iiLocus_exception", exceptstr);
       }
-      gt_feature_node_add_attribute(fn, "iLocus_type", "complex");
+      const char *type = "complex";
+      if(agn_locus_num_genes(*gn) == 1)
+      {
+        if(agn_locus_num_mrnas(*gn) > 0)
+          type = "piLocus";
+        else
+          type = "niLocus";
+
+      }
+      gt_feature_node_add_attribute(fn, "iLocus_type", type);
     }
   }
 
