@@ -271,6 +271,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
   // Handle internal loci
   if(stream->prev_locus && gt_str_cmp(seqid, prev_seqid) == 0)
   {
+    GtFeatureNode *prevfn = gt_feature_node_cast(stream->prev_locus);
+    GtFeatureNode *locusfn = gt_feature_node_cast(locus);
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
     if(prev_range.end + stream->delta >= locusrange.start)
     {
@@ -287,10 +289,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       GtUword overlap = newend - newstart + 1;
       char ovrlp[16];
       sprintf(ovrlp, "%lu", overlap);
-      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
-                                    "right_overlap", ovrlp);
-      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
-                                    ovrlp);
+      gt_feature_node_add_attribute(prevfn, "right_overlap", ovrlp);
+      gt_feature_node_add_attribute(locusfn, "left_overlap", ovrlp);
+      gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
+                                    "delta-overlap-gene");
     }
     else if(prev_range.end + (2*stream->delta) >= locusrange.start)
     {
@@ -304,16 +306,18 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       GtUword overlap = prev_range.end-locusrange.start+(2*stream->delta)+1;
       char ovrlp[16];
       sprintf(ovrlp, "%lu", overlap);
-      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
-                                    "right_overlap", ovrlp);
-      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
-                                    ovrlp);
+      gt_feature_node_add_attribute(prevfn, "right_overlap", ovrlp);
+      gt_feature_node_add_attribute(locusfn, "left_overlap", ovrlp);
+      gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
+                                    "delta-overlap-delta");
     }
     else if(prev_range.end + (3*stream->delta) >= locusrange.start)
     {
       GtUword midpoint = (prev_range.end + locusrange.start) / 2;
       agn_locus_set_range(stream->prev_locus, prev_range.start, midpoint);
       agn_locus_set_range(locus, midpoint + 1, locusrange.end);
+      gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
+                                    "delta-re-extend");
     }
     else
     {

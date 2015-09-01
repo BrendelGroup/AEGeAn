@@ -6,7 +6,7 @@
 #!genome-build-accession NCBI_Assembly:GCF_000002195.4
 #!annotation-date 7 January 2014
 #!annotation-source NCBI Apis mellifera Annotation Release 102
-NC_007079.3	AEGeAn::LocusPocus	locus	8269827	8271756	.	.	.	ID=locus1;effective_length=3352;iLocus_type=piLocus;gene=1;mRNA=1
+NC_007079.3	AEGeAn::LocusPocus	locus	8269827	8271756	.	.	.	ID=locus1;effective_length=3352;iiLocus_exception=gene-overlap-gene;iLocus_type=piLocus;gene=1;mRNA=1
 ###
 NC_007079.3	AEGeAn::LocusPocus	locus	8270498	8273178	.	.	.	ID=locus2;iLocus_type=piLocus;gene=1;mRNA=1
 ###

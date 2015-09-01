@@ -8,5 +8,5 @@
 #!annotation-source NCBI Megachile rotundata Annotation Release 101
 NW_003797177.1	AEGeAn::LocusPocus	locus	9652	19311	.	.	.	ID=locus1;effective_length=9660;iLocus_type=piLocus;gene=1;mRNA=1
 ###
-NW_003797177.1	AEGeAn::LocusPocus	locus	11405	18146	.	.	.	ID=locus2;intron_gene=true;iLocus_type=piLocus;gene=1;mRNA=4
+NW_003797177.1	AEGeAn::LocusPocus	locus	11405	18146	.	.	.	ID=locus2;iiLocus_exception=intron-gene;iLocus_type=piLocus;gene=1;mRNA=4
 ###

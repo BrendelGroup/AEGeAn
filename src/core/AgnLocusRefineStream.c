@@ -297,8 +297,8 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
 
   locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, fn2);
-  gt_feature_node_add_attribute((GtFeatureNode *)locus, "intron_gene",
-                                "true");
+  gt_feature_node_add_attribute((GtFeatureNode *)locus, "iiLocus_exception",
+                                "intron-gene");
   gt_genome_node_ref(*gn2);
   gt_array_add(iloci, locus);
 
@@ -384,10 +384,23 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         char lenstr[32];
         sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
+        if(numloci == 2)
+        {
+          GtFeatureNode **fn2 = gt_array_get(iloci, 1);
+          const char *exc = gt_feature_node_get_attribute(*fn2,
+                                                          "iiLocus_exception");
+          if(exc == NULL || strcmp(exc, "intron-gene") != 0)
+          {
+            gt_feature_node_add_attribute(fn, "iiLocus_exception",
+                                          "gene-overlap-gene");
+          }
+        }
       }
       const char *typestr = "piLocus";
       if(coding_status == false)
         typestr = "niLocus";
+      else if(agn_locus_num_genes(*gn) > 1)
+        typestr = "complex";
       gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
     }
     if(numloci == 1)
@@ -422,6 +435,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       gt_feature_node_add_attribute(fn2, "iLocus_type", "piLocus");
     }
 
+    const char *exc = gt_feature_node_get_attribute(fn2, "iiLocus_exception");
+
     // One gene contains the other
     if(gt_range_contains(&rng1, &rng2))
     {
@@ -429,6 +444,11 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
       gt_feature_node_add_attribute(fn1, "effective_length", lenstr);
       gt_feature_node_add_attribute(fn2, "effective_length", "0");
+      if(exc == NULL || strcmp(exc, "intron-gene") != 0)
+      {
+        gt_feature_node_add_attribute(fn1, "iiLocus_exception",
+                                      "gene-contain-gene");
+      }
     }
     
     // The genes overlap
@@ -444,6 +464,11 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       sprintf(lenstr2, "%lu", elen2);
       gt_feature_node_add_attribute(fn1, "effective_length", lenstr1);
       gt_feature_node_add_attribute(fn2, "effective_length", lenstr2);
+      if(exc == NULL || strcmp(exc, "intron-gene") != 0)
+      {
+        gt_feature_node_add_attribute(fn1, "iiLocus_exception",
+                                      "gene-overlap-gene");
+      }
     }
   }
 
@@ -460,6 +485,10 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         char lenstr[32];
         sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
+
+        char exceptstr[256];
+        sprintf(exceptstr, "complex-overlap-%lu", numloci);
+        gt_feature_node_add_attribute(fn, "iiLocus_exception", exceptstr);
       }
       gt_feature_node_add_attribute(fn, "iLocus_type", "complex");
     }
