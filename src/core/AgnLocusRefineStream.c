@@ -512,7 +512,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
 
         char exceptstr[256];
-        sprintf(exceptstr, "complex-overlap-%lu", numloci);
+        GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
+        sprintf(exceptstr, "complex-overlap-%lu", genenum);
         gt_feature_node_add_attribute(fn, "iiLocus_exception", exceptstr);
       }
       const char *type = "complex";
