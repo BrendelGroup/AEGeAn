@@ -19,6 +19,7 @@ typedef struct
   bool fix_pseudogenes;
   bool locus_parent;
   FILE *mapstream;
+  bool usename;
 } PmrnaOptions;
 
 static void print_usage(FILE *outstream)
@@ -34,6 +35,7 @@ static void print_usage(FILE *outstream)
 "    -l|--locus          report a single representative mRNA for each locus\n"
 "                        instead of each gene\n"
 "    -m|--map: FILE      write each gene/mRNA mapping to the specified file\n"
+"    -n|--name           for map, report mRNA Name instead of ID\n"
 "    -p|--pseudogenes    disable pseudogene detection and correction\n\n");
 }
 
@@ -41,7 +43,7 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hilm:p";
+  const char *optstr = "hilm:np";
   const struct option pmrna_options[] =
   {
     { "help",        no_argument,       NULL, 'h' },
@@ -74,6 +76,9 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
           exit(1);
         }
         break;
+      case 'n':
+        options->usename = true;
+        break;
       case 'p':
         options->fix_pseudogenes = false;
         break;
@@ -86,7 +91,7 @@ int main(int argc, char **argv)
   GtError *error;
   GtNodeStream *stream, *last_stream;
   GtQueue *streams;
-  PmrnaOptions options = { true, NULL, true, false, NULL };
+  PmrnaOptions options = { true, NULL, true, false, NULL, false };
   parse_options(argc, argv, &options);
 
   //----------
@@ -118,6 +123,8 @@ int main(int argc, char **argv)
   GtNodeVisitor *nv = agn_mrna_rep_visitor_new(options.mapstream);
   if(options.locus_parent)
     agn_mrna_rep_visitor_set_parent_type((AgnMrnaRepVisitor *)nv, "locus");
+  if(options.usename)
+    agn_mrna_rep_visitor_use_name((AgnMrnaRepVisitor *)nv);
   stream = gt_visitor_stream_new(last_stream, nv);
   gt_queue_add(streams, stream);
   last_stream = stream;

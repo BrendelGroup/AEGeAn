@@ -27,6 +27,7 @@ struct AgnMrnaRepVisitor
   const GtNodeVisitor parent_instance;
   char *parenttype;
   FILE *mapstream;
+  bool usename;
 };
 
 
@@ -61,9 +62,15 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error);
 // Method implementations
 //------------------------------------------------------------------------------
 
-GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream)
+GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream,
+                                      bool usename)
 {
   GtNodeVisitor *nv = agn_mrna_rep_visitor_new(mapstream);
+  if(usename)
+  {
+    AgnMrnaRepVisitor *v = mrna_rep_visitor_cast(nv);
+    agn_mrna_rep_visitor_use_name(v);
+  }
   GtNodeStream *ns = gt_visitor_stream_new(in, nv);
   return ns;
 }
@@ -74,6 +81,7 @@ GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream)
   AgnMrnaRepVisitor *v = mrna_rep_visitor_cast(nv);
   v->parenttype = gt_cstr_dup("gene");
   v->mapstream = mapstream;
+  v->usename = false;
   return nv;
 }
 
@@ -82,6 +90,12 @@ void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v,
 {
   gt_free(v->parenttype);
   v->parenttype = gt_cstr_dup(type);
+}
+
+void agn_mrna_rep_visitor_use_name(AgnMrnaRepVisitor *v)
+{
+  agn_assert(v);
+  v->usename = true;
 }
 
 bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
@@ -136,7 +150,7 @@ static void mrna_rep_visitor_test_data(GtQueue *queue)
   GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &file);
   gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)gff3in);
   gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)gff3in);
-  GtNodeStream *rep_stream = agn_mrna_rep_stream_new(gff3in, NULL);
+  GtNodeStream *rep_stream = agn_mrna_rep_stream_new(gff3in, NULL, false);
   GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
   GtNodeStream *arraystream = gt_array_out_stream_new(rep_stream, feats, error);
   int pullresult = gt_node_stream_pull(arraystream, error);
@@ -178,7 +192,9 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
       if(v->mapstream != NULL && gt_array_size(mrnas) == 1)
       {
         GtFeatureNode **mrna = gt_array_pop(mrnas);
-        const char *mid = gt_feature_node_get_attribute(*mrna, "ID");
+        const char *mid = gt_feature_node_get_attribute(*mrna, "Name");
+        if(mid == NULL || v->usename == false)
+          mid = gt_feature_node_get_attribute(*mrna, "ID");
         fprintf(v->mapstream, "%s\t%s\n", gid, mid);
       }
       gt_array_delete(mrnas);
@@ -194,12 +210,14 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
       GtGenomeNode **mrna = gt_array_get(mrnas, j);
       GtFeatureNode *mrnafn = gt_feature_node_cast(*mrna);
       GtUword length = agn_mrna_cds_length(mrnafn);
-      const char *mid = gt_feature_node_get_attribute(mrnafn, "ID");
+      const char *mid = gt_feature_node_get_attribute(mrnafn, "Name");
+      if(mid == NULL || v->usename == false)
+        mid = gt_feature_node_get_attribute(mrnafn, "ID");
       bool preempt = (length == longest_length && strcmp(mid, longest_id) < 0);
       if(longest_length == 0 || length > longest_length || preempt)
       {
         longest_mrna = mrnafn;
-        longest_id = gt_feature_node_get_attribute(mrnafn, "ID");
+        longest_id = mid;
         longest_length = length;
       }
     }
