@@ -424,8 +424,15 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       const char *typestr = "piLocus";
       if(coding_status == false)
         typestr = "niLocus";
-      else if(agn_locus_num_genes(*gn) > 1)
+      else if(agn_locus_num_genes(*gn) > 2)
+      {
         typestr = "complex";
+
+        char exceptstr[32];
+        GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
+        sprintf(exceptstr, "complex-overlap-%lu", genenum);
+        gt_feature_node_set_attribute(fn, "iiLocus_exception", exceptstr);
+      }
       gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
     }
     if(numloci == 1)
@@ -511,7 +518,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
 
-        char exceptstr[256];
+        char exceptstr[32];
         GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
         sprintf(exceptstr, "complex-overlap-%lu", genenum);
         gt_feature_node_add_attribute(fn, "iiLocus_exception", exceptstr);
