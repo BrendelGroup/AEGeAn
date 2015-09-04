@@ -185,7 +185,9 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
   {
     GtGenomeNode **gene = gt_array_get(genes, i);
     GtFeatureNode *genefn = gt_feature_node_cast(*gene);
-    const char *gid = gt_feature_node_get_attribute(genefn, "ID");
+    const char *gid = gt_feature_node_get_attribute(genefn, "Name");
+    if(gid == NULL || v->usename == false)
+      gid = gt_feature_node_get_attribute(genefn, "Name");
     GtArray *mrnas = agn_typecheck_select(genefn, agn_typecheck_mrna);
     if(gt_array_size(mrnas) <= 1)
     {
