@@ -196,7 +196,11 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
         GtFeatureNode **mrna = gt_array_pop(mrnas);
         const char *mid = gt_feature_node_get_attribute(*mrna, "accession");
         if(mid == NULL || v->useacc == false)
+        {
           mid = gt_feature_node_get_attribute(*mrna, "ID");
+          if(mid == NULL)
+            mid = gt_feature_node_get_attribute(*mrna, "Parent");
+        }
         fprintf(v->mapstream, "%s\t%s\n", gid, mid);
       }
       gt_array_delete(mrnas);
@@ -214,7 +218,11 @@ mrna_rep_visit_feature_node(GtNodeVisitor *nv,GtFeatureNode *fn,GtError *error)
       GtUword length = agn_mrna_cds_length(mrnafn);
       const char *mid = gt_feature_node_get_attribute(mrnafn, "accession");
       if(mid == NULL || v->useacc == false)
+      {
         mid = gt_feature_node_get_attribute(mrnafn, "ID");
+        if(mid == NULL)
+          mid = gt_feature_node_get_attribute(mrnafn, "Parent");
+      }
       bool preempt = (length == longest_length && strcmp(mid, longest_id) < 0);
       if(longest_length == 0 || length > longest_length || preempt)
       {

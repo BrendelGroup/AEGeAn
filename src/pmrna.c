@@ -59,6 +59,9 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
   {
     switch(opt)
     {
+      case 'a':
+        options->useacc = true;
+        break;
       case 'h':
         print_usage(stdout);
         exit(0);
@@ -76,9 +79,6 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
           fprintf(stderr, "error: could not create mapfile '%s'", optarg);
           exit(1);
         }
-        break;
-      case 'n':
-        options->useacc = true;
         break;
       case 'p':
         options->fix_pseudogenes = false;
