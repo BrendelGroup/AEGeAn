@@ -361,6 +361,11 @@ int main(int argc, char **argv)
                                                  options.by_cds);
     agn_locus_refine_stream_set_source((AgnLocusRefineStream *)current_stream,
                                        "AEGeAn::LocusPocus");
+    if(options.idformat != NULL)
+    {
+      AgnLocusRefineStream *rs = (AgnLocusRefineStream *)current_stream;
+      agn_locus_refine_stream_set_idformat(rs, options.idformat);
+    }
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }
