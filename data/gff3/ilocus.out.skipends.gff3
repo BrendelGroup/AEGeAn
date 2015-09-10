@@ -38,13 +38,13 @@ seq06	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus6;gene=1;mRNA=1
 ###
 seq07	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus7;gene=1;mRNA=1
 ###
-seq07	AEGeAn::LocusPocus	locus	801	1001	.	.	.	ID=locus8
+seq07	AEGeAn::LocusPocus	locus	801	1001	.	.	.	ID=locus8;fg_orient=FF
 ###
 seq07	AEGeAn::LocusPocus	locus	1002	1600	.	.	.	ID=locus9;gene=1;mRNA=1
 ###
 seq08	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus10;gene=1;mRNA=1
 ###
-seq08	AEGeAn::LocusPocus	locus	801	1000	.	.	.	ID=locus11
+seq08	AEGeAn::LocusPocus	locus	801	1000	.	.	.	ID=locus11;fg_orient=FF
 ###
 seq08	AEGeAn::LocusPocus	locus	1001	1600	.	.	.	ID=locus12;gene=1;mRNA=1
 ###

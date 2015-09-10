@@ -334,6 +334,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         agn_locus_set_range(emptylocus,
                             prev_range.end + stream->delta + 1,
                             locusrange.start - stream->delta - 1);
+        const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
+        int orient = agn_locus_inner_orientation(stream->prev_locus, locus);
+        GtFeatureNode *iilocus = gt_feature_node_cast(emptylocus);
+        gt_feature_node_set_attribute(iilocus, "fg_orient", orientstrs[orient]);
         gt_queue_add(stream->locusqueue, emptylocus);
       }
     }

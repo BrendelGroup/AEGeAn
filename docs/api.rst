@@ -454,6 +454,10 @@ Class AgnLocus
 
   Return true if ``locus`` satisfies the given filtering criterion.
 
+.. c:function:: GtArray *agn_locus_get(AgnLocus *locus)
+
+  Return an array of the locus' top-level children, regardless of their type.
+
 .. c:function:: GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
 
   Get a list of all the prediction transcript cliques that have no corresponding reference transcript clique.
@@ -473,6 +477,10 @@ Class AgnLocus
 .. c:function:: GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src)
 
   Get the number of genes for the locus. Rather than calling this function directly, users are encouraged to use one of the following macros: ``agn_locus_num_pred_genes(locus)`` for the number of prediction genes, ``agn_locus_num_refr_genes(locus)`` for the number of reference genes, or ``agn_locus_num_genes(locus)`` if the source of annotation is undesignated or irrelevant.
+
+.. c:function:: int agn_locus_inner_orientation(AgnLocus *left, AgnLocus *right)
+
+  Given two adjacent gene-containing iLoci, determine their orientation: 0 for both forward ('>>'), 1 for inner ('><'), 2 for outer ('<>'), and 3 for reverse ('<<').
 
 .. c:function:: GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
 
@@ -540,13 +548,17 @@ Class AgnLocusMapVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `AgnLocusMapVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
+.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh, bool useacc)
 
   Constructor for a node stream based on this node visitor. See :c:func:`agn_locus_map_visitor_new` for a description of the function arguments.
 
 .. c:function:: GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
 
   Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
+
+.. c:function:: void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv)
+
+  Report gene/mRNA `Name` attributes rather than ID attributes.
 
 Class AgnLocusRefineStream
 --------------------------
@@ -613,7 +625,7 @@ Class AgnMrnaRepVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream)
+.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstreami, bool useacc)
 
   Constructor for a node stream based on this node visitor.
 
@@ -624,6 +636,10 @@ Class AgnMrnaRepVisitor
 .. c:function:: void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v, const char *type)
 
   By default, the representative mRNA for each gene will be reported. Use this function to specify an alternative top-level feature to gene (such as locus).
+
+.. c:function:: void agn_mrna_rep_visitor_use_accession(AgnMrnaRepVisitor *v)
+
+  Write mRNA `accession` attribute to `mapstream` rather than `ID` attribute.
 
 .. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
