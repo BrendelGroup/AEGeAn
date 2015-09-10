@@ -488,6 +488,7 @@ static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
   char locusid[256];
   sprintf(locusid, gt_str_get(stream->idformat), stream->count);
   gt_feature_node_set_attribute((GtFeatureNode *)locus, "ID", locusid);
+  gt_feature_node_set_attribute((GtFeatureNode *)locus, "Name", locusid);
   gt_feature_node_set_source((GtFeatureNode *)locus, stream->source);
 
   GtArray *types = gt_array_new( sizeof(const char *) );

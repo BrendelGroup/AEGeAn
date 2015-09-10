@@ -609,6 +609,7 @@ static void locus_refine_stream_mint(AgnLocusRefineStream *stream,
   char locusid[256];
   sprintf(locusid, gt_str_get(stream->idformat), stream->count);
   gt_feature_node_set_attribute((GtFeatureNode *)locus, "ID", locusid);
+  gt_feature_node_set_attribute((GtFeatureNode *)locus, "Name", locusid);
 
   GtArray *types = gt_array_new( sizeof(const char *) );
   GtHashmap *countsbytype = gt_hashmap_new(GT_HASH_STRING, gt_free_func,

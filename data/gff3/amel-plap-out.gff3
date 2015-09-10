@@ -6,5 +6,5 @@
 #!genome-build-accession NCBI_Assembly:GCF_000002195.4
 #!annotation-date 7 January 2014
 #!annotation-source NCBI Apis mellifera Annotation Release 102
-NC_007077.3	AEGeAn::LocusPocus	locus	8815135	8822332	.	.	.	ID=locus1;gene=2;mRNA=2
+NC_007077.3	AEGeAn::LocusPocus	locus	8815135	8822332	.	.	.	ID=locus1;Name=locus1;gene=2;mRNA=2
 ###

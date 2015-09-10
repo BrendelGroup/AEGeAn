@@ -24,83 +24,83 @@
 ##sequence-region   seq23 1 801
 ##sequence-region   seq24 1 800
 ##sequence-region   seq25 1 799
-seq01	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus1;gene=1;mRNA=1
+seq01	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus1;Name=locus1;gene=1;mRNA=1
 ###
-seq02	AEGeAn::LocusPocus	locus	201	900	.	.	.	ID=locus2;gene=1;mRNA=1
+seq02	AEGeAn::LocusPocus	locus	201	900	.	.	.	ID=locus2;Name=locus2;gene=1;mRNA=1
 ###
-seq03	AEGeAn::LocusPocus	locus	202	900	.	.	.	ID=locus3;gene=1;mRNA=1
+seq03	AEGeAn::LocusPocus	locus	202	900	.	.	.	ID=locus3;Name=locus3;gene=1;mRNA=1
 ###
-seq04	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus4;gene=1;mRNA=1
+seq04	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus4;Name=locus4;gene=1;mRNA=1
 ###
-seq05	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus5;gene=1;mRNA=1
+seq05	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus5;Name=locus5;gene=1;mRNA=1
 ###
-seq06	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus6;gene=1;mRNA=1
+seq06	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus6;Name=locus6;gene=1;mRNA=1
 ###
-seq07	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus7;gene=1;mRNA=1
+seq07	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus7;Name=locus7;gene=1;mRNA=1
 ###
-seq07	AEGeAn::LocusPocus	locus	801	1001	.	.	.	ID=locus8;fg_orient=FF
+seq07	AEGeAn::LocusPocus	locus	801	1001	.	.	.	ID=locus8;fg_orient=FF;Name=locus8
 ###
-seq07	AEGeAn::LocusPocus	locus	1002	1600	.	.	.	ID=locus9;gene=1;mRNA=1
+seq07	AEGeAn::LocusPocus	locus	1002	1600	.	.	.	ID=locus9;Name=locus9;gene=1;mRNA=1
 ###
-seq08	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus10;gene=1;mRNA=1
+seq08	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus10;Name=locus10;gene=1;mRNA=1
 ###
-seq08	AEGeAn::LocusPocus	locus	801	1000	.	.	.	ID=locus11;fg_orient=FF
+seq08	AEGeAn::LocusPocus	locus	801	1000	.	.	.	ID=locus11;fg_orient=FF;Name=locus11
 ###
-seq08	AEGeAn::LocusPocus	locus	1001	1600	.	.	.	ID=locus12;gene=1;mRNA=1
+seq08	AEGeAn::LocusPocus	locus	1001	1600	.	.	.	ID=locus12;Name=locus12;gene=1;mRNA=1
 ###
-seq09	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus13;gene=1;mRNA=1;iiLocus_exception=delta-re-extend
+seq09	AEGeAn::LocusPocus	locus	1	900	.	.	.	ID=locus13;Name=locus13;gene=1;mRNA=1;iiLocus_exception=delta-re-extend
 ###
-seq09	AEGeAn::LocusPocus	locus	901	1600	.	.	.	ID=locus14;gene=1;mRNA=1
+seq09	AEGeAn::LocusPocus	locus	901	1600	.	.	.	ID=locus14;Name=locus14;gene=1;mRNA=1
 ###
-seq10	AEGeAn::LocusPocus	locus	1	801	.	.	.	ID=locus15;gene=1;mRNA=1;iiLocus_exception=delta-re-extend
+seq10	AEGeAn::LocusPocus	locus	1	801	.	.	.	ID=locus15;Name=locus15;gene=1;mRNA=1;iiLocus_exception=delta-re-extend
 ###
-seq10	AEGeAn::LocusPocus	locus	802	1500	.	.	.	ID=locus16;gene=1;mRNA=1
+seq10	AEGeAn::LocusPocus	locus	802	1500	.	.	.	ID=locus16;Name=locus16;gene=1;mRNA=1
 ###
-seq11	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus17;gene=1;mRNA=1;iiLocus_exception=delta-re-extend
+seq11	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus17;Name=locus17;gene=1;mRNA=1;iiLocus_exception=delta-re-extend
 ###
-seq11	AEGeAn::LocusPocus	locus	801	1500	.	.	.	ID=locus18;gene=1;mRNA=1
+seq11	AEGeAn::LocusPocus	locus	801	1500	.	.	.	ID=locus18;Name=locus18;gene=1;mRNA=1
 ###
-seq12	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus19;gene=1;mRNA=1;right_overlap=1;iiLocus_exception=delta-overlap-delta
+seq12	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus19;Name=locus19;gene=1;mRNA=1;right_overlap=1;iiLocus_exception=delta-overlap-delta
 ###
-seq12	AEGeAn::LocusPocus	locus	800	1500	.	.	.	ID=locus20;left_overlap=1;gene=1;mRNA=1
+seq12	AEGeAn::LocusPocus	locus	800	1500	.	.	.	ID=locus20;left_overlap=1;Name=locus20;gene=1;mRNA=1
 ###
-seq13	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus21;gene=1;mRNA=1;right_overlap=198;iiLocus_exception=delta-overlap-delta
+seq13	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus21;Name=locus21;gene=1;mRNA=1;right_overlap=198;iiLocus_exception=delta-overlap-delta
 ###
-seq13	AEGeAn::LocusPocus	locus	603	1300	.	.	.	ID=locus22;left_overlap=198;gene=1;mRNA=1
+seq13	AEGeAn::LocusPocus	locus	603	1300	.	.	.	ID=locus22;left_overlap=198;Name=locus22;gene=1;mRNA=1
 ###
-seq14	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus23;gene=1;mRNA=1;right_overlap=199;iiLocus_exception=delta-overlap-delta
+seq14	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus23;Name=locus23;gene=1;mRNA=1;right_overlap=199;iiLocus_exception=delta-overlap-delta
 ###
-seq14	AEGeAn::LocusPocus	locus	602	1300	.	.	.	ID=locus24;left_overlap=199;gene=1;mRNA=1
+seq14	AEGeAn::LocusPocus	locus	602	1300	.	.	.	ID=locus24;left_overlap=199;Name=locus24;gene=1;mRNA=1
 ###
-seq15	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus25;gene=1;mRNA=1;right_overlap=200;iiLocus_exception=delta-overlap-delta
+seq15	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus25;Name=locus25;gene=1;mRNA=1;right_overlap=200;iiLocus_exception=delta-overlap-delta
 ###
-seq15	AEGeAn::LocusPocus	locus	601	1300	.	.	.	ID=locus26;left_overlap=200;gene=1;mRNA=1
+seq15	AEGeAn::LocusPocus	locus	601	1300	.	.	.	ID=locus26;left_overlap=200;Name=locus26;gene=1;mRNA=1
 ###
-seq16	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus27;gene=1;mRNA=1;right_overlap=201;iiLocus_exception=delta-overlap-gene
+seq16	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus27;Name=locus27;gene=1;mRNA=1;right_overlap=201;iiLocus_exception=delta-overlap-gene
 ###
-seq16	AEGeAn::LocusPocus	locus	600	1300	.	.	.	ID=locus28;left_overlap=201;gene=1;mRNA=1
+seq16	AEGeAn::LocusPocus	locus	600	1300	.	.	.	ID=locus28;left_overlap=201;Name=locus28;gene=1;mRNA=1
 ###
-seq17	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus29;gene=1;mRNA=1;right_overlap=395;iiLocus_exception=delta-overlap-gene
+seq17	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus29;Name=locus29;gene=1;mRNA=1;right_overlap=395;iiLocus_exception=delta-overlap-gene
 ###
-seq17	AEGeAn::LocusPocus	locus	406	1200	.	.	.	ID=locus30;left_overlap=395;gene=1;mRNA=1
+seq17	AEGeAn::LocusPocus	locus	406	1200	.	.	.	ID=locus30;left_overlap=395;Name=locus30;gene=1;mRNA=1
 ###
-seq18	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus31;gene=1;mRNA=1;right_overlap=399;iiLocus_exception=delta-overlap-gene
+seq18	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus31;Name=locus31;gene=1;mRNA=1;right_overlap=399;iiLocus_exception=delta-overlap-gene
 ###
-seq18	AEGeAn::LocusPocus	locus	402	1200	.	.	.	ID=locus32;left_overlap=399;gene=1;mRNA=1
+seq18	AEGeAn::LocusPocus	locus	402	1200	.	.	.	ID=locus32;left_overlap=399;Name=locus32;gene=1;mRNA=1
 ###
-seq19	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus33;gene=1;mRNA=1;right_overlap=400;iiLocus_exception=delta-overlap-gene
+seq19	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus33;Name=locus33;gene=1;mRNA=1;right_overlap=400;iiLocus_exception=delta-overlap-gene
 ###
-seq19	AEGeAn::LocusPocus	locus	401	1200	.	.	.	ID=locus34;left_overlap=400;gene=1;mRNA=1
+seq19	AEGeAn::LocusPocus	locus	401	1200	.	.	.	ID=locus34;left_overlap=400;Name=locus34;gene=1;mRNA=1
 ###
-seq20	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus35;gene=1;mRNA=1
+seq20	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus35;Name=locus35;gene=1;mRNA=1
 ###
-seq21	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus36;gene=1;mRNA=1
+seq21	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus36;Name=locus36;gene=1;mRNA=1
 ###
-seq22	AEGeAn::LocusPocus	locus	1	999	.	.	.	ID=locus37;gene=1;mRNA=1
+seq22	AEGeAn::LocusPocus	locus	1	999	.	.	.	ID=locus37;Name=locus37;gene=1;mRNA=1
 ###
-seq23	AEGeAn::LocusPocus	locus	1	801	.	.	.	ID=locus38;gene=1;mRNA=1
+seq23	AEGeAn::LocusPocus	locus	1	801	.	.	.	ID=locus38;Name=locus38;gene=1;mRNA=1
 ###
-seq24	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus39;gene=1;mRNA=1
+seq24	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus39;Name=locus39;gene=1;mRNA=1
 ###
-seq25	AEGeAn::LocusPocus	locus	1	799	.	.	.	ID=locus40;gene=1;mRNA=1
+seq25	AEGeAn::LocusPocus	locus	1	799	.	.	.	ID=locus40;Name=locus40;gene=1;mRNA=1
 ###
