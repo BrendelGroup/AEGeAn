@@ -85,3 +85,16 @@ if [ $status == 0 ]; then
 fi
 printf "        | %-36s | %s\n" "Megachile rotundata CST (intron)" $result
 rm ${temp}
+
+$memcheckcmd bin/locuspocus --delta=300 --ilens=${temp} --cds data/gff3/amel-ogs-g716.gff3 > /dev/null 2>&1
+if [ $? != 0 ]; then
+  exit 1
+fi
+diff ${temp} data/misc/amel-ogs-ilens.txt > /dev/null 2>&1
+status=$?
+result="FAIL"
+if [ $status == 0 ]; then
+  result="PASS"
+fi
+printf "        | %-36s | %s\n" "iiLocus lengths (Amel OGS Group7.16)" $result
+rm ${temp}
