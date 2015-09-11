@@ -436,7 +436,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       const char *typestr = "piLocus";
       if(coding_status == false)
         typestr = "niLocus";
-      else if(agn_locus_num_genes(*gn) > 2)
+      else if(agn_locus_num_genes(*gn) > 1)
       {
         typestr = "complex";
 
