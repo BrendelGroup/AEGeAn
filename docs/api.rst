@@ -579,6 +579,10 @@ Class AgnLocusRefineStream
 
   Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
 
+.. c:function:: void agn_locus_refine_stream_track_ilens(AgnLocusRefineStream *stream, FILE *ilenfile)
+
+  Record the length of each intergenic iLocus as loci are being parsed.
+
 .. c:function:: bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class. Returns true if all tests passed.
@@ -613,6 +617,10 @@ Class AgnLocusStream
 .. c:function:: void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source)
 
   Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
+
+.. c:function:: void agn_locus_stream_track_ilens(AgnLocusStream *stream, FILE *ilenfile)
+
+  Record the length of each intergenic iLocus as loci are being parsed.
 
 .. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
 

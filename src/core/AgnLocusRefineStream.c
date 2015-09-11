@@ -37,6 +37,7 @@ struct AgnLocusRefineStream
   GtUword count;
   GtQueue *locusqueue;
   AgnLocus *cache;
+  FILE *ilenfile;
 };
 
 //------------------------------------------------------------------------------
@@ -128,6 +129,7 @@ GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream,
   stream->count = 0;
   stream->locusqueue = gt_queue_new();
   stream->cache = NULL;
+  stream->ilenfile = NULL;
   return ns;
 }
 
@@ -145,6 +147,12 @@ void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream,
   agn_assert(stream && source);
   gt_str_delete(stream->source);
   stream->source = gt_str_new_cstr(source);
+}
+
+void agn_locus_refine_stream_track_ilens(AgnLocusRefineStream *stream,
+                                         FILE *ilenfile)
+{
+  stream->ilenfile = ilenfile;
 }
 
 bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
@@ -299,6 +307,8 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   agn_locus_add_feature(locus, fn2);
   gt_feature_node_add_attribute((GtFeatureNode *)locus, "iiLocus_exception",
                                 "intron-gene");
+  if(stream->ilenfile != NULL)
+    fprintf(stream->ilenfile, "0\n");
   gt_genome_node_ref(*gn2);
   gt_array_add(iloci, locus);
 
@@ -418,6 +428,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           {
             gt_feature_node_add_attribute(fn, "iiLocus_exception",
                                           "gene-overlap-gene");
+            if(stream->ilenfile != NULL)
+              fprintf(stream->ilenfile, "0\n");
           }
         }
       }
@@ -432,6 +444,12 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
         sprintf(exceptstr, "complex-overlap-%lu", genenum);
         gt_feature_node_set_attribute(fn, "iiLocus_exception", exceptstr);
+        if(stream->ilenfile != NULL)
+        {
+          GtUword k;
+          for(k = 1; k < genenum; k++)
+            fprintf(stream->ilenfile, "0\n");
+        }
       }
       gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
     }
@@ -480,6 +498,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       {
         gt_feature_node_add_attribute(fn1, "iiLocus_exception",
                                       "gene-contain-gene");
+        if(stream->ilenfile != NULL)
+          fprintf(stream->ilenfile, "0\n");
       }
     }
     
@@ -500,6 +520,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       {
         gt_feature_node_add_attribute(fn1, "iiLocus_exception",
                                       "gene-overlap-gene");
+        if(stream->ilenfile != NULL)
+          fprintf(stream->ilenfile, "0\n");
       }
     }
   }
@@ -522,6 +544,12 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
         sprintf(exceptstr, "complex-overlap-%lu", genenum);
         gt_feature_node_add_attribute(fn, "iiLocus_exception", exceptstr);
+        if(stream->ilenfile != NULL)
+        {
+          GtUword k;
+          for(k = 1; k < genenum; k++)
+            fprintf(stream->ilenfile, "0\n");
+        }
       }
       const char *type = "complex";
       if(agn_locus_num_genes(*gn) == 1)

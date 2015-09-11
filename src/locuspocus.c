@@ -13,7 +13,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "genometools.h"
 #include "aegean.h"
 
-// Simple data structure for program options
+// Data structure for program options
 typedef struct
 {
   bool debug;
@@ -32,6 +32,7 @@ typedef struct
   bool refine;
   bool by_cds;
   GtUword minoverlap;
+  FILE *ilenfile;
 } LocusPocusOptions;
 
 // Set default values for program
@@ -55,6 +56,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->refine = false;
   options->by_cds = false;
   options->minoverlap = 1;
+  options->ilenfile = NULL;
 }
 
 static void free_option_memory(LocusPocusOptions *options)
@@ -68,6 +70,8 @@ static void free_option_memory(LocusPocusOptions *options)
     fclose(options->transstream);
   if(options->idformat != NULL)
     gt_free(options->idformat);
+  if(options->ilenfile != NULL)
+    fclose(options->ilenfile);
 }
 
 // Usage statement
@@ -107,6 +111,8 @@ static void print_usage(FILE *outstream)
 "                           interval loci; note the format string should\n"
 "                           include a single %%lu specifier to be filled in\n"
 "                           with a long unsigned integer value\n"
+"    -i|--ilens: FILE       create a file with the lengths of each intergenic\n"
+"                           iLocus\n"
 "    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
 "                           corresponding locus to the given file\n"
 "    -o|--outfile: FILE     name of file to which results will be written;\n"
@@ -133,7 +139,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "cdef:g:hI:l:m:o:p:rst:uVvy";
+  const char *optstr = "cdef:g:hI:i:l:m:o:p:rst:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
@@ -144,6 +150,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "genemap",    required_argument, NULL, 'g' },
     { "help",       no_argument,       NULL, 'h' },
     { "idformat",   required_argument, NULL, 'I' },
+    { "ilens",      required_argument, NULL, 'i' },
     { "delta",      required_argument, NULL, 'l' },
     { "minoverlap", required_argument, NULL, 'm' },
     { "outfile",    required_argument, NULL, 'o' },
@@ -207,6 +214,11 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         if(options->idformat != NULL)
           gt_free(options->idformat);
         options->idformat = gt_cstr_dup(optarg);
+        break;
+      case 'i':
+        options->ilenfile = fopen(optarg, "w");
+        if(options->ilenfile == NULL)
+          gt_error_set(error, "could not open ilenfile file '%s'", optarg);
         break;
       case 'l':
         if(sscanf(optarg, "%lu", &options->delta) == EOF)
@@ -339,18 +351,14 @@ int main(int argc, char **argv)
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, options.delta);
-  agn_locus_stream_set_source((AgnLocusStream *)current_stream,
-                              "AEGeAn::LocusPocus");
-  agn_locus_stream_set_endmode((AgnLocusStream*)current_stream,options.endmode);
+  AgnLocusStream *ls = (AgnLocusStream*)current_stream;
+  agn_locus_stream_set_source(ls, "AEGeAn::LocusPocus");
+  agn_locus_stream_set_endmode(ls, options.endmode);
+  agn_locus_stream_track_ilens(ls, options.ilenfile);
   if(options.idformat != NULL)
-  {
-    agn_locus_stream_set_idformat((AgnLocusStream *)current_stream,
-                                  options.idformat);
-  }
+    agn_locus_stream_set_idformat(ls, options.idformat);
   if(options.skipempty)
-  {
-    agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
-  }
+    agn_locus_stream_skip_empty_loci(ls);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
@@ -359,13 +367,11 @@ int main(int argc, char **argv)
     current_stream = agn_locus_refine_stream_new(last_stream, options.delta,
                                                  options.minoverlap,
                                                  options.by_cds);
-    agn_locus_refine_stream_set_source((AgnLocusRefineStream *)current_stream,
-                                       "AEGeAn::LocusPocus");
+    AgnLocusRefineStream *lrs = (AgnLocusRefineStream *)current_stream;
+    agn_locus_refine_stream_set_source(lrs, "AEGeAn::LocusPocus");
+    agn_locus_refine_stream_track_ilens(lrs, options.ilenfile);
     if(options.idformat != NULL)
-    {
-      AgnLocusRefineStream *rs = (AgnLocusRefineStream *)current_stream;
-      agn_locus_refine_stream_set_idformat(rs, options.idformat);
-    }
+      agn_locus_refine_stream_set_idformat(lrs, options.idformat);
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }

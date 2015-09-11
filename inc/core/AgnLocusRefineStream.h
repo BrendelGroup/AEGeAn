@@ -50,6 +50,13 @@ void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream,
                                         const char *source);
 
 /**
+ * @function Record the length of each intergenic iLocus as loci are being
+ * parsed.
+ */
+void agn_locus_refine_stream_track_ilens(AgnLocusRefineStream *stream,
+                                         FILE *ilenfile);
+
+/**
  * @function Run unit tests for this class. Returns true if all tests passed.
  */
 bool agn_locus_refine_stream_unit_test(AgnUnitTest *test);
