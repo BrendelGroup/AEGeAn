@@ -301,8 +301,11 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       gt_feature_node_add_attribute(locusfn, "left_overlap", ovrlp);
       gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
                                     "delta-overlap-gene");
+
       if(stream->ilenfile != NULL)
         fprintf(stream->ilenfile, "0\n");
+      gt_feature_node_add_attribute(prevfn, "riil", "0");
+      gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
     else if(prev_range.end + (2*stream->delta) >= locusrange.start)
     {
@@ -320,8 +323,11 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       gt_feature_node_add_attribute(locusfn, "left_overlap", ovrlp);
       gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
                                     "delta-overlap-delta");
+
       if(stream->ilenfile != NULL)
         fprintf(stream->ilenfile, "0\n");
+      gt_feature_node_add_attribute(prevfn, "riil", "0");
+      gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
     else if(prev_range.end + (3*stream->delta) >= locusrange.start)
     {
@@ -330,8 +336,11 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       agn_locus_set_range(locus, midpoint + 1, locusrange.end);
       gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
                                     "delta-re-extend");
+
       if(stream->ilenfile != NULL)
         fprintf(stream->ilenfile, "0\n");
+      gt_feature_node_add_attribute(prevfn, "riil", "0");
+      gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
     else
     {
@@ -348,8 +357,13 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         GtRange irange = { prev_range.end + stream->delta + 1,
                            locusrange.start - stream->delta - 1 };
         agn_locus_set_range(iilocus, irange.start, irange.end);
+
         if(stream->ilenfile != NULL)
           fprintf(stream->ilenfile, "%lu\n", gt_range_length(&irange));
+        char iilocuslen[32];
+        sprintf(iilocuslen, "%lu", gt_range_length(&irange));
+        gt_feature_node_add_attribute(prevfn, "riil", iilocuslen);
+        gt_feature_node_add_attribute(locusfn, "liil", iilocuslen);
 
         const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
         int orient = agn_locus_inner_orientation(stream->prev_locus, locus);
