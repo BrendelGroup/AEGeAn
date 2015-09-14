@@ -55,8 +55,7 @@ GtArray *locus_refine_stream_bin_features(AgnLocusRefineStream *stream,
  * @function FIXME
  */
 static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
-                                            AgnLocus *orig, GtArray *bin,
-                                            GtArray *iloci);
+                                            GtArray *bin, GtArray *iloci);
 
 /**
  * @function Implement the node stream interface.
@@ -104,7 +103,7 @@ static int locus_refine_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
  * @function FIXME
  */
 static GtArray *locus_refine_stream_resolve_bins(AgnLocusRefineStream *stream,
-                                                 AgnLocus *orig, GtArray *bins);
+                                                 GtArray *bins);
 
 /**
  * @function FIXME
@@ -258,8 +257,7 @@ GtArray *locus_refine_stream_bin_features(AgnLocusRefineStream *stream,
 }
 
 static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
-                                            AgnLocus *orig, GtArray *bin,
-                                            GtArray *iloci)
+                                            GtArray *bin, GtArray *iloci)
 {
   agn_assert(bin);
   agn_assert(iloci);
@@ -305,13 +303,6 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   agn_locus_add_feature(locus, fn1);
   gt_genome_node_ref(*gn1);
   gt_array_add(iloci, locus);
-  GtFeatureNode *origfn = gt_feature_node_cast(orig);
-  const char *iil = gt_feature_node_get_attribute(origfn, "liil");
-  if(iil != NULL)
-    gt_feature_node_add_attribute((GtFeatureNode *)locus, "liil", iil);
-  iil = gt_feature_node_get_attribute(origfn, "riil");
-  if(iil != NULL)
-    gt_feature_node_add_attribute((GtFeatureNode *)locus, "riil", iil);
 
   locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, fn2);
@@ -319,8 +310,6 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
                                 "intron-gene");
   if(stream->ilenfile != NULL)
     fprintf(stream->ilenfile, "0\n");
-  gt_feature_node_add_attribute((GtFeatureNode *)locus, "liil", "0");
-  gt_feature_node_add_attribute((GtFeatureNode *)locus, "riil", "0");
   gt_genome_node_ref(*gn2);
   gt_array_add(iloci, locus);
 
@@ -518,8 +507,10 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           fprintf(stream->ilenfile, "0\n");
         gt_feature_node_add_attribute(fn2, "liil", "0");
         gt_feature_node_add_attribute(fn2, "riil", "0");
-        gt_feature_node_add_attribute(fn1, "liil", orig_liil);
-        gt_feature_node_add_attribute(fn1, "riil", orig_riil);
+        if(orig_liil)
+          gt_feature_node_add_attribute(fn1, "liil", orig_liil);
+        if(orig_riil)
+          gt_feature_node_add_attribute(fn1, "riil", orig_riil);
       }
     }
     
@@ -543,10 +534,12 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         if(stream->ilenfile != NULL)
           fprintf(stream->ilenfile, "0\n");
 
-        gt_feature_node_add_attribute(fn1, "liil", orig_liil);
+        if(orig_liil)
+          gt_feature_node_add_attribute(fn1, "liil", orig_liil);
         gt_feature_node_add_attribute(fn1, "riil", "0");
         gt_feature_node_add_attribute(fn2, "liil", "0");
-        gt_feature_node_add_attribute(fn2, "riil", orig_riil);
+        if(orig_riil)
+          gt_feature_node_add_attribute(fn2, "riil", orig_riil);
       }
     }
   }
@@ -555,6 +548,20 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
   // assign an effective length to the first and label it complex.
   else
   {
+    GtGenomeNode *rightmost = NULL;
+    for(i = 0; i < numloci; i++)
+    {
+      GtGenomeNode **gn = gt_array_get(iloci, i);
+      if(i == 0)
+        rightmost = *gn;
+      else
+      {
+        if(gt_genome_node_get_end(*gn) > gt_genome_node_get_end(rightmost))
+          rightmost = *gn;
+      }
+    }
+    GtFeatureNode *rightmostfn = gt_feature_node_cast(rightmost);
+
     for(i = 0; i < numloci; i++)
     {
       GtGenomeNode **gn = gt_array_get(iloci, i);
@@ -575,18 +582,22 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           for(k = 1; k < genenum; k++)
             fprintf(stream->ilenfile, "0\n");
         }
-        gt_feature_node_add_attribute(fn, "liil", orig_liil);
-        gt_feature_node_add_attribute(fn, "riil", "0");
+        if(orig_liil)
+          gt_feature_node_set_attribute(fn, "liil", orig_liil);
+
+        if(fn == rightmostfn && orig_riil)
+          gt_feature_node_add_attribute(fn, "riil", orig_riil);
       }
-      else if(i == numloci - 1)
+      else if(fn == rightmostfn)
       {
         gt_feature_node_add_attribute(fn, "liil", "0");
-        gt_feature_node_add_attribute(fn, "riil", orig_riil);
+        if(orig_riil)
+          gt_feature_node_add_attribute(fn, "riil", orig_riil);
       }
       else
       {
-        gt_feature_node_add_attribute(fn, "liil", "0");
-        gt_feature_node_add_attribute(fn, "riil", "0");
+          gt_feature_node_add_attribute(fn, "liil", "0");
+          gt_feature_node_add_attribute(fn, "riil", "0");
       }
 
       const char *type = "complex";
@@ -643,7 +654,7 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
   }
 
   GtArray *bins = locus_refine_stream_bin_features(stream, locus);
-  GtArray *iloci = locus_refine_stream_resolve_bins(stream, gn, bins);
+  GtArray *iloci = locus_refine_stream_resolve_bins(stream, bins);
   locus_refine_stream_extend(stream, iloci, gn);
 
   locus_refine_stream_mark_for_deletion(stream, gn);
@@ -766,7 +777,7 @@ static int locus_refine_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
 }
 
 static GtArray *locus_refine_stream_resolve_bins(AgnLocusRefineStream *stream,
-                                                 AgnLocus *orig, GtArray *bins)
+                                                 GtArray *bins)
 {
   agn_assert(stream);
   agn_assert(bins);
@@ -790,7 +801,7 @@ static GtArray *locus_refine_stream_resolve_bins(AgnLocusRefineStream *stream,
     }
     else
     {
-      if(refine_locus_check_intron_genes(stream, orig, *bin, iloci) == false)
+      if(refine_locus_check_intron_genes(stream, *bin, iloci) == false)
       {
         GtGenomeNode **gn = gt_array_get(*bin, 0);
         GtFeatureNode *fn = gt_feature_node_cast(*gn);
