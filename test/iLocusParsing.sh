@@ -111,3 +111,16 @@ if [ $status == 0 ]; then
 fi
 printf "        | %-36s | %s\n" "Nasonia vitripennis (intron gene)" $result
 rm ${temp}
+
+$memcheckcmd bin/locuspocus --outfile=${temp} --cds data/gff3/aech-dachsous.gff3 > /dev/null 2>&1
+if [ $? != 0 ]; then
+  exit 1
+fi
+diff ${temp} data/gff3/aech-dachsous-out.gff3 > /dev/null 2>&1
+status=$?
+result="FAIL"
+if [ $status == 0 ]; then
+  result="PASS"
+fi
+printf "        | %-36s | %s\n" "A. echinatior (intron gene + ncRNA)" $result
+rm ${temp}
