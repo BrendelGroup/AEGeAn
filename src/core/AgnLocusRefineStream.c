@@ -45,14 +45,18 @@ struct AgnLocusRefineStream
 //------------------------------------------------------------------------------
 
 /**
- * @function FIXME
+ * @function Collect iLocus children (typically genes) into overlapping bins.
+ * Overlap may be determined by UTR coordinates or CDS coordinates, and coding
+ * genes are not considered to overlap with non-coding genes.
  */
 static
 GtArray *locus_refine_stream_bin_features(AgnLocusRefineStream *stream,
                                           GtFeatureNode *locus);
 
 /**
- * @function FIXME
+ * @function Look for intron genes: a gene contained completely within the
+ * intron of another gene. Currently does not support identifying cases where
+ * multiple genes are containined within another gene's intron.
  */
 static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
                                             GtArray *bin, GtArray *iloci);
@@ -63,7 +67,7 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
 static const GtNodeStreamClass *locus_refine_stream_class(void);
 
 /**
- * @function FIXME
+ * @function Analogous to the AgnLocusStream class' extend function.
  */
 static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
                                        GtArray *iloci, AgnLocus *orig);
@@ -74,13 +78,17 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
 static void locus_refine_stream_free(GtNodeStream *ns);
 
 /**
- * @function FIXME
+ * @function Callback function to be executed for each node.
  */
 static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
                                        GtGenomeNode *gn);
 
 /**
- * @function FIXME
+ * @function While processing node i, it is often necessary to refer to the
+ * nearest boundary of node i-1. However, in some cases the streaming
+ * procedure will process and delete node i-1 before node i is properly
+ * handled. This function simply delays the deletion of the nodes to ensure
+ * they are still around when needed for reference.
  */
 static void
 locus_refine_stream_mark_for_deletion(AgnLocusRefineStream *stream,
@@ -100,13 +108,14 @@ static int locus_refine_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                                     GtError *error);
 
 /**
- * @function FIXME
+ * @function After genes are placed into overlapping bins, resolve them into
+ * "refined" iLoci.
  */
 static GtArray *locus_refine_stream_resolve_bins(AgnLocusRefineStream *stream,
                                                  GtArray *bins);
 
 /**
- * @function FIXME
+ * @function Load data for unit tests.
  */
 static void locus_refine_stream_test_data(const char *filename, GtQueue *queue,
                                           GtUword delta);
