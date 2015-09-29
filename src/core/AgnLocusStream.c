@@ -402,7 +402,7 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
     for(i = 0; i < gt_array_size(current_locus); i++)
     {
       GtGenomeNode **oldfeature = gt_array_get(current_locus, i);
-      if(agn_overlap_ilocus(*gn, *oldfeature, 37, true))
+      if(agn_overlap_ilocus(*gn, *oldfeature, 1, false))
       {
         overlap = true;
         break;
