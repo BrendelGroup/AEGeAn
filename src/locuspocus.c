@@ -33,6 +33,7 @@ typedef struct
   bool by_cds;
   GtUword minoverlap;
   FILE *ilenfile;
+  bool retain;
 } LocusPocusOptions;
 
 // Set default values for program
@@ -57,6 +58,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->by_cds = false;
   options->minoverlap = 1;
   options->ilenfile = NULL;
+  options->retain = false;
 }
 
 static void free_option_memory(LocusPocusOptions *options)
@@ -119,6 +121,9 @@ static void print_usage(FILE *outstream)
 "                           corresponding locus to the given file\n"
 "    -o|--outfile: FILE     name of file to which results will be written;\n"
 "                           default is terminal (standard output)\n"
+"    -T|--retainids         retain original feature IDs from input files;\n"
+"                           conflicts will arise if input contains duplicated\n"
+"                           ID values"
 "    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
 "                           to its corresponding locus to the given file\n"
 "    -V|--verbose           include all locus subfeatures (genes, RNAs, etc)\n"
@@ -141,7 +146,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "cdef:g:hI:i:l:m:o:p:rst:uVvy";
+  const char *optstr = "cdef:g:hI:i:l:m:o:p:rsTt:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
@@ -159,11 +164,13 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "parent",     required_argument, NULL, 'p' },
     { "refine",     no_argument,       NULL, 'r' },
     { "skipends",   no_argument,       NULL, 's' },
+    { "retainids",  no_argument,       NULL, 'T' },
     { "transmap",   required_argument, NULL, 't' },
     { "pseudo",     no_argument,       NULL, 'u' },
     { "version",    no_argument,       NULL, 'v' },
     { "verbose",    no_argument,       NULL, 'V' },
     { "skipiiloci", no_argument,       NULL, 'y' },
+    {0, 0, 0, 0},
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -267,6 +274,9 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         }
         options->endmode = -1;
         break;
+      case 'T':
+        options->retain = true;
+        break;
       case 't':
         options->transstream = fopen(optarg, "w");
         if(options->transstream == NULL)
@@ -284,6 +294,9 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         break;
       case 'y':
         options->skipiiLoci = true;
+        break;
+      default:
+        fprintf(stderr, "error: unknown option");
         break;
     }
   }
@@ -394,7 +407,8 @@ int main(int argc, char **argv)
   }
 
   current_stream = gt_gff3_out_stream_new(last_stream, options.outstream);
-  gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)current_stream);
+  if(options.retain)
+    gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

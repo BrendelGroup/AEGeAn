@@ -8,7 +8,7 @@ fi
 echo "    AEGeAn::LocusPocus"
 
 temp="iLocusParseTest.gff3"
-$memcheckcmd bin/locuspocus --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --delta=200 --outfile=${temp} --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -23,7 +23,7 @@ fi
 printf "        | %-36s | %s\n" "default" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --delta=200 --outfile=${temp} --skipends --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --delta=200 --outfile=${temp} --skipends --parent mRNA:gene data/gff3/ilocus.in.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -38,7 +38,7 @@ fi
 printf "        | %-36s | %s\n" "end skip" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --outfile=${temp} --skipends data/gff3/amel-plap.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --outfile=${temp} --skipends data/gff3/amel-plap.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -53,7 +53,7 @@ fi
 printf "        | %-36s | %s\n" "Apis mellifera plap" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --outfile=${temp} --skipends --cds data/gff3/amel-plap.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --outfile=${temp} --skipends --cds data/gff3/amel-plap.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -68,7 +68,7 @@ fi
 printf "        | %-36s | %s\n" "Apis mellifera plap (CDS)" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --outfile=${temp} --skipends --cds data/gff3/amel-lsm.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --outfile=${temp} --skipends --cds data/gff3/amel-lsm.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -83,7 +83,7 @@ fi
 printf "        | %-36s | %s\n" "Apis mellifera LSM" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --outfile=${temp} --skipends --cds data/gff3/mrot-cst.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --outfile=${temp} --skipends --cds data/gff3/mrot-cst.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -98,7 +98,7 @@ fi
 printf "        | %-36s | %s\n" "Megachile rotundata CST (intron)" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --delta=300 --ilens=${temp} --cds data/gff3/amel-ogs-g716.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --delta=300 --ilens=${temp} --cds data/gff3/amel-ogs-g716.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -113,7 +113,7 @@ fi
 printf "        | %-36s | %s\n" "iiLocus lengths (Amel OGS Group7.16)" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --outfile=${temp} --cds data/gff3/nvit-exospindle.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --outfile=${temp} --cds data/gff3/nvit-exospindle.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi
@@ -128,7 +128,7 @@ fi
 printf "        | %-36s | %s\n" "Nasonia vitripennis (intron gene)" $result
 rm ${temp}
 
-$memcheckcmd bin/locuspocus --outfile=${temp} --cds data/gff3/aech-dachsous.gff3 > /dev/null 2>&1
+$memcheckcmd bin/locuspocus --retainids --outfile=${temp} --cds data/gff3/aech-dachsous.gff3 > /dev/null 2>&1
 if [ $? != 0 ]; then
   exit 1
 fi

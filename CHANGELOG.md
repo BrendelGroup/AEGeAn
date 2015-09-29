@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - iLocus delta extensions are now `\delta` bp long, even if that means extending into adjacent gene bodies.
 - Protein-coding genes and non-coding genes are no longer placed in the same iLocus even if they overlap.
 - Enabled use of feature accessions rather than IDs for some tools.
+- Replaced the term *empty* with the more current term *iiLocus* in a variety of places in the code and documentation.
 
 ### Fixed
 - Bug that prevented AEGeAn from building correctly--thanks Sascha!

@@ -60,21 +60,21 @@ seq11	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus17;Name=locus17;gene=1;mRNA=1
 ###
 seq11	AEGeAn::LocusPocus	locus	801	1500	.	.	.	ID=locus18;liil=0;Name=locus18;gene=1;mRNA=1
 ###
-seq12	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus19;Name=locus19;gene=1;mRNA=1;right_overlap=0;iiLocus_exception=delta-overlap-delta;riil=0
+seq12	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus19;Name=locus19;gene=1;mRNA=1;right_overlap=1;iiLocus_exception=delta-overlap-delta;riil=0
 ###
-seq12	AEGeAn::LocusPocus	locus	800	1500	.	.	.	ID=locus20;left_overlap=0;liil=0;Name=locus20;gene=1;mRNA=1
+seq12	AEGeAn::LocusPocus	locus	800	1500	.	.	.	ID=locus20;left_overlap=1;liil=0;Name=locus20;gene=1;mRNA=1
 ###
-seq13	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus21;Name=locus21;gene=1;mRNA=1;right_overlap=197;iiLocus_exception=delta-overlap-delta;riil=0
+seq13	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus21;Name=locus21;gene=1;mRNA=1;right_overlap=198;iiLocus_exception=delta-overlap-delta;riil=0
 ###
-seq13	AEGeAn::LocusPocus	locus	603	1300	.	.	.	ID=locus22;left_overlap=197;liil=0;Name=locus22;gene=1;mRNA=1
+seq13	AEGeAn::LocusPocus	locus	603	1300	.	.	.	ID=locus22;left_overlap=198;liil=0;Name=locus22;gene=1;mRNA=1
 ###
-seq14	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus23;Name=locus23;gene=1;mRNA=1;right_overlap=198;iiLocus_exception=delta-overlap-delta;riil=0
+seq14	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus23;Name=locus23;gene=1;mRNA=1;right_overlap=199;iiLocus_exception=delta-overlap-delta;riil=0
 ###
-seq14	AEGeAn::LocusPocus	locus	602	1300	.	.	.	ID=locus24;left_overlap=198;liil=0;Name=locus24;gene=1;mRNA=1
+seq14	AEGeAn::LocusPocus	locus	602	1300	.	.	.	ID=locus24;left_overlap=199;liil=0;Name=locus24;gene=1;mRNA=1
 ###
-seq15	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus25;Name=locus25;gene=1;mRNA=1;right_overlap=199;iiLocus_exception=delta-overlap-delta;riil=0
+seq15	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus25;Name=locus25;gene=1;mRNA=1;right_overlap=200;iiLocus_exception=delta-overlap-delta;riil=0
 ###
-seq15	AEGeAn::LocusPocus	locus	601	1300	.	.	.	ID=locus26;left_overlap=199;liil=0;Name=locus26;gene=1;mRNA=1
+seq15	AEGeAn::LocusPocus	locus	601	1300	.	.	.	ID=locus26;left_overlap=200;liil=0;Name=locus26;gene=1;mRNA=1
 ###
 seq16	AEGeAn::LocusPocus	locus	1	800	.	.	.	ID=locus27;Name=locus27;gene=1;mRNA=1;right_overlap=201;iiLocus_exception=delta-overlap-gene;riil=0
 ###
