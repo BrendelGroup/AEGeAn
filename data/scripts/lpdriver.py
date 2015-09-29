@@ -17,6 +17,7 @@ def run_locuspocus(infile, outfile, delta, ilenfile=None, debug=False):
   command += " --delta %d" % delta
   command += " --outfile %s.lp" % outfile
   command += " --cds"
+  command += " --retainids"
   if ilenfile:
     command += " --ilens %s" % ilenfile
   command += " %s" % infile
