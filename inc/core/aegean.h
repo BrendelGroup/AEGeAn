@@ -21,6 +21,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnLocus.h"
 #include "AgnLocusFilterStream.h"
 #include "AgnLocusMapVisitor.h"
+#include "AgnLocusRefineStream.h"
 #include "AgnLocusStream.h"
 #include "AgnMrnaRepVisitor.h"
 #include "AgnPseudogeneFixVisitor.h"

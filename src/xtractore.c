@@ -344,18 +344,19 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
 
   sprintf(subseqid, "%s_%lu-%lu%s", gt_str_get(seqid), range.start, range.end,
           strandstr);
-  const char *featid   = gt_feature_node_get_attribute(fn, "ID");
-  const char *parentid = gt_feature_node_get_attribute(fn, "Parent");
-  if(featid)
+  const char *featid = gt_feature_node_get_attribute(fn, "ID");
+  const char *accession = gt_feature_node_get_attribute(fn, "accession");
+  if(gt_feature_node_is_pseudo(fn))
   {
-    const char *featname = gt_feature_node_get_attribute(fn, "Name");
-    if(featname)
-      fprintf(options->outfile, ">%s %s %s\n", featid, featname, subseqid);
-    else
-      fprintf(options->outfile, ">%s %s\n", featid, subseqid);
+    GtFeatureNodeIterator *it = gt_feature_node_iterator_new_direct(fn);
+    GtFeatureNode *child = gt_feature_node_iterator_next(it);
+    accession = gt_feature_node_get_attribute(child, "accession");
+    gt_feature_node_iterator_delete(it);
   }
-  else if(parentid)
-    fprintf(options->outfile, ">%s %s\n", parentid, subseqid);
+  if(accession)
+    fprintf(options->outfile, ">%s %s\n", accession, subseqid);
+  else if(featid)
+    fprintf(options->outfile, ">%s %s\n", featid, subseqid);
   else
     fprintf(options->outfile, ">%s\n", subseqid);
 
@@ -364,8 +365,8 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
      strncmp(feat_seq, "ATG", 3) != 0 &&
      options->verbose)
   {
-    fprintf(stderr, "[xtractore] warning: CDS for '%s' does not begin with "
-            "ATG\n", parentid);
+    fprintf(stderr, "[xtractore] warning: CDS at '%s' does not begin with "
+            "ATG\n", subseqid);
   }
   xt_format_sequence(options->outfile, feat_seq, options->width);
   gt_free(feat_seq);

@@ -28,7 +28,8 @@ typedef struct AgnLocusMapVisitor AgnLocusMapVisitor;
  * arguments.
  */
 GtNodeStream*
-agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh);
+agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh,
+                         bool useacc);
 
 /**
  * @function Constructor for the node visitor. Gene-to-locus relationships are
@@ -37,5 +38,10 @@ agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh);
  * will disable printing the corresponding output.
  */
 GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh);
+
+/**
+ * @function Report gene/mRNA `Name` attributes rather than ID attributes.
+ */
+void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv);
 
 #endif

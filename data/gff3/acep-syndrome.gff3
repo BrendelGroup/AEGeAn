@@ -1,0 +1,46 @@
+##gff-version   3
+##sequence-region   NW_012130113.1 1915858 1927323
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build Attacep1.0
+#!genome-build-accession NCBI_Assembly:GCF_000143395.1
+#!annotation-date 2 April 2015
+#!annotation-source NCBI Atta cephalotes Annotation Release 100
+NW_012130113.1	Gnomon	gene	1916358	1918366	.	+	.	ID=gene1;Dbxref=GeneID:105622858;Name=LOC105622858;gbkey=Gene;gene=LOC105622858
+NW_012130113.1	Gnomon	mRNA	1916358	1918366	.	+	.	ID=mRNA1;Parent=gene1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;Name=XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+NW_012130113.1	Gnomon	exon	1916358	1916625	.	+	.	Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+NW_012130113.1	Gnomon	CDS	1916358	1916625	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XP_012059659.1;Name=XP_012059659.1;gbkey=CDS;gene=LOC105622858;product=alpha-L-fucosidase-like;protein_id=XP_012059659.1
+NW_012130113.1	Gnomon	exon	1916723	1916974	.	+	.	Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+NW_012130113.1	Gnomon	CDS	1916723	1916974	.	+	2	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XP_012059659.1;Name=XP_012059659.1;gbkey=CDS;gene=LOC105622858;product=alpha-L-fucosidase-like;protein_id=XP_012059659.1
+NW_012130113.1	Gnomon	exon	1917059	1917421	.	+	.	Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+NW_012130113.1	Gnomon	CDS	1917059	1917421	.	+	2	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XP_012059659.1;Name=XP_012059659.1;gbkey=CDS;gene=LOC105622858;product=alpha-L-fucosidase-like;protein_id=XP_012059659.1
+NW_012130113.1	Gnomon	exon	1917565	1917783	.	+	.	Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+NW_012130113.1	Gnomon	CDS	1917565	1917783	.	+	2	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XP_012059659.1;Name=XP_012059659.1;gbkey=CDS;gene=LOC105622858;product=alpha-L-fucosidase-like;protein_id=XP_012059659.1
+NW_012130113.1	Gnomon	exon	1917881	1918104	.	+	.	Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+NW_012130113.1	Gnomon	CDS	1917881	1918104	.	+	2	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XP_012059659.1;Name=XP_012059659.1;gbkey=CDS;gene=LOC105622858;product=alpha-L-fucosidase-like;protein_id=XP_012059659.1
+NW_012130113.1	Gnomon	CDS	1918228	1918320	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XP_012059659.1;Name=XP_012059659.1;gbkey=CDS;gene=LOC105622858;product=alpha-L-fucosidase-like;protein_id=XP_012059659.1
+NW_012130113.1	Gnomon	exon	1918228	1918366	.	+	.	Parent=mRNA1;Dbxref=GeneID:105622858,Genbank:XM_012204269.1;gbkey=mRNA;gene=LOC105622858;product=alpha-L-fucosidase-like;transcript_id=XM_012204269.1
+###
+NW_012130113.1	Gnomon	gene	1916852	1926823	.	+	.	ID=gene2;Dbxref=GeneID:105622857;Name=LOC105622857;gbkey=Gene;gene=LOC105622857
+NW_012130113.1	Gnomon	mRNA	1916852	1926823	.	+	.	ID=mRNA2;Parent=gene2;Dbxref=GeneID:105622857,Genbank:XM_012204268.1;Name=XM_012204268.1;gbkey=mRNA;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;transcript_id=XM_012204268.1
+NW_012130113.1	Gnomon	exon	1916852	1916871	.	+	.	Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XM_012204268.1;gbkey=mRNA;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;transcript_id=XM_012204268.1
+NW_012130113.1	Gnomon	exon	1923099	1926330	.	+	.	Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XM_012204268.1;gbkey=mRNA;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;transcript_id=XM_012204268.1
+NW_012130113.1	Gnomon	CDS	1923106	1926330	.	+	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XP_012059658.1;Name=XP_012059658.1;gbkey=CDS;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;protein_id=XP_012059658.1
+NW_012130113.1	Gnomon	exon	1926436	1926550	.	+	.	Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XM_012204268.1;gbkey=mRNA;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;transcript_id=XM_012204268.1
+NW_012130113.1	Gnomon	CDS	1926436	1926550	.	+	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XP_012059658.1;Name=XP_012059658.1;gbkey=CDS;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;protein_id=XP_012059658.1
+NW_012130113.1	Gnomon	exon	1926642	1926823	.	+	.	Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XM_012204268.1;gbkey=mRNA;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;transcript_id=XM_012204268.1
+NW_012130113.1	Gnomon	CDS	1926642	1926823	.	+	2	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105622857,Genbank:XP_012059658.1;Name=XP_012059658.1;gbkey=CDS;gene=LOC105622857;product=Hermansky-Pudlak syndrome 3 protein;protein_id=XP_012059658.1
+###
+NW_012130113.1	Gnomon	gene	1918657	1920655	.	-	.	ID=gene3;Dbxref=GeneID:105622856;Name=LOC105622856;gbkey=Gene;gene=LOC105622856
+NW_012130113.1	Gnomon	mRNA	1918657	1920655	.	-	.	ID=mRNA3;Parent=gene3;Dbxref=GeneID:105622856,Genbank:XM_012204267.1;Name=XM_012204267.1;gbkey=mRNA;gene=LOC105622856;product=cytosolic non-specific dipeptidase;transcript_id=XM_012204267.1
+NW_012130113.1	Gnomon	exon	1918657	1918701	.	-	.	Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XM_012204267.1;gbkey=mRNA;gene=LOC105622856;product=cytosolic non-specific dipeptidase;transcript_id=XM_012204267.1
+NW_012130113.1	Gnomon	CDS	1918657	1918701	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XP_012059657.1;Name=XP_012059657.1;gbkey=CDS;gene=LOC105622856;product=cytosolic non-specific dipeptidase;protein_id=XP_012059657.1
+NW_012130113.1	Gnomon	exon	1918795	1919268	.	-	.	Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XM_012204267.1;gbkey=mRNA;gene=LOC105622856;product=cytosolic non-specific dipeptidase;transcript_id=XM_012204267.1
+NW_012130113.1	Gnomon	CDS	1918795	1919268	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XP_012059657.1;Name=XP_012059657.1;gbkey=CDS;gene=LOC105622856;product=cytosolic non-specific dipeptidase;protein_id=XP_012059657.1
+NW_012130113.1	Gnomon	exon	1919354	1919782	.	-	.	Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XM_012204267.1;gbkey=mRNA;gene=LOC105622856;product=cytosolic non-specific dipeptidase;transcript_id=XM_012204267.1
+NW_012130113.1	Gnomon	CDS	1919354	1919782	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XP_012059657.1;Name=XP_012059657.1;gbkey=CDS;gene=LOC105622856;product=cytosolic non-specific dipeptidase;protein_id=XP_012059657.1
+NW_012130113.1	Gnomon	exon	1919886	1920336	.	-	.	Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XM_012204267.1;gbkey=mRNA;gene=LOC105622856;product=cytosolic non-specific dipeptidase;transcript_id=XM_012204267.1
+NW_012130113.1	Gnomon	CDS	1919886	1920336	.	-	1	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XP_012059657.1;Name=XP_012059657.1;gbkey=CDS;gene=LOC105622856;product=cytosolic non-specific dipeptidase;protein_id=XP_012059657.1
+NW_012130113.1	Gnomon	exon	1920621	1920655	.	-	.	Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XM_012204267.1;gbkey=mRNA;gene=LOC105622856;product=cytosolic non-specific dipeptidase;transcript_id=XM_012204267.1
+NW_012130113.1	Gnomon	CDS	1920621	1920655	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105622856,Genbank:XP_012059657.1;Name=XP_012059657.1;gbkey=CDS;gene=LOC105622856;product=cytosolic non-specific dipeptidase;protein_id=XP_012059657.1
+###

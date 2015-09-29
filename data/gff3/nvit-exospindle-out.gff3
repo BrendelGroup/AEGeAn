@@ -1,0 +1,16 @@
+##gff-version   3
+##sequence-region   NC_015867.2 370926 381835
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build Nvit_2.1
+#!genome-build-accession NCBI_Assembly:GCF_000002325.3
+#!annotation-date 3 June 2014
+#!annotation-source NCBI Nasonia vitripennis Annotation Release 101
+NC_015867.2	AEGeAn::LocusPocus	locus	370926	373152	.	.	.	ID=locus1;Name=locus1;gene=1;mRNA=1;right_overlap=261;iiLocus_exception=delta-overlap-delta;riil=0;effective_length=1966;iLocus_type=piLocus
+###
+NC_015867.2	AEGeAn::LocusPocus	locus	372891	380536	.	.	.	ID=locus2;effective_length=6758;iLocus_type=piLocus;Name=locus2;gene=1;mRNA=1
+###
+NC_015867.2	AEGeAn::LocusPocus	locus	374998	378903	.	.	.	ID=locus3;iiLocus_exception=intron-gene;iLocus_type=piLocus;Name=locus3;gene=1;mRNA=1
+###
+NC_015867.2	AEGeAn::LocusPocus	locus	379649	381835	.	.	.	ID=locus4;left_overlap=888;liil=0;Name=locus4;gene=1;mRNA=1;effective_length=2187;iLocus_type=piLocus
+###

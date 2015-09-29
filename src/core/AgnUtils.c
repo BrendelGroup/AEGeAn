@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -153,6 +153,24 @@ GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn)
   }
   gt_feature_node_iterator_delete(iter);
   return cds_range;
+}
+
+GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
+{
+  agn_assert(fn);
+  GtFeatureNode *child;
+  GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
+  {
+    gt_array_add(children, child);
+  }
+  gt_feature_node_iterator_delete(iter);
+  if(gt_array_size(children) > 1)
+    gt_array_sort(children, (GtCompare)agn_genome_node_compare);
+  return children;
 }
 
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)

@@ -25,7 +25,8 @@ typedef struct AgnMrnaRepVisitor AgnMrnaRepVisitor;
 /**
  * @function Constructor for a node stream based on this node visitor.
  */
-GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream);
+GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstreami,
+                                      bool useacc);
 
 /**
  * @function Constructor for the node visitor. If `mapstream` is not NULL, each
@@ -40,6 +41,12 @@ GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream);
  */
 void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v,
                                           const char *type);
+
+/**
+ * @function Write mRNA `accession` attribute to `mapstream` rather than `ID`
+ * attribute.
+ */
+void agn_mrna_rep_visitor_use_accession(AgnMrnaRepVisitor *v);
 
 /**
  * @function Run unit tests for this class. Returns true if all tests passed.

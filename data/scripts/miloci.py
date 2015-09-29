@@ -42,7 +42,7 @@ def merge_iloci(loci):
         attrs[key] = 0
       attrs[key] += value
   
-  attrstring = "merged=true"
+  attrstring = "merged=true;iLocus_type=miLocus"
   for key in attrs:
     attrstring += ";%s=%d" % (key, attrs[key])
   gff3 = [ seqid, "AEGeAn::miloci.py", "locus", str(start), str(end),

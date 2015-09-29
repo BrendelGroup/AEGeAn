@@ -4,8 +4,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [Unreleased][unreleased]
+
+### Added
+- New post-processing steps to iLocus parsing procedures (iLocus "refinement").
+- An option for using coding sequence instead of UTRs as boundary test for gene overlap when computing iLoci.
+- A variety of new iLocus GFF3 attributes related to iLocus accounting (such as for computing genome breakdown).
+- A barrage of new functional tests (and some unit tests) to validate new functionality.
+- Identification of intron genes into separate iLoci during iLocus parsing.
+
 ### Changed
-- Replaced ParsEval's `--png` option with a `--nopng` option, made graphics the default for HTML output mode
+- Replaced ParsEval's `--png` option with a `--nopng` option, made graphics the default for HTML output mode.
+- iLocus delta extensions are now `\delta` bp long, even if that means extending into adjacent gene bodies.
+- Protein-coding genes and non-coding genes are no longer placed in the same iLocus even if they overlap.
+- Enabled use of feature accessions rather than IDs for some tools.
+
+### Fixed
+- Bug that prevented AEGeAn from building correctly--thanks Sascha!
 
 ## [0.13.1] - 2015-06-15
 

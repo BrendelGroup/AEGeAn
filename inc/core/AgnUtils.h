@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -92,6 +92,11 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
  * range occupied by coding sequence, or {0,0} if there is no coding sequence.
  */
 GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn);
+
+/**
+ * @function Return an array of the given feature node's direct children.
+ */
+GtArray *agn_feature_node_get_children(GtFeatureNode *fn);
 
 /**
  * @function Remove feature ``fn`` and all its subfeatures from ``root``.

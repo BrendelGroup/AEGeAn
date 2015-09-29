@@ -23,6 +23,7 @@ struct AgnLocusMapVisitor
   const GtNodeVisitor parent_instance;
   FILE *genefh;
   FILE *mrnafh;
+  bool useacc;
 };
 
 
@@ -48,9 +49,15 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
 //------------------------------------------------------------------------------
 
 GtNodeStream*
-agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
+agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh,
+                         bool useacc)
 {
   GtNodeVisitor *nv = agn_locus_map_visitor_new(genefh, mrnafh);
+  if(useacc)
+  {
+    AgnLocusMapVisitor *mv = locus_map_visitor_cast(nv);
+    agn_locus_map_visitor_use_accession(mv);
+  }
   GtNodeStream *ns = gt_visitor_stream_new(in, nv);
   return ns;
 }
@@ -61,7 +68,14 @@ GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
   AgnLocusMapVisitor *v = locus_map_visitor_cast(nv);
   v->genefh = genefh;
   v->mrnafh = mrnafh;
+  v->useacc = false;
   return nv;
+}
+
+void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv)
+{
+  agn_assert(mv);
+  mv->useacc = true;
 }
 
 static const GtNodeVisitorClass *locus_map_visitor_class()
@@ -91,13 +105,17 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
   {
     if(agn_typecheck_gene(current) && v->genefh != NULL)
     {
-      const char *geneid = gt_feature_node_get_attribute(current, "ID");
+      const char *geneid = gt_feature_node_get_attribute(current, "accession");
+      if(geneid == NULL || v->useacc == false)
+        geneid = gt_feature_node_get_attribute(current, "ID");
       fprintf(v->genefh, "%s\t%s\n", geneid, locusid);
     }
 
     if(agn_typecheck_mrna(current) && v->mrnafh != NULL)
     {
-      const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+      const char *mrnaid = gt_feature_node_get_attribute(current, "accession");
+      if(mrnaid == NULL || v->useacc == false)
+        mrnaid = gt_feature_node_get_attribute(current, "ID");
       fprintf(v->mrnafh, "%s\t%s\n", mrnaid, locusid);
     }
   }

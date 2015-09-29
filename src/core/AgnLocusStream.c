@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -40,6 +40,7 @@ struct AgnLocusStream
   GtStr *idformat;
   char *refrfile;
   char *predfile;
+  FILE *ilenfile;
 };
 
 //------------------------------------------------------------------------------
@@ -149,6 +150,7 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
   stream->idformat = gt_str_new_cstr("locus%lu");
   stream->refrfile = NULL;
   stream->predfile = NULL;
+  stream->ilenfile = NULL;
   return ns;
 }
 
@@ -183,6 +185,11 @@ bool agn_locus_stream_unit_test(AgnUnitTest *test)
   locus_stream_unit_test_loci(test);
   locus_stream_unit_test_iloci(test);
   return agn_unit_test_success(test);
+}
+
+void agn_locus_stream_track_ilens(AgnLocusStream *stream, FILE *ilenfile)
+{
+  stream->ilenfile = ilenfile;
 }
 
 static int locus_stream_add_feature(AgnLocusStream *stream, AgnLocus *locus,
@@ -254,12 +261,13 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                           locusrange.end);
       if(stream->endmode >= 0 && !stream->skip_empty)
       {
-        AgnLocus *emptylocus = agn_locus_new(seqid);
-        agn_locus_set_range(emptylocus, seqrange.start,
-                            locusrange.start - stream->delta - 1);
-        GtFeatureNode *elfn = (GtFeatureNode *)emptylocus;
-        gt_feature_node_add_attribute(elfn, "fragment", "true");
-        gt_queue_add(stream->locusqueue, emptylocus);
+        AgnLocus *iilocus = agn_locus_new(seqid);
+        GtRange irange = { seqrange.start,
+                           locusrange.start - stream->delta - 1 };
+        agn_locus_set_range(iilocus, irange.start, irange.end);
+        GtFeatureNode *iilocfn = gt_feature_node_cast(iilocus);
+        gt_feature_node_add_attribute(iilocfn, "fragment", "true");
+        gt_queue_add(stream->locusqueue, iilocus);
       }
     }
     else
@@ -271,66 +279,97 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
   // Handle internal loci
   if(stream->prev_locus && gt_str_cmp(seqid, prev_seqid) == 0)
   {
+    GtFeatureNode *prevfn = gt_feature_node_cast(stream->prev_locus);
+    GtFeatureNode *locusfn = gt_feature_node_cast(locus);
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
-    if(prev_range.end >= locusrange.start)
+    if(prev_range.end >= locusrange.start || prev_range.end + stream->delta >= locusrange.start)
     {
-      GtUword overlap = locusrange.start - prev_range.end - 1;
-      char ovrlp[16];
-      sprintf(ovrlp, "%lu", overlap);
-      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
-                                    "right_overlap", ovrlp);
-      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
-                                    ovrlp);
-    }
-    else if(prev_range.end + stream->delta >= locusrange.start)
-    {
-      GtUword overlap = locusrange.start - prev_range.end - 1;
-      char ovrlp[16];
-      sprintf(ovrlp, "%lu", overlap);
+      GtUword newend = prev_range.end + stream->delta;
+      if(newend > seqrange.end)
+        newend = seqrange.end;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
 
-      agn_locus_set_range(stream->prev_locus, prev_range.start,
-                          locusrange.start - 1);
-      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
-                                    "right_overlap", ovrlp);
-      agn_locus_set_range(locus, prev_range.end + 1, locusrange.end);
-      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
-                                    ovrlp);
+      GtUword newstart = locusrange.start - stream->delta;
+      if(seqrange.start + stream->delta > locusrange.start)
+        newstart = seqrange.start;
+      agn_locus_set_range(locus, newstart, locusrange.end);
+
+      GtUword overlap = newend - newstart + 1;
+      char ovrlp[16];
+      sprintf(ovrlp, "%lu", overlap);
+      gt_feature_node_add_attribute(prevfn, "right_overlap", ovrlp);
+      gt_feature_node_add_attribute(locusfn, "left_overlap", ovrlp);
+      gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
+                                    "delta-overlap-gene");
+
+      if(stream->ilenfile != NULL)
+        fprintf(stream->ilenfile, "0\n");
+      gt_feature_node_add_attribute(prevfn, "riil", "0");
+      gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
     else if(prev_range.end + (2*stream->delta) >= locusrange.start)
     {
-      GtUword overlap = prev_range.end-locusrange.start+(2*stream->delta)+1;
-      char ovrlp[16];
-      sprintf(ovrlp, "%lu", overlap);
-
-      agn_locus_set_range(stream->prev_locus, prev_range.start,
-                          prev_range.end + stream->delta);
-      gt_feature_node_add_attribute((GtFeatureNode *)stream->prev_locus,
-                                    "right_overlap", ovrlp);
+      GtUword newend = prev_range.end + stream->delta;
+      if(newend > seqrange.end)
+        newend = seqrange.end;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
-      gt_feature_node_add_attribute((GtFeatureNode *)locus, "left_overlap",
-                                    ovrlp);
+
+      GtUword overlap = prev_range.end-locusrange.start+(2*stream->delta);
+      char ovrlp[16];
+      sprintf(ovrlp, "%lu", overlap);
+      gt_feature_node_add_attribute(prevfn, "right_overlap", ovrlp);
+      gt_feature_node_add_attribute(locusfn, "left_overlap", ovrlp);
+      gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
+                                    "delta-overlap-delta");
+
+      if(stream->ilenfile != NULL)
+        fprintf(stream->ilenfile, "0\n");
+      gt_feature_node_add_attribute(prevfn, "riil", "0");
+      gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
     else if(prev_range.end + (3*stream->delta) >= locusrange.start)
     {
       GtUword midpoint = (prev_range.end + locusrange.start) / 2;
       agn_locus_set_range(stream->prev_locus, prev_range.start, midpoint);
       agn_locus_set_range(locus, midpoint + 1, locusrange.end);
+      gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
+                                    "delta-re-extend");
+
+      if(stream->ilenfile != NULL)
+        fprintf(stream->ilenfile, "0\n");
+      gt_feature_node_add_attribute(prevfn, "riil", "0");
+      gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
     else
     {
-      agn_locus_set_range(stream->prev_locus, prev_range.start,
-                          prev_range.end + stream->delta);
+      GtUword newend = prev_range.end + stream->delta;
+      if(newend > seqrange.end)
+        newend = seqrange.end;
+      agn_locus_set_range(stream->prev_locus, prev_range.start, newend);
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
 
       if(stream->endmode <= 0 && !stream->skip_empty)
       {
-        AgnLocus *emptylocus = agn_locus_new(seqid);
-        agn_locus_set_range(emptylocus,
-                            prev_range.end + stream->delta + 1,
-                            locusrange.start - stream->delta - 1);
-        gt_queue_add(stream->locusqueue, emptylocus);
+        AgnLocus *iilocus = agn_locus_new(seqid);
+        GtRange irange = { prev_range.end + stream->delta + 1,
+                           locusrange.start - stream->delta - 1 };
+        agn_locus_set_range(iilocus, irange.start, irange.end);
+
+        if(stream->ilenfile != NULL)
+          fprintf(stream->ilenfile, "%lu\n", gt_range_length(&irange));
+        char iilocuslen[32];
+        sprintf(iilocuslen, "%lu", gt_range_length(&irange));
+        gt_feature_node_add_attribute(prevfn, "riil", iilocuslen);
+        gt_feature_node_add_attribute(locusfn, "liil", iilocuslen);
+
+        const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
+        int orient = agn_locus_inner_orientation(stream->prev_locus, locus);
+        GtFeatureNode *iilocfn = gt_feature_node_cast(iilocus);
+        gt_feature_node_set_attribute(iilocfn, "fg_orient", orientstrs[orient]);
+        gt_queue_add(stream->locusqueue, iilocus);
       }
     }
   }
@@ -475,6 +514,7 @@ static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
   char locusid[256];
   sprintf(locusid, gt_str_get(stream->idformat), stream->count);
   gt_feature_node_set_attribute((GtFeatureNode *)locus, "ID", locusid);
+  gt_feature_node_set_attribute((GtFeatureNode *)locus, "Name", locusid);
   gt_feature_node_set_source((GtFeatureNode *)locus, stream->source);
 
   GtArray *types = gt_array_new( sizeof(const char *) );

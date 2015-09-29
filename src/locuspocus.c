@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -13,7 +13,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "genometools.h"
 #include "aegean.h"
 
-// Simple data structure for program options
+// Data structure for program options
 typedef struct
 {
   bool debug;
@@ -29,6 +29,10 @@ typedef struct
   bool pseudofix;
   bool verbose;
   bool skipempty;
+  bool refine;
+  bool by_cds;
+  GtUword minoverlap;
+  FILE *ilenfile;
 } LocusPocusOptions;
 
 // Set default values for program
@@ -49,6 +53,10 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->pseudofix = false;
   options->verbose = false;
   options->skipempty = false;
+  options->refine = false;
+  options->by_cds = false;
+  options->minoverlap = 1;
+  options->ilenfile = NULL;
 }
 
 static void free_option_memory(LocusPocusOptions *options)
@@ -62,6 +70,8 @@ static void free_option_memory(LocusPocusOptions *options)
     fclose(options->transstream);
   if(options->idformat != NULL)
     gt_free(options->idformat);
+  if(options->ilenfile != NULL)
+    fclose(options->ilenfile);
 }
 
 // Usage statement
@@ -84,6 +94,15 @@ static void print_usage(FILE *outstream)
 "    -e|--endsonly          report only empty iLoci at the ends of sequences\n"
 "                           (complement of --skipends)\n"
 "    -y|--skipempty         do not report empty iLoci\n\n"
+"  Refinement options:\n"
+"    -r|--refine            by default genes are grouped in the same iLocus\n"
+"                           if they have any overlap; 'refine' mode allows\n"
+"                           for a more nuanced handling of overlapping genes\n"
+"    -c|--cds               use CDS rather than UTRs for determining gene\n"
+"                           overlap; implies 'refine' mode\n"
+"    -m|--minoverlap: INT   the minimum number of nucleotides two genes must\n"
+"                           overlap to be grouped in the same iLocus; default\n"
+"                           is 1\n\n"
 "  Output options:\n"
 "    -I|--idformat: STR     provide a printf-style format string to override\n"
 "                           the default ID format for newly created loci;\n"
@@ -92,6 +111,8 @@ static void print_usage(FILE *outstream)
 "                           interval loci; note the format string should\n"
 "                           include a single %%lu specifier to be filled in\n"
 "                           with a long unsigned integer value\n"
+"    -i|--ilens: FILE       create a file with the lengths of each intergenic\n"
+"                           iLocus\n"
 "    -g|--genemap: FILE     print a mapping from each gene annotation to its\n"
 "                           corresponding locus to the given file\n"
 "    -o|--outfile: FILE     name of file to which results will be written;\n"
@@ -118,25 +139,29 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "def:g:hI:l:o:p:st:uVvy";
+  const char *optstr = "cdef:g:hI:i:l:m:o:p:rst:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
-    { "debug",     no_argument,       NULL, 'd' },
-    { "endsonly",  no_argument,       NULL, 'e' },
-    { "filter",    required_argument, NULL, 'f' },
-    { "genemap",   required_argument, NULL, 'g' },
-    { "help",      no_argument,       NULL, 'h' },
-    { "idformat",  required_argument, NULL, 'I' },
-    { "delta",     required_argument, NULL, 'l' },
-    { "outfile",   required_argument, NULL, 'o' },
-    { "parent",    required_argument, NULL, 'p' },
-    { "skipends",  no_argument,       NULL, 's' },
-    { "transmap",  required_argument, NULL, 't' },
-    { "pseudo",    no_argument,       NULL, 'u' },
-    { "version",   no_argument,       NULL, 'v' },
-    { "verbose",   no_argument,       NULL, 'V' },
-    { "skipempty", no_argument,       NULL, 'y' },
+    { "cds",        no_argument,       NULL, 'c' },
+    { "debug",      no_argument,       NULL, 'd' },
+    { "endsonly",   no_argument,       NULL, 'e' },
+    { "filter",     required_argument, NULL, 'f' },
+    { "genemap",    required_argument, NULL, 'g' },
+    { "help",       no_argument,       NULL, 'h' },
+    { "idformat",   required_argument, NULL, 'I' },
+    { "ilens",      required_argument, NULL, 'i' },
+    { "delta",      required_argument, NULL, 'l' },
+    { "minoverlap", required_argument, NULL, 'm' },
+    { "outfile",    required_argument, NULL, 'o' },
+    { "parent",     required_argument, NULL, 'p' },
+    { "refine",     no_argument,       NULL, 'r' },
+    { "skipends",   no_argument,       NULL, 's' },
+    { "transmap",   required_argument, NULL, 't' },
+    { "pseudo",     no_argument,       NULL, 'u' },
+    { "version",    no_argument,       NULL, 'v' },
+    { "verbose",    no_argument,       NULL, 'V' },
+    { "skipempty",  no_argument,       NULL, 'y' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -144,6 +169,10 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
   {
     switch(opt)
     {
+      case 'c':
+        options->by_cds = 1;
+        options->refine = 1;
+        break;
       case 'd':
         options->debug = 1;
         break;
@@ -186,10 +215,22 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
           gt_free(options->idformat);
         options->idformat = gt_cstr_dup(optarg);
         break;
+      case 'i':
+        options->ilenfile = fopen(optarg, "w");
+        if(options->ilenfile == NULL)
+          gt_error_set(error, "could not open ilenfile file '%s'", optarg);
+        break;
       case 'l':
         if(sscanf(optarg, "%lu", &options->delta) == EOF)
         {
           gt_error_set(error, "could not convert delta '%s' to an integer",
+                       optarg);
+        }
+        break;
+      case 'm':
+        if(sscanf(optarg, "%lu", &options->minoverlap) == EOF)
+        {
+          gt_error_set(error, "could not convert overlap '%s' to an integer",
                        optarg);
         }
         break;
@@ -212,6 +253,9 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
           gt_hashmap_add(options->type_parents, gt_cstr_dup(key),
                          gt_cstr_dup(value));
         }
+        break;
+      case 'r':
+        options->refine = 1;
         break;
       case 's':
         if(options->endmode > 0)
@@ -307,25 +351,35 @@ int main(int argc, char **argv)
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, options.delta);
-  agn_locus_stream_set_source((AgnLocusStream *)current_stream,
-                              "AEGeAn::LocusPocus");
-  agn_locus_stream_set_endmode((AgnLocusStream*)current_stream,options.endmode);
+  AgnLocusStream *ls = (AgnLocusStream*)current_stream;
+  agn_locus_stream_set_source(ls, "AEGeAn::LocusPocus");
+  agn_locus_stream_set_endmode(ls, options.endmode);
+  agn_locus_stream_track_ilens(ls, options.ilenfile);
   if(options.idformat != NULL)
-  {
-    agn_locus_stream_set_idformat((AgnLocusStream *)current_stream,
-                                  options.idformat);
-  }
+    agn_locus_stream_set_idformat(ls, options.idformat);
   if(options.skipempty)
-  {
-    agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
-  }
+    agn_locus_stream_skip_empty_loci(ls);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
+
+  if(options.refine)
+  {
+    current_stream = agn_locus_refine_stream_new(last_stream, options.delta,
+                                                 options.minoverlap,
+                                                 options.by_cds);
+    AgnLocusRefineStream *lrs = (AgnLocusRefineStream *)current_stream;
+    agn_locus_refine_stream_set_source(lrs, "AEGeAn::LocusPocus");
+    agn_locus_refine_stream_track_ilens(lrs, options.ilenfile);
+    if(options.idformat != NULL)
+      agn_locus_refine_stream_set_idformat(lrs, options.idformat);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+  }
 
   if(options.genestream != NULL || options.transstream != NULL)
   {
     current_stream = agn_locus_map_stream_new(last_stream, options.genestream,
-                                              options.transstream);
+                                              options.transstream, true);
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }
@@ -352,7 +406,6 @@ int main(int argc, char **argv)
 
 
   // Free memory and terminate
-  free_option_memory(&options);
   while(gt_queue_size(streams) > 0)
   {
     current_stream = gt_queue_get(streams);
@@ -361,6 +414,7 @@ int main(int argc, char **argv)
   gt_queue_delete(streams);
   gt_logger_delete(logger);
   gt_error_delete(error);
+  free_option_memory(&options);
   gt_lib_clean();
   return 0;
 }
