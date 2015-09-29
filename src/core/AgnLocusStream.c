@@ -30,7 +30,7 @@ struct AgnLocusStream
   GtNodeStream *in_stream;
   GtUword delta;
   GtUword count;
-  bool skip_empty;
+  bool skip_iiLoci;
   int endmode;
   GtFeatureIndex *seqranges;
   AgnLocus *prev_locus;
@@ -140,7 +140,7 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
   stream->in_stream = gt_node_stream_ref(in_stream);
   stream->delta = delta;
   stream->count = 0;
-  stream->skip_empty = false;
+  stream->skip_iiLoci = false;
   stream->endmode = 0;
   stream->seqranges = gt_feature_index_memory_new();
   stream->prev_locus = NULL;
@@ -167,10 +167,10 @@ void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
   stream->idformat = gt_str_new_cstr(format);
 }
 
-void agn_locus_stream_skip_empty_loci(AgnLocusStream *stream)
+void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream)
 {
   agn_assert(stream);
-  stream->skip_empty = true;
+  stream->skip_iiLoci = true;
 }
 
 void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source)
@@ -259,7 +259,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     {
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
-      if(stream->endmode >= 0 && !stream->skip_empty)
+      if(stream->endmode >= 0 && !stream->skip_iiLoci)
       {
         AgnLocus *iilocus = agn_locus_new(seqid);
         GtRange irange = { seqrange.start,
@@ -353,7 +353,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
 
-      if(stream->endmode <= 0 && !stream->skip_empty)
+      if(stream->endmode <= 0 && !stream->skip_iiLoci)
       {
         AgnLocus *iilocus = agn_locus_new(seqid);
         GtRange irange = { prev_range.end + stream->delta + 1,
@@ -391,7 +391,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     {
       agn_locus_set_range(locus, locusrange.start,
                           locusrange.end + stream->delta);
-      if(stream->endmode >= 0 && !stream->skip_empty)
+      if(stream->endmode >= 0 && !stream->skip_iiLoci)
       {
         AgnLocus *term_locus = agn_locus_new(seqid);
         agn_locus_set_range(term_locus,

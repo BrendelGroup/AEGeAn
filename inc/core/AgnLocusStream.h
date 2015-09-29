@@ -63,7 +63,7 @@ void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format);
  * and loci containing no features. This function disables reporting of the
  * latter.
  */
-void agn_locus_stream_skip_empty_loci(AgnLocusStream *stream);
+void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream);
 
 /**
  * @function Set the source value to be used for all iLoci created by this

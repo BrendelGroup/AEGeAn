@@ -28,7 +28,7 @@ typedef struct
   FILE *transstream;
   bool pseudofix;
   bool verbose;
-  bool skipempty;
+  bool skipiiLoci;
   bool refine;
   bool by_cds;
   GtUword minoverlap;
@@ -52,7 +52,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->transstream = NULL;
   options->pseudofix = false;
   options->verbose = false;
-  options->skipempty = false;
+  options->skipiiLoci = false;
   options->refine = false;
   options->by_cds = false;
   options->minoverlap = 1;
@@ -89,11 +89,13 @@ static void print_usage(FILE *outstream)
 "    -l|--delta: INT        when parsing interval loci, use the following\n"
 "                           delta to extend gene loci and include potential\n"
 "                           regulatory regions; default is 500\n"
-"    -s|--skipends          when enumerating interval loci, exclude gene-less\n"
-"                           iLoci at either end of the sequence\n"
-"    -e|--endsonly          report only empty iLoci at the ends of sequences\n"
-"                           (complement of --skipends)\n"
-"    -y|--skipempty         do not report empty iLoci\n\n"
+"    -s|--skipends          when enumerating interval loci, exclude\n"
+"                           unannotated (and presumably incomplete) iLoci at\n"
+"                           either end of the sequence\n"
+"    -e|--endsonly          report only incomplete iLocus fragments at the\n"
+"                           unannotated ends of sequences (complement of\n"
+"                           --skipends)\n"
+"    -y|--skipiiloci        do not report intergenic iLoci\n\n"
 "  Refinement options:\n"
 "    -r|--refine            by default genes are grouped in the same iLocus\n"
 "                           if they have any overlap; 'refine' mode allows\n"
@@ -161,7 +163,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "pseudo",     no_argument,       NULL, 'u' },
     { "version",    no_argument,       NULL, 'v' },
     { "verbose",    no_argument,       NULL, 'V' },
-    { "skipempty",  no_argument,       NULL, 'y' },
+    { "skipiiloci", no_argument,       NULL, 'y' },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
@@ -281,7 +283,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         options->verbose = 1;
         break;
       case 'y':
-        options->skipempty = true;
+        options->skipiiLoci = true;
         break;
     }
   }
@@ -357,8 +359,8 @@ int main(int argc, char **argv)
   agn_locus_stream_track_ilens(ls, options.ilenfile);
   if(options.idformat != NULL)
     agn_locus_stream_set_idformat(ls, options.idformat);
-  if(options.skipempty)
-    agn_locus_stream_skip_empty_loci(ls);
+  if(options.skipiiLoci)
+    agn_locus_stream_skip_iiLoci(ls);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 
