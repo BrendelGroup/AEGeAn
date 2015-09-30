@@ -131,51 +131,56 @@ static void xtract_options_parse(int argc, char **argv,
     { "width",   required_argument, NULL, 'w' },
     { NULL,      no_argument,       NULL,  0  },
   };
-  for( opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
-       opt != -1;
-       opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex))
+  for(opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
+      opt != -1;
+      opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'h')
     {
-      case 'h':
-        xt_print_usage(stdout);
-        exit(0);
-        break;
-      case 'i':
-        options->idfile = fopen(optarg, "r");
-        if(options->idfile == NULL)
-          gt_error_set(error, "could not open ID file '%s'", optarg);
-        break;
-      case 'o':
-        options->outfile = fopen(optarg, "w");
-        if(options->outfile == NULL)
-          gt_error_set(error, "could not open output file '%s'", optarg);
-        break;
-      case 't':
-        if(options->typeoverride == false)
-        {
-          gt_hashmap_delete(options->typestoextract);
-          options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
-                                                   NULL);
-          options->typeoverride = true;
-        }
-        type = gt_cstr_dup(optarg);
-        gt_hashmap_add(options->typestoextract, type, type);
-        break;
-      case 'V':
-        options->verbose = true;
-        break;
-      case 'v':
-        agn_print_version("Xtractore", stdout);
-        exit(0);
-        break;
-      case 'w':
-        if(sscanf(optarg, "%u", &options->width) == EOF)
-        {
-          gt_error_set(error, "could not convert width '%s' to an integer",
-                       optarg);
-        }
-        break;
+      xt_print_usage(stdout);
+      exit(0);
+    }
+    else if(opt == 'i')
+    {
+      options->idfile = fopen(optarg, "r");
+      if(options->idfile == NULL)
+        gt_error_set(error, "could not open ID file '%s'", optarg);
+    }
+    else if(opt == 'o')
+    {
+      options->outfile = fopen(optarg, "w");
+      if(options->outfile == NULL)
+        gt_error_set(error, "could not open output file '%s'", optarg);
+    }
+    else if(opt == 't')
+    {
+      if(options->typeoverride == false)
+      {
+        gt_hashmap_delete(options->typestoextract);
+        options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                                 NULL);
+        options->typeoverride = true;
+      }
+      type = gt_cstr_dup(optarg);
+      gt_hashmap_add(options->typestoextract, type, type);
+    }
+    else if(opt == 'V')
+    {
+      options->verbose = true;
+      break;
+    }
+    else if(opt == 'v')
+    {
+      agn_print_version("Xtractore", stdout);
+      exit(0);
+    }
+    else if(opt == 'w')
+    {
+      if(sscanf(optarg, "%u", &options->width) == EOF)
+      {
+        gt_error_set(error, "could not convert width '%s' to an integer",
+                     optarg);
+      }
     }
   }
 }

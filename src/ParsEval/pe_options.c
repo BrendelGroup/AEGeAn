@@ -48,114 +48,106 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
       opt != -1;
       opt  = getopt_long(argc, argv, optstr, parseval_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'a')
     {
-      case 'a':
-        options->data_path = optarg;
-        break;
-
-      case 'd':
-        options->debug = true;
-        break;
-
-      case 'f':
-        if      (strcmp(optarg, "csv")  == 0) options->outfmt = CSVMODE;
-        else if (strcmp(optarg, "text") == 0) options->outfmt = TEXTMODE;
-        else if (strcmp(optarg, "html") == 0) options->outfmt = HTMLMODE;
-        else
+      options->data_path = optarg;
+    }
+    else if(opt == 'd')
+    {
+      options->debug = true;
+    }
+    else if(opt == 'f')
+    {
+      if      (strcmp(optarg, "csv")  == 0) options->outfmt = CSVMODE;
+      else if (strcmp(optarg, "text") == 0) options->outfmt = TEXTMODE;
+      else if (strcmp(optarg, "html") == 0) options->outfmt = HTMLMODE;
+      else
+      {
+        fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
+                "option\n\n", optarg);
+        pe_print_usage(stderr);
+        exit(1);
+      }
+    }
+    else if(opt == 'g')
+    {
+      options->gff3 = false;
+    }
+    else if(opt == 'h')
+    {
+      pe_print_usage(stdout);
+      exit(0);
+    }
+    else if(opt == 'k')
+    {
+      options->makefilter = true;
+    }
+    else if(opt == 'l')
+    {
+      if(sscanf(optarg, "%ld", &options->delta) == EOF)
+      {
+        fprintf(stderr, "error: could not convert delta '%s' to an integer\n",
+                optarg);
+        exit(1);
+      }
+    }
+    else if(opt == 'o')
+    {
+      options->outfilename = optarg;
+    }
+    else if(opt == 'p')
+    {
+      options->graphics = false;
+    }
+    else if(opt == 'r')
+    {
+      if(true)
+      {
+        FILE *filterfile = fopen(optarg, "r");
+        if(filterfile == NULL)
         {
-          fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
-                  "option\n\n", optarg);
-          pe_print_usage(stderr);
-          exit(1);
+          gt_error_set(error, "unable to open filter file '%s'", optarg);
+          return -1;
         }
-        break;
-
-      case 'g':
-        options->gff3 = false;
-        break;
-
-      case 'h':
-        pe_print_usage(stdout);
-        exit(0);
-        break;
-
-      case 'k':
-        options->makefilter = true;
-        break;
-
-      case 'l':
-        if(sscanf(optarg, "%ld", &options->delta) == EOF)
-        {
-          fprintf(stderr, "error: could not convert delta '%s' to an "
-                          "integer\n", optarg);
-          exit(1);
-        }
-        break;
-
-      case 'o':
-        options->outfilename = optarg;
-        break;
-
-      case 'p':
-        options->graphics = false;
-        break;
-
-      case 'r':
-        if(true)
-        {
-          FILE *filterfile = fopen(optarg, "r");
-          if(filterfile == NULL)
-          {
-            gt_error_set(error, "unable to open filter file '%s'", optarg);
-            return -1;
-          }
-          agn_locus_filter_parse(filterfile, options->filters);
-          fclose(filterfile);
-        }
-        break;
-
-      case 's':
-        options->summary_only = true;
-        break;
-
-      case 't':
-        if(sscanf(optarg, "%d", &options->max_transcripts) == EOF)
-        {
-          fprintf(stderr, "error: could not convert maxtrans '%s' to an "
-                          "integer\n", optarg);
-          exit(1);
-        }
-        break;
-
-      case 'V':
-        options->verbose = true;
-        break;
-
-      case 'v':
-        agn_print_version("ParsEval", stdout);
-        exit(0);
-        break;
-
-      case 'w':
-        options->overwrite = true;
-        break;
-
-      case 'x':
-        options->refrlabel = optarg;
-        break;
-
-      case 'y':
-        options->predlabel = optarg;
-        break;
-
-      default:
-        break;
+        agn_locus_filter_parse(filterfile, options->filters);
+        fclose(filterfile);
+      }
+    }
+    else if(opt == 's')
+    {
+      options->summary_only = true;
+    }
+    else if(opt == 't')
+    {
+      if(sscanf(optarg, "%d", &options->max_transcripts) == EOF)
+      {
+        fprintf(stderr, "error: could not convert maxtrans '%s' to an "
+                        "integer\n", optarg);
+        exit(1);
+      }
+    }
+    else if(opt == 'V')
+    {
+      options->verbose = true;
+    }
+    else if(opt == 'v')
+    {
+      agn_print_version("ParsEval", stdout);
+      exit(0);
+    }
+    else if(opt == 'w')
+    {
+      options->overwrite = true;
+    }
+    else if(opt == 'x')
+    {
+      options->refrlabel = optarg;
+    }
+    else if(opt == 'y')
+    {
+      options->predlabel = optarg;
     }
   }
-
-  // For debugging
-  // pe_option_print(options, stderr);
   
 #ifdef WITHOUT_CAIRO
   if(options->graphics)

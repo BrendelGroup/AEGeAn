@@ -176,129 +176,131 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
        opt != -1;
        opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'c')
     {
-      case 'c':
-        options->by_cds = 1;
-        options->refine = 1;
-        break;
-      case 'd':
-        options->debug = 1;
-        break;
-      case 'e':
-        if(options->endmode < 0)
-        {
-          gt_error_set(error, "cannot set 'skipends' and 'endsonly' options"
-                       "simultaneously; stubbornly refusing to proceed");
-        }
-        options->endmode = 1;
-        break;
-      case 'f':
-        gt_hashmap_delete(options->filter);
-        options->filter = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
-                                         gt_free_func);
+      options->by_cds = 1;
+      options->refine = 1;
+    }
+    else if(opt == 'd')
+      options->debug = 1;
+    else if(opt == 'e')
+    {
+      if(options->endmode < 0)
+      {
+        gt_error_set(error, "cannot set 'skipends' and 'endsonly' options"
+                     "simultaneously; stubbornly refusing to proceed");
+      }
+      options->endmode = 1;
+    }
+    else if(opt == 'f')
+    {
+      gt_hashmap_delete(options->filter);
+      options->filter = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                       gt_free_func);
 
-        value = strtok(optarg, ",");
-        gt_hashmap_add(options->filter, gt_cstr_dup(value), gt_cstr_dup(value));
-        while((value = strtok(NULL, ",")) != NULL)
+      value = strtok(optarg, ",");
+      gt_hashmap_add(options->filter, gt_cstr_dup(value), gt_cstr_dup(value));
+      while((value = strtok(NULL, ",")) != NULL)
+      {
+        oldvalue = gt_hashmap_get(options->filter, value);
+        if(!oldvalue)
         {
-          oldvalue = gt_hashmap_get(options->filter, value);
-          if(!oldvalue)
-          {
-            gt_hashmap_add(options->filter, gt_cstr_dup(value),
-                           gt_cstr_dup(value));
-          }
-        }
-        break;
-      case 'g':
-        options->genestream = fopen(optarg, "w");
-        if(options->genestream == NULL)
-          gt_error_set(error, "could not open genemap file '%s'", optarg);
-        break;
-      case 'h':
-        print_usage(stdout);
-        exit(0);
-        break;
-      case 'I':
-        if(options->idformat != NULL)
-          gt_free(options->idformat);
-        options->idformat = gt_cstr_dup(optarg);
-        break;
-      case 'i':
-        options->ilenfile = fopen(optarg, "w");
-        if(options->ilenfile == NULL)
-          gt_error_set(error, "could not open ilenfile file '%s'", optarg);
-        break;
-      case 'l':
-        if(sscanf(optarg, "%lu", &options->delta) == EOF)
-        {
-          gt_error_set(error, "could not convert delta '%s' to an integer",
-                       optarg);
-        }
-        break;
-      case 'm':
-        if(sscanf(optarg, "%lu", &options->minoverlap) == EOF)
-        {
-          gt_error_set(error, "could not convert overlap '%s' to an integer",
-                       optarg);
-        }
-        break;
-      case 'o':
-        options->filefreefunc(options->outstream);
-        options->outstream = gt_file_new(optarg, "w", error);
-        options->filefreefunc = gt_file_delete;
-        break;
-      case 'p':
-        key   = strtok(optarg, ":");
-        value = strtok(NULL, ":");
-        oldvalue = gt_hashmap_get(options->type_parents, "key");
-        if(oldvalue)
-        {
-          gt_error_set(error, "cannot set parent type for '%s' to '%s'; "
-                       "already set to '%s'", key, value, oldvalue);
-        }
-        else
-        {
-          gt_hashmap_add(options->type_parents, gt_cstr_dup(key),
+          gt_hashmap_add(options->filter, gt_cstr_dup(value),
                          gt_cstr_dup(value));
         }
-        break;
-      case 'r':
-        options->refine = 1;
-        break;
-      case 's':
-        if(options->endmode > 0)
-        {
-          gt_error_set(error, "cannot set 'skipends' and 'endsonly' options"
-                       "simultaneously; stubbornly refusing to proceed");
-        }
-        options->endmode = -1;
-        break;
-      case 'T':
-        options->retain = true;
-        break;
-      case 't':
-        options->transstream = fopen(optarg, "w");
-        if(options->transstream == NULL)
-          gt_error_set(error, "could not open transmap file '%s'", optarg);
-        break;
-      case 'u':
-        options->pseudofix = 1;
-        break;
-      case 'v':
-        agn_print_version("LocusPocus", stdout);
-        exit(0);
-        break;
-      case 'V':
-        options->verbose = 1;
-        break;
-      case 'y':
-        options->skipiiLoci = true;
-        break;
-      default:
-        fprintf(stderr, "error: unknown option");
-        break;
+      }
     }
+    else if(opt == 'g')
+    {
+      options->genestream = fopen(optarg, "w");
+      if(options->genestream == NULL)
+        gt_error_set(error, "could not open genemap file '%s'", optarg);
+    }
+    else if(opt == 'h')
+    {
+      print_usage(stdout);
+      exit(0);
+    }
+    else if(opt == 'I')
+    {
+      if(options->idformat != NULL)
+        gt_free(options->idformat);
+      options->idformat = gt_cstr_dup(optarg);
+    }
+    else if(opt == 'i')
+    {
+      options->ilenfile = fopen(optarg, "w");
+      if(options->ilenfile == NULL)
+        gt_error_set(error, "could not open ilenfile file '%s'", optarg);
+    }
+    else if(opt == 'l')
+    {
+      if(sscanf(optarg, "%lu", &options->delta) == EOF)
+      {
+        gt_error_set(error, "could not convert delta '%s' to an integer",
+                     optarg);
+      }
+    }
+    else if(opt == 'm')
+    {
+      if(sscanf(optarg, "%lu", &options->minoverlap) == EOF)
+      {
+        gt_error_set(error, "could not convert overlap '%s' to an integer",
+                     optarg);
+      }
+    }
+    else if(opt == 'o')
+    {
+      options->filefreefunc(options->outstream);
+      options->outstream = gt_file_new(optarg, "w", error);
+      options->filefreefunc = gt_file_delete;
+    }
+    else if(opt == 'p')
+    {
+      key = strtok(optarg, ":");
+      value = strtok(NULL, ":");
+      oldvalue = gt_hashmap_get(options->type_parents, "key");
+      if(oldvalue)
+      {
+        gt_error_set(error, "cannot set parent type for '%s' to '%s'; "
+                     "already set to '%s'", key, value, oldvalue);
+      }
+      else
+      {
+        gt_hashmap_add(options->type_parents, gt_cstr_dup(key),
+                       gt_cstr_dup(value));
+      }
+    }
+    else if(opt == 'r')
+      options->refine = 1;
+    else if(opt == 's')
+    {
+      if(options->endmode > 0)
+      {
+        gt_error_set(error, "cannot set 'skipends' and 'endsonly' options"
+                     "simultaneously; stubbornly refusing to proceed");
+      }
+      options->endmode = -1;
+    }
+    else if(opt == 'T')
+      options->retain = true;
+    else if(opt == 't')
+    {
+      options->transstream = fopen(optarg, "w");
+      if(options->transstream == NULL)
+        gt_error_set(error, "could not open transmap file '%s'", optarg);
+    }
+    else if(opt == 'u')
+      options->pseudofix = 1;
+    else if(opt == 'v')
+    {
+      agn_print_version("LocusPocus", stdout);
+      exit(0);
+    }
+    else if(opt == 'V')
+      options->verbose = 1;
+    else if(opt == 'y')
+      options->skipiiLoci = true;
   }
 }
 

@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Bug that prevented AEGeAn from building correctly--thanks Sascha!
+- Bug with option parsing and unknown options/flags (only appeared in Linux).
 
 ## [0.13.1] - 2015-06-15
 

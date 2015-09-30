@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -58,33 +58,28 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
       opt != -1;
       opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'a')
+      options->useacc = true;
+    else if(opt == 'h')
     {
-      case 'a':
-        options->useacc = true;
-        break;
-      case 'h':
-        print_usage(stdout);
-        exit(0);
-        break;
-      case 'i':
-        options->infer_introns = false;
-        break;
-      case 'l':
-        options->locus_parent = true;
-        break;
-      case 'm':
-        options->mapstream = fopen(optarg, "w");
-        if(options->mapstream == NULL)
-        {
-          fprintf(stderr, "error: could not create mapfile '%s'", optarg);
-          exit(1);
-        }
-        break;
-      case 'p':
-        options->fix_pseudogenes = false;
-        break;
+      print_usage(stdout);
+      exit(0);
     }
+    else if(opt == 'i')
+      options->infer_introns = false;
+    else if(opt == 'l')
+      options->locus_parent = true;
+    else if(opt == 'm')
+    {
+      options->mapstream = fopen(optarg, "w");
+      if(options->mapstream == NULL)
+      {
+        fprintf(stderr, "error: could not create mapfile '%s'", optarg);
+        exit(1);
+      }
+    }
+    else if(opt == 'p')
+      options->fix_pseudogenes = false;
   }
 }
 
