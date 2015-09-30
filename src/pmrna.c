@@ -52,6 +52,7 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
     { "locus",       no_argument,       NULL, 'l' },
     { "map",         required_argument, NULL, 'm' },
     { "pseudogenes", no_argument,       NULL, 'o' },
+    { NULL,      no_argument,       NULL,  0  },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex);
       opt != -1;

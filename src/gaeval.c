@@ -73,6 +73,7 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
     { "exp-cds",   required_argument, NULL, 'c' },
     { "exp-5putr", required_argument, NULL, '5' },
     { "exp-3putr", required_argument, NULL, '3' },
+    { NULL,        no_argument,       NULL,  0  },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, gaeval_options, &optindex);
       opt != -1;

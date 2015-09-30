@@ -129,6 +129,7 @@ static void xtract_options_parse(int argc, char **argv,
     { "verbose", no_argument,       NULL, 'V' },
     { "version", no_argument,       NULL, 'v' },
     { "width",   required_argument, NULL, 'w' },
+    { NULL,      no_argument,       NULL,  0  },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
        opt != -1;

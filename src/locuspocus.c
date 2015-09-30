@@ -170,7 +170,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "version",    no_argument,       NULL, 'v' },
     { "verbose",    no_argument,       NULL, 'V' },
     { "skipiiloci", no_argument,       NULL, 'y' },
-    {0, 0, 0, 0},
+    { NULL,         no_argument,       NULL,  0  },
   };
   for( opt = getopt_long(argc, argv + 0, optstr, locuspocus_options, &optindex);
        opt != -1;
