@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Protein-coding genes and non-coding genes are no longer placed in the same iLocus even if they overlap.
 - Enabled use of feature accessions rather than IDs for some tools.
 - Replaced the term *empty* with the more current term *iiLocus* in a variety of places in the code and documentation.
+- Refactored iLocus functional test code.
 
 ### Fixed
 - Bug that prevented AEGeAn from building correctly--thanks Sascha!
