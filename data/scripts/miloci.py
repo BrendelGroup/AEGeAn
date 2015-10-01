@@ -15,7 +15,9 @@ def merge_iloci(loci):
   """
   assert len(loci) > 0
   if len(loci) == 1:
-    return re.sub("ID=[^;\n]+;*", "", loci[0])
+    line = re.sub("ID=[^;\n]+;*", "", loci[0])
+    line = re.sub("Name=[^;\n]+;*", "", line)
+    return line
 
   seqid = None
   start, end = -1, -1
@@ -79,7 +81,9 @@ def parse_iloci(fp):
       if len(prev_loci) > 0:
         yield merge_iloci(prev_loci)
         prev_loci = []
-      yield re.sub("ID=[^;\n]+", "geneless=true", line)
+      line = re.sub("ID=[^;\n]+;*", "geneless=true;", line)
+      line = re.sub("Name=[^;\n]+;*", "", line)
+      yield line
     if len(prev_loci) > 0:
       yield merge_iloci(prev_loci)
 
