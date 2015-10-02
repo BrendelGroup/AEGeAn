@@ -18,7 +18,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
  * @class AgnFilterStream
  *
  * Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream
- * used to select features of a certain type from a node stream.
+ * used to remove features with certain attributes from a node stream.
  */
 typedef struct AgnAttributeFilterStream AgnAttributeFilterStream;
 
@@ -31,5 +31,10 @@ typedef struct AgnAttributeFilterStream AgnAttributeFilterStream;
  */
 GtNodeStream* agn_attribute_filter_stream_new(GtNodeStream *in_stream,
                                               GtHashmap *filters);
+
+/**
+ * @function Run unit tests for this class.
+ */
+bool agn_attribute_filter_stream_unit_test(AgnUnitTest *test);
 
 #endif

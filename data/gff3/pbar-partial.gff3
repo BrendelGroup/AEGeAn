@@ -1,0 +1,39 @@
+##gff-version   3
+##sequence-region   NW_011933723.1 646485 656424
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build Pbar_UMD_V03
+#!genome-build-accession NCBI_Assembly:GCF_000187915.1
+#!annotation-date 17 March 2015
+#!annotation-source NCBI Pogonomyrmex barbatus Annotation Release 100
+NW_011933723.1	Gnomon	gene	646485	650947	.	-	.	ID=gene1;Dbxref=GeneID:105430795;Name=LOC105430795;gbkey=Gene;gene=LOC105430795;accession=105430795
+NW_011933723.1	Gnomon	mRNA	646485	650947	.	-	.	ID=mRNA1;Parent=gene1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;Name=XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	exon	646485	646898	.	-	.	Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	CDS	646601	646898	.	-	1	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XP_011642812.1;Name=XP_011642812.1;gbkey=CDS;gene=LOC105430795;product=adenosylhomocysteinase;protein_id=XP_011642812.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	exon	646968	647194	.	-	.	Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	CDS	646968	647194	.	-	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XP_011642812.1;Name=XP_011642812.1;gbkey=CDS;gene=LOC105430795;product=adenosylhomocysteinase;protein_id=XP_011642812.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	exon	647494	647709	.	-	.	Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	CDS	647494	647709	.	-	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XP_011642812.1;Name=XP_011642812.1;gbkey=CDS;gene=LOC105430795;product=adenosylhomocysteinase;protein_id=XP_011642812.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	exon	648131	648472	.	-	.	Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	CDS	648131	648472	.	-	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XP_011642812.1;Name=XP_011642812.1;gbkey=CDS;gene=LOC105430795;product=adenosylhomocysteinase;protein_id=XP_011642812.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	exon	649230	649420	.	-	.	Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	CDS	649230	649420	.	-	2	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XP_011642812.1;Name=XP_011642812.1;gbkey=CDS;gene=LOC105430795;product=adenosylhomocysteinase;protein_id=XP_011642812.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	CDS	650830	650860	.	-	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XP_011642812.1;Name=XP_011642812.1;gbkey=CDS;gene=LOC105430795;product=adenosylhomocysteinase;protein_id=XP_011642812.1;accession=XM_011644510.1
+NW_011933723.1	Gnomon	exon	650830	650947	.	-	.	Parent=mRNA1;Dbxref=GeneID:105430795,Genbank:XM_011644510.1;gbkey=mRNA;gene=LOC105430795;product=adenosylhomocysteinase;transcript_id=XM_011644510.1;accession=XM_011644510.1
+###
+NW_011933723.1	Gnomon	gene	652674	654283	.	-	.	ID=gene2;Dbxref=GeneID:105430827;Name=LOC105430827;gbkey=Gene;gene=LOC105430827;partial=true;start_range=.,652674;accession=105430827
+NW_011933723.1	Gnomon	mRNA	652674	654283	.	-	.	ID=mRNA2;Parent=gene2;Dbxref=GeneID:105430827,Genbank:XM_011644548.1;Name=XM_011644548.1;gbkey=mRNA;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;start_range=.,652674;transcript_id=XM_011644548.1;accession=XM_011644548.1
+NW_011933723.1	Gnomon	exon	652674	653074	.	-	.	Parent=mRNA2;Dbxref=GeneID:105430827,Genbank:XM_011644548.1;gbkey=mRNA;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;start_range=.,652674;transcript_id=XM_011644548.1;accession=XM_011644548.1
+NW_011933723.1	Gnomon	CDS	652674	653074	.	-	2	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105430827,Genbank:XP_011642850.1;Name=XP_011642850.1;gbkey=CDS;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;protein_id=XP_011642850.1;start_range=.,652674;accession=XM_011644548.1
+NW_011933723.1	Gnomon	exon	653540	653739	.	-	.	Parent=mRNA2;Dbxref=GeneID:105430827,Genbank:XM_011644548.1;gbkey=mRNA;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;transcript_id=XM_011644548.1;accession=XM_011644548.1
+NW_011933723.1	Gnomon	CDS	653540	653739	.	-	1	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105430827,Genbank:XP_011642850.1;Name=XP_011642850.1;gbkey=CDS;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;protein_id=XP_011642850.1;accession=XM_011644548.1
+NW_011933723.1	Gnomon	CDS	653801	654216	.	-	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105430827,Genbank:XP_011642850.1;Name=XP_011642850.1;gbkey=CDS;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;protein_id=XP_011642850.1;accession=XM_011644548.1
+NW_011933723.1	Gnomon	exon	653801	654283	.	-	.	Parent=mRNA2;Dbxref=GeneID:105430827,Genbank:XM_011644548.1;gbkey=mRNA;gene=LOC105430827;partial=true;product=leucine-rich repeat-containing protein 23-like;transcript_id=XM_011644548.1;accession=XM_011644548.1
+###
+NW_011933723.1	Gnomon	gene	654911	656424	.	-	.	ID=gene3;Dbxref=GeneID:105430796;Name=LOC105430796;gbkey=Gene;gene=LOC105430796;accession=105430796
+NW_011933723.1	Gnomon	mRNA	654911	656424	.	-	.	ID=mRNA3;Parent=gene3;Dbxref=GeneID:105430796,Genbank:XM_011644511.1;Name=XM_011644511.1;gbkey=mRNA;gene=LOC105430796;product=uncharacterized LOC105430796;transcript_id=XM_011644511.1;accession=XM_011644511.1
+NW_011933723.1	Gnomon	exon	654911	655313	.	-	.	Parent=mRNA3;Dbxref=GeneID:105430796,Genbank:XM_011644511.1;gbkey=mRNA;gene=LOC105430796;product=uncharacterized LOC105430796;transcript_id=XM_011644511.1;accession=XM_011644511.1
+NW_011933723.1	Gnomon	CDS	655086	655313	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105430796,Genbank:XP_011642813.1;Name=XP_011642813.1;gbkey=CDS;gene=LOC105430796;product=uncharacterized protein LOC105430796;protein_id=XP_011642813.1;accession=XM_011644511.1
+NW_011933723.1	Gnomon	CDS	656100	656177	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:105430796,Genbank:XP_011642813.1;Name=XP_011642813.1;gbkey=CDS;gene=LOC105430796;product=uncharacterized protein LOC105430796;protein_id=XP_011642813.1;accession=XM_011644511.1
+NW_011933723.1	Gnomon	exon	656100	656424	.	-	.	Parent=mRNA3;Dbxref=GeneID:105430796,Genbank:XM_011644511.1;gbkey=mRNA;gene=LOC105430796;product=uncharacterized LOC105430796;transcript_id=XM_011644511.1;accession=XM_011644511.1
+###

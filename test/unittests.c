@@ -8,6 +8,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 **/
 #include <string.h>
+#include "AgnAttributeFilterStream.h"
 #include "AgnCliquePair.h"
 #include "AgnFilterStream.h"
 #include "AgnGaevalVisitor.h"
@@ -29,6 +30,8 @@ int main(int argc, char **argv)
   gt_lib_init();
 
   GtQueue *tests = gt_queue_new();
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnAttributeFilterStream",
+                                        agn_attribute_filter_stream_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnPseudogeneFixVisitor",
                                         agn_pseudogene_fix_visitor_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnInferParentStream",

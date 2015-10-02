@@ -51,6 +51,11 @@ static void attribute_filter_stream_free(GtNodeStream *ns);
 static int attribute_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
                                         GtError *error);
 
+/**
+ * @function Generate data for unit testing.
+ */
+static void attribute_filter_stream_test_data(GtQueue *queue);
+
 
 //------------------------------------------------------------------------------
 // Method implementations
@@ -79,6 +84,27 @@ static const GtNodeStreamClass *attribute_filter_stream_class(void)
                                    attribute_filter_stream_next);
   }
   return nsc;
+}
+
+bool agn_attribute_filter_stream_unit_test(AgnUnitTest *test)
+{
+  GtQueue *queue = gt_queue_new();
+  attribute_filter_stream_test_data(queue);
+  bool test1 = gt_queue_size(queue) == 2;
+  if(test1)
+  {
+    GtGenomeNode *gene = gt_queue_get(queue);
+    test1 = test1 && gt_genome_node_get_start(gene) == 646485;
+    gt_genome_node_delete(gene);
+
+    gene = gt_queue_get(queue);
+    test1 = test1 && gt_genome_node_get_start(gene) == 654911;
+    gt_genome_node_delete(gene);
+  }
+
+  agn_unit_test_result(test, "Pogonomyrmex barbatus (partial)", test1);
+  gt_queue_delete(queue);
+  return agn_unit_test_success(test);
 }
 
 static void attribute_filter_stream_free(GtNodeStream *ns)
@@ -145,4 +171,55 @@ static int attribute_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
   }
 
   return 0;
+}
+
+static void attribute_filter_stream_test_data(GtQueue *queue)
+{
+  GtNodeStream *current_stream, *last_stream;
+  GtQueue *streams = gt_queue_new();
+
+  const char *infile = "data/gff3/pbar-partial.gff3";
+  current_stream = gt_gff3_in_stream_new_unsorted(1, &infile);
+  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)current_stream);
+  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)current_stream);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  GtHashmap *attrs = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
+  char *keyvalue = gt_cstr_dup("partial=true");
+  gt_hashmap_add(attrs, keyvalue, keyvalue);
+  current_stream = agn_attribute_filter_stream_new(last_stream, attrs);
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+  gt_hashmap_delete(attrs);
+
+  GtError *error = gt_error_new();
+  GtArray *genes = gt_array_new( sizeof(GtGenomeNode *) );
+  current_stream = gt_array_out_stream_new(last_stream, genes, error);
+  agn_assert(!gt_error_is_set(error));
+  gt_queue_add(streams, current_stream);
+  last_stream = current_stream;
+
+  int result = gt_node_stream_pull(last_stream, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "error loading unit test data: %s\n", gt_error_get(error));
+    exit(1);
+  }
+
+  gt_array_reverse(genes);
+  while(gt_array_size(genes) > 0)
+  {
+    GtGenomeNode **gene = gt_array_pop(genes);
+    gt_queue_add(queue, *gene);
+  }
+
+  while(gt_queue_size(streams) > 0)
+  {
+    GtNodeStream *ns = gt_queue_get(streams);
+    gt_node_stream_delete(ns);
+  }
+  gt_queue_delete(streams);
+  gt_error_delete(error);
+  gt_array_delete(genes);
 }
