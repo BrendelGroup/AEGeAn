@@ -25,12 +25,28 @@ typedef struct AgnMrnaRepVisitor AgnMrnaRepVisitor;
 /**
  * @function Constructor for a node stream based on this node visitor.
  */
-GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in);
+GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstreami,
+                                      bool useacc);
 
 /**
- * @function Constructor for the node visitor.
+ * @function Constructor for the node visitor. If `mapstream` is not NULL, each
+ * gene/mRNA rep pair will be written to `mapstream`.
  */
-GtNodeVisitor *agn_mrna_rep_visitor_new();
+GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream);
+
+/**
+ * @function By default, the representative mRNA for each gene will be reported.
+ * Use this function to specify an alternative top-level feature to gene (such
+ * as locus).
+ */
+void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v,
+                                          const char *type);
+
+/**
+ * @function Write mRNA `accession` attribute to `mapstream` rather than `ID`
+ * attribute.
+ */
+void agn_mrna_rep_visitor_use_accession(AgnMrnaRepVisitor *v);
 
 /**
  * @function Run unit tests for this class. Returns true if all tests passed.

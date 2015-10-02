@@ -69,6 +69,12 @@ bool agn_typecheck_pseudogene(GtFeatureNode *fn);
 GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *));
 
 /**
+ * @function Gather the children of a given feature that have a certain type.
+ * Type is tested by comparing `type` to the type of `fn`.
+ */
+GtArray *agn_typecheck_select_str(GtFeatureNode *fn, const char *);
+
+/**
  * @function Returns true if the given feature is a start codon; false
  * otherwise.
  */

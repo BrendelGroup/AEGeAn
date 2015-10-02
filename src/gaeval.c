@@ -73,6 +73,7 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
     { "exp-cds",   required_argument, NULL, 'c' },
     { "exp-5putr", required_argument, NULL, '5' },
     { "exp-3putr", required_argument, NULL, '3' },
+    { NULL,        no_argument,       NULL,  0  },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, gaeval_options, &optindex);
       opt != -1;
@@ -80,31 +81,23 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
   {
     if(opt == '3')
       options->params.exp_3putr_len = atoi(optarg);
-
     else if(opt == '5')
       options->params.exp_5putr_len = atoi(optarg);
-
     else if(opt == 'a')
       options->params.alpha = atof(optarg);
-
     else if(opt == 'b')
       options->params.beta = atof(optarg);
-
     else if(opt == 'c')
       options->params.exp_cds_len = atoi(optarg);
-
     else if(opt == 'e')
       options->params.epsilon = atof(optarg);
-
     else if(opt == 'h')
     {
       print_usage(stdout);
       exit(0);
     }
-
     else if(opt == 'g')
       options->params.gamma = atof(optarg);
-
     else if(opt == 'v')
     {
       agn_print_version("GAEVAL", stdout);

@@ -129,52 +129,58 @@ static void xtract_options_parse(int argc, char **argv,
     { "verbose", no_argument,       NULL, 'V' },
     { "version", no_argument,       NULL, 'v' },
     { "width",   required_argument, NULL, 'w' },
+    { NULL,      no_argument,       NULL,  0  },
   };
-  for( opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
-       opt != -1;
-       opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex))
+  for(opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex);
+      opt != -1;
+      opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'h')
     {
-      case 'h':
-        xt_print_usage(stdout);
-        exit(0);
-        break;
-      case 'i':
-        options->idfile = fopen(optarg, "r");
-        if(options->idfile == NULL)
-          gt_error_set(error, "could not open ID file '%s'", optarg);
-        break;
-      case 'o':
-        options->outfile = fopen(optarg, "w");
-        if(options->outfile == NULL)
-          gt_error_set(error, "could not open output file '%s'", optarg);
-        break;
-      case 't':
-        if(options->typeoverride == false)
-        {
-          gt_hashmap_delete(options->typestoextract);
-          options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
-                                                   NULL);
-          options->typeoverride = true;
-        }
-        type = gt_cstr_dup(optarg);
-        gt_hashmap_add(options->typestoextract, type, type);
-        break;
-      case 'V':
-        options->verbose = true;
-        break;
-      case 'v':
-        agn_print_version("Xtractore", stdout);
-        exit(0);
-        break;
-      case 'w':
-        if(sscanf(optarg, "%u", &options->width) == EOF)
-        {
-          gt_error_set(error, "could not convert width '%s' to an integer",
-                       optarg);
-        }
-        break;
+      xt_print_usage(stdout);
+      exit(0);
+    }
+    else if(opt == 'i')
+    {
+      options->idfile = fopen(optarg, "r");
+      if(options->idfile == NULL)
+        gt_error_set(error, "could not open ID file '%s'", optarg);
+    }
+    else if(opt == 'o')
+    {
+      options->outfile = fopen(optarg, "w");
+      if(options->outfile == NULL)
+        gt_error_set(error, "could not open output file '%s'", optarg);
+    }
+    else if(opt == 't')
+    {
+      if(options->typeoverride == false)
+      {
+        gt_hashmap_delete(options->typestoextract);
+        options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
+                                                 NULL);
+        options->typeoverride = true;
+      }
+      type = gt_cstr_dup(optarg);
+      gt_hashmap_add(options->typestoextract, type, type);
+    }
+    else if(opt == 'V')
+    {
+      options->verbose = true;
+      break;
+    }
+    else if(opt == 'v')
+    {
+      agn_print_version("Xtractore", stdout);
+      exit(0);
+    }
+    else if(opt == 'w')
+    {
+      if(sscanf(optarg, "%u", &options->width) == EOF)
+      {
+        gt_error_set(error, "could not convert width '%s' to an integer",
+                     optarg);
+      }
     }
   }
 }
@@ -344,18 +350,19 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
 
   sprintf(subseqid, "%s_%lu-%lu%s", gt_str_get(seqid), range.start, range.end,
           strandstr);
-  const char *featid   = gt_feature_node_get_attribute(fn, "ID");
-  const char *parentid = gt_feature_node_get_attribute(fn, "Parent");
-  if(featid)
+  const char *featid = gt_feature_node_get_attribute(fn, "ID");
+  const char *accession = gt_feature_node_get_attribute(fn, "accession");
+  if(gt_feature_node_is_pseudo(fn))
   {
-    const char *featname = gt_feature_node_get_attribute(fn, "Name");
-    if(featname)
-      fprintf(options->outfile, ">%s %s %s\n", featid, featname, subseqid);
-    else
-      fprintf(options->outfile, ">%s %s\n", featid, subseqid);
+    GtFeatureNodeIterator *it = gt_feature_node_iterator_new_direct(fn);
+    GtFeatureNode *child = gt_feature_node_iterator_next(it);
+    accession = gt_feature_node_get_attribute(child, "accession");
+    gt_feature_node_iterator_delete(it);
   }
-  else if(parentid)
-    fprintf(options->outfile, ">%s %s\n", parentid, subseqid);
+  if(accession)
+    fprintf(options->outfile, ">%s %s\n", accession, subseqid);
+  else if(featid)
+    fprintf(options->outfile, ">%s %s\n", featid, subseqid);
   else
     fprintf(options->outfile, ">%s\n", subseqid);
 
@@ -364,8 +371,8 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
      strncmp(feat_seq, "ATG", 3) != 0 &&
      options->verbose)
   {
-    fprintf(stderr, "[xtractore] warning: CDS for '%s' does not begin with "
-            "ATG\n", parentid);
+    fprintf(stderr, "[xtractore] warning: CDS at '%s' does not begin with "
+            "ATG\n", subseqid);
   }
   xt_format_sequence(options->outfile, feat_seq, options->width);
   gt_free(feat_seq);

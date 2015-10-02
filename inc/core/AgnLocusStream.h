@@ -63,13 +63,19 @@ void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format);
  * and loci containing no features. This function disables reporting of the
  * latter.
  */
-void agn_locus_stream_skip_empty_loci(AgnLocusStream *stream);
+void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream);
 
 /**
  * @function Set the source value to be used for all iLoci created by this
  * stream. Default value is 'AEGeAn::AgnLocusStream'.
  */
 void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source);
+
+/**
+ * @function Record the length of each intergenic iLocus as loci are being
+ * parsed.
+ */
+void agn_locus_stream_track_ilens(AgnLocusStream *stream, FILE *ilenfile);
 
 /**
  * @function Run unit tests for this class. Returns true if all tests passed.

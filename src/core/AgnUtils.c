@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -133,6 +133,46 @@ bool agn_feature_overlap_check(GtArray *feats)
   return false;
 }
 
+GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn)
+{
+  GtRange cds_range = {0,0};
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *child;
+  for(child = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child = gt_feature_node_iterator_next(iter))
+  {
+    if(agn_typecheck_cds(child))
+    {
+      GtRange childrange = gt_genome_node_get_range((GtGenomeNode *)child);
+      if(cds_range.end == 0)
+        cds_range = childrange;
+      else
+        cds_range = gt_range_join(&cds_range, &childrange);
+    }
+  }
+  gt_feature_node_iterator_delete(iter);
+  return cds_range;
+}
+
+GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
+{
+  agn_assert(fn);
+  GtFeatureNode *child;
+  GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(fn);
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
+  {
+    gt_array_add(children, child);
+  }
+  gt_feature_node_iterator_delete(iter);
+  if(gt_array_size(children) > 1)
+    gt_array_sort(children, (GtCompare)agn_genome_node_compare);
+  return children;
+}
+
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 {
   agn_assert(root && fn);
@@ -146,6 +186,11 @@ void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
   }
   gt_feature_node_iterator_delete(iter);
   gt_feature_node_remove_leaf(root, fn);
+}
+
+int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
+{
+  return gt_genome_node_cmp(*gn_a, *gn_b);
 }
 
 GtUword agn_mrna_3putr_length(GtFeatureNode *mrna)
@@ -188,9 +233,39 @@ GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
   return range;
 }
 
-int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
+bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2,
+                        GtUword minoverlap, bool by_cds)
 {
-  return gt_genome_node_cmp(*gn_a, *gn_b);
+  GtStr *seqid1 = gt_genome_node_get_seqid(f1);
+  GtStr *seqid2 = gt_genome_node_get_seqid(f2);
+  if(gt_str_cmp(seqid1, seqid2) != 0)
+    return false;
+
+  if(by_cds)
+  {
+    GtRange c1 = agn_feature_node_get_cds_range((GtFeatureNode *)f1);
+    GtRange c2 = agn_feature_node_get_cds_range((GtFeatureNode *)f2);
+    bool has_cds_1 = c1.end != 0;
+    bool has_cds_2 = c2.end != 0;
+    if(has_cds_1 != has_cds_2)
+    {
+      // One feature has a CDS, the other doesn't, so they should belong to
+      // different iLoci even if they overlap.
+      return false;
+    }
+
+    if(has_cds_1)
+    {
+      // Both have coding sequences, use those instead of the complete feature
+      // coordinates.
+      return gt_range_overlap_delta(&c1, &c2, minoverlap);
+    }
+  }
+
+  // Either we are not in CDS mode, or the features don't have a CDS.
+  GtRange r1 = gt_genome_node_get_range(f1);
+  GtRange r2 = gt_genome_node_get_range(f2);
+  return gt_range_overlap_delta(&r1, &r2, minoverlap);
 }
 
 void agn_print_version(const char *progname, FILE *outstream)

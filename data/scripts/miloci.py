@@ -35,12 +35,14 @@ def merge_iloci(loci):
     for key_value_pair in numeric_attrs:
       assert "=" in key_value_pair, "malformed key/value pair %s" % key_value_pair
       key, value = key_value_pair.split("=")
+      if key in ["left_overlap", "right_overlap"]:
+          continue
       value = int(value)
       if key not in attrs:
         attrs[key] = 0
       attrs[key] += value
   
-  attrstring = "merged=true"
+  attrstring = "merged=true;iLocus_type=miLocus"
   for key in attrs:
     attrstring += ";%s=%d" % (key, attrs[key])
   gff3 = [ seqid, "AEGeAn::miloci.py", "locus", str(start), str(end),

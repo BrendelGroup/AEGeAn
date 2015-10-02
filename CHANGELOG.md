@@ -6,7 +6,36 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased][unreleased]
 
 ### Added
+- New post-processing steps to iLocus parsing procedures (iLocus "refinement").
+- An option for using coding sequence instead of UTRs as boundary test for gene overlap when computing iLoci.
+- A variety of new iLocus GFF3 attributes related to iLocus accounting (such as for computing genome breakdown).
+- A barrage of new functional tests (and some unit tests) to validate new functionality.
+- Identification of intron genes into separate iLoci during iLocus parsing.
+
+### Changed
+- Replaced ParsEval's `--png` option with a `--nopng` option, made graphics the default for HTML output mode.
+- iLocus delta extensions are now `\delta` bp long, even if that means extending into adjacent gene bodies.
+- Protein-coding genes and non-coding genes are no longer placed in the same iLocus even if they overlap.
+- Enabled use of feature accessions rather than IDs for some tools.
+- Replaced the term *empty* with the more current term *iiLocus* in a variety of places in the code and documentation.
+- Refactored iLocus functional test code.
+
+### Fixed
+- Bug that prevented AEGeAn from building correctly--thanks Sascha!
+- Bug with option parsing and unknown options/flags (only appeared in Linux).
+
+## [0.13.1] - 2015-06-15
+
+### Added
+- Ability to filter based on feature attribute key/value pairs.
+- Ability to specify arbitrary parent types for mRNA rep stream, and corresponding `--locus` flag for the `pmrna` program.
+- The `map` option for mRNA rep visitor and `pmrna`.
 - Ability to access ParsEval locus reports by category (perfect match, CDS match, etc).
+- Delta option for ParsEval.
+
+### Fixed
+- Simplified and corrected GAEVAL interval merging function.
+- Fixed locus parsing issues resulting from incorrect sorting of input when pseudonodes involved.
 
 ## [0.12.2] - 2015-03-06
 

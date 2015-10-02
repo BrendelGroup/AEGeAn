@@ -188,6 +188,13 @@ void agn_locus_filter_parse(FILE *filterfile, GtArray *filters);
  */
 bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter);
 
+
+/**
+ * @function Return an array of the locus' top-level children, regardless of
+ * their type.
+ */
+GtArray *agn_locus_get(AgnLocus *locus);
+
 /**
  * @function Get a list of all the prediction transcript cliques that have no
  * corresponding reference transcript clique.
@@ -253,6 +260,13 @@ GtUword agn_locus_gene_num(AgnLocus *locus, AgnComparisonSource src);
  * @function Return the locus' position in the format `seqid_start-end`.
  */
 GtStr *agn_locus_get_position(AgnLocus *locus);
+
+/**
+ * @function Given two adjacent gene-containing iLoci, determine their
+ * orientation: 0 for both forward ('>>'), 1 for inner ('><'), 2 for outer
+ * ('<>'), and 3 for reverse ('<<').
+ */
+int agn_locus_inner_orientation(AgnLocus *left, AgnLocus *right);
 
 /**
  * @function Get the mRNAs associated with this locus. Rather than calling

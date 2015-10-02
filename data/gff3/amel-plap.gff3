@@ -1,0 +1,33 @@
+##gff-version   3
+##sequence-region   NC_007077.3 8815135 8822332
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build Amel_4.5
+#!genome-build-accession NCBI_Assembly:GCF_000002195.4
+#!annotation-date 7 January 2014
+#!annotation-source NCBI Apis mellifera Annotation Release 102
+NC_007077.3	Gnomon	gene	8815635	8818420	.	-	.	ID=gene1;Name=LOC552051;Dbxref=BEEBASE:GB41846,GeneID:552051;gbkey=Gene;gene=LOC552051
+NC_007077.3	Gnomon	mRNA	8815635	8818420	.	-	.	ID=mRNA1;Parent=gene1;Name=XM_624430.4;Dbxref=GeneID:552051,Genbank:XM_624430.4,BEEBASE:GB41846;gbkey=mRNA;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like%2C transcript variant 1;transcript_id=XM_624430.4
+NC_007077.3	Gnomon	exon	8815635	8816486	.	-	.	Parent=mRNA1;Dbxref=GeneID:552051,Genbank:XM_624430.4,BEEBASE:GB41846;gbkey=mRNA;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like%2C transcript variant 1;transcript_id=XM_624430.4
+NC_007077.3	Gnomon	CDS	8815942	8816486	.	-	2	ID=CDS1;Parent=mRNA1;Name=XP_624433.2;Dbxref=GeneID:552051,Genbank:XP_624433.2,BEEBASE:GB41846;gbkey=CDS;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like isoform 1;protein_id=XP_624433.2
+NC_007077.3	Gnomon	exon	8816579	8817205	.	-	.	Parent=mRNA1;Dbxref=GeneID:552051,Genbank:XM_624430.4,BEEBASE:GB41846;gbkey=mRNA;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like%2C transcript variant 1;transcript_id=XM_624430.4
+NC_007077.3	Gnomon	CDS	8816579	8817205	.	-	2	ID=CDS1;Parent=mRNA1;Name=XP_624433.2;Dbxref=GeneID:552051,Genbank:XP_624433.2,BEEBASE:GB41846;gbkey=CDS;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like isoform 1;protein_id=XP_624433.2
+NC_007077.3	Gnomon	CDS	8817914	8818046	.	-	0	ID=CDS1;Parent=mRNA1;Name=XP_624433.2;Dbxref=GeneID:552051,Genbank:XP_624433.2,BEEBASE:GB41846;gbkey=CDS;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like isoform 1;protein_id=XP_624433.2
+NC_007077.3	Gnomon	exon	8817914	8818166	.	-	.	Parent=mRNA1;Dbxref=GeneID:552051,Genbank:XM_624430.4,BEEBASE:GB41846;gbkey=mRNA;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like%2C transcript variant 1;transcript_id=XM_624430.4
+NC_007077.3	Gnomon	exon	8818415	8818420	.	-	.	Parent=mRNA1;Dbxref=GeneID:552051,Genbank:XM_624430.4,BEEBASE:GB41846;gbkey=mRNA;gene=LOC552051;product=dolichyl-diphosphooligosaccharide--protein glycosyltransferase 48 kDa subunit-like%2C transcript variant 1;transcript_id=XM_624430.4
+###
+NC_007077.3	Gnomon	gene	8818160	8821832	.	+	.	ID=gene2;Name=Plap;Dbxref=BEEBASE:GB41825,GeneID:409219;gbkey=Gene;gene=Plap
+NC_007077.3	Gnomon	mRNA	8818160	8821832	.	+	.	ID=mRNA2;Parent=gene2;Name=XM_006564515.1;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+NC_007077.3	Gnomon	exon	8818160	8818755	.	+	.	Parent=mRNA2;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+NC_007077.3	Gnomon	CDS	8818580	8818755	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_006564578.1;Dbxref=GeneID:409219,Genbank:XP_006564578.1,BEEBASE:GB41825;gbkey=CDS;gene=Plap;product=phospholipase A-2-activating protein;protein_id=XP_006564578.1
+NC_007077.3	Gnomon	exon	8818870	8819739	.	+	.	Parent=mRNA2;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+NC_007077.3	Gnomon	CDS	8818870	8819739	.	+	1	ID=CDS2;Parent=mRNA2;Name=XP_006564578.1;Dbxref=GeneID:409219,Genbank:XP_006564578.1,BEEBASE:GB41825;gbkey=CDS;gene=Plap;product=phospholipase A-2-activating protein;protein_id=XP_006564578.1
+NC_007077.3	Gnomon	exon	8819841	8820171	.	+	.	Parent=mRNA2;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+NC_007077.3	Gnomon	CDS	8819841	8820171	.	+	1	ID=CDS2;Parent=mRNA2;Name=XP_006564578.1;Dbxref=GeneID:409219,Genbank:XP_006564578.1,BEEBASE:GB41825;gbkey=CDS;gene=Plap;product=phospholipase A-2-activating protein;protein_id=XP_006564578.1
+NC_007077.3	Gnomon	exon	8820246	8820480	.	+	.	Parent=mRNA2;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+NC_007077.3	Gnomon	CDS	8820246	8820480	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_006564578.1;Dbxref=GeneID:409219,Genbank:XP_006564578.1,BEEBASE:GB41825;gbkey=CDS;gene=Plap;product=phospholipase A-2-activating protein;protein_id=XP_006564578.1
+NC_007077.3	Gnomon	exon	8820580	8820998	.	+	.	Parent=mRNA2;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+NC_007077.3	Gnomon	CDS	8820580	8820998	.	+	2	ID=CDS2;Parent=mRNA2;Name=XP_006564578.1;Dbxref=GeneID:409219,Genbank:XP_006564578.1,BEEBASE:GB41825;gbkey=CDS;gene=Plap;product=phospholipase A-2-activating protein;protein_id=XP_006564578.1
+NC_007077.3	Gnomon	CDS	8821088	8821405	.	+	0	ID=CDS2;Parent=mRNA2;Name=XP_006564578.1;Dbxref=GeneID:409219,Genbank:XP_006564578.1,BEEBASE:GB41825;gbkey=CDS;gene=Plap;product=phospholipase A-2-activating protein;protein_id=XP_006564578.1
+NC_007077.3	Gnomon	exon	8821088	8821832	.	+	.	Parent=mRNA2;Dbxref=GeneID:409219,Genbank:XM_006564515.1,BEEBASE:GB41825;gbkey=mRNA;gene=Plap;product=phospholipase A2 activator protein;transcript_id=XM_006564515.1
+###

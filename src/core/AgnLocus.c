@@ -510,6 +510,22 @@ bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
   return false;
 }
 
+GtArray *agn_locus_get(AgnLocus *locus)
+{
+  GtFeatureNode *locusfn = gt_feature_node_cast(locus);
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new_direct(locusfn);
+  GtFeatureNode *child;
+  GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
+  for(child  = gt_feature_node_iterator_next(iter);
+      child != NULL;
+      child  = gt_feature_node_iterator_next(iter))
+  {
+    gt_array_add(children, child);
+  }
+  gt_feature_node_iterator_delete(iter);
+  return children;
+}
+
 GtArray *agn_locus_get_unique_pred_cliques(AgnLocus *locus)
 {
   return gt_genome_node_get_user_data(locus, "uniqpred");
@@ -593,6 +609,40 @@ GtStr *agn_locus_get_position(AgnLocus *locus)
   gt_str_append_char(pos, '-');
   gt_str_append_uword(pos, range.end);
   return pos;
+}
+
+int agn_locus_inner_orientation(AgnLocus *left, AgnLocus *right)
+{
+  agn_assert(left && right);\
+
+  GtArray *leftgenes = agn_locus_get(left);
+  GtArray *rightgenes = agn_locus_get(right);
+  agn_assert(gt_array_size(leftgenes) > 0);
+  agn_assert(gt_array_size(rightgenes) > 0);
+
+  GtFeatureNode *leftgene = NULL;
+  GtUword end = 0;
+  while(gt_array_size(leftgenes) > 0)
+  {
+    GtGenomeNode **testgene = gt_array_pop(leftgenes);
+    if(leftgene == NULL || gt_genome_node_get_end(*testgene) > end)
+      leftgene = gt_feature_node_cast(*testgene);
+  }
+  gt_array_delete(leftgenes);
+  GtFeatureNode *rightgene = *(GtFeatureNode **)gt_array_get(rightgenes, 0);
+  gt_array_delete(rightgenes);
+
+  GtStrand leftstrand = gt_feature_node_get_strand(leftgene);
+  GtStrand rightstrand = gt_feature_node_get_strand(rightgene);
+
+  if(leftstrand == GT_STRAND_FORWARD && rightstrand == GT_STRAND_FORWARD)
+    return 0;
+  else if(leftstrand == GT_STRAND_FORWARD && rightstrand == GT_STRAND_REVERSE)
+    return 1;
+  else if(leftstrand == GT_STRAND_REVERSE && rightstrand == GT_STRAND_FORWARD)
+    return 2;
+  else
+    return 3;
 }
 
 GtArray *agn_locus_mrnas(AgnLocus *locus, AgnComparisonSource src)
@@ -872,6 +922,12 @@ void agn_locus_print_transcript_mapping(AgnLocus *locus, FILE *outstream)
 
 void agn_locus_set_range(AgnLocus *locus, GtUword start, GtUword end)
 {
+  if(start > end)
+  {
+    GtStr *seqid = gt_genome_node_get_seqid(locus);
+    fprintf(stderr, "%s %lu %lu\n", gt_str_get(seqid), start, end);
+  }
+  agn_assert(start <= end);
   GtRange range = { start, end };
   gt_genome_node_set_range(locus, &range);
 }

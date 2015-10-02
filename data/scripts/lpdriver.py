@@ -12,10 +12,14 @@ import re
 import subprocess
 import sys
 
-def run_locuspocus(infile, outfile, delta, debug=False):
+def run_locuspocus(infile, outfile, delta, ilenfile=None, debug=False):
   command  = "locuspocus --verbose"
   command += " --delta %d" % delta
   command += " --outfile %s.lp" % outfile
+  command += " --cds"
+  command += " --retainids"
+  if ilenfile:
+    command += " --ilens %s" % ilenfile
   command += " %s" % infile
   if debug:
     print >> sys.stderr, "command: %s" % command
@@ -80,6 +84,8 @@ if __name__ == "__main__":
   desc = "Report all iLoci for an annotation file"
   parser = argparse.ArgumentParser(description=desc)
   parser.add_argument("-d", "--debug", action="store_true", help="Debug mode")
+  parser.add_argument("--ilenfile", type=str, default=None, help="File to which"
+                      "iiLocus lengths will be written")
   parser.add_argument("--idfmt", type=str, default="locus%d", help="An ID with"+
                       " a serial number is assigned to each locus; default"+
                       " format is 'locus%%d'")
@@ -92,7 +98,8 @@ if __name__ == "__main__":
   if not args.out:
     args.out = "%s.loci" % args.infile
 
-  numloci = run_locuspocus(args.infile, args.out, args.delta, args.debug)
+  numloci = run_locuspocus(args.infile, args.out, args.delta, args.ilenfile,
+                           args.debug)
   run_uloci(args.infile, args.out, numloci + 1, args.debug)
   combine_output(args.out, args.idfmt)
 

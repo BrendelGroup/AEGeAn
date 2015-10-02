@@ -126,7 +126,7 @@ int ga_init(int argc, char * const *argv)
 
   current_stream = agn_locus_stream_new(last_stream, 0);
   agn_locus_stream_set_source((AgnLocusStream *)current_stream, "GeneAnnoLogy");
-  agn_locus_stream_skip_empty_loci((AgnLocusStream *)current_stream);
+  agn_locus_stream_skip_iiLoci((AgnLocusStream *)current_stream);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
 

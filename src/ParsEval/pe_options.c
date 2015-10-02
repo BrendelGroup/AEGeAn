@@ -21,7 +21,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "a:df:ghko:pr:st:Vvwx:y:";
+  const char *optstr = "a:df:ghkl:o:pr:st:Vvwx:y:";
   const struct option parseval_options[] =
   {
     { "datashare",  required_argument, NULL, 'a' },
@@ -30,8 +30,9 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     { "printgff3",  no_argument,       NULL, 'g' },
     { "help",       no_argument,       NULL, 'h' },
     { "makefilter", no_argument,       NULL, 'k' },
+    { "delta",      required_argument, NULL, 'l' },
     { "outfile",    required_argument, NULL, 'o' },
-    { "png",        no_argument,       NULL, 'p' },
+    { "nopng",      no_argument,       NULL, 'p' },
     { "filterfile", required_argument, NULL, 'r' },
     { "summary",    no_argument,       NULL, 's' },
     { "maxtrans",   required_argument, NULL, 't' },
@@ -47,110 +48,115 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
       opt != -1;
       opt  = getopt_long(argc, argv, optstr, parseval_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'a')
     {
-      case 'a':
-        options->data_path = optarg;
-        break;
-
-      case 'd':
-        options->debug = true;
-        break;
-
-      case 'f':
-        if      (strcmp(optarg, "csv")  == 0) options->outfmt = CSVMODE;
-        else if (strcmp(optarg, "text") == 0) options->outfmt = TEXTMODE;
-        else if (strcmp(optarg, "html") == 0) options->outfmt = HTMLMODE;
-        else
-        {
-          fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
-                  "option\n\n", optarg);
-          pe_print_usage(stderr);
-          exit(1);
-        }
-        break;
-
-      case 'g':
-        options->gff3 = false;
-        break;
-
-      case 'h':
-        pe_print_usage(stdout);
-        exit(0);
-        break;
-
-      case 'k':
-        options->makefilter = true;
-        break;
-
-      case 'o':
-        options->outfilename = optarg;
-        break;
-
-      case 'p':
-        options->graphics = true;
-#ifdef WITHOUT_CAIRO
-        fputs("error: AEGeAn was compiled without graphics support. Please "
-              "recompile to enable this feature.\n", stderr);
+      options->data_path = optarg;
+    }
+    else if(opt == 'd')
+    {
+      options->debug = true;
+    }
+    else if(opt == 'f')
+    {
+      if      (strcmp(optarg, "csv")  == 0) options->outfmt = CSVMODE;
+      else if (strcmp(optarg, "text") == 0) options->outfmt = TEXTMODE;
+      else if (strcmp(optarg, "html") == 0) options->outfmt = HTMLMODE;
+      else
+      {
+        fprintf(stderr, "error: unknown value '%s' for '-f|--outformat' "
+                "option\n\n", optarg);
+        pe_print_usage(stderr);
         exit(1);
-#endif
-        break;
-
-      case 'r':
-        if(true)
+      }
+    }
+    else if(opt == 'g')
+    {
+      options->gff3 = false;
+    }
+    else if(opt == 'h')
+    {
+      pe_print_usage(stdout);
+      exit(0);
+    }
+    else if(opt == 'k')
+    {
+      options->makefilter = true;
+    }
+    else if(opt == 'l')
+    {
+      if(sscanf(optarg, "%ld", &options->delta) == EOF)
+      {
+        fprintf(stderr, "error: could not convert delta '%s' to an integer\n",
+                optarg);
+        exit(1);
+      }
+    }
+    else if(opt == 'o')
+    {
+      options->outfilename = optarg;
+    }
+    else if(opt == 'p')
+    {
+      options->graphics = false;
+    }
+    else if(opt == 'r')
+    {
+      if(true)
+      {
+        FILE *filterfile = fopen(optarg, "r");
+        if(filterfile == NULL)
         {
-          FILE *filterfile = fopen(optarg, "r");
-          if(filterfile == NULL)
-          {
-            gt_error_set(error, "unable to open filter file '%s'", optarg);
-            return -1;
-          }
-          agn_locus_filter_parse(filterfile, options->filters);
-          fclose(filterfile);
+          gt_error_set(error, "unable to open filter file '%s'", optarg);
+          return -1;
         }
-        break;
-
-      case 's':
-        options->summary_only = true;
-        break;
-
-      case 't':
-        if(sscanf(optarg, "%d", &options->max_transcripts) == EOF)
-        {
-          fprintf(stderr, "error: could not convert maxtrans '%s' to an "
-                          "integer\n", optarg);
-          exit(1);
-        }
-        break;
-
-      case 'V':
-        options->verbose = true;
-        break;
-
-      case 'v':
-        agn_print_version("ParsEval", stdout);
-        exit(0);
-        break;
-
-      case 'w':
-        options->overwrite = true;
-        break;
-
-      case 'x':
-        options->refrlabel = optarg;
-        break;
-
-      case 'y':
-        options->predlabel = optarg;
-        break;
-
-      default:
-        break;
+        agn_locus_filter_parse(filterfile, options->filters);
+        fclose(filterfile);
+      }
+    }
+    else if(opt == 's')
+    {
+      options->summary_only = true;
+    }
+    else if(opt == 't')
+    {
+      if(sscanf(optarg, "%d", &options->max_transcripts) == EOF)
+      {
+        fprintf(stderr, "error: could not convert maxtrans '%s' to an "
+                        "integer\n", optarg);
+        exit(1);
+      }
+    }
+    else if(opt == 'V')
+    {
+      options->verbose = true;
+    }
+    else if(opt == 'v')
+    {
+      agn_print_version("ParsEval", stdout);
+      exit(0);
+    }
+    else if(opt == 'w')
+    {
+      options->overwrite = true;
+    }
+    else if(opt == 'x')
+    {
+      options->refrlabel = optarg;
+    }
+    else if(opt == 'y')
+    {
+      options->predlabel = optarg;
     }
   }
-
-  // For debugging
-  // pe_option_print(options, stderr);
+  
+#ifdef WITHOUT_CAIRO
+  if(options->graphics)
+  {
+    fputs("error: AEGeAn was compiled without graphics support. Please "
+          "recompile to enable this feature.\n", stderr);
+    exit(1);
+  }
+#endif
 
   if(options->makefilter)
   {
@@ -277,12 +283,6 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
   }
   else
   {
-    if(options->graphics)
-    {
-      fputs("warning: will only generate PNG graphics when outformat='html'; "
-            "ignoring\n\n", stderr);
-      options->graphics = false;
-    }
     if(options->outfilename)
     {
       options->outfile = fopen(options->outfilename, "w");
@@ -318,6 +318,8 @@ void pe_print_usage(FILE *outstream)
 "  Basic options:\n"
 "    -d|--debug:                 Print debugging messages\n"
 "    -h|--help:                  Print help message and exit\n"
+"    -l|--delta: INT             Extend gene loci by this many nucleotides;\n"
+"                                default is 0\n"
 "    -V|--verbose:               Print verbose warning messages\n"
 "    -v|--version:               Print version number and exit\n\n"
 "  Output options:\n"
@@ -333,8 +335,8 @@ void pe_print_usage(FILE *outstream)
 "                                comparison\n"
 "    -o|--outfile: FILENAME      File/directory to which output will be\n"
 "                                written; default is the terminal (STDOUT)\n"
-"    -p|--png:                   Generate individual PNG graphics for each\n"
-"                                gene locus (HTML mode only)\n"
+"    -p|--nopng:                 In HTML output mode, skip generation of PNG\n"
+"                                graphics for each gene locus\n"
 "    -s|--summary:               Only print summary statistics, do not print\n"
 "                                individual comparisons\n"
 "    -w|--overwrite:             Force overwrite of any existing output files\n"
@@ -357,7 +359,7 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->outfilename = NULL;
   options->gff3 = true;
   options->summary_only = false;
-  options->graphics = false;
+  options->graphics = true;
   options->refrfile = NULL;
   options->predfile = NULL;
   options->refrlabel = NULL;
@@ -369,4 +371,5 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->filters = gt_array_new( sizeof(AgnLocusFilter) );
   options->verbose = false;
   options->max_transcripts = 32;
+  options->delta = 0;
 }

@@ -104,6 +104,23 @@ GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
   return children;
 }
 
+GtArray *agn_typecheck_select_str(GtFeatureNode *fn, const char *type)
+{
+  GtArray *children = gt_array_new( sizeof(GtFeatureNode *) );
+  GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
+  GtFeatureNode *current;
+  for(current = gt_feature_node_iterator_next(iter);
+      current != NULL;
+      current = gt_feature_node_iterator_next(iter))
+  {
+    if(gt_feature_node_has_type(current, type))
+      gt_array_add(children, current);
+  }
+  gt_feature_node_iterator_delete(iter);
+  gt_array_sort(children, (GtCompare)agn_genome_node_compare);
+  return children;
+}
+
 bool agn_typecheck_start_codon(GtFeatureNode *fn)
 {
   return gt_feature_node_has_type(fn, "start_codon") ||

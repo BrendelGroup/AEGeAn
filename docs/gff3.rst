@@ -14,12 +14,12 @@ genomic features and the relationships between them. Second, GFF3 enables
 greater flexibility and granularity in describing genomic features compared to
 alternative formats, such as the `Gene Transfer Format (GTF)`_ which focuses
 exclusively on protein-coding genes, or the `Browser Extensible Data (BED)`_
-format which focuses primarily on feature visualization.Both GTF and BED support
-only a single level of feature decomposition, while GFF3 supports grouping
-features and subfeatures to arbitrary levels of granularity. Annotations encoded
-in GFF3 can be considered *annotation graphs*, directed acyclic graphs with
-nodes representing genomic features and edges representing relationships between
-the features (Gremme, 2013).
+format which focuses primarily on feature visualization. Both GTF and BED
+support only a single level of feature decomposition, while GFF3 supports
+grouping features and subfeatures to arbitrary levels of granularity.
+Annotations encoded in GFF3 can be considered *annotation graphs*, directed
+acyclic graphs with nodes representing genomic features and edges representing
+relationships between the features (Gremme, 2013).
 
 .. _`GFF3 format`: http://sequenceontology.org/resources/gff3.html
 .. _`Sequence Ontology`: http://sequenceontology.org

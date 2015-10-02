@@ -6,6 +6,8 @@ prefix=/usr/local
 #----End configuration----#
 #----End configuration----#
 
+SHELL := bash
+
 # Binaries
 PE_EXE=bin/parseval
 CN_EXE=bin/canon-gff3
@@ -166,6 +168,8 @@ agn-test:	all
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends --verbose data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
 		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --skipends --verbose --idformat=GrapeLocus%03lu data/gff3/grape-refr.gff3 data/gff3/grape-pred.gff3
+		@ $(MEMCHECK) bin/locuspocus --outfile=/dev/null --verbose data/gff3/dmel-pseudofeat-sort-test-in.gff3 2> >(grep -v 'not unique')
+		@ $(MEMCHECK) bin/tidygff3 < data/gff3/grape-refr.gff3 > /dev/null
 		@ echo AEGeAn Functional Tests
 		@ test/AT1G05320.sh $(MEMCHECKFT)
 		@ test/FBgn0035002.sh $(MEMCHECKFT)

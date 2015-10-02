@@ -55,36 +55,29 @@ static void canon_gff3_parse_options(int argc, char * const *argv,
       opt != -1;
       opt = getopt_long(argc, argv, optstr, init_options, &optindex))
   {
-    switch(opt)
+    if(opt == 'h')
     {
-      case 'h':
-        print_usage(stdout);
-        exit(0);
-        break;
-
-      case 'i':
-        options->infer = true;
-        break;
-
-      case 'o':
-        if(options->outstream != NULL)
-          gt_file_delete(options->outstream);
-        options->outstream = gt_file_new(optarg, "w", error);
-        break;
-
-      case 's':
-        if(options->source != NULL)
-          gt_str_delete(options->source);
-        options->source = gt_str_new_cstr(optarg);
-        break;
-
-      case 'v':
-        agn_print_version("CanonGFF3", stdout);
-        exit(0);
-        break;
-
-      default:
-        break;
+      print_usage(stdout);
+      exit(0);
+    }
+    else if(opt == 'i')
+      options->infer = true;
+    else if(opt == 'o')
+    {
+      if(options->outstream != NULL)
+        gt_file_delete(options->outstream);
+      options->outstream = gt_file_new(optarg, "w", error);
+    }
+    else if(opt == 's')
+    {
+      if(options->source != NULL)
+        gt_str_delete(options->source);
+      options->source = gt_str_new_cstr(optarg);
+    }
+    else if(opt == 'v')
+    {
+      agn_print_version("CanonGFF3", stdout);
+      exit(0);
     }
   }
 }

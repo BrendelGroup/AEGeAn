@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -88,6 +88,17 @@ agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest,
                                         bool use_orig, GtError *error);
 
 /**
+ * @function Traverse the given feature and its subfeatures and find the
+ * range occupied by coding sequence, or {0,0} if there is no coding sequence.
+ */
+GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn);
+
+/**
+ * @function Return an array of the given feature node's direct children.
+ */
+GtArray *agn_feature_node_get_children(GtFeatureNode *fn);
+
+/**
  * @function Remove feature ``fn`` and all its subfeatures from ``root``.
  * Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn``
  * need not be a leaf feature.
@@ -99,6 +110,12 @@ void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn);
  * otherwise.
  */
 bool agn_feature_overlap_check(GtArray *feats);
+
+/**
+ * @function Compare function for data type ``GtGenomeNode **``, needed for
+ * sorting ``GtGenomeNode *`` stored in ``GtArray`` objects.
+ */
+int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b);
 
 /**
  * @function Determine the length of an mRNA's 3' UTR.
@@ -123,10 +140,13 @@ GtUword agn_mrna_cds_length(GtFeatureNode *mrna);
 GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep);
 
 /**
- * @function Compare function for data type ``GtGenomeNode **``, needed for
- * sorting ``GtGenomeNode *`` stored in ``GtArray`` objects.
+ * @function Determine if two features overlap such that they should be
+ * assigned to the same iLocus. Specify the minimum overlap (in bp) required
+ * and whether the location of the feature's coding sequence (CDS) should be
+ * used or not.
  */
-int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b);
+bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2,
+                        GtUword minoverlap, bool by_cds);
 
 /**
  * @function CLI function: provide the name of the program, and this function

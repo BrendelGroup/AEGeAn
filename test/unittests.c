@@ -16,6 +16,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnInferExonsVisitor.h"
 #include "AgnInferParentStream.h"
 #include "AgnLocus.h"
+#include "AgnLocusRefineStream.h"
 #include "AgnLocusStream.h"
 #include "AgnMrnaRepVisitor.h"
 #include "AgnPseudogeneFixVisitor.h"
@@ -52,6 +53,8 @@ int main(int argc, char **argv)
                                         agn_gene_stream_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnLocusStream",
                                         agn_locus_stream_unit_test));
+  gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnLocusRefineStream",
+                                        agn_locus_refine_stream_unit_test));
   gt_queue_add(tests, agn_unit_test_new("AEGeAn::AgnGaevalVisitor",
                                         agn_gaeval_visitor_unit_test));
 
