@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [0.14.1] - 2015-10-02
+
+### Fixed
+- Date in ChangeLog
+
+## [0.14.0] - 2015-10-02
+
 ### Added
 - New post-processing steps to iLocus parsing procedures (iLocus "refinement").
 - An option for using coding sequence instead of UTRs as boundary test for gene overlap when computing iLoci.
@@ -24,7 +31,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Bug that prevented AEGeAn from building correctly--thanks Sascha!
 - Bug with option parsing and unknown options/flags (only appeared in Linux).
 
-## [0.13.1] - 2015-06-15
+## [0.13.0] - 2015-06-15
 
 ### Added
 - Ability to filter based on feature attribute key/value pairs.
