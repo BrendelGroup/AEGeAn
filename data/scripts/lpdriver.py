@@ -17,7 +17,6 @@ def run_locuspocus(infile, outfile, delta, ilenfile=None, debug=False):
   command += " --delta %d" % delta
   command += " --outfile %s.lp" % outfile
   command += " --cds"
-  command += " --retainids"
   if ilenfile:
     command += " --ilens %s" % ilenfile
   command += " %s" % infile
@@ -68,9 +67,12 @@ def combine_output(outfile, idfmt):
         if "\tlocus\t" in line:
           counter += 1
           locusid = idfmt % counter
-          oldid = re.search("ID=([^;\n]+)", line).group(1)
-          locusids[oldid] = locusid
-          line = re.sub("ID=[^;\n]+", "ID=%s" % locusid, line)
+          line = re.sub("Name=[^;\n]+", "Name=%s" % locusid, line)
+          idmatch = re.search("ID=([^;\n]+)", line)
+          if idmatch:
+            oldid = idmatch.group(1)
+            locusids[oldid] = locusid
+            line = re.sub("ID=[^;\n]+", "ID=%s" % locusid, line)
         elif "\tgene\t" in line:
           oldid = re.search("Parent=([^;\n]+)", line).group(1)
           newid = locusids[oldid]

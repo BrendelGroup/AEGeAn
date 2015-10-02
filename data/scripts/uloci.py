@@ -46,7 +46,7 @@ def run_parse_gff3(gff3string, src=".", idformat="locus%d", counter=1):
   for seqid, seqlen in parse_gff3(gff3string.splitlines()):
     locusid = idformat % counter
     counter += 1
-    attrs = "ID=%s;fragment=true;unannot=true;" % locusid
+    attrs = "ID=%s;Name=%s;fragment=true;unannot=true;" % (locusid, locusid)
     attrs += "iLocus_type=iiLocus;effective_length=%d\n" % seqlen
     fields = [seqid, src, "locus", "1", str(seqlen),
               ".", ".", ".", attrs]
@@ -67,7 +67,7 @@ def test_parse_gff3():
           "chr2\t.\tgene\t100\t200\t.\t+\t.\tID=gene2\n"
           "chr3\t.\tgene\t100\t200\t.\t+\t.\tID=gene3\n")
   out  = "\t".join(["chr4", ".", "locus", "1", "1000", ".", ".", ".",
-                    "ID=locus1;fragment=true;unannot=true;"
+                    "ID=locus1;Name=locus1;fragment=true;unannot=true;"
                     "iLocus_type=iiLocus;effective_length=1000\n"])
   testout = run_parse_gff3(gff3)
   assert out == testout, "test 1 failed"
@@ -79,13 +79,13 @@ def test_parse_gff3():
           "##sequence-region\tscaf00004   1   10000\n"
           "scaf00003\t.\tgene\t10000\t12000\t.\t+\t.\tID=gene1\n")
   out  = "\t".join(["scaf00001", ".", "locus", "1", "150000", ".", ".", ".",
-                    "ID=locus001;fragment=true;unannot=true;iLocus_type=iiLocus;"
+                    "ID=locus001;Name=locus001;fragment=true;unannot=true;iLocus_type=iiLocus;"
                     "effective_length=150000\n"])
   out += "\t".join(["scaf00002", ".", "locus", "1", "100000", ".", ".", ".",
-                    "ID=locus002;fragment=true;unannot=true;iLocus_type=iiLocus;"
+                    "ID=locus002;Name=locus002;fragment=true;unannot=true;iLocus_type=iiLocus;"
                     "effective_length=100000\n"])
   out += "\t".join(["scaf00004", ".", "locus", "1", "10000", ".", ".", ".",
-                    "ID=locus003;fragment=true;unannot=true;iLocus_type=iiLocus;"
+                    "ID=locus003;Name=locus003;fragment=true;unannot=true;iLocus_type=iiLocus;"
                     "effective_length=10000\n"])
   testout = run_parse_gff3(gff3, idformat="locus%03d")
   assert out == testout, "test 2 failed"
@@ -115,8 +115,8 @@ if __name__ == "__main__":
   for seqid, seqlen in parse_gff3(fp):
     locusid = args.idfmt % args.counter
     args.counter += 1
-    attrs = "ID=%s;fragment=true;unannot=true;iLocus_type=iiLocus;" % locusid
-    attrs += "effective_length=%d" % seqlen
+    attrs = "ID=%s;Name=%s;fragment=true;unannot=true;" % (locusid, locusid)
+    attrs += "iLocus_type=iiLocus;effective_length=%d" % seqlen
     fields = [seqid, args.src, "locus", "1",
               str(seqlen), ".", ".", ".", attrs]
     print "\t".join(fields)
