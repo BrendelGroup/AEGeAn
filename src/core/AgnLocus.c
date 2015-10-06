@@ -81,12 +81,14 @@ static void locus_test_data(GtQueue *queue);
 /**
  * @function Track order function for PNG graphics.
  */
+#ifndef WITHOUT_CAIRO
 static int locus_track_order(const char *s1, const char *s2, void *data)
 {
   if(strstr(s1, "Reference") == NULL)
     return 1;
   return -1;
 }
+#endif
 
 /**
  * @function For a set of features, we can construct a graph where each node

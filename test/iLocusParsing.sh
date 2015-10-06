@@ -15,7 +15,7 @@ run_func_test()
   shift
   filelabel=$(echo "$testlabel" | tr -d '(' | tr -d ')' | tr ' ' '_')-test.gff3
 
-  $memcheckcmd bin/locuspocus --retainids $@ > /dev/null 2>&1
+  $memcheckcmd bin/locuspocus --retainids $@ > ${filelabel}.err 2>&1
   if [ $? != 0 ]; then
     echo "Error running functional test '$testlabel'"
     exit 1
@@ -29,7 +29,7 @@ run_func_test()
   result="FAIL"
   if [ $status == 0 ]; then
     result="PASS"
-    rm -f $tempfile $filelabel
+    rm -f $tempfile ${filelabel}*
   else
     mv $tempfile $filelabel
     failures=$((failures+1))

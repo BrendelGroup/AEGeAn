@@ -34,6 +34,7 @@ GTFLAGS=prefix=$(prefix)
 ifeq ($(cairo),no)
   CFLAGS += -DWITHOUT_CAIRO
   GTFLAGS += cairo=no
+  CAIROFT=cairo=no
 endif
 ifneq ($(errorcheck),no)
   CFLAGS += -Werror
@@ -48,7 +49,7 @@ endif
 ifneq ($(debug),no)
   CFLAGS += -g
 endif
-LDFLAGS=-lgenometools -lm \
+LDFLAGS=-lgenometools -lm -ldl \
         -L$(prefix)/lib \
         -L/usr/local/lib
 ifdef lib
@@ -63,6 +64,8 @@ ifeq ($(memcheck),yes)
                     --suppressions=data/misc/libpixman.supp \
                     --suppressions=data/misc/libpango.supp
   MEMCHECKFT=memcheck
+else
+  MEMCHECKFT=nomemcheck
 endif
 
 # Targets
@@ -165,7 +168,7 @@ agn-test:	all
 		@ test/xtractore-ft.sh $(MEMCHECKFT)
 		@ test/canon-gff3-ft.sh $(MEMCHECKFT)
 		@ test/gaeval-ft.sh $(MEMCHECKFT)
-		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT)
+		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT) $(CAIROFT)
 		@ test/align-convert.sh
 		@ test/misc-ft.sh $(MEMCHECKFT)
 
