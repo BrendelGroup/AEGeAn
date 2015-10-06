@@ -49,7 +49,9 @@ printf "        | %-36s | %s\n" "Amel Group7.16 (delta=500)" $result
 rm $tempfile ${tempfile}.orig
 
 
-
+if [ "$2" == "cairo=no" ]; then
+  exit 0
+fi
 $memcheckcmd \
 bin/parseval --datashare=data/share/ \
              --outformat=html \

@@ -6,16 +6,36 @@ types implemented by the GenomeTools library. For data types beginning with
 ``Gt``, see the GenomeTools API documentation at
 http://genometools.org/libgenometools.html.
 
-Class AgnFilterStream
----------------------
+Class AgnUnitTest
+-----------------
 
-.. c:type:: AgnFilterStream
+.. c:type:: AgnUnitTest
 
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+  Class used for unit testing of classes and modules. See the `AgnUnitTest class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUnitTest.h>`_.
 
-.. c:function:: GtNodeStream* agn_attribute_filter_stream_new(GtNodeStream *in_stream, GtHashmap *filters)
+.. c:function:: void agn_unit_test_delete(AgnUnitTest *test)
 
-  Class constructor. The keys of the `filters` hashmap should be the attribute keys/value pairs (such as `partial=true` or `pseudo=true`) to test each feature node against. The values associated with each key in the hashmap can be any non-NULL value. Any feature node having an attribute key/value pair matching an entry in the hashmap will be discarded.
+  Destructor.
+
+.. c:function:: AgnUnitTest *agn_unit_test_new(const char *label, bool (*testfunc)(AgnUnitTest *))
+
+  Class constructor, where ``label`` is a label for the test and ``testfunc`` is a pointer to the function that will execute the test.
+
+.. c:function:: void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
+
+  Prints results of the unit test to ``outstream``.
+
+.. c:function:: void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success)
+
+  Add a result to this unit test.
+
+.. c:function:: bool agn_unit_test_success(AgnUnitTest *test)
+
+  Returns true if all the results checked with this unit test passed, false otherwise.
+
+.. c:function:: void agn_unit_test_run(AgnUnitTest *test)
+
+  Run the unit test.
 
 Class AgnCliquePair
 -------------------
@@ -68,6 +88,25 @@ Class AgnCliquePair
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnGeneStream
+-------------------
+
+.. c:type:: AgnGeneStream
+
+  Implements the ``GtNodeStream`` interface. Searches the complete feature graph of each feature node in the input for canonical protein-coding gene features. Some basic sanity checks are performed on the mRNA(s) associated with each gene, and genes are only delivered to the output stream if they include one or more valid mRNA subfeatures. See the `AgnGeneStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGeneStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
+
+  Class constructor.
+
+.. c:function:: void agn_gene_stream_set_source(AgnGeneStream *gs, GtStr *source)
+
+  Specify a source (GFF3 column 2) to be applied to newly inferred features (default is '.').
+
+.. c:function:: bool agn_gene_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnCompareReportHTML
 --------------------------
 
@@ -94,6 +133,348 @@ Class AgnCompareReportHTML
 .. c:function:: void agn_compare_report_html_set_overview_func(AgnCompareReportHTML *rpt, AgnCompareReportHTMLOverviewFunc func, void *funcdata)
 
   Specify a callback function to be used when printing an overview on the summary report.
+
+Class AgnInferCDSVisitor
+------------------------
+
+.. c:type:: AgnInferCDSVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `AgnInferCDSVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtStr *source, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_infer_cds_visitor_new(GtLogger *logger)
+
+  Constructor for the node visitor.
+
+.. c:function:: void agn_infer_cds_visitor_set_source(AgnInferCDSVisitor *v, GtStr *source)
+
+  Set the source value (GFF3 column 2) that will be assigned to any inferred features (default is '.').
+
+.. c:function:: bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnLocusStream
+--------------------
+
+.. c:type:: AgnLocusStream
+
+  Implements the ``GtNodeStream`` interface. The only feature nodes delivered by this stream have type ``locus``, and the only direct children of these features are gene features present in the input stream. Any overlapping genes are children of the same locus feature. See the `AgnLocusStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusStream.h>`_.
+
+.. c:function:: void agn_locus_stream_label_pairwise(AgnLocusStream *stream, const char *refrfile,const char *predfile)
+
+  Use the given filenames to label the direct children of each iLocus as a 'reference' feature or a 'prediction' feature, to facilitate pairwise comparison. Note that these labels carry no connotation as to the relative quality of the respective annotation sources.
+
+.. c:function:: GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
+
+  Calculate iLoci from a node stream which may or may not include data from multiple sources. Extend each iLocus boundary as far as possible without overlapping a gene from another iLocus, or by `delta` nucleotides, whichever is shorter.
+
+.. c:function:: void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode)
+
+  Terminal iLoci or 'end loci' are empty iLoci at either end of a sequence. To exclude terminal iLoci from the output, set `endmode` < 0. To output only terminal iLoci, set `endmode` > 0. By default (`endmode == 0`), terminal iLoci are reported along with all other iLoci.
+
+.. c:function:: void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
+
+  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
+
+.. c:function:: void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream)
+
+  By default, the locus stream will produce loci containing features and loci containing no features. This function disables reporting of the latter.
+
+.. c:function:: void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source)
+
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
+
+.. c:function:: void agn_locus_stream_track_ilens(AgnLocusStream *stream, FILE *ilenfile)
+
+  Record the length of each intergenic iLocus as loci are being parsed.
+
+.. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Module AgnUtils
+---------------
+
+Collection of assorted functions that are otherwise unrelated. See the `AgnUtils module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
+
+.. c:type:: AgnSequenceRegion
+
+  This data structure combines sequence coordinates with a sequence ID to facilitate their usage together.
+
+
+
+.. c:function:: GtArray* agn_array_copy(GtArray *source, size_t size)
+
+  Similar to ``gt_array_copy``, except that array elements are treated as pointers and dereferenced before being added to the new array.
+
+.. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
+
+  Determine the splice complexity of the given set of transcripts.
+
+.. c:function:: GtUword agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src, bool use_orig, GtError *error)
+
+  Copy the sequence regions from ``src`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
+
+.. c:function:: GtUword agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest, GtFeatureIndex *refrsrc, GtFeatureIndex *predsrc, bool use_orig, GtError *error)
+
+  Copy the sequence regions from ``refrsrc`` and ``predsrc`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
+
+.. c:function:: GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn)
+
+  Traverse the given feature and its subfeatures and find the range occupied by coding sequence, or {0,0} if there is no coding sequence.
+
+.. c:function:: GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
+
+  Return an array of the given feature node's direct children.
+
+.. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
+
+  Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
+
+.. c:function:: bool agn_feature_overlap_check(GtArray *feats)
+
+  Returns true if any of the features in ``feats`` overlaps, false otherwise.
+
+.. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
+
+  Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
+
+.. c:function:: GtUword agn_mrna_3putr_length(GtFeatureNode *mrna)
+
+  Determine the length of an mRNA's 3' UTR.
+
+.. c:function:: GtUword agn_mrna_5putr_length(GtFeatureNode *mrna)
+
+  Determine the length of an mRNA's 5'UTR.
+
+.. c:function:: GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
+
+  Determine the length of an mRNA's coding sequence.
+
+.. c:function:: GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
+
+  If a top-level feature ``top`` contains a multifeature child (with multi representative ``rep``), use this function to get the complete range of the multifeature.
+
+.. c:function:: bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2, GtUword minoverlap, bool by_cds)
+
+  Determine if two features overlap such that they should be assigned to the same iLocus. Specify the minimum overlap (in bp) required and whether the location of the feature's coding sequence (CDS) should be used or not.
+
+.. c:function:: void agn_print_version(const char *progname, FILE *outstream)
+
+  CLI function: provide the name of the program, and this function prints out the AEGeAn version number to the specified outstream.
+
+.. c:function:: int agn_sprintf_comma(GtUword n, char *buffer)
+
+  Format the given non-negative number with commas as the thousands separator. The resulting string will be written to ``buffer``.
+
+.. c:function:: int agn_string_compare(const void *p1, const void *p2)
+
+  Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
+
+.. c:function:: GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2)
+
+  Find the strings that are present in either (or both) of the string arrays.
+
+Class AgnFilterStream
+---------------------
+
+.. c:type:: AgnFilterStream
+
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
+
+  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
+
+.. c:function:: bool agn_filter_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Module AgnTypecheck
+-------------------
+
+Functions for testing feature types. See the `AgnTypecheck module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTypecheck.h>`_.
+
+.. c:function:: bool agn_typecheck_cds(GtFeatureNode *fn)
+
+  Returns true if the given feature is a CDS; false otherwise.
+
+.. c:function:: GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+
+  Count the number of ``fn``'s children that have the given type.
+
+.. c:function:: bool agn_typecheck_exon(GtFeatureNode *fn)
+
+  Returns true if the given feature is an exon; false otherwise.
+
+.. c:function:: GtUword agn_typecheck_feature_combined_length(GtFeatureNode *root, bool (*func)(GtFeatureNode *))
+
+  Traverse the feature graph starting at `root` and add up the length of all features matching the given selection function `func`.
+
+.. c:function:: bool agn_typecheck_gene(GtFeatureNode *fn)
+
+  Returns true if the given feature is a gene; false otherwise.
+
+.. c:function:: bool agn_typecheck_intron(GtFeatureNode *fn)
+
+  Returns true if the given feature is an intron; false otherwise.
+
+.. c:function:: bool agn_typecheck_mrna(GtFeatureNode *fn)
+
+  Returns true if the given feature is an mRNA; false otherwise.
+
+.. c:function:: bool agn_typecheck_pseudogene(GtFeatureNode *fn)
+
+  Returns true if the given feature is declared as a pseudogene; false otherwise.
+
+.. c:function:: GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+
+  Gather the children of a given feature that have a certain type. Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
+
+.. c:function:: GtArray *agn_typecheck_select_str(GtFeatureNode *fn, const char *)
+
+  Gather the children of a given feature that have a certain type. Type is tested by comparing `type` to the type of `fn`.
+
+.. c:function:: bool agn_typecheck_start_codon(GtFeatureNode *fn)
+
+  Returns true if the given feature is a start codon; false otherwise.
+
+.. c:function:: bool agn_typecheck_stop_codon(GtFeatureNode *fn)
+
+  Returns true if the given feature is a stop codon; false otherwise.
+
+.. c:function:: bool agn_typecheck_transcript(GtFeatureNode *fn)
+
+  Returns true if the given feature is an mRNA, tRNA, or rRNA; false otherwise.
+
+.. c:function:: bool agn_typecheck_utr(GtFeatureNode *fn)
+
+  Returns true if the given feature is a UTR; false otherwise.
+
+.. c:function:: bool agn_typecheck_utr3p(GtFeatureNode *fn)
+
+  Returns true if the given feature is a 3' UTR; false otherwise.
+
+.. c:function:: bool agn_typecheck_utr5p(GtFeatureNode *fn)
+
+  Returns true if the given feature is a 5' UTR; false otherwise.
+
+Class AgnRemoveChildrenVisitor
+------------------------------
+
+.. c:type:: AgnRemoveChildrenVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting removing all children of each top-level feature. Psuedo-features are not modified. See the `AgnRemoveChildrenVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnRemoveChildrenVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_remove_children_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_remove_children_visitor_new()
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_remove_children_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnGaevalVisitor
+----------------------
+
+.. c:type:: AgnGaevalVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for calculating transcript coverage and integrity scores for gene models using alignment data. See the `AgnGaevalVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGaevalVisitor.h>`_.
+
+.. c:type:: AgnGaevalParams
+
+  Parameters used in calculating GAEVAL integrity. See http://www.plantgdb.org/GAEVAL/docs/integrity.html
+
+
+
+.. c:function:: GtNodeStream* agn_gaeval_stream_new(GtNodeStream *in, GtNodeStream *astream, AgnGaevalParams gparams)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor* agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
+
+  Class constructor for the node visitor.
+
+.. c:function:: bool agn_gaeval_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class.
+
+Class AgnInferExonsVisitor
+--------------------------
+
+.. c:type:: AgnInferExonsVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly. See the `AgnInferExonsVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtStr *source, GtLogger *logger)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor* agn_infer_exons_visitor_new(GtLogger *logger)
+
+  Class constructor for the node visitor.
+
+.. c:function:: void agn_infer_exons_visitor_set_source(AgnInferExonsVisitor *v, GtStr *source)
+
+  Set the source value (GFF3 column 2) that will be assigned to any inferred features (default is '.').
+
+.. c:function:: bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class.
+
+Class AgnPseudogeneFixVisitor
+-----------------------------
+
+.. c:type:: AgnPseudogeneFixVisitor
+
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting the ``type`` value for pseudogene features erroneously using the ``gene`` type instead of the more appropriate ``pseudogene`` type. See the `AgnPseudogeneFixVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnPseudogeneFixVisitor.h>`_.
+
+.. c:function:: GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
+
+  Constructor for a node stream based on this node visitor.
+
+.. c:function:: GtNodeVisitor *agn_pseudogene_fix_visitor_new()
+
+  Constructor for the node visitor.
+
+.. c:function:: bool agn_pseudogene_fix_visitor_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
+Class AgnLocusRefineStream
+--------------------------
+
+.. c:type:: AgnLocusRefineStream
+
+  Implements the ``GtNodeStream`` interface. By default the ``AgnLocusStream`` class will group any and all overlapping features of interest together in the same iLocus. The ``AgnLocusRefineStream`` class can be used to post-process ``AgnLocusStream`` output to accommodate a more flexible handling of overlapping features, such as requiring CDS overlap for grouping genes together or creating distinct iLoci for genes within the introns of other genes. See the `AgnLocusRefineStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusRefineStream.h>`_.
+
+.. c:function:: GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream, GtUword delta, GtUword minoverlap, bool by_cds)
+
+  Class constructor.
+
+.. c:function:: void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream, const char *format)
+
+  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
+
+.. c:function:: void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream, const char *source)
+
+  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
+
+.. c:function:: void agn_locus_refine_stream_track_ilens(AgnLocusRefineStream *stream, FILE *ilenfile)
+
+  Record the length of each intergenic iLocus as loci are being parsed.
+
+.. c:function:: bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
 
 Class AgnCompareReportText
 --------------------------
@@ -254,130 +635,6 @@ Data structures and functions related to comparative assessment of gene/transcri
 .. c:function:: bool agn_comp_stats_scaled_test(AgnCompStatsScaled *s1, AgnCompStatsScaled *s2)
 
   Returns true if s1 and s2 contain identical values, false otherwise.
-
-Class AgnFilterStream
----------------------
-
-.. c:type:: AgnFilterStream
-
-  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
-
-.. c:function:: GtNodeStream* agn_filter_stream_new(GtNodeStream *in_stream, GtHashmap *typestokeep)
-
-  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
-
-.. c:function:: bool agn_filter_stream_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnGaevalVisitor
-----------------------
-
-.. c:type:: AgnGaevalVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for calculating transcript coverage and integrity scores for gene models using alignment data. See the `AgnGaevalVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGaevalVisitor.h>`_.
-
-.. c:type:: AgnGaevalParams
-
-  Parameters used in calculating GAEVAL integrity. See http://www.plantgdb.org/GAEVAL/docs/integrity.html
-
-
-
-.. c:function:: GtNodeStream* agn_gaeval_stream_new(GtNodeStream *in, GtNodeStream *astream, AgnGaevalParams gparams)
-
-  Constructor for a node stream based on this node visitor.
-
-.. c:function:: GtNodeVisitor* agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
-
-  Class constructor for the node visitor.
-
-.. c:function:: bool agn_gaeval_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class.
-
-Class AgnGeneStream
--------------------
-
-.. c:type:: AgnGeneStream
-
-  Implements the ``GtNodeStream`` interface. Searches the complete feature graph of each feature node in the input for canonical protein-coding gene features. Some basic sanity checks are performed on the mRNA(s) associated with each gene, and genes are only delivered to the output stream if they include one or more valid mRNA subfeatures. See the `AgnGeneStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnGeneStream.h>`_.
-
-.. c:function:: GtNodeStream* agn_gene_stream_new(GtNodeStream *in_stream, GtLogger *logger)
-
-  Class constructor.
-
-.. c:function:: void agn_gene_stream_set_source(AgnGeneStream *gs, GtStr *source)
-
-  Specify a source (GFF3 column 2) to be applied to newly inferred features (default is '.').
-
-.. c:function:: bool agn_gene_stream_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnInferCDSVisitor
-------------------------
-
-.. c:type:: AgnInferCDSVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring an mRNA's CDS from explicitly defined exon and start/stop codon features. See the `AgnInferCDSVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferCDSVisitor.h>`_.
-
-.. c:function:: GtNodeStream* agn_infer_cds_stream_new(GtNodeStream *in, GtStr *source, GtLogger *logger)
-
-  Constructor for a node stream based on this node visitor.
-
-.. c:function:: GtNodeVisitor *agn_infer_cds_visitor_new(GtLogger *logger)
-
-  Constructor for the node visitor.
-
-.. c:function:: void agn_infer_cds_visitor_set_source(AgnInferCDSVisitor *v, GtStr *source)
-
-  Set the source value (GFF3 column 2) that will be assigned to any inferred features (default is '.').
-
-.. c:function:: bool agn_infer_cds_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnInferExonsVisitor
---------------------------
-
-.. c:type:: AgnInferExonsVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for inferring exon features when only CDS and UTR features are provided explicitly. See the `AgnInferExonsVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferExonsVisitor.h>`_.
-
-.. c:function:: GtNodeStream* agn_infer_exons_stream_new(GtNodeStream *in, GtStr *source, GtLogger *logger)
-
-  Constructor for a node stream based on this node visitor.
-
-.. c:function:: GtNodeVisitor* agn_infer_exons_visitor_new(GtLogger *logger)
-
-  Class constructor for the node visitor.
-
-.. c:function:: void agn_infer_exons_visitor_set_source(AgnInferExonsVisitor *v, GtStr *source)
-
-  Set the source value (GFF3 column 2) that will be assigned to any inferred features (default is '.').
-
-.. c:function:: bool agn_infer_exons_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class.
-
-Class AgnInferParentStream
---------------------------
-
-.. c:type:: AgnInferParentStream
-
-  Implements the GenomeTools ``GtNodeStream`` interface. This node stream creates new features as parents for the specified types. For example, if ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as the value, this node stream will create a ``gene`` feature for any ``tRNA`` feature that lacks a gene parent. See the `AgnInferParentStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
-
-.. c:function:: GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream, GtHashmap *type_parents)
-
-  Class constructor. The hashmap contains a list of key-value pairs, both strings. Any time the stream encounters a top-level (parentless) feature whose type is a key in the hashmap, a parent will be created for this feature of the type associated with the key.
-
-.. c:function:: void agn_infer_parent_stream_set_source(AgnInferParentStream *stream, GtStr *source)
-
-  Set the source (GFF3 2nd column) for all inferred features.
-
-.. c:function:: bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
 
 Class AgnLocus
 --------------
@@ -541,156 +798,6 @@ Class AgnLocusFilterStream
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Class AgnLocusMapVisitor
-------------------------
-
-.. c:type:: AgnLocusMapVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `AgnLocusMapVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
-
-.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh, bool useacc)
-
-  Constructor for a node stream based on this node visitor. See :c:func:`agn_locus_map_visitor_new` for a description of the function arguments.
-
-.. c:function:: GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
-
-  Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
-
-.. c:function:: void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv)
-
-  Report gene/mRNA `Name` attributes rather than ID attributes.
-
-Class AgnLocusRefineStream
---------------------------
-
-.. c:type:: AgnLocusRefineStream
-
-  Implements the ``GtNodeStream`` interface. By default the ``AgnLocusStream`` class will group any and all overlapping features of interest together in the same iLocus. The ``AgnLocusRefineStream`` class can be used to post-process ``AgnLocusStream`` output to accommodate a more flexible handling of overlapping features, such as requiring CDS overlap for grouping genes together or creating distinct iLoci for genes within the introns of other genes. See the `AgnLocusRefineStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusRefineStream.h>`_.
-
-.. c:function:: GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream, GtUword delta, GtUword minoverlap, bool by_cds)
-
-  Class constructor.
-
-.. c:function:: void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream, const char *format)
-
-  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
-
-.. c:function:: void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream, const char *source)
-
-  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
-
-.. c:function:: void agn_locus_refine_stream_track_ilens(AgnLocusRefineStream *stream, FILE *ilenfile)
-
-  Record the length of each intergenic iLocus as loci are being parsed.
-
-.. c:function:: bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnLocusStream
---------------------
-
-.. c:type:: AgnLocusStream
-
-  Implements the ``GtNodeStream`` interface. The only feature nodes delivered by this stream have type ``locus``, and the only direct children of these features are gene features present in the input stream. Any overlapping genes are children of the same locus feature. See the `AgnLocusStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusStream.h>`_.
-
-.. c:function:: void agn_locus_stream_label_pairwise(AgnLocusStream *stream, const char *refrfile,const char *predfile)
-
-  Use the given filenames to label the direct children of each iLocus as a 'reference' feature or a 'prediction' feature, to facilitate pairwise comparison. Note that these labels carry no connotation as to the relative quality of the respective annotation sources.
-
-.. c:function:: GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
-
-  Calculate iLoci from a node stream which may or may not include data from multiple sources. Extend each iLocus boundary as far as possible without overlapping a gene from another iLocus, or by `delta` nucleotides, whichever is shorter.
-
-.. c:function:: void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode)
-
-  Terminal iLoci or 'end loci' are empty iLoci at either end of a sequence. To exclude terminal iLoci from the output, set `endmode` < 0. To output only terminal iLoci, set `endmode` > 0. By default (`endmode == 0`), terminal iLoci are reported along with all other iLoci.
-
-.. c:function:: void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
-
-  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
-
-.. c:function:: void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream)
-
-  By default, the locus stream will produce loci containing features and loci containing no features. This function disables reporting of the latter.
-
-.. c:function:: void agn_locus_stream_set_source(AgnLocusStream *stream, const char *source)
-
-  Set the source value to be used for all iLoci created by this stream. Default value is 'AEGeAn::AgnLocusStream'.
-
-.. c:function:: void agn_locus_stream_track_ilens(AgnLocusStream *stream, FILE *ilenfile)
-
-  Record the length of each intergenic iLocus as loci are being parsed.
-
-.. c:function:: bool agn_locus_stream_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnMrnaRepVisitor
------------------------
-
-.. c:type:: AgnMrnaRepVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
-
-.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstreami, bool useacc)
-
-  Constructor for a node stream based on this node visitor.
-
-.. c:function:: GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream)
-
-  Constructor for the node visitor. If `mapstream` is not NULL, each gene/mRNA rep pair will be written to `mapstream`.
-
-.. c:function:: void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v, const char *type)
-
-  By default, the representative mRNA for each gene will be reported. Use this function to specify an alternative top-level feature to gene (such as locus).
-
-.. c:function:: void agn_mrna_rep_visitor_use_accession(AgnMrnaRepVisitor *v)
-
-  Write mRNA `accession` attribute to `mapstream` rather than `ID` attribute.
-
-.. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnPseudogeneFixVisitor
------------------------------
-
-.. c:type:: AgnPseudogeneFixVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting the ``type`` value for pseudogene features erroneously using the ``gene`` type instead of the more appropriate ``pseudogene`` type. See the `AgnPseudogeneFixVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnPseudogeneFixVisitor.h>`_.
-
-.. c:function:: GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
-
-  Constructor for a node stream based on this node visitor.
-
-.. c:function:: GtNodeVisitor *agn_pseudogene_fix_visitor_new()
-
-  Constructor for the node visitor.
-
-.. c:function:: bool agn_pseudogene_fix_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
-Class AgnRemoveChildrenVisitor
-------------------------------
-
-.. c:type:: AgnRemoveChildrenVisitor
-
-  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for correcting removing all children of each top-level feature. Psuedo-features are not modified. See the `AgnRemoveChildrenVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnRemoveChildrenVisitor.h>`_.
-
-.. c:function:: GtNodeStream* agn_remove_children_stream_new(GtNodeStream *in)
-
-  Constructor for a node stream based on this node visitor.
-
-.. c:function:: GtNodeVisitor *agn_remove_children_visitor_new()
-
-  Constructor for the node visitor.
-
-.. c:function:: bool agn_remove_children_visitor_unit_test(AgnUnitTest *test)
-
-  Run unit tests for this class. Returns true if all tests passed.
-
 Class AgnTranscriptClique
 -------------------------
 
@@ -770,186 +877,79 @@ Class AgnTranscriptClique
 
   Run unit tests for this class. Returns true if all tests passed.
 
-Module AgnTypecheck
--------------------
+Class AgnFilterStream
+---------------------
 
-Functions for testing feature types. See the `AgnTypecheck module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnTypecheck.h>`_.
+.. c:type:: AgnFilterStream
 
-.. c:function:: bool agn_typecheck_cds(GtFeatureNode *fn)
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features of a certain type from a node stream. See the `AgnFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnFilterStream.h>`_.
 
-  Returns true if the given feature is a CDS; false otherwise.
+.. c:function:: GtNodeStream* agn_attribute_filter_stream_new(GtNodeStream *in_stream, GtHashmap *filters)
 
-.. c:function:: GtUword agn_typecheck_count(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+  Class constructor. The keys of the `filters` hashmap should be the attribute keys/value pairs (such as `partial=true` or `pseudo=true`) to test each feature node against. The values associated with each key in the hashmap can be any non-NULL value. Any feature node having an attribute key/value pair matching an entry in the hashmap will be discarded.
 
-  Count the number of ``fn``'s children that have the given type.
+Class AgnMrnaRepVisitor
+-----------------------
 
-.. c:function:: bool agn_typecheck_exon(GtFeatureNode *fn)
+.. c:type:: AgnMrnaRepVisitor
 
-  Returns true if the given feature is an exon; false otherwise.
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
 
-.. c:function:: GtUword agn_typecheck_feature_combined_length(GtFeatureNode *root, bool (*func)(GtFeatureNode *))
+.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstreami, bool useacc)
 
-  Traverse the feature graph starting at `root` and add up the length of all features matching the given selection function `func`.
+  Constructor for a node stream based on this node visitor.
 
-.. c:function:: bool agn_typecheck_gene(GtFeatureNode *fn)
+.. c:function:: GtNodeVisitor *agn_mrna_rep_visitor_new(FILE *mapstream)
 
-  Returns true if the given feature is a gene; false otherwise.
+  Constructor for the node visitor. If `mapstream` is not NULL, each gene/mRNA rep pair will be written to `mapstream`.
 
-.. c:function:: bool agn_typecheck_intron(GtFeatureNode *fn)
+.. c:function:: void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v, const char *type)
 
-  Returns true if the given feature is an intron; false otherwise.
+  By default, the representative mRNA for each gene will be reported. Use this function to specify an alternative top-level feature to gene (such as locus).
 
-.. c:function:: bool agn_typecheck_mrna(GtFeatureNode *fn)
+.. c:function:: void agn_mrna_rep_visitor_use_accession(AgnMrnaRepVisitor *v)
 
-  Returns true if the given feature is an mRNA; false otherwise.
+  Write mRNA `accession` attribute to `mapstream` rather than `ID` attribute.
 
-.. c:function:: bool agn_typecheck_pseudogene(GtFeatureNode *fn)
+.. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
-  Returns true if the given feature is declared as a pseudogene; false otherwise.
+  Run unit tests for this class. Returns true if all tests passed.
 
-.. c:function:: GtArray *agn_typecheck_select(GtFeatureNode *fn, bool (*func)(GtFeatureNode *))
+Class AgnLocusMapVisitor
+------------------------
 
-  Gather the children of a given feature that have a certain type. Type is tested by ``func``, which accepts a single ``GtFeatureNode`` object.
+.. c:type:: AgnLocusMapVisitor
 
-.. c:function:: GtArray *agn_typecheck_select_str(GtFeatureNode *fn, const char *)
+  Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `AgnLocusMapVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
 
-  Gather the children of a given feature that have a certain type. Type is tested by comparing `type` to the type of `fn`.
+.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh, bool useacc)
 
-.. c:function:: bool agn_typecheck_start_codon(GtFeatureNode *fn)
+  Constructor for a node stream based on this node visitor. See :c:func:`agn_locus_map_visitor_new` for a description of the function arguments.
 
-  Returns true if the given feature is a start codon; false otherwise.
+.. c:function:: GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
 
-.. c:function:: bool agn_typecheck_stop_codon(GtFeatureNode *fn)
+  Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
 
-  Returns true if the given feature is a stop codon; false otherwise.
+.. c:function:: void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv)
 
-.. c:function:: bool agn_typecheck_transcript(GtFeatureNode *fn)
+  Report gene/mRNA `Name` attributes rather than ID attributes.
 
-  Returns true if the given feature is an mRNA, tRNA, or rRNA; false otherwise.
+Class AgnInferParentStream
+--------------------------
 
-.. c:function:: bool agn_typecheck_utr(GtFeatureNode *fn)
+.. c:type:: AgnInferParentStream
 
-  Returns true if the given feature is a UTR; false otherwise.
+  Implements the GenomeTools ``GtNodeStream`` interface. This node stream creates new features as parents for the specified types. For example, if ``type_parents`` includes an entry with ``tRNA`` as the key and ``gene`` as the value, this node stream will create a ``gene`` feature for any ``tRNA`` feature that lacks a gene parent. See the `AgnInferParentStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnInferParentStream.h>`_.
 
-.. c:function:: bool agn_typecheck_utr3p(GtFeatureNode *fn)
+.. c:function:: GtNodeStream* agn_infer_parent_stream_new(GtNodeStream *in_stream, GtHashmap *type_parents)
 
-  Returns true if the given feature is a 3' UTR; false otherwise.
+  Class constructor. The hashmap contains a list of key-value pairs, both strings. Any time the stream encounters a top-level (parentless) feature whose type is a key in the hashmap, a parent will be created for this feature of the type associated with the key.
 
-.. c:function:: bool agn_typecheck_utr5p(GtFeatureNode *fn)
+.. c:function:: void agn_infer_parent_stream_set_source(AgnInferParentStream *stream, GtStr *source)
 
-  Returns true if the given feature is a 5' UTR; false otherwise.
+  Set the source (GFF3 2nd column) for all inferred features.
 
-Class AgnUnitTest
------------------
+.. c:function:: bool agn_infer_parent_stream_unit_test(AgnUnitTest *test)
 
-.. c:type:: AgnUnitTest
-
-  Class used for unit testing of classes and modules. See the `AgnUnitTest class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUnitTest.h>`_.
-
-.. c:function:: void agn_unit_test_delete(AgnUnitTest *test)
-
-  Destructor.
-
-.. c:function:: AgnUnitTest *agn_unit_test_new(const char *label, bool (*testfunc)(AgnUnitTest *))
-
-  Class constructor, where ``label`` is a label for the test and ``testfunc`` is a pointer to the function that will execute the test.
-
-.. c:function:: void agn_unit_test_print(AgnUnitTest *test, FILE *outstream)
-
-  Prints results of the unit test to ``outstream``.
-
-.. c:function:: void agn_unit_test_result(AgnUnitTest *test, const char *label, bool success)
-
-  Add a result to this unit test.
-
-.. c:function:: bool agn_unit_test_success(AgnUnitTest *test)
-
-  Returns true if all the results checked with this unit test passed, false otherwise.
-
-.. c:function:: void agn_unit_test_run(AgnUnitTest *test)
-
-  Run the unit test.
-
-Module AgnUtils
----------------
-
-Collection of assorted functions that are otherwise unrelated. See the `AgnUtils module header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnUtils.h>`_.
-
-.. c:type:: AgnSequenceRegion
-
-  This data structure combines sequence coordinates with a sequence ID to facilitate their usage together.
-
-
-
-.. c:function:: GtArray* agn_array_copy(GtArray *source, size_t size)
-
-  Similar to ``gt_array_copy``, except that array elements are treated as pointers and dereferenced before being added to the new array.
-
-.. c:function:: double agn_calc_splice_complexity(GtArray *transcripts)
-
-  Determine the splice complexity of the given set of transcripts.
-
-.. c:function:: GtUword agn_feature_index_copy_regions(GtFeatureIndex *dest, GtFeatureIndex *src, bool use_orig, GtError *error)
-
-  Copy the sequence regions from ``src`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
-
-.. c:function:: GtUword agn_feature_index_copy_regions_pairwise(GtFeatureIndex *dest, GtFeatureIndex *refrsrc, GtFeatureIndex *predsrc, bool use_orig, GtError *error)
-
-  Copy the sequence regions from ``refrsrc`` and ``predsrc`` to ``dest``. If ``use_orig`` is true, regions specified by input region nodes (such as those parsed from ``##sequence-region`` pragmas in GFF3) are used. Otherwise, regions inferred directly from the feature nodes are used.
-
-.. c:function:: GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn)
-
-  Traverse the given feature and its subfeatures and find the range occupied by coding sequence, or {0,0} if there is no coding sequence.
-
-.. c:function:: GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
-
-  Return an array of the given feature node's direct children.
-
-.. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
-
-  Remove feature ``fn`` and all its subfeatures from ``root``. Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn`` need not be a leaf feature.
-
-.. c:function:: bool agn_feature_overlap_check(GtArray *feats)
-
-  Returns true if any of the features in ``feats`` overlaps, false otherwise.
-
-.. c:function:: int agn_genome_node_compare(GtGenomeNode **gn_a, GtGenomeNode **gn_b)
-
-  Compare function for data type ``GtGenomeNode ``, needed for sorting ``GtGenomeNode `` stored in ``GtArray`` objects.
-
-.. c:function:: GtUword agn_mrna_3putr_length(GtFeatureNode *mrna)
-
-  Determine the length of an mRNA's 3' UTR.
-
-.. c:function:: GtUword agn_mrna_5putr_length(GtFeatureNode *mrna)
-
-  Determine the length of an mRNA's 5'UTR.
-
-.. c:function:: GtUword agn_mrna_cds_length(GtFeatureNode *mrna)
-
-  Determine the length of an mRNA's coding sequence.
-
-.. c:function:: GtRange agn_multi_child_range(GtFeatureNode *top, GtFeatureNode *rep)
-
-  If a top-level feature ``top`` contains a multifeature child (with multi representative ``rep``), use this function to get the complete range of the multifeature.
-
-.. c:function:: bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2, GtUword minoverlap, bool by_cds)
-
-  Determine if two features overlap such that they should be assigned to the same iLocus. Specify the minimum overlap (in bp) required and whether the location of the feature's coding sequence (CDS) should be used or not.
-
-.. c:function:: void agn_print_version(const char *progname, FILE *outstream)
-
-  CLI function: provide the name of the program, and this function prints out the AEGeAn version number to the specified outstream.
-
-.. c:function:: int agn_sprintf_comma(GtUword n, char *buffer)
-
-  Format the given non-negative number with commas as the thousands separator. The resulting string will be written to ``buffer``.
-
-.. c:function:: int agn_string_compare(const void *p1, const void *p2)
-
-  Dereference the given pointers and compare the resulting strings (a la ``strcmp``).
-
-.. c:function:: GtStrArray* agn_str_array_union(GtStrArray *a1, GtStrArray *a2)
-
-  Find the strings that are present in either (or both) of the string arrays.
+  Run unit tests for this class. Returns true if all tests passed.
 

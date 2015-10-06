@@ -487,6 +487,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
   }
 
   compare_report_html_locus_header(locus, outstream);
+#ifndef WITHOUT_CAIRO
   if(rpt->pngdata != NULL)
   {
     agn_locus_print_png(locus, rpt->pngdata);
@@ -497,6 +498,7 @@ static void compare_report_html_locus_handler(AgnCompareReportHTML *rpt,
             gt_str_get(seqid), rng.start, rng.end,
             gt_str_get(seqid), rng.start, rng.end);
   }
+#endif
 
   pairs2report = agn_locus_pairs_to_report(locus);
   if(pairs2report == NULL || gt_array_size(pairs2report) == 0)

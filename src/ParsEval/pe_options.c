@@ -297,6 +297,12 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
 
   options->refrfile = argv[optind];
   options->predfile = argv[optind + 1];
+  if(options->outfmt != HTMLMODE && options->graphics)
+  {
+    fprintf(stderr, "warning: graphics mode for HTML output only; disabling\n");
+    options->graphics = false;
+  }
+
   if(options->graphics)
   {
     sprintf(options->pngdata.filename_template, "%s/%%s/%%s_%%lu-%%lu.png",
@@ -360,6 +366,9 @@ void pe_set_option_defaults(ParsEvalOptions *options)
   options->gff3 = true;
   options->summary_only = false;
   options->graphics = true;
+#ifdef WITHOUT_CAIRO
+  options->graphics = false;
+#endif
   options->refrfile = NULL;
   options->predfile = NULL;
   options->refrlabel = NULL;
