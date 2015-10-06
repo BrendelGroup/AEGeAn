@@ -298,10 +298,7 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
   options->refrfile = argv[optind];
   options->predfile = argv[optind + 1];
   if(options->outfmt != HTMLMODE && options->graphics)
-  {
-    fprintf(stderr, "warning: graphics mode for HTML output only; disabling\n");
     options->graphics = false;
-  }
 
   if(options->graphics)
   {
