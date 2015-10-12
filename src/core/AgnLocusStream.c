@@ -305,7 +305,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                                     "delta-overlap-gene");
 
       if(stream->ilenfile != NULL)
-        fprintf(stream->ilenfile, "0\n");
+        fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
       gt_feature_node_add_attribute(prevfn, "riil", "0");
       gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
@@ -327,7 +327,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                                     "delta-overlap-delta");
 
       if(stream->ilenfile != NULL)
-        fprintf(stream->ilenfile, "0\n");
+        fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
       gt_feature_node_add_attribute(prevfn, "riil", "0");
       gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
@@ -340,7 +340,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                                     "delta-re-extend");
 
       if(stream->ilenfile != NULL)
-        fprintf(stream->ilenfile, "0\n");
+        fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
       gt_feature_node_add_attribute(prevfn, "riil", "0");
       gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
@@ -361,7 +361,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         agn_locus_set_range(iilocus, irange.start, irange.end);
 
         if(stream->ilenfile != NULL)
-          fprintf(stream->ilenfile, "%lu\n", gt_range_length(&irange));
+        {
+          fprintf(stream->ilenfile, "%s\t%lu\n", gt_str_get(seqid),
+                  gt_range_length(&irange));
+        }
         char iilocuslen[32];
         sprintf(iilocuslen, "%lu", gt_range_length(&irange));
         gt_feature_node_add_attribute(prevfn, "riil", iilocuslen);
