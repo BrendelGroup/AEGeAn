@@ -464,7 +464,7 @@ void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
       if(strcmp(srcstr, "R") == 0)
         filter.src = REFERENCESOURCE;
       else if(strcmp(srcstr, "P") == 0)
-        filter.src = REFERENCESOURCE;
+        filter.src = PREDICTIONSOURCE;
       else
       {
         fprintf(stderr, "[AgnLocus::agn_locus_filter_parse] invalid source "
