@@ -101,17 +101,14 @@ int pe_parse_options(int argc, char **argv, ParsEvalOptions *options,
     }
     else if(opt == 'r')
     {
-      if(true)
+      FILE *filterfile = fopen(optarg, "r");
+      if(filterfile == NULL)
       {
-        FILE *filterfile = fopen(optarg, "r");
-        if(filterfile == NULL)
-        {
-          gt_error_set(error, "unable to open filter file '%s'", optarg);
-          return -1;
-        }
-        agn_locus_filter_parse(filterfile, options->filters);
-        fclose(filterfile);
+        gt_error_set(error, "unable to open filter file '%s'", optarg);
+        return -1;
       }
+      agn_locus_filter_parse(filterfile, options->filters);
+      fclose(filterfile);
     }
     else if(opt == 's')
     {

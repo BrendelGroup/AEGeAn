@@ -473,7 +473,8 @@ void agn_locus_filter_parse(FILE *filterfile, GtArray *filters)
       }
     }
 
-    gt_array_add(filters, filter);
+    if(filter.operator != AGN_LOCUS_FILTER_NO)
+      gt_array_add(filters, filter);
   }
 }
 
@@ -485,29 +486,39 @@ bool agn_locus_filter_test(AgnLocus *locus, AgnLocusFilter *filter)
     return true;
 
   value = filter->function(locus, filter->src);
-  switch(filter->operator)
+  if(filter->operator == AGN_LOCUS_FILTER_EQ)
   {
-    case AGN_LOCUS_FILTER_EQ:
-      if(value == filter->testvalue) return true;
-      break;
-    case AGN_LOCUS_FILTER_NE:
-      if(value != filter->testvalue) return true;
-      break;
-    case AGN_LOCUS_FILTER_GT:
-      if(value > filter->testvalue) return true;
-      break;
-    case AGN_LOCUS_FILTER_GE:
-      if(value >= filter->testvalue) return true;
-      break;
-    case AGN_LOCUS_FILTER_LT:
-      if(value < filter->testvalue) return true;
-      break;
-    case AGN_LOCUS_FILTER_LE:
-      if(value <= filter->testvalue) return true;
-      break;
-    case AGN_LOCUS_FILTER_NO: // Added this entry to case statement because
-      return true;            // of compiler complaint
-      break;
+    if(value == filter->testvalue)
+      return true;
+  }
+  else if(filter->operator == AGN_LOCUS_FILTER_NE)
+  {
+    if(value != filter->testvalue)
+      return true;
+  }
+  else if(filter->operator == AGN_LOCUS_FILTER_GT)
+  {
+    if(value > filter->testvalue)
+      return true;
+  }
+  else if(filter->operator == AGN_LOCUS_FILTER_GE)
+  {
+    if(value >= filter->testvalue)
+      return true;
+  }
+  else if(filter->operator == AGN_LOCUS_FILTER_LT)
+  {
+    if(value < filter->testvalue)
+      return true;
+  }
+  else if(filter->operator == AGN_LOCUS_FILTER_LE)
+  {
+    if(value <= filter->testvalue)
+      return true;
+  }
+  else if(filter->operator == AGN_LOCUS_FILTER_NO)
+  {
+    return true;
   }
   return false;
 }
