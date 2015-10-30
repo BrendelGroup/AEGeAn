@@ -123,7 +123,7 @@ static void print_usage(FILE *outstream)
 "                           default is terminal (standard output)\n"
 "    -T|--retainids         retain original feature IDs from input files;\n"
 "                           conflicts will arise if input contains duplicated\n"
-"                           ID values"
+"                           ID values\n"
 "    -t|--transmap: FILE    print a mapping from each transcript annotation\n"
 "                           to its corresponding locus to the given file\n"
 "    -V|--verbose           include all locus subfeatures (genes, RNAs, etc)\n"
