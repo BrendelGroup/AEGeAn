@@ -6,12 +6,12 @@
 # the 'LICENSE' file in the AEGeAn source code distribution or
 # online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
+from __future__ import print_function
 import re
 import sys
 
 
 class Peeker:
-
     """
     Minimal wrapper around an iterator that buffers lines for peeking ahead.
     Stolen shamelessly from http://stackoverflow.com/a/1517965/459780.
@@ -28,13 +28,16 @@ class Peeker:
         if self.buffer:
             return self.buffer.pop(0)
         else:
-            return self.iter.next()
+            return next(self.iter)
+
+    def __next__(self):
+        return self.next()
 
     def peek(self, n=0):
         """Return an item n entries ahead in the iteration."""
         while n >= len(self.buffer):
             try:
-                self.buffer.append(self.iter.next())
+                self.buffer.append(next(self.iter))
             except StopIteration:
                 return None
         return self.buffer[n]
@@ -42,7 +45,7 @@ class Peeker:
 
 def align_convert(fp):
     """
-    If an alignment feature is encountered, convert it from the 2-tiered match /
+    If an alignment feature is encountered, convert it from the 2-tiered match/
     match_part encoding to a 1-tiered match multifeature encoding.
     """
     moltypes = {"cDNA_match": 1, "EST_match": 1, "nucleotide_match": 1,
@@ -73,4 +76,4 @@ def align_convert(fp):
 if __name__ == "__main__":
     fqiter = Peeker(sys.stdin)
     for entry in align_convert(fqiter):
-        print entry
+        print(entry)

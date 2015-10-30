@@ -6,6 +6,7 @@
 # the 'LICENSE' file in the AEGeAn source code distribution or
 # online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
+from __future__ import print_function
 import re
 import subprocess
 import sys
@@ -16,7 +17,7 @@ with open("VERSION", "r") as vfile:
 
 try:
   logproc = subprocess.Popen(["git", "log"], stdout=subprocess.PIPE,
-                                             stderr=subprocess.PIPE)
+                             stderr=subprocess.PIPE, universal_newlines=True)
   logout, logerr = logproc.communicate()
 except:
   logerr = True
@@ -37,12 +38,12 @@ else:
   assert yearmatch, "could not find year of latest commit"
   year = yearmatch.group(1)
 
-print '#ifndef AEGEAN_VERSION_H'
-print '#define AEGEAN_VERSION_H'
-print '#define AGN_SEMANTIC_VERSION  "%s"' % semver
-print '#define AGN_VERSION_STABILITY "%s"' % stability
-print '#define AGN_VERSION_HASH      "%s"' % sha1
-print '#define AGN_VERSION_HASH_SLUG "%s"' % sha1slug
-print '#define AGN_VERSION_LINK      "%s"' % link
-print '#define AGN_COPY_YEAR         "%s"' % year
-print '#endif'
+print('#ifndef AEGEAN_VERSION_H')
+print('#define AEGEAN_VERSION_H')
+print('#define AGN_SEMANTIC_VERSION  "%s"' % semver)
+print('#define AGN_VERSION_STABILITY "%s"' % stability)
+print('#define AGN_VERSION_HASH      "%s"' % sha1)
+print('#define AGN_VERSION_HASH_SLUG "%s"' % sha1slug)
+print('#define AGN_VERSION_LINK      "%s"' % link)
+print('#define AGN_COPY_YEAR         "%s"' % year)
+print('#endif')
