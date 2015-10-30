@@ -48,8 +48,8 @@ def align_convert(fp):
     If an alignment feature is encountered, convert it from the 2-tiered match/
     match_part encoding to a 1-tiered match multifeature encoding.
     """
-    moltypes = {"cDNA_match": 1, "EST_match": 1, "nucleotide_match": 1,
-                "protein_match": 1}
+    moltypes = {'cDNA_match': 1, 'EST_match': 1, 'nucleotide_match': 1,
+                'protein_match': 1}
     buffer = None
     for line in fp:
         line = line.rstrip()
@@ -59,21 +59,21 @@ def align_convert(fp):
             continue
         ftype = fields[2]
         if ftype in moltypes:
-            matchid = re.search("ID=([^;\n]+)", fields[8]).group(1)
+            matchid = re.search('ID=([^;\n]+)', fields[8]).group(1)
             peekline = fp.peek()
-            while not (peekline is None) and "\tmatch_part\t" in peekline:
+            while not (peekline is None) and '\tmatch_part\t' in peekline:
                 line = next(fp).rstrip()
-                fields = line.split("\t")
-                fields[8] = re.sub("ID=[^;\n]+;*", "", fields[8])
-                fields[8] = re.sub("Parent=[^;\n]+;*", "", fields[8])
-                fields[8] = "ID=" + matchid + ";" + fields[8]
+                fields = line.split('\t')
+                fields[8] = re.sub('ID=[^;\n]+;*', '', fields[8])
+                fields[8] = re.sub('Parent=[^;\n]+;*', '', fields[8])
+                fields[8] = 'ID=' + matchid + ';' + fields[8]
                 fields[2] = ftype
-                yield "\t".join(fields)
+                yield '\t'.join(fields)
                 peekline = fp.peek()
         else:
             yield line
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     fqiter = Peeker(sys.stdin)
     for entry in align_convert(fqiter):
         print(entry)
