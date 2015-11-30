@@ -1,7 +1,7 @@
 #---Begin configuration---#
 #---Begin configuration---#
 
-prefix=/usr/local
+prefix?=/usr/local
 
 #----End configuration----#
 #----End configuration----#
@@ -23,7 +23,7 @@ BINS=$(INSTALL_BINS) $(UT_EXE)
 #----- Source, header, and object files -----#
 
 # AEGeAn core class and module files
-AGN_SRCS=$(wildcard src/core/Agn*.c)
+AGN_SRCS=$(sort $(wildcard src/core/Agn*.c))
 AGN_OBJS=$(patsubst src/core/%.c,obj/%.o,$(AGN_SRCS))
 AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
