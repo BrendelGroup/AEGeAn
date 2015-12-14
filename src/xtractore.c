@@ -212,7 +212,7 @@ static char *xt_extract_subsequence(GtGenomeNode *gn, const GtUchar *sequence,
 {
   char *outseq, *outseqp;
   GtArray *regions;
-  GtStrand fstrand;
+  GtStrand fstrand = GT_STRAND_UNKNOWN;
   GtUword i, nregions, length;
 
   regions = xt_get_regions(gn);
