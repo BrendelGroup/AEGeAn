@@ -248,7 +248,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
   GtRange seqrange;
   gt_feature_index_get_range_for_seqid(stream->seqranges, &seqrange,
                                        gt_str_get(seqid), NULL);
-  GtStr *prev_seqid;
+  GtStr *prev_seqid = NULL;
   if(stream->prev_locus)
     prev_seqid = gt_genome_node_get_seqid(stream->prev_locus);
 
