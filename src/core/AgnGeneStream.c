@@ -112,7 +112,7 @@ bool agn_gene_stream_unit_test(AgnUnitTest *test)
 {
   GtQueue *queue = gt_queue_new();
   gene_stream_test_data(queue);
-  agn_assert(gt_queue_size(queue) == 3);
+  agn_assert(gt_queue_size(queue) == 4);
 
   GtFeatureNode *fn = gt_queue_get(queue);
   GtArray *mrnas = agn_typecheck_select(fn, agn_typecheck_mrna);
@@ -163,6 +163,13 @@ bool agn_gene_stream_unit_test(AgnUnitTest *test)
     gt_array_delete(utr5p);
   }
   agn_unit_test_result(test, "mRNA only", test3);
+  gt_genome_node_delete((GtGenomeNode *)fn);
+  gt_array_delete(mrnas);
+
+  fn = gt_queue_get(queue);
+  mrnas = agn_typecheck_select(fn, agn_typecheck_mrna);
+  bool test4 = gt_array_size(mrnas) == 1;
+  agn_unit_test_result(test, "mRNA boundaries", test4);
   gt_genome_node_delete((GtGenomeNode *)fn);
   gt_array_delete(mrnas);
 
@@ -248,6 +255,16 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
         gt_logger_log(stream->logger, "error: mRNA '%s' has %lu exons but "
                       "%lu introns", mrnaid, gt_array_size(exons),
                       gt_array_size(introns));
+        keepmrna = false;
+      }
+
+      GtRange generange = gt_genome_node_get_range(*gn);
+      GtRange mrnarange = gt_genome_node_get_range((GtGenomeNode *)current);
+      if(!gt_range_contains(&generange, &mrnarange))
+      {
+        const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+        gt_logger_log(stream->logger, "mRNA '%s' extends beyond the range of "
+                      "its parent; ignoring", mrnaid);
         keepmrna = false;
       }
 

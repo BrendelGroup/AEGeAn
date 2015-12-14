@@ -535,8 +535,8 @@ static void clique_vector_update(AgnTranscriptClique *clique,
   GtRange locusrange = gt_genome_node_get_range(clique);
   GtRange transrange = gt_genome_node_get_range((GtGenomeNode *)transcript);
   char *modelvector = gt_genome_node_get_user_data(clique, "modelvector");
-  agn_assert(gt_range_contains(&locusrange, &transrange) &&
-            gt_range_length(&locusrange) == strlen(modelvector));
+  agn_assert(gt_range_contains(&locusrange, &transrange));
+  agn_assert(gt_range_length(&locusrange) == strlen(modelvector));
 
   GtFeatureNode *fn;
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(transcript);

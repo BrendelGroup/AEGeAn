@@ -44,3 +44,11 @@ chr1	nano	exon	30600	30850	.	+	.	Parent=mRNA6
 chr1	nano	exon	31004	31222	.	+	.	Parent=mRNA6
 chr1	nano	exon	32157	32288	.	+	.	Parent=mRNA6
 chr1	nano	exon	32802	33035	.	+	.	Parent=mRNA6
+###
+chr1	nano	gene	40050	49006	.	+	.	ID=gene4;Name=foobar
+chr1	nano	mRNA	40050	49500	.	+	.	ID=mRNA7;Parent=gene4
+chr1	nano	CDS	40050	49500	.	+	0	ID=CDS6;Parent=mRNA7
+chr1	nano	exon	40050	49500	.	+	.	Parent=mRNA7
+chr1	nano	mRNA	40050	49006	.	+	.	ID=mRNA8;Parent=gene4
+chr1	nano	CDS	40050	49006	.	+	0	ID=CDS7;Parent=mRNA8
+chr1	nano	exon	40050	49006	.	+	.	Parent=mRNA8
