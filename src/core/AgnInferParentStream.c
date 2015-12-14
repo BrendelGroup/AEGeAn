@@ -167,7 +167,7 @@ infer_parent_stream_handle_pseudo(AgnInferParentStream *ips, GtFeatureNode **fn)
   gt_hashmap_delete(obsrv_nodes);
   gt_genome_node_delete(*(GtGenomeNode **)fn);
 
-  GtFeatureNode *newparent;
+  GtFeatureNode *newparent = NULL;
   while(gt_queue_size(newparents) > 0)
   {
     newparent = gt_queue_get(newparents);
