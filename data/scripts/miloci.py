@@ -46,7 +46,7 @@ def merge_iloci(loci):
             attrs[key] += value
 
     attrstring = 'merged=true;iLocus_type=miLocus'
-    for key in attrs:
+    for key in sorted(attrs):
         attrstring += ';%s=%d' % (key, attrs[key])
     gff3 = [seqid, 'AEGeAn::miloci.py', 'locus', str(start), str(end),
             '%d' % len(loci), '.', '.',    attrstring]
@@ -85,8 +85,8 @@ def parse_iloci(fp):
             line = re.sub('ID=[^;\n]+;*', 'geneless=true;', line)
             line = re.sub('Name=[^;\n]+;*', '', line)
             yield line
-        if len(prev_loci) > 0:
-            yield merge_iloci(prev_loci)
+    if len(prev_loci) > 0:
+        yield merge_iloci(prev_loci)
 
 
 if __name__ == '__main__':

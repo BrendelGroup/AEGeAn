@@ -15,7 +15,7 @@ import sys
 
 
 def run_locuspocus(infile, outfile, delta, ilenfile=None, debug=False):
-    command = 'locuspocus --verbose'
+    command = 'locuspocus --verbose --namefmt=prelocus%lu'
     command += ' --delta %d' % delta
     command += ' --outfile %s.lp' % outfile
     command += ' --cds'
@@ -26,11 +26,7 @@ def run_locuspocus(infile, outfile, delta, ilenfile=None, debug=False):
         print('command: %s' % command, file=sys.stderr)
 
     cmd = command.split(' ')
-    result = subprocess.call(cmd)
-    if result:
-        print('command resulted in return status %d: %s' % (result, command),
-              file=sys.stderr)
-        exit(result)
+    subprocess.check_call(cmd)
 
     numloci = 0
     with open('%s.lp' % outfile, 'r') as fp:
@@ -58,30 +54,22 @@ def run_uloci(infile, outfile, counter, debug=False):
         exit(result)
 
 
-def combine_output(outfile, idfmt):
+def combine_output(outfile, namefmt):
     locusids = {}
     with open(outfile, 'w') as fp:
-        command = 'gt gff3 -retainids -sort -tidy'
-        commant += '%s.lp %s.ul' % (outfile, outfile)
+        command = 'gt gff3 -retainids -sort -tidy '
+        command += '%s.lp %s.ul' % (outfile, outfile)
         cmd = command.split(' ')
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                             universal_newlines=True)
         counter = 0
         while True:
             line = p.stdout.readline().rstrip()
             if line:
                 if '\tlocus\t' in line:
                     counter += 1
-                    locusid = idfmt % counter
-                    line = re.sub('Name=[^;\n]+', 'Name=%s' % locusid, line)
-                    idmatch = re.search('ID=([^;\n]+)', line)
-                    if idmatch:
-                        oldid = idmatch.group(1)
-                        locusids[oldid] = locusid
-                        line = re.sub('ID=[^;\n]+', 'ID=%s' % locusid, line)
-                elif '\tgene\t' in line:
-                    oldid = re.search('Parent=([^;\n]+)', line).group(1)
-                    newid = locusids[oldid]
-                    line = line.replace(oldid, newid)
+                    locusname = namefmt % counter
+                    line = re.sub('Name=[^;\n]+', 'Name=%s' % locusname, line)
                 print(line, file=fp)
             else:
                 break
@@ -94,9 +82,9 @@ if __name__ == '__main__':
                         help='Debug mode')
     parser.add_argument('--ilenfile', type=str, default=None,
                         help='File to which iiLocus lengths will be written')
-    parser.add_argument('--idfmt', type=str, default='locus%d',
-                        help='An ID with a serial number is assigned to each '
-                        'locus; default format is "locus%%d"')
+    parser.add_argument('--namefmt', type=str, default='locus%d',
+                        help='An Name with a serial number is assigned to each'
+                        ' locus; default format is "locus%%d"')
     parser.add_argument('--delta', type=int, default=500,
                         help='Delta for extending iLoci; default is 500')
     parser.add_argument('--out', type=str, default=None,
@@ -109,7 +97,7 @@ if __name__ == '__main__':
     numloci = run_locuspocus(args.infile, args.out, args.delta, args.ilenfile,
                              args.debug)
     run_uloci(args.infile, args.out, numloci + 1, args.debug)
-    combine_output(args.out, args.idfmt)
+    combine_output(args.out, args.namefmt)
 
     os.unlink('%s.lp' % args.out)
     os.unlink('%s.ul' % args.out)

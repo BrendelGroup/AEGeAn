@@ -35,12 +35,11 @@ GtNodeStream *agn_locus_refine_stream_new(GtNodeStream *in_stream,
                                           bool by_cds);
 
 /**
- * @function Loci created by this stream are assigned an ID with a serial
- * number. The default format is 'locus%lu' (that is, locus1, locus2, etc).
- * Use this function to override the default ID format.
+ * @function Assign a `Name` attribute with a serial number to each iLocus
+ * using the specified printf-style format.
  */
-void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream,
-                                          const char *format);
+void agn_locus_refine_stream_set_name_format(AgnLocusRefineStream *stream,
+                                             const char *format);
 
 /**
  * @function Set the source value to be used for all iLoci created by this
