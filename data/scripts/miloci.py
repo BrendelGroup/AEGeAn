@@ -85,8 +85,8 @@ def parse_iloci(fp):
             line = re.sub('ID=[^;\n]+;*', 'geneless=true;', line)
             line = re.sub('Name=[^;\n]+;*', '', line)
             yield line
-        if len(prev_loci) > 0:
-            yield merge_iloci(prev_loci)
+    if len(prev_loci) > 0:
+        yield merge_iloci(prev_loci)
 
 
 if __name__ == '__main__':
