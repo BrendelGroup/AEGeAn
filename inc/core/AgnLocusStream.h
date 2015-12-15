@@ -52,11 +52,10 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta);
 void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode);
 
 /**
- * @function Loci created by this stream are assigned an ID with a serial
- * number. The default format is 'locus%lu' (that is, locus1, locus2, etc).
- * Use this function to override the default ID format.
+ * @function Assign a `Name` attribute with a serial number to each iLocus
+ * using the specified printf-style format.
  */
-void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format);
+void agn_locus_stream_set_name_format(AgnLocusStream *stream, const char *fmt);
 
 /**
  * @function By default, the locus stream will produce loci containing features

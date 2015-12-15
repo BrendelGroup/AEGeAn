@@ -19,7 +19,7 @@ typedef struct
   bool debug;
   GtHashmap *filter;
   FILE *genestream;
-  char *idformat;
+  char *nameformat;
   unsigned long delta;
   GtFile *outstream;
   void (*filefreefunc)(GtFile *);
@@ -43,7 +43,7 @@ static void set_option_defaults(LocusPocusOptions *options)
   options->filter = gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
   gt_hashmap_add(options->filter, gt_cstr_dup("gene"), gt_cstr_dup("gene"));
   options->genestream = NULL;
-  options->idformat = NULL;
+  options->nameformat = NULL;
   options->delta = 500;
   options->outstream = gt_file_new_from_fileptr(stdout);
   options->filefreefunc = gt_file_delete_without_handle;
@@ -70,8 +70,8 @@ static void free_option_memory(LocusPocusOptions *options)
     fclose(options->genestream);
   if(options->transstream != NULL)
     fclose(options->transstream);
-  if(options->idformat != NULL)
-    gt_free(options->idformat);
+  if(options->nameformat != NULL)
+    gt_free(options->nameformat);
   if(options->ilenfile != NULL)
     fclose(options->ilenfile);
 }
@@ -108,7 +108,7 @@ static void print_usage(FILE *outstream)
 "                           overlap to be grouped in the same iLocus; default\n"
 "                           is 1\n\n"
 "  Output options:\n"
-"    -I|--idformat: STR     provide a printf-style format string to override\n"
+"    -n|--namefmt: STR     provide a printf-style format string to override\n"
 "                           the default ID format for newly created loci;\n"
 "                           default is 'locus%%lu' (locus1, locus2, etc) for\n"
 "                           loci and 'iLocus%%lu' (iLocus1, iLocus2, etc) for\n"
@@ -146,7 +146,7 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "cdef:g:hI:i:l:m:o:p:rsTt:uVvy";
+  const char *optstr = "cdef:g:hi:l:m:n:o:p:rsTt:uVvy";
   const char *key, *value, *oldvalue;
   const struct option locuspocus_options[] =
   {
@@ -156,10 +156,10 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
     { "filter",     required_argument, NULL, 'f' },
     { "genemap",    required_argument, NULL, 'g' },
     { "help",       no_argument,       NULL, 'h' },
-    { "idformat",   required_argument, NULL, 'I' },
     { "ilens",      required_argument, NULL, 'i' },
     { "delta",      required_argument, NULL, 'l' },
     { "minoverlap", required_argument, NULL, 'm' },
+    { "namefmt",    required_argument, NULL, 'n' },
     { "outfile",    required_argument, NULL, 'o' },
     { "parent",     required_argument, NULL, 'p' },
     { "refine",     no_argument,       NULL, 'r' },
@@ -221,12 +221,6 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
       print_usage(stdout);
       exit(0);
     }
-    else if(opt == 'I')
-    {
-      if(options->idformat != NULL)
-        gt_free(options->idformat);
-      options->idformat = gt_cstr_dup(optarg);
-    }
     else if(opt == 'i')
     {
       options->ilenfile = fopen(optarg, "w");
@@ -248,6 +242,12 @@ parse_options(int argc, char **argv, LocusPocusOptions *options, GtError *error)
         gt_error_set(error, "could not convert overlap '%s' to an integer",
                      optarg);
       }
+    }
+    else if(opt == 'n')
+    {
+      if(options->nameformat != NULL)
+        gt_free(options->nameformat);
+      options->nameformat = gt_cstr_dup(optarg);
     }
     else if(opt == 'o')
     {
@@ -372,8 +372,8 @@ int main(int argc, char **argv)
   agn_locus_stream_set_source(ls, "AEGeAn::LocusPocus");
   agn_locus_stream_set_endmode(ls, options.endmode);
   agn_locus_stream_track_ilens(ls, options.ilenfile);
-  if(options.idformat != NULL)
-    agn_locus_stream_set_idformat(ls, options.idformat);
+  if(options.nameformat != NULL)
+    agn_locus_stream_set_name_format(ls, options.nameformat);
   if(options.skipiiLoci)
     agn_locus_stream_skip_iiLoci(ls);
   gt_queue_add(streams, current_stream);
@@ -387,8 +387,8 @@ int main(int argc, char **argv)
     AgnLocusRefineStream *lrs = (AgnLocusRefineStream *)current_stream;
     agn_locus_refine_stream_set_source(lrs, "AEGeAn::LocusPocus");
     agn_locus_refine_stream_track_ilens(lrs, options.ilenfile);
-    if(options.idformat != NULL)
-      agn_locus_refine_stream_set_idformat(lrs, options.idformat);
+    if(options.nameformat != NULL)
+      agn_locus_refine_stream_set_name_format(lrs, options.nameformat);
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }

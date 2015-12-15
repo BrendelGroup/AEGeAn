@@ -37,7 +37,7 @@ struct AgnLocusStream
   GtQueue *locusqueue;
   GtGenomeNode *buffer;
   GtStr *source;
-  GtStr *idformat;
+  GtStr *nameformat;
   char *refrfile;
   char *predfile;
   FILE *ilenfile;
@@ -147,7 +147,7 @@ GtNodeStream *agn_locus_stream_new(GtNodeStream *in_stream, GtUword delta)
   stream->locusqueue = gt_queue_new();
   stream->buffer = NULL;
   stream->source = gt_str_new_cstr("AEGeAn::AgnLocusStream");
-  stream->idformat = gt_str_new_cstr("locus%lu");
+  stream->nameformat = NULL;
   stream->refrfile = NULL;
   stream->predfile = NULL;
   stream->ilenfile = NULL;
@@ -160,11 +160,12 @@ void agn_locus_stream_set_endmode(AgnLocusStream *stream, int endmode)
   stream->endmode = endmode;
 }
 
-void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
+void agn_locus_stream_set_name_format(AgnLocusStream *stream, const char *fmt)
 {
-  agn_assert(stream && format);
-  gt_str_delete(stream->idformat);
-  stream->idformat = gt_str_new_cstr(format);
+  agn_assert(stream && fmt);
+  if(stream->nameformat)
+    gt_str_delete(stream->nameformat);
+  stream->nameformat = gt_str_new_cstr(fmt);
 }
 
 void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream)
@@ -506,7 +507,8 @@ static void locus_stream_free(GtNodeStream *ns)
   gt_feature_index_delete(stream->seqranges);
   gt_queue_delete(stream->locusqueue);
   gt_str_delete(stream->source);
-  gt_str_delete(stream->idformat);
+  if(stream->nameformat)
+    gt_str_delete(stream->nameformat);
   gt_free(stream->refrfile);
   gt_free(stream->predfile);
 }
@@ -516,11 +518,13 @@ static void locus_stream_mint(AgnLocusStream *stream, AgnLocus *locus)
   agn_assert(stream);
   stream->count++;
 
-  char locusid[256];
-  sprintf(locusid, gt_str_get(stream->idformat), stream->count);
-  gt_feature_node_set_attribute((GtFeatureNode *)locus, "ID", locusid);
-  gt_feature_node_set_attribute((GtFeatureNode *)locus, "Name", locusid);
   gt_feature_node_set_source((GtFeatureNode *)locus, stream->source);
+  if(stream->nameformat)
+  {
+    char locusname[256];
+    sprintf(locusname, gt_str_get(stream->nameformat), stream->count);
+    gt_feature_node_set_attribute((GtFeatureNode *)locus, "Name", locusname);
+  }
 
   GtArray *types = gt_array_new( sizeof(const char *) );
   GtHashmap *countsbytype = gt_hashmap_new(GT_HASH_STRING, gt_free_func,

@@ -575,9 +575,9 @@ Class AgnLocusRefineStream
 
   Class constructor.
 
-.. c:function:: void agn_locus_refine_stream_set_idformat(AgnLocusRefineStream *stream, const char *format)
+.. c:function:: void agn_locus_refine_stream_set_name_format(AgnLocusRefineStream *stream, const char *format)
 
-  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
+  Assign a `Name` attribute with a serial number to each iLocus using the specified printf-style format.
 
 .. c:function:: void agn_locus_refine_stream_set_source(AgnLocusRefineStream *stream, const char *source)
 
@@ -610,9 +610,9 @@ Class AgnLocusStream
 
   Terminal iLoci or 'end loci' are empty iLoci at either end of a sequence. To exclude terminal iLoci from the output, set `endmode` < 0. To output only terminal iLoci, set `endmode` > 0. By default (`endmode == 0`), terminal iLoci are reported along with all other iLoci.
 
-.. c:function:: void agn_locus_stream_set_idformat(AgnLocusStream *stream, const char *format)
+.. c:function:: void agn_locus_stream_set_name_format(AgnLocusStream *stream, const char *fmt)
 
-  Loci created by this stream are assigned an ID with a serial number. The default format is 'locus%lu' (that is, locus1, locus2, etc). Use this function to override the default ID format.
+  Assign a `Name` attribute with a serial number to each iLocus using the specified printf-style format.
 
 .. c:function:: void agn_locus_stream_skip_iiLoci(AgnLocusStream *stream)
 
