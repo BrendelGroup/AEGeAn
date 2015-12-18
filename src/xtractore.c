@@ -488,7 +488,9 @@ int main(int argc, char **argv)
       xt_print_feature_sequence(gn, sequence, seqlength, &options);
       featcounter += 1;
       if(featcounter % 100 == 0 && options.debug)
-        fprintf(stderr, "..........\n");
+        fputs("..........", stderr);
+      if(featcounter % 1000 == 0 && options.debug)
+        fputs("\n", stderr)
     }
     gt_array_delete(seqfeatures);
   }
