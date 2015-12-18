@@ -99,6 +99,17 @@ GtRange agn_feature_node_get_cds_range(GtFeatureNode *fn);
 GtArray *agn_feature_node_get_children(GtFeatureNode *fn);
 
 /**
+ * @function ID attribute is required to be unique within a single GFF3 file,
+ * but is not guaranteed to be unique among all GFF3 files (that is, it is not
+ * a stable identifier). This function searches other common attributes for
+ * labels or identifiers (`accession` and then `Name`) that are likely to be
+ * more stable. If these cannot be found, the `ID` attribute is retrieved.
+ * Finally, if `ID` is unavailable, the location of the feature will be
+ * returned in the format `${featuretype}:${seqid}_${start}-${end}`.
+ */
+const char *agn_feature_node_get_label(GtFeatureNode *fn);
+
+/**
  * @function Remove feature ``fn`` and all its subfeatures from ``root``.
  * Analogous to ``gt_feature_node_remove_leaf`` with the difference that ``fn``
  * need not be a leaf feature.

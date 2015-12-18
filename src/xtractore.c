@@ -26,7 +26,6 @@ typedef struct
   GtHashmap *typestoextract;
   bool verbose;
   unsigned width;
-  bool nameisid;
 } XtractoreOptions;
 
 // Simple data structure to group genomic coordinates and strand together
@@ -119,13 +118,12 @@ static void xtract_options_parse(int argc, char **argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hi:no:t:Vvw:";
+  const char *optstr = "hi:o:t:Vvw:";
   char *type;
   const struct option xtractore_options[] =
   {
     { "help",     no_argument,       NULL, 'h' },
     { "idfile",   required_argument, NULL, 'i' },
-    { "nameisid", no_argument,       NULL, 'n' },
     { "outfile",  required_argument, NULL, 'o' },
     { "type",     required_argument, NULL, 't' },
     { "verbose",  no_argument,       NULL, 'V' },
@@ -148,8 +146,6 @@ static void xtract_options_parse(int argc, char **argv,
       if(options->idfile == NULL)
         gt_error_set(error, "could not open ID file '%s'", optarg);
     }
-    else if(opt == 'n')
-      options->nameisid = true;
     else if(opt == 'o')
     {
       options->outfile = fopen(optarg, "w");
@@ -199,7 +195,6 @@ static void xtract_options_set_defaults(XtractoreOptions *options)
   gt_hashmap_add(options->typestoextract, defaulttype, defaulttype);
   options->verbose = false;
   options->width = 80;
-  options->nameisid = false;
 }
 
 static int xtract_region_compare(XtractRegion *r1, XtractRegion *r2)
@@ -349,38 +344,17 @@ xt_print_feature_sequence(GtGenomeNode *gn, const GtUchar *sequence,
   agn_assert(type);
 
   GtStrand strand = gt_feature_node_get_strand(fn);
-  char *strandstr = "";
-  if(strand == GT_STRAND_FORWARD)      strandstr = "+";
-  else if(strand == GT_STRAND_REVERSE) strandstr = "-";
-
-  sprintf(subseqid, "%s_%lu-%lu%s", gt_str_get(seqid), range.start, range.end,
-          strandstr);
-  const char *featid = gt_feature_node_get_attribute(fn, "ID");
-  const char *name = gt_feature_node_get_attribute(fn, "Name");
-  const char *accession = gt_feature_node_get_attribute(fn, "accession");
+  sprintf(subseqid, "%s_%lu-%lu%c", gt_str_get(seqid), range.start, range.end,
+          GT_STRAND_CHARS[strand]);
+  const char *featlabel = agn_feature_node_get_label(fn);
   if(gt_feature_node_is_pseudo(fn))
   {
     GtFeatureNodeIterator *it = gt_feature_node_iterator_new_direct(fn);
     GtFeatureNode *child = gt_feature_node_iterator_next(it);
-    accession = gt_feature_node_get_attribute(child, "accession");
+    featlabel = agn_feature_node_get_label(child);
     gt_feature_node_iterator_delete(it);
   }
-  if(accession)
-    fprintf(options->outfile, ">%s %s\n", accession, subseqid);
-  else if(options->nameisid)
-  {
-    if(name == NULL)
-    {
-      fprintf(stderr, "Error: feature %s has no Name attribute, with 'nameisid'"
-              " mode active;\n", subseqid);
-      exit(1);
-    }
-    fprintf(options->outfile, ">%s %s\n", name, subseqid);
-  }
-  else if(featid)
-    fprintf(options->outfile, ">%s %s\n", featid, subseqid);
-  else
-    fprintf(options->outfile, ">%s\n", subseqid);
+  fprintf(options->outfile, ">%s %s\n", featlabel, subseqid);
 
   char *feat_seq = xt_extract_subsequence(gn, sequence, seqlength);
   if(strcmp(type, "CDS") == 0 &&
@@ -405,8 +379,6 @@ static void xt_print_usage(FILE *outstream)
 "    -i|--idfile: FILE     file containing a list of feature IDs (1 per line\n"
 "                          with no spaces); if provided, only features with\n"
 "                          IDs in this file will be extracted\n"
-"    -n|--nameisid         Use Name attribute instead of ID attribute as the\n"
-"                          stable unique identifier for each feature\n"
 "    -o|--outfile: FILE    file to which output sequences will be written;\n"
 "                          default is terminal (stdout)\n"
 "    -t|--type: STRING     feature type to extract; can be used multiple\n"

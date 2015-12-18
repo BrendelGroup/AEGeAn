@@ -173,6 +173,34 @@ GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
   return children;
 }
 
+const char *agn_feature_node_get_label(GtFeatureNode *fn)
+{
+  const char *label = gt_feature_node_get_attribute(fn, "accession");
+  if(label == NULL)
+    label = gt_feature_node_get_attribute(fn, "Name");
+  if(label == NULL)
+    label = gt_feature_node_get_attribute(fn, "ID");
+  if(label == NULL)
+  {
+    GtGenomeNode *gn = (GtGenomeNode *)fn;
+    GtStrand strand = gt_feature_node_get_strand(fn);
+    GtStr *labelstr = gt_str_new();
+    gt_str_append_cstr(labelstr, gt_feature_node_get_type(fn));
+    gt_str_append_char(labelstr, ':');
+    gt_str_append_str(labelstr, gt_genome_node_get_seqid(gn));
+    gt_str_append_char(labelstr, '_');
+    gt_str_append_uword(labelstr, gt_genome_node_get_start(gn));
+    gt_str_append_char(labelstr, '-');
+    gt_str_append_uword(labelstr, gt_genome_node_get_end(gn));
+    gt_str_append_char(labelstr, GT_STRAND_CHARS[strand]);
+    gt_genome_node_add_user_data(gn, "agn_label", labelstr,
+                                 (GtFree)gt_str_delete);
+    label = gt_str_get(labelstr);
+  }
+
+  return label;
+}
+
 void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 {
   agn_assert(root && fn);

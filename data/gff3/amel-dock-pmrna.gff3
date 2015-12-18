@@ -1,13 +1,15 @@
 ##gff-version   3
 ##sequence-region   NC_007070.3 4660647 4665672
 NC_007070.3	Gnomon	gene	4660647	4665672	.	-	.	ID=gene262;Name=dock;Dbxref=GeneID:551892;gbkey=Gene;gene=dock
-NC_007070.3	Gnomon	mRNA	4660647	4665672	.	-	.	ID=rna528;Parent=gene262;Name=XM_624278.4;Dbxref=GeneID:551892,Genbank:XM_624278.4;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X1;transcript_id=XM_624278.4
-NC_007070.3	Gnomon	exon	4660647	4661434	.	-	.	ID=id3266;Parent=rna528;Dbxref=GeneID:551892,Genbank:XM_624278.4;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X1;transcript_id=XM_624278.4
-NC_007070.3	Gnomon	CDS	4661213	4661434	.	-	0	ID=cds369;Parent=rna528;Name=XP_624281.2;Dbxref=GeneID:551892,Genbank:XP_624281.2;gbkey=CDS;gene=dock;product=cytoplasmic protein NCK1 isoformX1;protein_id=XP_624281.2
-NC_007070.3	.	intron	4661435	4661580	.	-	.	Parent=rna528
-NC_007070.3	Gnomon	exon	4661581	4662518	.	-	.	ID=id3265;Parent=rna528;Dbxref=GeneID:551892,Genbank:XM_624278.4;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X1;transcript_id=XM_624278.4
-NC_007070.3	Gnomon	CDS	4661581	4662518	.	-	2	ID=cds369;Parent=rna528;Name=XP_624281.2;Dbxref=GeneID:551892,Genbank:XP_624281.2;gbkey=CDS;gene=dock;product=cytoplasmic protein NCK1 isoformX1;protein_id=XP_624281.2
-NC_007070.3	.	intron	4662519	4665197	.	-	.	Parent=rna528
-NC_007070.3	Gnomon	CDS	4665198	4665216	.	-	0	ID=cds369;Parent=rna528;Name=XP_624281.2;Dbxref=GeneID:551892,Genbank:XP_624281.2;gbkey=CDS;gene=dock;product=cytoplasmic protein NCK1 isoformX1;protein_id=XP_624281.2
-NC_007070.3	Gnomon	exon	4665198	4665672	.	-	.	ID=id3264;Parent=rna528;Dbxref=GeneID:551892,Genbank:XM_624278.4;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X1;transcript_id=XM_624278.4
+NC_007070.3	Gnomon	mRNA	4660647	4665672	.	-	.	ID=rna529;Parent=gene262;Name=XM_006561927.1;Dbxref=GeneID:551892,Genbank:XM_006561927.1;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X2;transcript_id=XM_006561927.1
+NC_007070.3	Gnomon	exon	4660647	4661434	.	-	.	ID=id3270;Parent=rna529;Dbxref=GeneID:551892,Genbank:XM_006561927.1;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X2;transcript_id=XM_006561927.1
+NC_007070.3	Gnomon	CDS	4661213	4661434	.	-	0	ID=cds370;Parent=rna529;Name=XP_006561990.1;Dbxref=GeneID:551892,Genbank:XP_006561990.1;gbkey=CDS;gene=dock;product=cytoplasmic protein NCK1 isoform X2;protein_id=XP_006561990.1
+NC_007070.3	.	intron	4661435	4661580	.	-	.	Parent=rna529
+NC_007070.3	Gnomon	exon	4661581	4662518	.	-	.	ID=id3269;Parent=rna529;Dbxref=GeneID:551892,Genbank:XM_006561927.1;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X2;transcript_id=XM_006561927.1
+NC_007070.3	Gnomon	CDS	4661581	4662518	.	-	2	ID=cds370;Parent=rna529;Name=XP_006561990.1;Dbxref=GeneID:551892,Genbank:XP_006561990.1;gbkey=CDS;gene=dock;product=cytoplasmic protein NCK1 isoform X2;protein_id=XP_006561990.1
+NC_007070.3	.	intron	4662519	4663527	.	-	.	Parent=rna529
+NC_007070.3	Gnomon	CDS	4663528	4663546	.	-	0	ID=cds370;Parent=rna529;Name=XP_006561990.1;Dbxref=GeneID:551892,Genbank:XP_006561990.1;gbkey=CDS;gene=dock;product=cytoplasmic protein NCK1 isoform X2;protein_id=XP_006561990.1
+NC_007070.3	Gnomon	exon	4663528	4663760	.	-	.	ID=id3268;Parent=rna529;Dbxref=GeneID:551892,Genbank:XM_006561927.1;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X2;transcript_id=XM_006561927.1
+NC_007070.3	.	intron	4663761	4665197	.	-	.	Parent=rna529
+NC_007070.3	Gnomon	exon	4665198	4665672	.	-	.	ID=id3267;Parent=rna529;Dbxref=GeneID:551892,Genbank:XM_006561927.1;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X2;transcript_id=XM_006561927.1
 ###

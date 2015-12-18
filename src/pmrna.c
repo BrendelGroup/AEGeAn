@@ -19,7 +19,6 @@ typedef struct
   bool fix_pseudogenes;
   bool locus_parent;
   FILE *mapstream;
-  bool useacc;
 } PmrnaOptions;
 
 static void print_usage(FILE *outstream)
@@ -28,7 +27,6 @@ static void print_usage(FILE *outstream)
 "\npmrna: filter out all but the primary isoform from each gene of the input\n"
 "Usage: pmrna [options] < annot.gff3 > new.gff3\n"
 "  Options:\n"
-"    -a|--accession      for map, report mRNA accession instead of ID\n"
 "    -h|--help           print this help message and exit\n"
 "    -i|--introns        flag indicating that introns are declared explicitly\n"
 "                        and do not need to be inferred from exon features;\n"
@@ -43,10 +41,9 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "ahilm:p";
+  const char *optstr = "hilm:p";
   const struct option pmrna_options[] =
   {
-    { "accession",   no_argument,       NULL, 'a' },
     { "help",        no_argument,       NULL, 'h' },
     { "introns",     no_argument,       NULL, 'i' },
     { "locus",       no_argument,       NULL, 'l' },
@@ -58,9 +55,7 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
       opt != -1;
       opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex))
   {
-    if(opt == 'a')
-      options->useacc = true;
-    else if(opt == 'h')
+    if(opt == 'h')
     {
       print_usage(stdout);
       exit(0);
@@ -88,7 +83,7 @@ int main(int argc, char **argv)
   GtError *error;
   GtNodeStream *stream, *last_stream;
   GtQueue *streams;
-  PmrnaOptions options = { true, NULL, true, false, NULL, false };
+  PmrnaOptions options = { true, NULL, true, false, NULL };
   parse_options(argc, argv, &options);
 
   //----------
@@ -120,8 +115,6 @@ int main(int argc, char **argv)
   GtNodeVisitor *nv = agn_mrna_rep_visitor_new(options.mapstream);
   if(options.locus_parent)
     agn_mrna_rep_visitor_set_parent_type((AgnMrnaRepVisitor *)nv, "locus");
-  if(options.useacc)
-    agn_mrna_rep_visitor_use_accession((AgnMrnaRepVisitor *)nv);
   stream = gt_visitor_stream_new(last_stream, nv);
   gt_queue_add(streams, stream);
   last_stream = stream;

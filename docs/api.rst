@@ -552,17 +552,13 @@ Class AgnLocusMapVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for printing out gene --> locus and mRNA --> locus relationships as part of a locus/iLocus processing stream. See the `AgnLocusMapVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnLocusMapVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh, bool useacc)
+.. c:function:: GtNodeStream* agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
 
   Constructor for a node stream based on this node visitor. See :c:func:`agn_locus_map_visitor_new` for a description of the function arguments.
 
 .. c:function:: GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
 
   Constructor for the node visitor. Gene-to-locus relationships are printed to the ``genefh`` file handle, while mRNA-to-locus relationships are printed to the ``mrnafh`` file handle. Setting either file handle to NULL will disable printing the corresponding output.
-
-.. c:function:: void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv)
-
-  Report gene/mRNA `Name` attributes rather than ID attributes.
 
 Class AgnLocusRefineStream
 --------------------------
@@ -637,7 +633,7 @@ Class AgnMrnaRepVisitor
 
   Implements the GenomeTools ``GtNodeVisitor`` interface. This is a node visitor used for filtering out all but the longest mRNA (as measured by CDS length) from alternatively spliced genes. See the `AgnMrnaRepVisitor class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnMrnaRepVisitor.h>`_.
 
-.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstreami, bool useacc)
+.. c:function:: GtNodeStream* agn_mrna_rep_stream_new(GtNodeStream *in, FILE *mapstream)
 
   Constructor for a node stream based on this node visitor.
 
@@ -648,10 +644,6 @@ Class AgnMrnaRepVisitor
 .. c:function:: void agn_mrna_rep_visitor_set_parent_type(AgnMrnaRepVisitor *v, const char *type)
 
   By default, the representative mRNA for each gene will be reported. Use this function to specify an alternative top-level feature to gene (such as locus).
-
-.. c:function:: void agn_mrna_rep_visitor_use_accession(AgnMrnaRepVisitor *v)
-
-  Write mRNA `accession` attribute to `mapstream` rather than `ID` attribute.
 
 .. c:function:: bool agn_mrna_rep_visitor_unit_test(AgnUnitTest *test)
 
@@ -908,6 +900,10 @@ Collection of assorted functions that are otherwise unrelated. See the `AgnUtils
 .. c:function:: GtArray *agn_feature_node_get_children(GtFeatureNode *fn)
 
   Return an array of the given feature node's direct children.
+
+.. c:function:: const char *agn_feature_node_get_label(GtFeatureNode *fn)
+
+  ID attribute is required to be unique within a single GFF3 file, but is not guaranteed to be unique among all GFF3 files (that is, it is not a stable identifier). This function searches other common attributes for labels or identifiers (`accession` and then `Name`) that are likely to be more stable. If these cannot be found, the `ID` attribute is retrieved. Finally, if `ID` is unavailable, the location of the feature will be returned in the format `${featuretype}:${seqid}_${start}-${end}`.
 
 .. c:function:: void agn_feature_node_remove_tree(GtFeatureNode *root, GtFeatureNode *fn)
 

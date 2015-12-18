@@ -245,13 +245,13 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
       bool keepmrna = true;
       if(gt_array_size(cds) < 1)
       {
-        const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+        const char *mrnaid = agn_feature_node_get_label(current);
         gt_logger_log(stream->logger, "ignoring mRNA '%s': no CDS", mrnaid);
         keepmrna = false;
       }
       if(gt_array_size(exons) != gt_array_size(introns) + 1)
       {
-        const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+        const char *mrnaid = agn_feature_node_get_label(current);
         gt_logger_log(stream->logger, "error: mRNA '%s' has %lu exons but "
                       "%lu introns", mrnaid, gt_array_size(exons),
                       gt_array_size(introns));
@@ -262,7 +262,7 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
       GtRange mrnarange = gt_genome_node_get_range((GtGenomeNode *)current);
       if(!gt_range_contains(&generange, &mrnarange))
       {
-        const char *mrnaid = gt_feature_node_get_attribute(current, "ID");
+        const char *mrnaid = agn_feature_node_get_label(current);
         gt_logger_log(stream->logger, "mRNA '%s' extends beyond the range of "
                       "its parent; ignoring", mrnaid);
         keepmrna = false;
@@ -289,17 +289,9 @@ static int gene_stream_next(GtNodeStream *ns, GtGenomeNode **gn, GtError *error)
       return 0;
     else
     {
-      char idstr[1024];
-      const char *id = gt_feature_node_get_attribute(fn, "ID");
-      if(id == NULL)
-      {
-        GtStr *seqid = gt_genome_node_get_seqid(*gn);
-        GtRange rng = gt_genome_node_get_range(*gn);
-        sprintf(idstr, "%s[%lu, %lu]", gt_str_get(seqid), rng.start, rng.end);
-        id = idstr;
-      }
+      const char *label = agn_feature_node_get_label(fn);
       gt_logger_log(stream->logger, "warning: found no valid mRNAs for gene "
-                    "'%s'", id);
+                    "'%s'", label);
       gt_genome_node_delete(*gn);
     }
   }

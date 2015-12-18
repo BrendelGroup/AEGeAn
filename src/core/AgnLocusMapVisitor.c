@@ -23,7 +23,6 @@ struct AgnLocusMapVisitor
   const GtNodeVisitor parent_instance;
   FILE *genefh;
   FILE *mrnafh;
-  bool useacc;
 };
 
 
@@ -37,8 +36,7 @@ struct AgnLocusMapVisitor
 static const GtNodeVisitorClass *locus_map_visitor_class();
 
 /**
- * @function For any gene feature with attribute 'pseudo=true', set type to
- * 'pseudogene'.
+ * @function FIXME
  */
 static int
 visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
@@ -49,17 +47,10 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error);
 //------------------------------------------------------------------------------
 
 GtNodeStream*
-agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh,
-                         bool useacc)
+agn_locus_map_stream_new(GtNodeStream *in, FILE *genefh, FILE *mrnafh)
 {
   GtNodeVisitor *nv = agn_locus_map_visitor_new(genefh, mrnafh);
-  if(useacc)
-  {
-    AgnLocusMapVisitor *mv = locus_map_visitor_cast(nv);
-    agn_locus_map_visitor_use_accession(mv);
-  }
-  GtNodeStream *ns = gt_visitor_stream_new(in, nv);
-  return ns;
+  return gt_visitor_stream_new(in, nv);
 }
 
 GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
@@ -68,14 +59,7 @@ GtNodeVisitor *agn_locus_map_visitor_new(FILE *genefh, FILE *mrnafh)
   AgnLocusMapVisitor *v = locus_map_visitor_cast(nv);
   v->genefh = genefh;
   v->mrnafh = mrnafh;
-  v->useacc = false;
   return nv;
-}
-
-void agn_locus_map_visitor_use_accession(AgnLocusMapVisitor *mv)
-{
-  agn_assert(mv);
-  mv->useacc = true;
 }
 
 static const GtNodeVisitorClass *locus_map_visitor_class()
@@ -95,7 +79,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
   AgnLocusMapVisitor *v = locus_map_visitor_cast(nv);
   gt_error_check(error);
   agn_assert(gt_feature_node_has_type(fn, "locus"));
-  const char *locusid = gt_feature_node_get_attribute(fn, "ID");
+  const char *locuslabel = agn_feature_node_get_label(fn);
 
   GtFeatureNodeIterator *iter = gt_feature_node_iterator_new(fn);
   GtFeatureNode *current;
@@ -105,18 +89,14 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
   {
     if(agn_typecheck_gene(current) && v->genefh != NULL)
     {
-      const char *geneid = gt_feature_node_get_attribute(current, "accession");
-      if(geneid == NULL || v->useacc == false)
-        geneid = gt_feature_node_get_attribute(current, "ID");
-      fprintf(v->genefh, "%s\t%s\n", geneid, locusid);
+      const char *genelabel = agn_feature_node_get_label(current);
+      fprintf(v->genefh, "%s\t%s\n", genelabel, locuslabel);
     }
 
     if(agn_typecheck_mrna(current) && v->mrnafh != NULL)
     {
-      const char *mrnaid = gt_feature_node_get_attribute(current, "accession");
-      if(mrnaid == NULL || v->useacc == false)
-        mrnaid = gt_feature_node_get_attribute(current, "ID");
-      fprintf(v->mrnafh, "%s\t%s\n", mrnaid, locusid);
+      const char *mrnalabel = agn_feature_node_get_label(current);
+      fprintf(v->mrnafh, "%s\t%s\n", mrnalabel, locuslabel);
     }
   }
   gt_feature_node_iterator_delete(iter);

@@ -396,7 +396,7 @@ int main(int argc, char **argv)
   if(options.genestream != NULL || options.transstream != NULL)
   {
     current_stream = agn_locus_map_stream_new(last_stream, options.genestream,
-                                              options.transstream, true);
+                                              options.transstream);
     gt_queue_add(streams, current_stream);
     last_stream = current_stream;
   }
