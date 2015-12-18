@@ -26,6 +26,7 @@ typedef struct
   GtHashmap *typestoextract;
   bool verbose;
   unsigned width;
+  bool debug;
 } XtractoreOptions;
 
 // Simple data structure to group genomic coordinates and strand together
@@ -118,10 +119,11 @@ static void xtract_options_parse(int argc, char **argv,
 {
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hi:o:t:Vvw:";
+  const char *optstr = "dhi:o:t:Vvw:";
   char *type;
   const struct option xtractore_options[] =
   {
+    { "debug",    no_argument,       NULL, 'd' },
     { "help",     no_argument,       NULL, 'h' },
     { "idfile",   required_argument, NULL, 'i' },
     { "outfile",  required_argument, NULL, 'o' },
@@ -135,7 +137,11 @@ static void xtract_options_parse(int argc, char **argv,
       opt != -1;
       opt = getopt_long(argc, argv + 0, optstr, xtractore_options, &optindex))
   {
-    if(opt == 'h')
+    if(opt == 'd')
+    {
+      options->debug = true;
+    }
+    else if(opt == 'h')
     {
       xt_print_usage(stdout);
       exit(0);
@@ -195,6 +201,7 @@ static void xtract_options_set_defaults(XtractoreOptions *options)
   gt_hashmap_add(options->typestoextract, defaulttype, defaulttype);
   options->verbose = false;
   options->width = 80;
+  options->debug = false;
 }
 
 static int xtract_region_compare(XtractRegion *r1, XtractRegion *r2)
@@ -375,6 +382,7 @@ static void xt_print_usage(FILE *outstream)
 "           given sequence file\n\n"
 "Usage: xtractore [options] features.gff3 sequences.fasta\n"
 "  Options:\n"
+"    -d|--debug            print debugging output\n"
 "    -h|--help             print this help message and exit\n"
 "    -i|--idfile: FILE     file containing a list of feature IDs (1 per line\n"
 "                          with no spaces); if provided, only features with\n"
@@ -455,6 +463,7 @@ int main(int argc, char **argv)
   seqfastas = gt_str_array_new();
   gt_str_array_add_cstr(seqfastas, seqfile);
   seqiter = gt_seq_iterator_sequence_buffer_new(seqfastas, error);
+  GtUword featcounter = 0;
   while((result = gt_seq_iterator_next(seqiter, &sequence, &seqlength, &seqdesc,
                                        error)) > 0)
   {
@@ -477,12 +486,15 @@ int main(int argc, char **argv)
     {
       GtGenomeNode *gn = *(GtGenomeNode **)gt_array_get(seqfeatures, i);
       xt_print_feature_sequence(gn, sequence, seqlength, &options);
+      featcounter += 1;
+      if(featcounter % 100 == 0 && options.debug)
+        fprintf(stderr, "..........\n");
     }
     gt_array_delete(seqfeatures);
   }
   if(result == -1)
   {
-    fprintf(stderr, "[xtractore] errror processing Fasta: %s\n",
+    fprintf(stderr, "[xtractore] error processing Fasta: %s\n",
             gt_error_get(error));
     return 1;
   }
