@@ -6,7 +6,7 @@
 #!genome-build-accession NCBI_Assembly:GCF_000002325.3
 #!annotation-date 3 June 2014
 #!annotation-source NCBI Nasonia vitripennis Annotation Release 101
-NC_015867.2	AEGeAn::LocusPocus	locus	370926	373152	.	.	.	gene=1;mRNA=1;right_overlap=262;iiLocus_exception=delta-overlap-delta;riil=0;effective_length=1965;iLocus_type=piLocus
-NC_015867.2	AEGeAn::LocusPocus	locus	372891	380536	.	.	.	effective_length=6758;iLocus_type=piLocus;gene=1;mRNA=1
-NC_015867.2	AEGeAn::LocusPocus	locus	374998	378903	.	.	.	iiLocus_exception=intron-gene;iLocus_type=piLocus;gene=1;mRNA=1
-NC_015867.2	AEGeAn::LocusPocus	locus	379649	381835	.	.	.	left_overlap=888;liil=0;gene=1;mRNA=1;effective_length=2187;iLocus_type=piLocus
+NC_015867.2	AEGeAn::LocusPocus	locus	370926	373152	.	.	.	child_gene=1;child_mRNA=1;right_overlap=262;iiLocus_exception=delta-overlap-delta;riil=0;effective_length=1965;iLocus_type=piLocus
+NC_015867.2	AEGeAn::LocusPocus	locus	372891	380536	.	.	.	effective_length=6758;iLocus_type=piLocus;child_gene=1;child_mRNA=1
+NC_015867.2	AEGeAn::LocusPocus	locus	374998	378903	.	.	.	iiLocus_exception=intron-gene;iLocus_type=piLocus;child_gene=1;child_mRNA=1
+NC_015867.2	AEGeAn::LocusPocus	locus	379649	381835	.	.	.	left_overlap=888;liil=0;child_gene=1;child_mRNA=1;effective_length=2187;iLocus_type=piLocus

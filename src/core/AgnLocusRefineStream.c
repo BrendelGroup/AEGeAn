@@ -752,9 +752,11 @@ static void locus_refine_stream_mint(AgnLocusRefineStream *stream,
   {
     const char **attrkey = gt_array_get(types, i);
     GtUword *attrvalue = gt_hashmap_get(countsbytype, *attrkey);
+    char key[128];
     char value[32];
+    sprintf(key, "child_%s", *attrkey);
     sprintf(value, "%lu", *attrvalue);
-    gt_feature_node_set_attribute(locusfn, *attrkey, value);
+    gt_feature_node_set_attribute(locusfn, key, value);
   }
 
   gt_hashmap_delete(countsbytype);

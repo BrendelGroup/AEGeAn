@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+### Changed
+- Now using a "label" (accession/Name/ID/position) in place of feature IDs in many places.
+- iLocus children and grandchildren counts are now prefixed with `child_`, so as to prevent warning messages for features with an uppercase first letter
+  (GFF3 attribute keys starting with an uppercase letter are disallowed except for those declared in the specification)
+
 ## [0.14.1] - 2015-10-02
 
 ### Fixed
