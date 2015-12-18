@@ -490,7 +490,7 @@ int main(int argc, char **argv)
       if(featcounter % 100 == 0 && options.debug)
         fputs("..........", stderr);
       if(featcounter % 1000 == 0 && options.debug)
-        fputs("\n", stderr)
+        fputs("\n", stderr);
     }
     gt_array_delete(seqfeatures);
   }
