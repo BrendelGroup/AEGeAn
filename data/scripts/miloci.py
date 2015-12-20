@@ -75,7 +75,7 @@ def parse_iloci(fp):
                 prev_loci = []
             seqid = locusseqid
 
-        if ';gene=' in line:
+        if ';child_gene=' in line:
             prev_loci.append(line)
             continue
         else:
