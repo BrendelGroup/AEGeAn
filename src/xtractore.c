@@ -487,9 +487,9 @@ int main(int argc, char **argv)
       GtGenomeNode *gn = *(GtGenomeNode **)gt_array_get(seqfeatures, i);
       xt_print_feature_sequence(gn, sequence, seqlength, &options);
       featcounter += 1;
-      if(featcounter % 100 == 0 && options.debug)
-        fputs("..........", stderr);
       if(featcounter % 1000 == 0 && options.debug)
+        fputs("..........", stderr);
+      if(featcounter % 10000 == 0 && options.debug)
         fputs("\n", stderr);
     }
     gt_array_delete(seqfeatures);
@@ -500,6 +500,8 @@ int main(int argc, char **argv)
             gt_error_get(error));
     return 1;
   }
+  if(options.debug)
+    fputs("\n", stderr);
 
   GtStrArray *gff3seqids = gt_feature_index_get_seqids(features, error);
   GtUword i;
