@@ -500,7 +500,7 @@ int main(int argc, char **argv)
             gt_error_get(error));
     return 1;
   }
-  if(options.debug)
+  if(featcounter >= 1000 && options.debug)
     fputs("\n", stderr);
 
   GtStrArray *gff3seqids = gt_feature_index_get_seqids(features, error);
