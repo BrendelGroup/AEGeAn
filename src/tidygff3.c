@@ -40,6 +40,8 @@ int main(int argc, char **argv)
   gt_hashmap_add(filters, filter, filter);
   filter = gt_cstr_dup("exception=unclassified translation discrepancy");
   gt_hashmap_add(filters, filter, filter);
+  filter = gt_cstr_dup("gene_biotype=other");
+  gt_hashmap_add(filters, filter, filter);
   stream = agn_attribute_filter_stream_new(last_stream, filters);
   gt_queue_add(streams, stream);
   last_stream = stream;
