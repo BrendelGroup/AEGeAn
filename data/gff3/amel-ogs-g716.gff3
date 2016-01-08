@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   Group7.16 1 124094
 Group7.16	OGS	gene	613	12833	1	+	.	ID=gene1
 Group7.16	OGS	mRNA	613	12833	1	+	.	ID=mRNA1;Parent=gene1

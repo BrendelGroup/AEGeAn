@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   seq1 1000 8000
 seq1	nano	gene	1000	2000	.	+	.	ID=g1
 seq1	nano	mRNA	1000	2000	.	+	.	ID=t1;Parent=g1

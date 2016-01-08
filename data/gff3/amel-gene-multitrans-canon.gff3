@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NC_007080.3 8572443 8600203
 NC_007080.3	Gnomon	gene	8572443	8600203	.	+	.	ID=gene8838;Name=LOC409171;Dbxref=BEEBASE:GB47299,GeneID:409171;gbkey=Gene;gene=LOC409171
 NC_007080.3	Gnomon	mRNA	8576159	8600197	.	+	.	ID=rna18825;Parent=gene8838;Name=XM_006564398.1;Dbxref=GeneID:409171,Genbank:XM_006564398.1,BEEBASE:GB47299;gbkey=mRNA;gene=LOC409171;product=esterase FE4-like%2C transcript variant X1;transcript_id=XM_006564398.1

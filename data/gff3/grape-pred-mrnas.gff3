@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   chr8 1 100000
 chr8	CpGAT	mRNA	72	5081	.	-	.	ID=chr8.g1.t1;index=1;Name=chr8.g1.t1
 chr8	CpGAT	CDS	72	167	.	-	0	Parent=chr8.g1.t1

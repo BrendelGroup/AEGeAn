@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NW_003789177.1 1 1704272
 NW_003789177.1	RefSeq	region	1	1704272	.	+	.	Dbxref=taxon:7463;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;note=haploid drones;sex=male
 NW_003789177.1	RefSeq	gene	9674	16314	.	+	.	ID=gene1;Name=LOC100866670;Dbxref=GeneID:100866670;gbkey=Gene;gene=LOC100866670;partial=true

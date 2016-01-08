@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NC_007070.3 2867466 12447095
 NC_007070.3	Gnomon	pseudogene	2867466	2870827	.	-	.	ID=gene167;Name=LOC726235;Dbxref=BEEBASE:GB50367,GeneID:726235;gbkey=Gene;gene=LOC726235;pseudo=true
 NC_007070.3	Gnomon	pseudogenic_exon	2867466	2867810	.	-	.	ID=id2060;Parent=gene167;Dbxref=GeneID:726235,BEEBASE:GB50367;exon_number=6;gbkey=exon;gene=LOC726235

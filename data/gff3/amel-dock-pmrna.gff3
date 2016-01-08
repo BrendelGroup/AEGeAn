@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NC_007070.3 4660647 4665672
 NC_007070.3	Gnomon	gene	4660647	4665672	.	-	.	ID=gene262;Name=dock;Dbxref=GeneID:551892;gbkey=Gene;gene=dock
 NC_007070.3	Gnomon	mRNA	4660647	4665672	.	-	.	ID=rna529;Parent=gene262;Name=XM_006561927.1;Dbxref=GeneID:551892,Genbank:XM_006561927.1;gbkey=mRNA;gene=dock;product=dreadlocks%2C transcript variant X2;transcript_id=XM_006561927.1

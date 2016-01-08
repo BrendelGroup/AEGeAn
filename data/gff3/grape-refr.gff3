@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   chr8 1 100000
 chr8	Gaze	gene	10503	11577	7.84	-	.	ID=GSVIVG01033678001;complete=1
 chr8	Gaze	mRNA	10503	11577	7.84	-	.	ID=GSVIVT01033678001;Parent=GSVIVG01033678001;complete=1

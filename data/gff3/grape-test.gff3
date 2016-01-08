@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   chr8 72 29591
 chr8	CpGAT	gene	72	5081	.	-	.	ID=chr8.g1;Name=chr8.g1
 chr8	CpGAT	mRNA	72	5081	.	-	.	ID=chr8.g1.t1;Parent=chr8.g1;index=1;Name=chr8.g1.t1

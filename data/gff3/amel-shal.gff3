@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NC_007070.3 20811948 20906957
 NC_007070.3	Gnomon	gene	20811948	20906957	.	-	.	ID=gene1241;Name=Shal;Dbxref=BEEBASE:GB42249,GeneID:408576;gbkey=Gene;gene=Shal
 NC_007070.3	Gnomon	mRNA	20811948	20906957	.	-	.	ID=rna2673;Name=XM_006571213.1;Parent=gene1241;Dbxref=GeneID:408576,Genbank:XM_006571213.1,BEEBASE:GB42249;gbkey=mRNA;gene=Shal;product=potassium voltage-gated channel protein Shal%2C transcript variant X1;transcript_id=XM_006571213.1

@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   seq 1 10000
 seq	nano	EST_match	50	250	.	-	.	.
 seq	nano	mRNA	100	500	.	+	.	ID=mRNA1

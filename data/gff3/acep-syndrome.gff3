@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NW_012130113.1 1915858 1927323
 #!gff-spec-version 1.20
 #!processor NCBI annotwriter

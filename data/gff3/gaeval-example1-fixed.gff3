@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   3 7015803 7020748
 3	GAEVAL	gene	7015803	7018366	.	+	.	ID=gene00001;Name=At3g20090
 3	GAEVAL	mRNA	7015803	7018366	.	+	.	ID=mRNA00001;Parent=gene00001;Name=At3g20090.1
