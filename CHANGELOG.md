@@ -3,12 +3,21 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased][unreleased]
+## [0.15.0] - 2016-01-08
 
 ### Changed
 - Now using a "label" (accession/Name/ID/position) in place of feature IDs in many places.
 - iLocus children and grandchildren counts are now prefixed with `child_`, so as to prevent warning messages for features with an uppercase first letter
-  (GFF3 attribute keys starting with an uppercase letter are disallowed except for those declared in the specification)
+  (GFF3 attribute keys starting with an uppercase letter are disallowed except for those declared in the specification).
+- Unit tests adjusted to handle GenomeTools 1.5.8's handling of the `gff-version` pragma (1 space instead of 3).
+
+### Fixed
+- Bug in `miloci.py` that prevented the last miLocus from printing.
+- Better reporting of issues with gene/mRNA interval containment.
+- Make build order deterministic (to facilitate reproducible builds on, i.e., Debian).
+- Implemented Python 3 support for all ancillary Python scripts.
+- A bug with the locus filtering code that distinguished between reference and prediction loci.
+- Improved build and test environment for systems without Cairo installed.
 
 ## [0.14.1] - 2015-10-02
 
