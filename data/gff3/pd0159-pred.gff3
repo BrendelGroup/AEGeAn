@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   PdomScaf0159 2454 184306
 PdomScaf0159	maker	gene	20145	20653	.	+	.	ID=gene1
 PdomScaf0159	maker	mRNA	20145	20653	.	+	.	ID=mRNA1;Parent=gene1;Name=genemark-PdomScaf0159-processed-gene-0.19-mRNA-1;_AED=0.65;_eAED=1.00;_QI=14|0|0|0.5|1|0.5|2|0|64

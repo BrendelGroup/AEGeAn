@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   NC_007079.3 8269827 8273178
 #!gff-spec-version 1.20
 #!processor NCBI annotwriter

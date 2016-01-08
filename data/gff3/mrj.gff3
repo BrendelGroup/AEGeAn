@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   mrj 1 4211
 mrj	nano	gene	488	3726	.	+	.	ID=gene1;Name=Mrjp1
 mrj	nano	mRNA	488	3726	.	+	.	ID=mRNA1;Parent=gene1

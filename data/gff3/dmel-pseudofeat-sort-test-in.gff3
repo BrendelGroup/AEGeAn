@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227
 ##feature-ontology ftp://ftp.flybase.org/releases/FB2014_04/precomputed_files/ontologies/so.obo.zip
 ##genome-build FlyBase r6.01

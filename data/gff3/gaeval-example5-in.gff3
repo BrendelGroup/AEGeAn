@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   1 2342200 2347000
 1	.	gene	2342274	2346184	.	-	.	ID=gene00001;Name=At1g07620
 1	.	mRNA	2342274	2346184	.	-	.	ID=mRNA00001;Parent=gene00001;Name=At1g07620.1

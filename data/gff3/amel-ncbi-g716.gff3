@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   Group7.16 1 136857
 Group7.16	NCBI	gene	613	12837	.	+	.	ID=gene1;Name=LOC726786;Dbxref=BEEBASE:GB46287,GeneID:726786;gbkey=Gene;gene=LOC726786;partial=true
 Group7.16	NCBI	mRNA	613	12837	.	+	.	ID=mRNA1;Parent=gene1;Name=XM_006562493.1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1

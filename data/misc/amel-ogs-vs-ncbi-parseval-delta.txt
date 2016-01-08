@@ -20,7 +20,7 @@
      |    mRNA1
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	613	12833	1	+	.	ID=mRNA1
 Group7.16	OGS	start_codon	613	615	.	+	.	Parent=mRNA1
 Group7.16	OGS	CDS	613	740	.	+	0	ID=CDS1;Parent=mRNA1
@@ -44,7 +44,7 @@ Group7.16	OGS	stop_codon	12689	12691	.	+	.	Parent=mRNA1
 Group7.16	OGS	three_prime_UTR	12692	12833	1	+	.	Parent=mRNA1
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	613	12837	.	+	.	ID=mRNA1;Name=XM_006562493.1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
 Group7.16	NCBI	start_codon	613	615	.	+	.	Parent=mRNA1
 Group7.16	NCBI	exon	613	740	.	+	.	Parent=mRNA1;Dbxref=GeneID:726786,Genbank:XM_006562493.1,BEEBASE:GB46287;gbkey=mRNA;gene=LOC726786;product=proton-coupled amino acid transporter 1-like;transcript_id=XM_006562493.1
@@ -156,7 +156,7 @@ Group7.16	NCBI	three_prime_UTR	12692	12837	.	+	.	Parent=mRNA1
      |    mRNA2
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	54738	72910	1	+	.	ID=mRNA3
 Group7.16	OGS	start_codon	54738	54740	.	+	.	Parent=mRNA3
 Group7.16	OGS	CDS	54738	54767	.	+	0	ID=CDS3;Parent=mRNA3
@@ -185,7 +185,7 @@ Group7.16	OGS	exon	72749	72910	.	+	.	Parent=mRNA3
 Group7.16	OGS	stop_codon	72908	72910	.	+	.	Parent=mRNA3
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	54607	73036	.	+	.	ID=mRNA2;Name=XM_001122105.3;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
 Group7.16	NCBI	five_prime_UTR	54607	54608	.	+	.	Parent=mRNA2
 Group7.16	NCBI	exon	54607	54767	.	+	.	Parent=mRNA2;Dbxref=GeneID:726362,Genbank:XM_001122105.3,BEEBASE:GB46289;gbkey=mRNA;gene=LOC726362;product=luciferin 4-monooxygenase-like;transcript_id=XM_001122105.3
@@ -287,7 +287,7 @@ Group7.16	NCBI	three_prime_UTR	72911	73036	.	+	.	Parent=mRNA2
      |    mRNA4
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	75757	79210	1	-	.	ID=mRNA4
 Group7.16	OGS	three_prime_UTR	75757	75834	1	-	.	Parent=mRNA4
 Group7.16	OGS	exon	75757	76028	1	-	.	Parent=mRNA4
@@ -312,7 +312,7 @@ Group7.16	OGS	start_codon	79045	79047	.	-	.	Parent=mRNA4
 Group7.16	OGS	five_prime_UTR	79048	79210	1	-	.	Parent=mRNA4
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	75713	79494	.	-	.	ID=mRNA4;Name=XM_623919.3;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
 Group7.16	NCBI	three_prime_UTR	75713	75834	.	-	.	Parent=mRNA4
 Group7.16	NCBI	exon	75713	76028	.	-	.	Parent=mRNA4;Dbxref=GeneID:551524,Genbank:XM_623919.3,BEEBASE:GB46286;gbkey=mRNA;gene=LOC551524;product=zinc carboxypeptidase A 1-like%2C transcript variant X2;transcript_id=XM_623919.3
@@ -412,7 +412,7 @@ Group7.16	NCBI	five_prime_UTR	79461	79494	.	-	.	Parent=mRNA4
      |    mRNA6
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	104797	107359	1	-	.	ID=mRNA6
 Group7.16	OGS	three_prime_UTR	104797	105353	1	-	.	Parent=mRNA6
 Group7.16	OGS	exon	104797	105898	1	-	.	Parent=mRNA6
@@ -431,7 +431,7 @@ Group7.16	OGS	start_codon	107158	107160	.	-	.	Parent=mRNA6
 Group7.16	OGS	five_prime_UTR	107161	107359	1	-	.	Parent=mRNA6
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	105315	107360	.	-	.	ID=mRNA6;Name=XM_006562491.1;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
 Group7.16	NCBI	three_prime_UTR	105315	105353	.	-	.	Parent=mRNA6
 Group7.16	NCBI	exon	105315	105898	.	-	.	Parent=mRNA6;Dbxref=GeneID:102655754,Genbank:XM_006562491.1;gbkey=mRNA;gene=LOC102655754;product=enolase-like;transcript_id=XM_006562491.1
@@ -502,7 +502,7 @@ Group7.16	NCBI	five_prime_UTR	107161	107360	.	-	.	Parent=mRNA6
      |    mRNA5
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	88301	109742	1	+	.	ID=mRNA5
 Group7.16	OGS	start_codon	88301	88303	.	+	.	Parent=mRNA5
 Group7.16	OGS	CDS	88301	88389	.	+	0	ID=CDS5;Parent=mRNA5
@@ -538,7 +538,7 @@ Group7.16	OGS	stop_codon	108269	108271	.	+	.	Parent=mRNA5
 Group7.16	OGS	three_prime_UTR	108272	109742	1	+	.	Parent=mRNA5
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	102349	108280	.	+	.	ID=mRNA5;Name=XM_006562492.1;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
 Group7.16	NCBI	five_prime_UTR	102349	102497	.	+	.	Parent=mRNA5
 Group7.16	NCBI	exon	102349	102569	.	+	.	Parent=mRNA5;Dbxref=GeneID:409624,Genbank:XM_006562492.1,BEEBASE:GB46290;gbkey=mRNA;gene=LOC409624;product=acetate-CoA ligase 1;transcript_id=XM_006562492.1
@@ -643,7 +643,7 @@ Group7.16	NCBI	three_prime_UTR	108272	108280	.	+	.	Parent=mRNA5
      |    mRNA7
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	110657	116915	1	+	.	ID=mRNA7
 Group7.16	OGS	five_prime_UTR	110657	110831	1	+	.	Parent=mRNA7
 Group7.16	OGS	exon	110657	110891	1	+	.	Parent=mRNA7
@@ -668,7 +668,7 @@ Group7.16	OGS	stop_codon	116433	116435	.	+	.	Parent=mRNA7
 Group7.16	OGS	three_prime_UTR	116436	116915	1	+	.	Parent=mRNA7
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	110654	116906	.	+	.	ID=mRNA7;Name=XM_393191.5;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
 Group7.16	NCBI	five_prime_UTR	110654	110831	.	+	.	Parent=mRNA7
 Group7.16	NCBI	exon	110654	110891	.	+	.	Parent=mRNA7;Dbxref=GeneID:409693,Genbank:XM_393191.5,BEEBASE:GB46291;gbkey=mRNA;gene=LOC409693;product=inositol-1-%28or 4-%29monophosphatase;transcript_id=XM_393191.5
@@ -758,7 +758,7 @@ Group7.16	NCBI	three_prime_UTR	116436	116906	.	+	.	Parent=mRNA7
      |    mRNA8
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	119475	119769	1	-	.	ID=mRNA9
 Group7.16	OGS	stop_codon	119475	119477	.	-	.	Parent=mRNA9
 Group7.16	OGS	CDS	119475	119675	.	-	0	ID=CDS9;Parent=mRNA9
@@ -769,7 +769,7 @@ Group7.16	OGS	exon	119755	119769	.	-	.	Parent=mRNA9
 Group7.16	OGS	start_codon	119767	119769	.	-	.	Parent=mRNA9
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	118880	119778	.	-	.	ID=mRNA8;Name=XM_006562490.1;Dbxref=GeneID:102655672,Genbank:XM_006562490.1;gbkey=mRNA;gene=LOC102655672;product=serine%2Fthreonine-protein kinase PRP4 homolog;transcript_id=XM_006562490.1
 Group7.16	NCBI	three_prime_UTR	118880	119474	.	-	.	Parent=mRNA8
 Group7.16	NCBI	exon	118880	119778	.	-	.	Parent=mRNA8;Dbxref=GeneID:102655672,Genbank:XM_006562490.1;gbkey=mRNA;gene=LOC102655672;product=serine%2Fthreonine-protein kinase PRP4 homolog;transcript_id=XM_006562490.1
@@ -856,7 +856,7 @@ Group7.16	NCBI	five_prime_UTR	119661	119778	.	-	.	Parent=mRNA8
      |    mRNA9
      |
      | reference GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	OGS	mRNA	120837	124094	1	-	.	ID=mRNA10
 Group7.16	OGS	three_prime_UTR	120837	120883	1	-	.	Parent=mRNA10
 Group7.16	OGS	exon	120837	120973	1	-	.	Parent=mRNA10
@@ -884,7 +884,7 @@ Group7.16	OGS	start_codon	123949	123951	.	-	.	Parent=mRNA10
 Group7.16	OGS	five_prime_UTR	123952	124094	1	-	.	Parent=mRNA10
 ###
      | prediction GFF3:
-##gff-version   3
+##gff-version 3
 Group7.16	NCBI	mRNA	120866	124108	.	-	.	ID=mRNA9;Name=XM_006562488.1;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1
 Group7.16	NCBI	three_prime_UTR	120866	120883	.	-	.	Parent=mRNA9
 Group7.16	NCBI	exon	120866	120973	.	-	.	Parent=mRNA9;Dbxref=GeneID:725406,Genbank:XM_006562488.1,BEEBASE:GB46282;gbkey=mRNA;gene=LOC725406;product=uncharacterized LOC725406%2C transcript variant X1;transcript_id=XM_006562488.1

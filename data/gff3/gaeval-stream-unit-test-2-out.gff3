@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   scaffold9 47520 56748
 scaffold9	maker	gene	47520	52539	.	+	.	ID=gene1
 scaffold9	maker	mRNA	47520	52539	.	+	.	ID=mRNA1;Parent=gene1;_AED=0.10;_eAED=0.10;gaeval_coverage=1.000;gaeval_integrity=0.850

@@ -1,4 +1,4 @@
-##gff-version   3
+##gff-version 3
 ##sequence-region   Chr1 1553603 1557733
 Chr1	TAIR10	gene	1553603	1557733	.	+	.	ID=AT1G05320;Note=protein_coding_gene;Name=AT1G05320
 Chr1	TAIR10	mRNA	1553603	1557733	.	+	.	ID=AT1G05320.2;Parent=AT1G05320;Name=AT1G05320.2;index=1
