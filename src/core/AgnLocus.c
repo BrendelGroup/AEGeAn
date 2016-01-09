@@ -344,7 +344,7 @@ void agn_locus_data_aggregate(AgnLocus *locus, AgnComparisonData *data)
         break;
       default:
         desc = NULL;
-        fprintf(stderr, "error: unknow comp classification %d\n", c);
+        fprintf(stderr, "error: unknown comp classification %d\n", c);
         break;
     }
     desc->comparison_count++;
