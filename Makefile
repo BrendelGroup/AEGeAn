@@ -29,7 +29,7 @@ AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
 # Compilation settings
 CC=gcc
-CFLAGS=-Wall -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -Wno-unused-result
+CFLAGS=-Wall -std=c11 -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -Wno-unused-result
 GTFLAGS=prefix=$(prefix)
 ifeq ($(cairo),no)
   CFLAGS += -DWITHOUT_CAIRO
@@ -70,7 +70,7 @@ endif
 
 # Targets
 all:		$(BINS) libaegean.a
-		
+
 
 install:	all
 		@ mkdir -p $(prefix)/bin/
@@ -87,13 +87,13 @@ install-scripts:
 		@ mkdir -p $(prefix)/bin/
 		cp data/scripts/*.p? $(prefix)/bin/.
 
-uninstall:	
+uninstall:
 		for exe in $(INSTALL_BINS); do rm -r $(prefix)/$$exe; done
 		rm -r $(prefix)/include/aegean/
 		rm -r $(prefix)/share/aegean/
 		rm $(prefix)/lib/libaegean.a
 
-clean:		
+clean:
 		rm -rf $(BINS) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
@@ -145,12 +145,12 @@ libaegean.a:	$(AGN_OBJS)
 		@ echo "[create libaegean]"
 		@ ar ru libaegean.a $(AGN_OBJS)
 
-inc/core/AgnVersion.h:	
+inc/core/AgnVersion.h:
 			@- echo "[print $@]"
 			@ data/scripts/version.py > $@
 
 test:		agn-test
-		
+
 
 agn-test:	all
 		@ $(MEMCHECK) bin/unittests
@@ -171,5 +171,3 @@ agn-test:	all
 		@ test/AmelOGSvsNCBI.sh $(MEMCHECKFT) $(CAIROFT)
 		@ test/align-convert.sh
 		@ test/misc-ft.sh $(MEMCHECKFT)
-
-

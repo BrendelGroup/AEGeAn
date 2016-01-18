@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Adopted strict adherance to the "Allman" C formatting style, as enforced by `clang-format`. (`clang-format -i -style=file src/pmrna.c`)
 
 ## [0.15.1] - 2016-01-08
 
