@@ -18,15 +18,7 @@ before_install:
   - sudo cp -r gt-1.5.8-Linux_x86_64-64bit-complete/lib/* /usr/local/lib/
   - sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/genometools-x86_64.conf'
   - sudo ldconfig
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - clang
 install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
   - sudo make install
   - sudo ldconfig
 script: make test

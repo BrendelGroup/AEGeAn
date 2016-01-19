@@ -29,7 +29,7 @@ AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
 # Compilation settings
 CC=gcc
-CFLAGS=-Wall -std=c11 -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -Wno-unused-result
+CFLAGS=-Wall -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -Wno-unused-result
 GTFLAGS=prefix=$(prefix)
 ifeq ($(cairo),no)
   CFLAGS += -DWITHOUT_CAIRO
@@ -98,7 +98,7 @@ clean:
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
-		@ echo "[compile $* $(CC)]"
+		@ echo "[compile $*]"
 		@ $(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
 $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c src/ParsEval/pe_options.h src/ParsEval/pe_utils.h $(AGN_OBJS)
