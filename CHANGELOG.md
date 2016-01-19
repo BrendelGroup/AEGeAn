@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Adopted strict adherance to the "Allman" C formatting style, as enforced by `clang-format`. (`clang-format -i -style=file src/pmrna.c`)
+- Required C99 supped (only because C11 support isn't more ubiquitous).
 
 ## [0.15.1] - 2016-01-08
 
