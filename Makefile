@@ -98,7 +98,7 @@ clean:
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
-		@ echo "[compile $*]"
+		@ echo "[compile $* $(CC)]"
 		@ $(CC) $(CFLAGS) $(INCS) -c -o $@ $<
 
 $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c src/ParsEval/pe_options.h src/ParsEval/pe_utils.h $(AGN_OBJS)
