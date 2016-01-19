@@ -85,12 +85,11 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
 
 int main(int argc, char **argv)
 {
-    PmrnaOptions options = {true, NULL, true, false, NULL};
-    parse_options(argc, argv, &options);
-
     //----------
     // Set up the processing stream
     //----------
+    PmrnaOptions options = {true, NULL, true, false, NULL};
+    parse_options(argc, argv, &options);
     gt_lib_init();
     GtQueue *streams = gt_queue_new();
 

@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2014, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2016, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -14,14 +14,15 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 
 typedef struct
 {
-  GtFile *outstream;
-  GtStr *source;
-  bool infer;
+    GtFile *outstream;
+    GtStr *source;
+    bool infer;
 } CanonGFF3Options;
 
 static void print_usage(FILE *outstream)
 {
-  fputs("\nUsage: canon-gff3 [options] gff3file1 [gff3file2 ...]\n"
+    // clang-format off
+    fputs("\nUsage: canon-gff3 [options] gff3file1 [gff3file2 ...]\n"
 "  Options:\n"
 "     -h|--help               print this help message and exit\n"
 "     -i|--infer              for transcript features lacking an explicitly\n"
@@ -33,128 +34,134 @@ static void print_usage(FILE *outstream)
 "                             value\n"
 "     -v|--version            print version number and exit\n\n",
         outstream);
+    // clang-format on
 }
 
-static void canon_gff3_parse_options(int argc, char * const *argv,
+static void canon_gff3_parse_options(int argc, char *const *argv,
                                      CanonGFF3Options *options, GtError *error)
 {
-  int opt = 0;
-  int optindex = 0;
-  const char *optstr = "hio:s:v";
-  const struct option init_options[] =
-  {
-    { "help",    no_argument,       NULL, 'h' },
-    { "infer",   no_argument,       NULL, 'i' },
-    { "outfile", required_argument, NULL, 'o' },
-    { "source",  required_argument, NULL, 's' },
-    { "version", no_argument,       NULL, 'v' },
-    { NULL,      no_argument,       NULL, 0 },
-  };
+    int opt = 0;
+    int optindex = 0;
+    const char *optstr = "hio:s:v";
+    const struct option init_options[] = {
+        {"help", no_argument, NULL, 'h'},
+        {"infer", no_argument, NULL, 'i'},
+        {"outfile", required_argument, NULL, 'o'},
+        {"source", required_argument, NULL, 's'},
+        {"version", no_argument, NULL, 'v'},
+        {NULL, no_argument, NULL, 0},
+    };
 
-  for(opt = getopt_long(argc, argv, optstr, init_options, &optindex);
-      opt != -1;
-      opt = getopt_long(argc, argv, optstr, init_options, &optindex))
-  {
-    if(opt == 'h')
+    for (opt = getopt_long(argc, argv, optstr, init_options, &optindex);
+         opt != -1;
+         opt = getopt_long(argc, argv, optstr, init_options, &optindex))
     {
-      print_usage(stdout);
-      exit(0);
+        if (opt == 'h')
+        {
+            print_usage(stdout);
+            exit(0);
+        }
+        else if (opt == 'i')
+        {
+            options->infer = true;
+        }
+        else if (opt == 'o')
+        {
+            if (options->outstream != NULL)
+            {
+                gt_file_delete(options->outstream);
+            }
+            options->outstream = gt_file_new(optarg, "w", error);
+        }
+        else if (opt == 's')
+        {
+            if (options->source != NULL)
+            {
+                gt_str_delete(options->source);
+            }
+            options->source = gt_str_new_cstr(optarg);
+        }
+        else if (opt == 'v')
+        {
+            agn_print_version("CanonGFF3", stdout);
+            exit(0);
+        }
     }
-    else if(opt == 'i')
-      options->infer = true;
-    else if(opt == 'o')
-    {
-      if(options->outstream != NULL)
-        gt_file_delete(options->outstream);
-      options->outstream = gt_file_new(optarg, "w", error);
-    }
-    else if(opt == 's')
-    {
-      if(options->source != NULL)
-        gt_str_delete(options->source);
-      options->source = gt_str_new_cstr(optarg);
-    }
-    else if(opt == 'v')
-    {
-      agn_print_version("CanonGFF3", stdout);
-      exit(0);
-    }
-  }
 }
 
 // Main method
-int main(int argc, char * const *argv)
+int main(int argc, char *const *argv)
 {
-  GtError *error;
-  GtLogger *logger;
-  GtQueue *streams;
-  GtNodeStream *stream, *last_stream;
-  CanonGFF3Options options = { NULL, NULL, false };
+    gt_lib_init();
+    CanonGFF3Options options = {NULL, NULL, false};
+    GtError *error = gt_error_new();
+    canon_gff3_parse_options(argc, argv + 0, &options, error);
 
-  gt_lib_init();
-  error = gt_error_new();
-  canon_gff3_parse_options(argc, argv + 0, &options, error);
+    GtQueue *streams = gt_queue_new();
+    GtLogger *logger = gt_logger_new(true, "", stderr);
 
-  streams = gt_queue_new();
-  logger = gt_logger_new(true, "", stderr);
+    GtNodeStream *stream = gt_gff3_in_stream_new_unsorted(
+        argc - optind, (const char **)argv + optind);
+    gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)stream);
+    gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)stream);
+    gt_queue_add(streams, stream);
+    GtNodeStream *last_stream = stream;
 
-  stream = gt_gff3_in_stream_new_unsorted(argc - optind, (const char **)
-                                                          argv+optind);
-  gt_gff3_in_stream_check_id_attributes((GtGFF3InStream *)stream);
-  gt_gff3_in_stream_enable_tidy_mode((GtGFF3InStream *)stream);
-  gt_queue_add(streams, stream);
-  last_stream = stream;
+    if (options.infer)
+    {
+        GtHashmap *type_parents =
+            gt_hashmap_new(GT_HASH_STRING, gt_free_func, gt_free_func);
+        gt_hashmap_add(type_parents, gt_cstr_dup("mRNA"), gt_cstr_dup("gene"));
+        gt_hashmap_add(type_parents, gt_cstr_dup("tRNA"), gt_cstr_dup("gene"));
+        stream = agn_infer_parent_stream_new(last_stream, type_parents);
+        gt_hashmap_delete(type_parents);
+        gt_queue_add(streams, stream);
+        last_stream = stream;
+    }
 
-  if(options.infer)
-  {
-    GtHashmap *type_parents = gt_hashmap_new(GT_HASH_STRING, gt_free_func,
-                                             gt_free_func);
-    gt_hashmap_add(type_parents, gt_cstr_dup("mRNA"), gt_cstr_dup("gene"));
-    gt_hashmap_add(type_parents, gt_cstr_dup("tRNA"), gt_cstr_dup("gene"));
-    stream = agn_infer_parent_stream_new(last_stream,
-                                                 type_parents);
-    gt_hashmap_delete(type_parents);
+    stream = agn_gene_stream_new(last_stream, logger);
     gt_queue_add(streams, stream);
     last_stream = stream;
-  }
 
-  stream = agn_gene_stream_new(last_stream, logger);
-  gt_queue_add(streams, stream);
-  last_stream = stream;
+    if (options.source != NULL)
+    {
+        GtNodeVisitor *ssv = gt_set_source_visitor_new(options.source);
+        stream = gt_visitor_stream_new(last_stream, ssv);
+        gt_queue_add(streams, stream);
+        last_stream = stream;
+    }
 
-  if(options.source != NULL)
-  {
-    GtNodeVisitor *ssv = gt_set_source_visitor_new(options.source);
-    stream = gt_visitor_stream_new(last_stream, ssv);
+    stream = gt_gff3_out_stream_new(last_stream, options.outstream);
+    if (!options.infer)
+    {
+        gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)stream);
+    }
     gt_queue_add(streams, stream);
     last_stream = stream;
-  }
 
-  stream = gt_gff3_out_stream_new(last_stream, options.outstream);
-  if(!options.infer)
-    gt_gff3_out_stream_retain_id_attributes((GtGFF3OutStream *)stream);
-  gt_queue_add(streams, stream);
-  last_stream = stream;
+    if (gt_node_stream_pull(last_stream, error) == -1)
+    {
+        fprintf(stderr, "[CanonGFF3] error processing node stream: %s",
+                gt_error_get(error));
+    }
 
-  if(gt_node_stream_pull(last_stream, error) == -1)
-  {
-    fprintf(stderr, "[CanonGFF3] error processing node stream: %s",
-            gt_error_get(error));
-  }
+    while (gt_queue_size(streams) > 0)
+    {
+        stream = gt_queue_get(streams);
+        gt_node_stream_delete(stream);
+    }
+    gt_queue_delete(streams);
+    if (options.source != NULL)
+    {
+        gt_str_delete(options.source);
+    }
+    if (options.outstream != NULL)
+    {
+        gt_file_delete(options.outstream);
+    }
+    gt_error_delete(error);
+    gt_logger_delete(logger);
+    gt_lib_clean();
 
-  while(gt_queue_size(streams) > 0)
-  {
-    stream = gt_queue_get(streams);
-    gt_node_stream_delete(stream);
-  }
-  gt_queue_delete(streams);
-  if(options.source != NULL)
-    gt_str_delete(options.source);
-  if(options.outstream != NULL)
-    gt_file_delete(options.outstream);
-  gt_error_delete(error);
-  gt_logger_delete(logger);
-  gt_lib_clean();
-
-  return 0;
+    return 0;
 }
