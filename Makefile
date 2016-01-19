@@ -29,7 +29,7 @@ AGN_HDRS=$(patsubst src/core%.c,inc/core/%.h,$(AGN_SRCS))
 
 # Compilation settings
 CC=gcc
-CFLAGS=-Wall -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -Wno-unused-result
+CFLAGS=-Wall -std=c99 -DAGN_DATA_PATH='"$(prefix)/share/aegean"' -Wno-unused-result
 GTFLAGS=prefix=$(prefix)
 ifeq ($(cairo),no)
   CFLAGS += -DWITHOUT_CAIRO
