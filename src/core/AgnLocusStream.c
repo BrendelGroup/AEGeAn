@@ -263,10 +263,9 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       if(stream->endmode >= 0 && !stream->skip_iiLoci)
       {
         AgnLocus *filocus = agn_locus_new(seqid);
-        GtRange irange = { seqrange.start,
-                           locusrange.start - stream->delta - 1 };
+        GtRange irange = {seqrange.start, locusrange.start - stream->delta - 1};
         agn_locus_set_range(filocus, irange.start, irange.end);
-        gt_genome_node_add_user_data(filocus, "iiLocus_type",
+        gt_genome_node_add_user_data(filocus, "iLocus_type",
                                      gt_cstr_dup("fiLocus"), gt_free_func);
         gt_queue_add(stream->locusqueue, filocus);
       }
@@ -398,8 +397,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       if(stream->endmode >= 0 && !stream->skip_iiLoci)
       {
         AgnLocus *filocus = agn_locus_new(seqid);
-        agn_locus_set_range(filocus,
-                            locusrange.end + stream->delta + 1, seqrange.end);
+        GtRange irange = {locusrange.end + stream->delta + 1, seqrange.end};
+        agn_locus_set_range(filocus, irange.start, irange.end);
         gt_genome_node_add_user_data(filocus, "iLocus_type",
                                      gt_cstr_dup("fiLocus"), gt_free_func);
         gt_queue_add(stream->locusqueue, filocus);
