@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+# Copyright (c) 2010-2016, Daniel S. Standage and CONTRIBUTORS
 #
 # The AEGeAn Toolkit is distributed under the ISC License. See
 # the 'LICENSE' file in the AEGeAn source code distribution or
@@ -111,8 +111,8 @@ if __name__ == '__main__':
     for seqid, seqlen in parse_gff3(args.infile):
         locid = args.idfmt % args.counter
         args.counter += 1
-        attrs = 'ID=%s;Name=%s;fragment=true;unannot=true;' % (locid, locid)
-        attrs += 'iLocus_type=iiLocus;effective_length=%d' % seqlen
+        attrs = 'ID=%s;Name=%s;unannot=true;' % (locid, locid)
+        attrs += 'iLocus_type=fiLocus;effective_length=%d' % seqlen
         fields = [seqid, args.src, 'locus', '1', str(seqlen), '.', '.', '.',
                   attrs]
         print(*fields, sep='\t')

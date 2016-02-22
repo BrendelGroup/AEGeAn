@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+# Copyright (c) 2010-2016, Daniel S. Standage and CONTRIBUTORS
 #
 # The AEGeAn Toolkit is distributed under the ISC License. See
 # the 'LICENSE' file in the AEGeAn source code distribution or
@@ -45,7 +45,7 @@ def merge_iloci(loci):
                 attrs[key] = 0
             attrs[key] += value
 
-    attrstring = 'merged=true;iLocus_type=miLocus'
+    attrstring = 'iLocus_type=miLocus'
     for key in sorted(attrs):
         attrstring += ';%s=%d' % (key, attrs[key])
     gff3 = [seqid, 'AEGeAn::miloci.py', 'locus', str(start), str(end),
@@ -82,7 +82,7 @@ def parse_iloci(fp):
             if len(prev_loci) > 0:
                 yield merge_iloci(prev_loci)
                 prev_loci = []
-            line = re.sub('ID=[^;\n]+;*', 'geneless=true;', line)
+            line = re.sub('ID=[^;\n]+;*', '', line)
             line = re.sub('Name=[^;\n]+;*', '', line)
             yield line
     if len(prev_loci) > 0:

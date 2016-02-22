@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2016, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -182,12 +182,12 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
     if(elen)
       test1a = strcmp(elen, "11466") == 0;
     gt_genome_node_delete(locus);
-    
+
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
     test1 = test1 && locusrange.start == 1916352 && locusrange.end == 1927323;
     gt_genome_node_delete(locus);
-    
+
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
     test1 = test1 && locusrange.start == 1918157 && locusrange.end == 1921155;
@@ -211,7 +211,7 @@ bool agn_locus_refine_stream_unit_test(AgnUnitTest *test)
     if(elen)
       test2a = strcmp(elen, "9660") == 0;
     gt_genome_node_delete(locus);
-    
+
     locus = gt_queue_get(queue);
     locusrange = gt_genome_node_get_range(locus);
     test2 = test2 && locusrange.start == 11405 && locusrange.end == 18146;
@@ -293,7 +293,7 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
     gt_array_delete(exons);
     return false;
   }
-  
+
   GtUword i;
   bool overlap = false;
   for(i = 0; i < gt_array_size(exons); i++)
@@ -368,7 +368,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       gnrange.end = origrange.end;
     else
       gnrange.end += stream->delta;
-    
+
     agn_locus_set_range(*gn, gnrange.start, gnrange.end);
     agn_assert(gt_range_contains(&origrange, &gnrange));
     gt_feature_node_set_source(fn, stream->source);
@@ -418,7 +418,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         break;
     }
   }
-  
+
   // If the iLoci are all coding or all non-coding, just assign their collective
   // length (sans overlap from previous unrefined iLocus) to the first refined
   // iLocus.
@@ -454,7 +454,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         typestr = "niLocus";
       else if(agn_locus_num_genes(*gn) > 1)
       {
-        typestr = "complex";
+        typestr = "ciLocus";
 
         char exceptstr[32];
         GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
@@ -524,7 +524,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           gt_feature_node_add_attribute(fn1, "riil", orig_riil);
       }
     }
-    
+
     // The genes overlap
     else
     {
@@ -611,7 +611,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           gt_feature_node_add_attribute(fn, "riil", "0");
       }
 
-      const char *type = "complex";
+      const char *type = "ciLocus";
       if(agn_locus_num_genes(*gn) == 1)
       {
         if(agn_locus_num_mrnas(*gn) > 0)
@@ -655,12 +655,20 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
     sprintf(lenstr, "%lu", gt_range_length(&rng) - ro);
     gt_feature_node_add_attribute(locus, "effective_length", lenstr);
 
-    if(gt_feature_node_number_of_children(locus) == 0)
-      gt_feature_node_add_attribute(locus, "iLocus_type", "iiLocus");
-    else if(agn_locus_num_mrnas(gn) > 0)
-      gt_feature_node_add_attribute(locus, "iLocus_type", "piLocus");
+    const char *loctype = gt_genome_node_get_user_data(gn, "iLocus_type");
+    if(loctype == NULL)
+    {
+      if(gt_feature_node_number_of_children(locus) == 0)
+        gt_feature_node_add_attribute(locus, "iLocus_type", "iiLocus");
+      else if(agn_locus_num_mrnas(gn) > 0)
+        gt_feature_node_add_attribute(locus, "iLocus_type", "piLocus");
+      else
+        gt_feature_node_add_attribute(locus, "iLocus_type", "niLocus");
+    }
     else
-      gt_feature_node_add_attribute(locus, "iLocus_type", "niLocus");
+    {
+      gt_feature_node_add_attribute(locus, "iLocus_type", loctype);
+    }
     gt_queue_add(stream->locusqueue, locus);
     return 0;
   }
