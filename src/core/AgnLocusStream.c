@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2016, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -262,13 +262,12 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                           locusrange.end);
       if(stream->endmode >= 0 && !stream->skip_iiLoci)
       {
-        AgnLocus *iilocus = agn_locus_new(seqid);
-        GtRange irange = { seqrange.start,
-                           locusrange.start - stream->delta - 1 };
-        agn_locus_set_range(iilocus, irange.start, irange.end);
-        GtFeatureNode *iilocfn = gt_feature_node_cast(iilocus);
-        gt_feature_node_add_attribute(iilocfn, "fragment", "true");
-        gt_queue_add(stream->locusqueue, iilocus);
+        AgnLocus *filocus = agn_locus_new(seqid);
+        GtRange irange = {seqrange.start, locusrange.start - stream->delta - 1};
+        agn_locus_set_range(filocus, irange.start, irange.end);
+        gt_genome_node_add_user_data(filocus, "iLocus_type",
+                                     gt_cstr_dup("fiLocus"), gt_free_func);
+        gt_queue_add(stream->locusqueue, filocus);
       }
     }
     else
@@ -397,12 +396,12 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                           locusrange.end + stream->delta);
       if(stream->endmode >= 0 && !stream->skip_iiLoci)
       {
-        AgnLocus *term_locus = agn_locus_new(seqid);
-        agn_locus_set_range(term_locus,
-                            locusrange.end + stream->delta + 1, seqrange.end);
-        GtFeatureNode *tlfn = (GtFeatureNode *)term_locus;
-        gt_feature_node_add_attribute(tlfn, "fragment", "true");
-        gt_queue_add(stream->locusqueue, term_locus);
+        AgnLocus *filocus = agn_locus_new(seqid);
+        GtRange irange = {locusrange.end + stream->delta + 1, seqrange.end};
+        agn_locus_set_range(filocus, irange.start, irange.end);
+        gt_genome_node_add_user_data(filocus, "iLocus_type",
+                                     gt_cstr_dup("fiLocus"), gt_free_func);
+        gt_queue_add(stream->locusqueue, filocus);
       }
     }
     else
@@ -863,4 +862,3 @@ static void locus_stream_unit_test_loci(AgnUnitTest *test)
 
   gt_queue_delete(queue);
 }
-
