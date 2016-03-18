@@ -2,11 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.15.2] - 2016-03-17
 
 ### Fixed
 - Minor typo in AgnLocus class.
-- Reporting of iLocus type.
+- Correct reporting of iLocus type.
 
 ## [0.15.1] - 2016-01-08
 
