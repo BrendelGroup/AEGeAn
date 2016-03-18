@@ -449,7 +449,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           }
         }
       }
-      const char *typestr = "piLocus";
+      const char *typestr = "siLocus";
       if(coding_status == false)
         typestr = "niLocus";
       else if(agn_locus_num_genes(*gn) > 1)
@@ -492,13 +492,13 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     bool cds1 = agn_locus_num_mrnas(*gn1) > 0;
     if(cds1 == true)
     {
-      gt_feature_node_add_attribute(fn1, "iLocus_type", "piLocus");
+      gt_feature_node_add_attribute(fn1, "iLocus_type", "siLocus");
       gt_feature_node_add_attribute(fn2, "iLocus_type", "niLocus");
     }
     else
     {
       gt_feature_node_add_attribute(fn1, "iLocus_type", "niLocus");
-      gt_feature_node_add_attribute(fn2, "iLocus_type", "piLocus");
+      gt_feature_node_add_attribute(fn2, "iLocus_type", "siLocus");
     }
 
     const char *exc = gt_feature_node_get_attribute(fn2, "iiLocus_exception");
@@ -611,14 +611,18 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
           gt_feature_node_add_attribute(fn, "riil", "0");
       }
 
-      const char *type = "ciLocus";
-      if(agn_locus_num_genes(*gn) == 1)
+      const char *type = "";
+      if(agn_locus_num_mrnas(*gn) == 0)
       {
-        if(agn_locus_num_mrnas(*gn) > 0)
-          type = "piLocus";
-        else
-          type = "niLocus";
-
+        type = "niLocus";
+      }
+      else if(agn_locus_num_genes(*gn) == 1)
+      {
+        type = "siLocus";
+      }
+      else
+      {
+        type = "ciLocus";
       }
       gt_feature_node_add_attribute(fn, "iLocus_type", type);
     }
@@ -661,7 +665,7 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
       if(gt_feature_node_number_of_children(locus) == 0)
         gt_feature_node_add_attribute(locus, "iLocus_type", "iiLocus");
       else if(agn_locus_num_mrnas(gn) > 0)
-        gt_feature_node_add_attribute(locus, "iLocus_type", "piLocus");
+        gt_feature_node_add_attribute(locus, "iLocus_type", "siLocus");
       else
         gt_feature_node_add_attribute(locus, "iLocus_type", "niLocus");
     }

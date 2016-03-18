@@ -6,5 +6,5 @@
 #!genome-build-accession NCBI_Assembly:GCF_000220905.1
 #!annotation-date 7 April 2015
 #!annotation-source NCBI Megachile rotundata Annotation Release 101
-NW_003797177.1	AEGeAn::LocusPocus	locus	9652	19311	.	.	.	effective_length=9660;iLocus_type=piLocus;child_gene=1;child_mRNA=1
-NW_003797177.1	AEGeAn::LocusPocus	locus	11405	18146	.	.	.	iiLocus_exception=intron-gene;iLocus_type=piLocus;child_gene=1;child_mRNA=4
+NW_003797177.1	AEGeAn::LocusPocus	locus	9652	19311	.	.	.	effective_length=9660;iLocus_type=siLocus;child_gene=1;child_mRNA=1
+NW_003797177.1	AEGeAn::LocusPocus	locus	11405	18146	.	.	.	iiLocus_exception=intron-gene;iLocus_type=siLocus;child_gene=1;child_mRNA=4
