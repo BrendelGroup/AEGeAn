@@ -8,7 +8,7 @@
 #!annotation-source NCBI Acromyrmex echinatior Annotation Release 100
 NW_011626563.1	AEGeAn::LocusPocus	locus	1190754	1200781	.	.	.	child_gene=1;child_mRNA=2;riil=769;effective_length=10028;iLocus_type=siLocus
 NW_011626563.1	AEGeAn::LocusPocus	locus	1200782	1201550	.	.	.	fg_orient=FR;effective_length=769;iLocus_type=iiLocus
-NW_011626563.1	AEGeAn::LocusPocus	locus	1201551	1566216	.	.	.	effective_length=364666;iiLocus_exception=complex-overlap-3;liil=769;riil=8884;iLocus_type=siLocus;child_gene=1;child_mRNA=1
+NW_011626563.1	AEGeAn::LocusPocus	locus	1201551	1566216	.	.	.	iLocus_type=ciLocus;effective_length=364666;iiLocus_exception=complex-overlap-3;liil=769;riil=8884;child_gene=1;child_mRNA=1
 NW_011626563.1	AEGeAn::LocusPocus	locus	1216473	1219475	.	.	.	iiLocus_exception=intron-gene;liil=0;riil=0;iLocus_type=siLocus;child_gene=1;child_mRNA=2
 NW_011626563.1	AEGeAn::LocusPocus	locus	1537022	1540189	.	.	.	liil=0;riil=0;iLocus_type=niLocus;child_gene=1;child_ncRNA=1
 NW_011626563.1	AEGeAn::LocusPocus	locus	1566217	1575100	.	.	.	fg_orient=RR;effective_length=8884;iLocus_type=iiLocus

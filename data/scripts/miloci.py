@@ -11,29 +11,67 @@ import re
 import sys
 
 
+class Locus(object):
+    def __init__(self, line):
+        self._rawdata = line
+        self.fields = line.strip().split('\t')
+        assert len(self.fields) == 9
+
+    @property
+    def seqid(self):
+        return self.fields[0]
+
+    @property
+    def start(self):
+        return int(self.fields[3])
+
+    @property
+    def end(self):
+        return int(self.fields[4])
+
+    @property
+    def ilocus_class(self):
+        typematch = re.search('iLocus_type=([^;\n]+)', self.fields[8])
+        assert typematch, 'could not determine iLocus type: ' + self._rawdata
+        return typematch.group(1)
+
+    @property
+    def mergeable(self):
+        if self.ilocus_class not in ['siLocus', 'niLocus']:
+            return False
+        if 'iiLocus_exception=intron-gene' in self.fields[8]:
+            return False
+        return True
+
+    def __len__(self):
+        return self.end - self.start + 1
+
+    def __str__(self):
+        return '\t'.join(self.fields)
+
+    def strip(self):
+        self.fields[8] = re.sub('ID=[^;\n]+;*', '', self.fields[8])
+        self.fields[8] = re.sub('Name=[^;\n]+;*', '', self.fields[8])
+
+
 def merge_iloci(loci):
     """Merge ajacent or overlapping gene-containing iLoci."""
     assert len(loci) > 0
     if len(loci) == 1:
-        line = re.sub('ID=[^;\n]+;*', '', loci[0])
-        line = re.sub('Name=[^;\n]+;*', '', line)
-        return line
+        loci[0].strip()
+        return loci[0]
 
     seqid = None
     start, end = -1, -1
     attrs = {}
     for locus in loci:
-        fields = locus.split('\t')
-        assert len(fields) == 9
         if seqid:
-            assert fields[0] == seqid
-        seqid = fields[0]
-        lstart = int(fields[3])
-        lend = int(fields[4])
-        if start == -1 or lstart < start:
-            start = lstart
-        end = max(end, lend)
-        numeric_attrs = re.findall('([^;=]+=\d+)', fields[8])
+            assert locus.seqid == seqid
+        seqid = locus.seqid
+        if start == -1 or locus.start < start:
+            start = locus.start
+        end = max(end, locus.end)
+        numeric_attrs = re.findall('([^;=]+=\d+)', locus.fields[8])
         for key_value_pair in numeric_attrs:
             assert '=' in key_value_pair, \
                 'malformed key/value pair %s' % key_value_pair
@@ -49,8 +87,9 @@ def merge_iloci(loci):
     for key in sorted(attrs):
         attrstring += ';%s=%d' % (key, attrs[key])
     gff3 = [seqid, 'AEGeAn::miloci.py', 'locus', str(start), str(end),
-            '%d' % len(loci), '.', '.',    attrstring]
-    return '\t'.join(gff3)
+            str(len(loci)), '.', '.', attrstring]
+    line = '\t'.join(gff3)
+    return Locus(line)
 
 
 def parse_iloci(fp):
@@ -59,34 +98,28 @@ def parse_iloci(fp):
     Output: merged iLoci; gene-containing iLoci that are adjacent or
             overlapping are combined
     """
-    seqid = None
-    prev_loci = []
+    locus_buffer = []
     for line in fp:
-        line = line.rstrip()
         if '\tlocus\t' not in line:
             continue
+        locus = Locus(line)
 
-        locusseqid = re.match('([^\t]+)', line).group(1)
-        if seqid is None:
-            seqid = locusseqid
-        elif locusseqid != seqid:
-            if len(prev_loci) > 0:
-                yield merge_iloci(prev_loci)
-                prev_loci = []
-            seqid = locusseqid
+        if len(locus_buffer) > 0 and locus.seqid != locus_buffer[0].seqid:
+            yield merge_iloci(locus_buffer)
+            locus_buffer = []
 
-        if ';child_gene=' in line:
-            prev_loci.append(line)
+        if locus.mergeable:
+            locus_buffer.append(locus)
             continue
         else:
-            if len(prev_loci) > 0:
-                yield merge_iloci(prev_loci)
-                prev_loci = []
-            line = re.sub('ID=[^;\n]+;*', '', line)
-            line = re.sub('Name=[^;\n]+;*', '', line)
-            yield line
-    if len(prev_loci) > 0:
-        yield merge_iloci(prev_loci)
+            if len(locus_buffer) > 0:
+                yield merge_iloci(locus_buffer)
+                locus_buffer = []
+            locus.strip()
+            yield locus
+
+    if len(locus_buffer) > 0:
+        yield merge_iloci(locus_buffer)
 
 
 if __name__ == '__main__':

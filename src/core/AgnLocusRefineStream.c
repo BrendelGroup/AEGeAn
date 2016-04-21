@@ -311,6 +311,8 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   GtStr *seqid = gt_genome_node_get_seqid(*gn1);
   AgnLocus *locus = agn_locus_new(seqid);
   agn_locus_add_feature(locus, fn1);
+  gt_feature_node_add_attribute((GtFeatureNode *)locus, "iLocus_type",
+                                "ciLocus");
   gt_genome_node_ref(*gn1);
   gt_array_add(iloci, locus);
 
@@ -467,7 +469,10 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
             fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
         }
       }
-      gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
+      if(gt_feature_node_get_attribute(fn, "iLocus_type") == NULL)
+      {
+        gt_feature_node_add_attribute(fn, "iLocus_type", typestr);
+      }
     }
     if(numloci == 1)
     {
@@ -624,7 +629,10 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       {
         type = "ciLocus";
       }
-      gt_feature_node_add_attribute(fn, "iLocus_type", type);
+      if(gt_feature_node_get_attribute(fn, "iLocus_type") == NULL)
+      {
+        gt_feature_node_add_attribute(fn, "iLocus_type", type);
+      }
     }
   }
 
