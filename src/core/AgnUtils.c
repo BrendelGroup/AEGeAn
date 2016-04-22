@@ -271,10 +271,6 @@ bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2,
 
   GtRange r1 = gt_genome_node_get_range(f1);
   GtRange r2 = gt_genome_node_get_range(f2);
-  if(gt_range_compare(&r1, &r2) == 0)
-  {
-    return true;
-  }
 
   if(by_cds)
   {
@@ -293,6 +289,13 @@ bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2,
     {
       // Both have coding sequences, use those instead of the complete feature
       // coordinates.
+
+      if(gt_range_compare(&r1, &r2) == 0)
+      {
+        // Polycistrons belong together
+        return true;
+      }
+
       return gt_range_overlap_delta(&c1, &c2, minoverlap);
     }
   }
