@@ -269,6 +269,13 @@ bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2,
   if(gt_str_cmp(seqid1, seqid2) != 0)
     return false;
 
+  GtRange r1 = gt_genome_node_get_range(f1);
+  GtRange r2 = gt_genome_node_get_range(f2);
+  if(gt_range_compare(&r1, &r2) == 0)
+  {
+    return true;
+  }
+
   if(by_cds)
   {
     GtRange c1 = agn_feature_node_get_cds_range((GtFeatureNode *)f1);
@@ -291,8 +298,6 @@ bool agn_overlap_ilocus(GtGenomeNode *f1, GtGenomeNode *f2,
   }
 
   // Either we are not in CDS mode, or the features don't have a CDS.
-  GtRange r1 = gt_genome_node_get_range(f1);
-  GtRange r2 = gt_genome_node_get_range(f2);
   return gt_range_overlap_delta(&r1, &r2, minoverlap);
 }
 
