@@ -410,11 +410,14 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
   for(i = 0; i < numloci; i++)
   {
     GtGenomeNode **gn = gt_array_get(iloci, i);
+    GtFeatureNode *fn = gt_feature_node_cast(*gn);
     if(i == 0)
-      coding_status = agn_locus_num_mrnas(*gn) > 0;
+    {
+      coding_status = agn_typecheck_count(fn, agn_typecheck_cds) > 0;
+    }
     else
     {
-      bool test_status = agn_locus_num_mrnas(*gn) > 0;
+      bool test_status = agn_typecheck_count(fn, agn_typecheck_cds) > 0;
       same_coding_status = coding_status == test_status;
       if(!same_coding_status)
         break;
@@ -494,7 +497,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     GtFeatureNode *fn1 = gt_feature_node_cast(*gn1);
     GtFeatureNode *fn2 = gt_feature_node_cast(*gn2);
 
-    bool cds1 = agn_locus_num_mrnas(*gn1) > 0;
+    bool cds1 = agn_typecheck_count(fn1, agn_typecheck_cds) > 0;;
     if(cds1 == true)
     {
       gt_feature_node_add_attribute(fn1, "iLocus_type", "siLocus");
