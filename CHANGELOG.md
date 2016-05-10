@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.16.0] - 2016-05-09
 
 ### Fixed
 - Outer gene in intron gene cases now designated as a ciLocus.
