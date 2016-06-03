@@ -23,11 +23,11 @@ For the impatient
     sudo ldconfig
 
     # Download, compile, and install the  AEGeAn Toolkit
-    curl https://github.com/standage/AEGeAn/archive/v0.15.0.tar.gz > AEGeAn-0.15.1.tar.gz
-    tar xzf AEGeAn-0.15.1.tar.gz
-    cd AEGeAn-0.15.1
+    curl https://github.com/standage/AEGeAn/archive/vx.y.z.tar.gz > AEGeAn-x.y.z.tar.gz
+    tar xzf AEGeAn-x.y.z.tar.gz
+    cd AEGeAn-x.y.z
     make test
-    sudo make install
+    sudo make install install-scripts
     sudo ldconfig # Update linker config again
 
 
@@ -50,7 +50,7 @@ platform-specific installation instructions).
 
 Downloading
 -----------
-Official stable releases of the AEGeAn Toolkit can be downloaded from the 
+Official stable releases of the AEGeAn Toolkit can be downloaded from the
 `Releases tab <https://github.com/standage/AEGeAn/releases>`_ on the AEGeAn
 GitHub page. Alternatively, you can always download the latest and greatest
 version of AEGeAn (most recently updates, though not guaranteed to be stable)
@@ -74,6 +74,10 @@ are specific to Debian-based Linux operating systems such as Ubuntu.
 If you are using a different operating system, please see "`Appendix:
 system setup`_"  for platform-specific instructions. After running those
 commands, complete the installation by running ``make`` and ``make install``.
+
+The AEGeAn Toolkit includes several ancillary scripts for processing annotation
+data. To install these along with the C programs, invoke the
+``make install-scripts`` command.
 
 See the section labeled `Compilation flags`_ for a complete description of
 configurable settings for compilation and installation.
@@ -136,7 +140,7 @@ administrative/sudo privileges.
 * Debian-based systems including Ubuntu, Mint/LMDE, etc (tested on Ubuntu 11.10)
 
   .. code-block:: bash
-  
+
       sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
       ldconfig
       apt-get install -y build-essential git libcairo2-dev libpango1.0-dev
@@ -144,7 +148,7 @@ administrative/sudo privileges.
 * Red Hat-based systems including CentOS, Fedora, etc (tested on CentOS 5.3)
 
   .. code-block:: bash
-  
+
       sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
       /sbin/ldconfig
       yum install -y git cairo-devel pango-devel
@@ -152,8 +156,7 @@ administrative/sudo privileges.
 * Mac OS X
 
   .. code-block:: bash
-  
+
       # Install Homebrew: http://brew.sh/
       # Then use the brew command to install GenomeTools
       brew install genometools
-      
