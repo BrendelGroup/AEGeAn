@@ -1,6 +1,6 @@
 /**
 
-Copyright (c) 2010-2015, Daniel S. Standage and CONTRIBUTORS
+Copyright (c) 2010-2016, Daniel S. Standage and CONTRIBUTORS
 
 The AEGeAn Toolkit is distributed under the ISC License. See
 the 'LICENSE' file in the AEGeAn source code distribution or
@@ -49,7 +49,7 @@ static void parse_options(int argc, char **argv, PmrnaOptions *options)
     { "locus",       no_argument,       NULL, 'l' },
     { "map",         required_argument, NULL, 'm' },
     { "pseudogenes", no_argument,       NULL, 'o' },
-    { NULL,      no_argument,       NULL,  0  },
+    { NULL,          no_argument,       NULL,  0  },
   };
   for(opt  = getopt_long(argc, argv + 0, optstr, pmrna_options, &optindex);
       opt != -1;
@@ -114,7 +114,20 @@ int main(int argc, char **argv)
 
   GtNodeVisitor *nv = agn_mrna_rep_visitor_new(options.mapstream);
   if(options.locus_parent)
+  {
     agn_mrna_rep_visitor_set_parent_type((AgnMrnaRepVisitor *)nv, "locus");
+  }
+  if(options.mapstream)
+  {
+    if(options.locus_parent)
+    {
+      fprintf(options.mapstream, "piLocusID\tMrnaID\n");
+    }
+    else
+    {
+      fprintf(options.mapstream, "GeneID\tMrnaID\n");
+    }
+  }
   stream = gt_visitor_stream_new(last_stream, nv);
   gt_queue_add(streams, stream);
   last_stream = stream;
