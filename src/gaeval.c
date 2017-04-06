@@ -147,12 +147,12 @@ int main(int argc, char **argv)
   GtNodeStream *stream, *last_stream, *align_stream;
   GtQueue *streams;
   GaevalOptions options;
-  parse_options(argc, argv, &options);
 
   //----------
   // Set up the processing stream
   //----------
   gt_lib_init();
+  parse_options(argc, argv, &options);
   streams = gt_queue_new();
 
   stream = gt_gff3_in_stream_new_unsorted(1, &options.alignfile);
@@ -179,7 +179,12 @@ int main(int argc, char **argv)
   last_stream = stream;
   gt_str_delete(source);
 
-  stream = agn_gaeval_stream_new(last_stream, align_stream, options.params);
+  GtNodeVisitor *nv = agn_gaeval_visitor_new(align_stream, options.params);
+  if(options.tsvout)
+  {
+    agn_gaeval_visitor_tsv_out((AgnGaevalVisitor *)nv, options.tsvout);
+  }
+  stream = gt_visitor_stream_new(last_stream, nv);
   gt_queue_add(streams, stream);
   last_stream = stream;
 
