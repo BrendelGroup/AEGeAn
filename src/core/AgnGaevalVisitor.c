@@ -31,6 +31,7 @@ struct AgnGaevalVisitor
 {
   const GtNodeVisitor parent_instance;
   GtFeatureIndex *alignments;
+  FILE *tsvout;
   AgnGaevalParams params;
 };
 
@@ -160,6 +161,7 @@ agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
   GtNodeVisitor *nv = gt_node_visitor_create(gaeval_visitor_class());
   AgnGaevalVisitor *v = gaeval_visitor_cast(nv);
   v->alignments = gt_feature_index_memory_new();
+  v->tsvout = NULL;
   v->params = gparams;
 
   // Check that sum of weights is 1.0
@@ -221,6 +223,18 @@ agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams)
   gt_queue_delete(streams);
 
   return nv;
+}
+
+void agn_gaeval_visitor_tsv_out(AgnGaevalVisitor *v, GtStr *tsvfilename)
+{
+  v->tsvout = fopen(gt_str_get(tsvfilename), "w");
+  if(v->tsvout == NULL)
+  {
+    fprintf(stderr, "error: unable to open output file %s",
+            gt_str_get(tsvfilename));
+    exit(1);
+  }
+  fprintf(v->tsvout, "ID\tLabel\tCoverage\tIntegrity\n");
 }
 
 bool agn_gaeval_visitor_unit_test(AgnUnitTest *test)
@@ -514,7 +528,7 @@ static GtArray *gaeval_visitor_union(GtArray *cov1, GtArray *cov2)
       prev = gt_array_get(runion, gt_array_size(runion) - 1);
     }
   }
-  
+
   return runion;
 }
 
@@ -544,6 +558,13 @@ gaeval_visitor_visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn,
     char intstr[16];
     sprintf(intstr, "%.3lf", integrity);
     gt_feature_node_add_attribute(tempfeat, "gaeval_integrity", intstr);
+
+    if(v->tsvout)
+    {
+      const char *mrnaid = gt_feature_node_get_attribute(tempfeat, "ID");
+      const char *mrnalabel = agn_feature_node_get_label(tempfeat);
+      fprintf(v->tsvout, "%s\t%s\t%s\t%s\n", mrnaid, mrnalabel, covstr, intstr);
+    }
   }
   gt_feature_node_iterator_delete(feats);
 

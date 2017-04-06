@@ -52,6 +52,11 @@ GtNodeVisitor*
 agn_gaeval_visitor_new(GtNodeStream *astream, AgnGaevalParams gparams);
 
 /**
+* @function Indicate a file to be used for printing TSV output.
+*/
+void agn_gaeval_visitor_tsv_out(AgnGaevalVisitor *v, GtStr *tsvfilename);
+
+/**
  * @function Run unit tests for this class.
  */
 bool agn_gaeval_visitor_unit_test(AgnUnitTest *test);

@@ -21,6 +21,7 @@ typedef struct
   const char *alignfile;
   const char **genefiles;
   int numgenefiles;
+  GtStr *tsvout;
   AgnGaevalParams params;
 } GaevalOptions;
 
@@ -43,7 +44,9 @@ static void print_usage(FILE *outstream)
 "Usage: gaeval [options] alignments.gff3 genes.gff3 [moregenes.gff3 ...]\n"
 "  Basic options:\n"
 "    -h|--help               print this help message and exit\n"
-"    -v|--version            print version number and exit\n\n"
+"    -v|--version            print version number and exit\n"
+"    -t|--tsv FILE           print coverage and integrity scores to the\n"
+"                            specified file in tab-separated text\n\n"
 "  Weights for calculating integrity score (must add up to 1.0):\n"
 "    -a|--alpha: DOUBLE      introns confirmed, or %% expected CDS length for\n"
 "                            single-exon genes; default is 0.6\n"
@@ -58,14 +61,16 @@ static void print_usage(FILE *outstream)
 
 static void parse_options(int argc, char **argv, GaevalOptions *options)
 {
+  options->tsvout = NULL;
   default_params(&options->params);
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hva:b:g:e:c:5:3:";
+  const char *optstr = "hvt:a:b:g:e:c:5:3:";
   const struct option gaeval_options[] =
   {
     { "help",      no_argument,       NULL, 'h' },
     { "version",   no_argument,       NULL, 'v' },
+    { "tsv",       required_argument, NULL, 't' },
     { "alpha",     required_argument, NULL, 'a' },
     { "beta",      required_argument, NULL, 'b' },
     { "gamma",     required_argument, NULL, 'g' },
@@ -98,6 +103,14 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
     }
     else if(opt == 'g')
       options->params.gamma = atof(optarg);
+    else if(opt == 't')
+    {
+      if(options->tsvout != NULL)
+      {
+        gt_str_delete(options->tsvout);
+      }
+      options->tsvout = gt_str_new_cstr(optarg);
+    }
     else if(opt == 'v')
     {
       agn_print_version("GAEVAL", stdout);
