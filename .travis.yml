@@ -13,11 +13,11 @@ env:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
-  - wget http://genometools.org/pub/binary_distributions/gt-1.5.8-Linux_x86_64-64bit-complete.tar.gz
-  - tar xzf gt-1.5.8-Linux_x86_64-64bit-complete.tar.gz
-  - sudo cp -r gt-1.5.8-Linux_x86_64-64bit-complete/bin/* /usr/local/bin/
-  - sudo cp -r gt-1.5.8-Linux_x86_64-64bit-complete/include/genometools /usr/local/include/
-  - sudo cp -r gt-1.5.8-Linux_x86_64-64bit-complete/lib/* /usr/local/lib/
+  - wget http://genometools.org/pub/binary_distributions/gt-1.5.9-Linux_x86_64-64bit-complete.tar.gz
+  - tar xzf gt-1.5.9-Linux_x86_64-64bit-complete.tar.gz
+  - sudo cp -r gt-1.5.9-Linux_x86_64-64bit-complete/bin/* /usr/local/bin/
+  - sudo cp -r gt-1.5.9-Linux_x86_64-64bit-complete/include/genometools /usr/local/include/
+  - sudo cp -r gt-1.5.9-Linux_x86_64-64bit-complete/lib/* /usr/local/lib/
   - sudo sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/genometools-x86_64.conf'
   - sudo ldconfig
 addons:
