@@ -10,6 +10,9 @@ env:
     - memcheck=yes optimize=no
     - memcheck=no optimize=yes
     - memcheck=no optimize=no
+branches:
+  only:  # don't build "pushes" except on the master branch
+    - master
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libcairo2-dev libpango1.0-dev valgrind
