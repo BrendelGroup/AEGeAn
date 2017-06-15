@@ -220,8 +220,11 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
           subfeat != NULL;
           subfeat  = gt_feature_node_iterator_next(subiter))
       {
-        if(gt_feature_node_has_type(subfeat, "transcript"))
+        if(gt_feature_node_has_type(subfeat, "transcript") ||
+           gt_feature_node_has_type(subfeat, "mRNA"))
+        {
           gt_feature_node_set_type(subfeat, "pseudogenic_transcript");
+        }
         else if(gt_feature_node_has_type(subfeat, "exon"))
           gt_feature_node_set_type(subfeat, "pseudogenic_exon");
       }
