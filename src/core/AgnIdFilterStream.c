@@ -168,6 +168,7 @@ bool agn_id_filter_stream_unit_test(AgnUnitTest *test)
     gt_node_stream_delete(ifs);
     gt_node_stream_delete(aos);
     gt_error_delete(error);
+    gt_queue_delete(queue);
 
     return agn_unit_test_success(test);
 }
