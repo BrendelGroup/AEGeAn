@@ -18,14 +18,14 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
  * @class AgnIdFilterStream
  *
  * Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream
- * used to select features from a pre-specified list of IDs from a node stream.
+ * used to select features from a node stream using a pre-specified list of IDs.
  */
 typedef struct AgnIdFilterStream AgnIdFilterStream;
 
 /**
- * @function Class constructor. The keys of the ``typestokeep`` hashmap should
- * be the type(s) to be kept from the node stream. Any non-NULL value can be
- * associated with those keys.
+ * @function Class constructor. The keys of the ``ids2keep`` hashmap should
+ * be strings of the IDs of features to be kept from the node stream. Any
+ * non-NULL value can be associated with those keys.
  */
 GtNodeStream* agn_id_filter_stream_new(GtNodeStream *in_stream,
                                        GtHashmap *ids2keep);
