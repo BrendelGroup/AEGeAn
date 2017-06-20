@@ -123,7 +123,7 @@ static int id_filter_stream_next(GtNodeStream *ns, GtGenomeNode **gn,
     }
     else
     {
-      // gt_genome_node_delete(*gn);
+      gt_genome_node_delete(*gn);
       continue;
     }
   }
@@ -167,6 +167,7 @@ bool agn_id_filter_stream_unit_test(AgnUnitTest *test)
     gt_node_stream_delete(ais);
     gt_node_stream_delete(ifs);
     gt_node_stream_delete(aos);
+    gt_error_delete(error);
 
     return agn_unit_test_success(test);
 }
