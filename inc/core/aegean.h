@@ -15,6 +15,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnComparison.h"
 #include "AgnFilterStream.h"
 #include "AgnGeneStream.h"
+#include "AgnIdFilterStream.h"
 #include "AgnInferCDSVisitor.h"
 #include "AgnInferExonsVisitor.h"
 #include "AgnInferParentStream.h"

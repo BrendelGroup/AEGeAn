@@ -318,6 +318,21 @@ Class AgnGeneStream
 
   Run unit tests for this class. Returns true if all tests passed.
 
+Class AgnIdFilterStream
+-----------------------
+
+.. c:type:: AgnIdFilterStream
+
+  Implements the GenomeTools ``GtNodeStream`` interface. This is a node stream used to select features from a pre-specified list of IDs from a node stream. See the `AgnIdFilterStream class header <https://github.com/standage/AEGeAn/blob/master/inc/core/AgnIdFilterStream.h>`_.
+
+.. c:function:: GtNodeStream* agn_id_filter_stream_new(GtNodeStream *in_stream, GtHashmap *ids2keep)
+
+  Class constructor. The keys of the ``typestokeep`` hashmap should be the type(s) to be kept from the node stream. Any non-NULL value can be associated with those keys.
+
+.. c:function:: bool agn_id_filter_stream_unit_test(AgnUnitTest *test)
+
+  Run unit tests for this class. Returns true if all tests passed.
+
 Class AgnInferCDSVisitor
 ------------------------
 
