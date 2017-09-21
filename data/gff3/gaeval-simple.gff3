@@ -1,0 +1,31 @@
+##gff-version 3
+##sequence-region   contig1 1 100000
+#
+#      =====----------======-------==----------====
+#
+#        >>>>>>        >>>>>~~~~~~~>>~~~~~~~~~~>>
+#          >>>~~~~~~~~>>>           >~~~~~~~~~~>>>>>
+#
+contig1	nano	gene	61	500	.	+	.	ID=gene1
+contig1	nano	mRNA	61	500	.	+	.	ID=mRNA1;Parent=gene1
+contig1	nano	exon	61	110	.	+	.	Parent=mRNA1
+contig1	nano	CDS	81	110	.	+	0	ID=CDS1;Parent=mRNA1
+contig1	nano	exon	211	270	.	+	.	Parent=mRNA1
+contig1	nano	CDS	211	270	.	+	0	ID=CDS1;Parent=mRNA1
+contig1	nano	exon	341	360	.	+	.	Parent=mRNA1
+contig1	nano	CDS	341	360	.	+	0	ID=CDS1;Parent=mRNA1
+contig1	nano	CDS	461	479	.	+	1	ID=CDS1;Parent=mRNA1
+contig1	nano	exon	461	500	.	+	.	Parent=mRNA1
+###
+contig1	nano	cDNA_match	81	140	.	+	.	ID=cDNA_match1
+###
+contig1	nano	cDNA_match	101	130	.	+	.	ID=cDNA_match2
+contig1	nano	cDNA_match	211	240	.	+	.	ID=cDNA_match2
+###
+contig1	nano	cDNA_match	221	270	.	+	.	ID=cDNA_match3
+contig1	nano	cDNA_match	341	360	.	+	.	ID=cDNA_match3
+contig1	nano	cDNA_match	461	480	.	+	.	ID=cDNA_match3
+###
+contig1	nano	cDNA_match	351	360	.	+	.	ID=cDNA_match4
+contig1	nano	cDNA_match	461	510	.	+	.	ID=cDNA_match4
+###

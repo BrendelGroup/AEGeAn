@@ -121,6 +121,11 @@ static void gv_test_calc_coverage(AgnUnitTest *test);
 static void gv_test_calc_integrity(AgnUnitTest *test);
 
 /**
+ * @function Another test for integrity calculations.
+ */
+static void gv_test_calc_integrity_simple(AgnUnitTest *test);
+
+/**
  * @function Unit test for `gaeval_visitor_intersect` function.
  */
 static void gv_test_intersect(AgnUnitTest *test);
@@ -246,6 +251,7 @@ bool agn_gaeval_visitor_unit_test(AgnUnitTest *test)
   gv_test_calc_coverage(test);
   gv_test_introns_confirmed(test);
   gv_test_calc_integrity(test);
+  gv_test_calc_integrity_simple(test);
   return agn_unit_test_success(test);
 }
 
@@ -691,6 +697,57 @@ static void gv_test_calc_integrity(AgnUnitTest *test)
   gt_array_delete(feats);
   gt_genome_node_delete((GtGenomeNode *)g1);
   gt_genome_node_delete((GtGenomeNode *)g2);
+  gt_node_visitor_delete(nv);
+}
+
+static void gv_test_calc_integrity_simple(AgnUnitTest *test)
+{
+  const char *filename = "data/gff3/gaeval-simple.gff3";
+  GtNodeStream *align_in = gt_gff3_in_stream_new_unsorted(1, &filename);
+  AgnGaevalParams params = { 0.6, 0.3, 0.05, 0.05, 400, 200, 100 };
+  GtNodeVisitor *nv = agn_gaeval_visitor_new(align_in, params);
+  AgnGaevalVisitor *gv = gaeval_visitor_cast(nv);
+  gt_node_stream_delete(align_in);
+
+  GtNodeStream *gff3in = gt_gff3_in_stream_new_unsorted(1, &filename);
+  GtHashmap *typestokeep = gt_hashmap_new(GT_HASH_STRING, NULL, NULL);
+  gt_hashmap_add(typestokeep, "mRNA", "mRNA");
+  GtNodeStream *filtstream = agn_filter_stream_new(gff3in, typestokeep);
+  GtLogger *logger = gt_logger_new(true, "", stderr);
+  GtNodeStream *ics = agn_infer_cds_stream_new(filtstream, NULL, logger);
+  GtNodeStream *ies = agn_infer_exons_stream_new(ics, NULL, logger);
+
+  GtError *error = gt_error_new();
+  GtArray *feats = gt_array_new( sizeof(GtFeatureNode *) );
+  GtNodeStream *featstream = gt_array_out_stream_new(ies, feats, error);
+  int result = gt_node_stream_pull(featstream, error);
+  if(result == -1)
+  {
+    fprintf(stderr, "[AgnGaevalVisitor::gv_test_calc_integrity_simple] error "
+            "processing GFF3: %s\n", gt_error_get(error));
+    return;
+  }
+  gt_node_stream_delete(gff3in);
+  gt_node_stream_delete(filtstream);
+  gt_node_stream_delete(featstream);
+  gt_node_stream_delete(ics);
+  gt_node_stream_delete(ies);
+  gt_logger_delete(logger);
+  gt_hashmap_delete(typestokeep);
+
+  agn_assert(gt_array_size(feats) == 1);
+  GtFeatureNode *g1 = *(GtFeatureNode **)gt_array_get(feats, 0);
+
+  double cov1 = gaeval_visitor_calculate_coverage(gv,  g1, error);
+  double int1 = gaeval_visitor_calculate_integrity(gv, g1, cov1, NULL, error);
+
+  bool test1 = fabs(cov1 - 0.882) < 0.001 &&
+               fabs(int1 - 0.680) < 0.001;
+  agn_unit_test_result(test, "calculate integrity (simple)", test1);
+
+  gt_error_delete(error);
+  gt_array_delete(feats);
+  gt_genome_node_delete((GtGenomeNode *)g1);
   gt_node_visitor_delete(nv);
 }
 
