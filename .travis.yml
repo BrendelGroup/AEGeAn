@@ -4,8 +4,8 @@ compiler:
   - gcc
 env:
   matrix:
-    - memcheck=yes optimize=yes
-    - memcheck=yes optimize=no
+#    - memcheck=yes optimize=yes
+#    - memcheck=yes optimize=no
     - memcheck=no optimize=yes
     - memcheck=no optimize=no
 branches:
