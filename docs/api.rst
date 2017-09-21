@@ -295,6 +295,10 @@ Class AgnGaevalVisitor
 
   Class constructor for the node visitor.
 
+.. c:function:: void agn_gaeval_visitor_tsv_out(AgnGaevalVisitor *v, GtStr *tsvfilename)
+
+  Indicate a file to be used for printing TSV output.
+
 .. c:function:: bool agn_gaeval_visitor_unit_test(AgnUnitTest *test)
 
   Run unit tests for this class.

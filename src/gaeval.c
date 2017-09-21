@@ -21,6 +21,7 @@ typedef struct
   const char *alignfile;
   const char **genefiles;
   int numgenefiles;
+  GtStr *tsvout;
   AgnGaevalParams params;
 } GaevalOptions;
 
@@ -43,7 +44,9 @@ static void print_usage(FILE *outstream)
 "Usage: gaeval [options] alignments.gff3 genes.gff3 [moregenes.gff3 ...]\n"
 "  Basic options:\n"
 "    -h|--help               print this help message and exit\n"
-"    -v|--version            print version number and exit\n\n"
+"    -v|--version            print version number and exit\n"
+"    -t|--tsv FILE           print coverage and integrity scores to the\n"
+"                            specified file in tab-separated text\n\n"
 "  Weights for calculating integrity score (must add up to 1.0):\n"
 "    -a|--alpha: DOUBLE      introns confirmed, or %% expected CDS length for\n"
 "                            single-exon genes; default is 0.6\n"
@@ -58,14 +61,16 @@ static void print_usage(FILE *outstream)
 
 static void parse_options(int argc, char **argv, GaevalOptions *options)
 {
+  options->tsvout = NULL;
   default_params(&options->params);
   int opt = 0;
   int optindex = 0;
-  const char *optstr = "hva:b:g:e:c:5:3:";
+  const char *optstr = "hvt:a:b:g:e:c:5:3:";
   const struct option gaeval_options[] =
   {
     { "help",      no_argument,       NULL, 'h' },
     { "version",   no_argument,       NULL, 'v' },
+    { "tsv",       required_argument, NULL, 't' },
     { "alpha",     required_argument, NULL, 'a' },
     { "beta",      required_argument, NULL, 'b' },
     { "gamma",     required_argument, NULL, 'g' },
@@ -98,6 +103,14 @@ static void parse_options(int argc, char **argv, GaevalOptions *options)
     }
     else if(opt == 'g')
       options->params.gamma = atof(optarg);
+    else if(opt == 't')
+    {
+      if(options->tsvout != NULL)
+      {
+        gt_str_delete(options->tsvout);
+      }
+      options->tsvout = gt_str_new_cstr(optarg);
+    }
     else if(opt == 'v')
     {
       agn_print_version("GAEVAL", stdout);
@@ -134,12 +147,12 @@ int main(int argc, char **argv)
   GtNodeStream *stream, *last_stream, *align_stream;
   GtQueue *streams;
   GaevalOptions options;
-  parse_options(argc, argv, &options);
 
   //----------
   // Set up the processing stream
   //----------
   gt_lib_init();
+  parse_options(argc, argv, &options);
   streams = gt_queue_new();
 
   stream = gt_gff3_in_stream_new_unsorted(1, &options.alignfile);
@@ -166,7 +179,12 @@ int main(int argc, char **argv)
   last_stream = stream;
   gt_str_delete(source);
 
-  stream = agn_gaeval_stream_new(last_stream, align_stream, options.params);
+  GtNodeVisitor *nv = agn_gaeval_visitor_new(align_stream, options.params);
+  if(options.tsvout)
+  {
+    agn_gaeval_visitor_tsv_out((AgnGaevalVisitor *)nv, options.tsvout);
+  }
+  stream = gt_visitor_stream_new(last_stream, nv);
   gt_queue_add(streams, stream);
   last_stream = stream;
 
