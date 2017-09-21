@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Header to mRNA->parent map files.
+- New `AgnIdFilterStream` class to support the `--idfile` flag of the `xtractore` program.
+
+### Fixed
+- Handling of pseudogene-related mRNA features in NCBI-derived GFF3 files.
 
 ## [0.16.0] - 2016-05-09
 

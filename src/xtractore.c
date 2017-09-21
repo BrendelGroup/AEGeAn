@@ -21,6 +21,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 typedef struct
 {
   FILE *idfile;
+  GtHashmap *ids2keep;
   FILE *outfile;
   bool typeoverride;
   GtHashmap *typestoextract;
@@ -110,6 +111,8 @@ static void xtract_options_free_memory(XtractoreOptions *options)
 {
   if(options->idfile != NULL)
     fclose(options->idfile);
+  if(options->ids2keep != NULL)
+    gt_hashmap_delete(options->ids2keep);
   fclose(options->outfile);
   gt_hashmap_delete(options->typestoextract);
 }
@@ -189,11 +192,24 @@ static void xtract_options_parse(int argc, char **argv,
       }
     }
   }
+  if(options->idfile != NULL)
+  {
+    char buffer[512];
+    char *id, *idcopy;
+    options->ids2keep = gt_hashmap_new(GT_HASH_STRING, (GtFree)free, NULL);
+    while(fgets(buffer, 511, options->idfile))
+    {
+      id = strtok(buffer, " \t\n");
+      idcopy = gt_cstr_dup(id);
+      gt_hashmap_add(options->ids2keep, idcopy, idcopy);
+    }
+  }
 }
 
 static void xtract_options_set_defaults(XtractoreOptions *options)
 {
   options->idfile = NULL;
+  options->ids2keep = NULL;
   options->outfile = stdout;
   options->typeoverride = false;
   options->typestoextract = gt_hashmap_new(GT_HASH_STRING, gt_free_func, NULL);
@@ -445,6 +461,13 @@ int main(int argc, char **argv)
   current_stream = agn_filter_stream_new(last_stream, options.typestoextract);
   gt_queue_add(streams, current_stream);
   last_stream = current_stream;
+
+  if(options.ids2keep != NULL)
+  {
+    current_stream = agn_id_filter_stream_new(last_stream, options.ids2keep);
+    gt_queue_add(streams, current_stream);
+    last_stream = current_stream;
+  }
 
   features = gt_feature_index_memory_new();
   current_stream = gt_feature_out_stream_new(last_stream, features);
