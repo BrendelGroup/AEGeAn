@@ -427,7 +427,7 @@ static void infer_cds_visitor_free(GtNodeVisitor *nv)
 
 static void infer_cds_visitor_infer_cds(AgnInferCDSVisitor *v)
 {
-  GtFeatureNode **start_codon, **stop_codon;
+  GtFeatureNode **start_codon = NULL, **stop_codon = NULL;
 
   bool exonsexplicit    = gt_array_size(v->exons) > 0;
   bool startcodon_check = gt_array_size(v->starts) == 1 &&
