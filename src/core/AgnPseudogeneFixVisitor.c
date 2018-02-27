@@ -208,7 +208,7 @@ visit_feature_node(GtNodeVisitor *nv, GtFeatureNode *fn, GtError *error)
       current != NULL;
       current  = gt_feature_node_iterator_next(iter))
   {
-    if(!agn_typecheck_gene(current))
+    if(!agn_typecheck_gene(current) && !agn_typecheck_pseudogene(current))
       continue;
 
     const char *attrvalue = gt_feature_node_get_attribute(current, "pseudo");
