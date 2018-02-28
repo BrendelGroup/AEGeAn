@@ -1,0 +1,21 @@
+##gff-version 3
+##sequence-region   seq1 1 9400
+# ============================================================================ #
+#        ------>             ------>              <------ ------>              #
+# ============================================================================ #
+seq1	nano	gene	1001	2000	.	+	.	ID=g1
+seq1	nano	mRNA	1001	2000	.	+	.	ID=t1;Parent=g1
+seq1	nano	CDS	1001	2000	.	+	0	Parent=t1
+###
+seq1	nano	gene	4001	5000	.	+	.	ID=g2
+seq1	nano	mRNA	4001	5000	.	+	.	ID=t2;Parent=g2
+seq1	nano	CDS	4001	5000	.	+	0	Parent=t2
+###
+seq1	nano	gene	7001	8000	.	-	.	ID=g3
+seq1	nano	mRNA	7001	8000	.	-	.	ID=t3;Parent=g3
+seq1	nano	CDS	7001	8000	.	-	0	Parent=t3
+###
+seq1	nano	gene	8151	9400	.	+	.	ID=g4
+seq1	nano	mRNA	8151	9400	.	+	.	ID=t4;Parent=g4
+seq1	nano	CDS	8151	9400	.	+	0	Parent=t4
+###
