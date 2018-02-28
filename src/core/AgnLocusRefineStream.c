@@ -321,7 +321,7 @@ static bool refine_locus_check_intron_genes(AgnLocusRefineStream *stream,
   gt_feature_node_add_attribute((GtFeatureNode *)locus, "iiLocus_exception",
                                 "intron-gene");
   if(stream->ilenfile != NULL)
-    fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+    fprintf(stream->ilenfile, "%s\t0\tNA\n", gt_str_get(seqid));
   gt_genome_node_ref(*gn2);
   gt_array_add(iloci, locus);
 
@@ -440,17 +440,22 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
         if(numloci == 2)
         {
-          GtFeatureNode **fn2 = gt_array_get(iloci, 1);
-          const char *exc = gt_feature_node_get_attribute(*fn2,
+          GtGenomeNode **gn2 = gt_array_get(iloci, 1);
+          GtFeatureNode *fn2 = gt_feature_node_cast(*gn2);
+          const char *exc = gt_feature_node_get_attribute(fn2,
                                                           "iiLocus_exception");
           if(exc == NULL || strcmp(exc, "intron-gene") != 0)
           {
             gt_feature_node_add_attribute(fn, "iiLocus_exception",
                                           "gene-overlap-gene");
-            if(stream->ilenfile != NULL)
-              fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+            if(stream->ilenfile != NULL) {
+              const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
+              int orient = agn_locus_inner_orientation(*gn, *gn2);
+              fprintf(stream->ilenfile, "R1%s\t0\t%s\n", gt_str_get(seqid),
+                      orientstrs[orient]);
+            }
             gt_feature_node_add_attribute(fn, "riil", "0");
-            gt_feature_node_add_attribute(*fn2, "liil", "0");
+            gt_feature_node_add_attribute(fn2, "liil", "0");
           }
         }
       }
@@ -465,12 +470,6 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         GtUword genenum = agn_typecheck_count(origfn, agn_typecheck_gene);
         sprintf(exceptstr, "complex-overlap-%lu", genenum);
         gt_feature_node_set_attribute(fn, "iiLocus_exception", exceptstr);
-        if(stream->ilenfile != NULL)
-        {
-          GtUword k;
-          for(k = 1; k < genenum; k++)
-            fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
-        }
       }
       if(gt_feature_node_get_attribute(fn, "iLocus_type") == NULL)
       {
@@ -523,7 +522,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         gt_feature_node_add_attribute(fn1, "iiLocus_exception",
                                       "gene-contain-gene");
         if(stream->ilenfile != NULL)
-          fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+          fprintf(stream->ilenfile, "R%s\t0\tNA\n", gt_str_get(seqid));
         gt_feature_node_add_attribute(fn2, "liil", "0");
         gt_feature_node_add_attribute(fn2, "riil", "0");
         if(orig_liil)
@@ -550,8 +549,12 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       {
         gt_feature_node_add_attribute(fn1, "iiLocus_exception",
                                       "gene-overlap-gene");
-        if(stream->ilenfile != NULL)
-          fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+        if(stream->ilenfile != NULL) {
+          const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
+          int orient = agn_locus_inner_orientation(*gn1, *gn2);
+          fprintf(stream->ilenfile, "R3%s\t0\t%s\n", gt_str_get(seqid),
+                  orientstrs[orient]);
+        }
 
         if(orig_liil)
           gt_feature_node_add_attribute(fn1, "liil", orig_liil);
@@ -599,7 +602,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         {
           GtUword k;
           for(k = 1; k < genenum; k++)
-            fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+            fprintf(stream->ilenfile, "R4%s\t0\tNA\n", gt_str_get(seqid));
         }
         if(orig_liil)
           gt_feature_node_set_attribute(fn, "liil", orig_liil);
