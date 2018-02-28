@@ -451,7 +451,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
             if(stream->ilenfile != NULL) {
               const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
               int orient = agn_locus_inner_orientation(*gn, *gn2);
-              fprintf(stream->ilenfile, "R1%s\t0\t%s\n", gt_str_get(seqid),
+              fprintf(stream->ilenfile, "%s\t0\t%s\n", gt_str_get(seqid),
                       orientstrs[orient]);
             }
             gt_feature_node_add_attribute(fn, "riil", "0");
@@ -522,7 +522,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         gt_feature_node_add_attribute(fn1, "iiLocus_exception",
                                       "gene-contain-gene");
         if(stream->ilenfile != NULL)
-          fprintf(stream->ilenfile, "R%s\t0\tNA\n", gt_str_get(seqid));
+          fprintf(stream->ilenfile, "%s\t0\tNA\n", gt_str_get(seqid));
         gt_feature_node_add_attribute(fn2, "liil", "0");
         gt_feature_node_add_attribute(fn2, "riil", "0");
         if(orig_liil)
@@ -552,7 +552,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         if(stream->ilenfile != NULL) {
           const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
           int orient = agn_locus_inner_orientation(*gn1, *gn2);
-          fprintf(stream->ilenfile, "R3%s\t0\t%s\n", gt_str_get(seqid),
+          fprintf(stream->ilenfile, "%s\t0\t%s\n", gt_str_get(seqid),
                   orientstrs[orient]);
         }
 
@@ -602,7 +602,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
         {
           GtUword k;
           for(k = 1; k < genenum; k++)
-            fprintf(stream->ilenfile, "R4%s\t0\tNA\n", gt_str_get(seqid));
+            fprintf(stream->ilenfile, "%s\t0\tNA\n", gt_str_get(seqid));
         }
         if(orig_liil)
           gt_feature_node_set_attribute(fn, "liil", orig_liil);
