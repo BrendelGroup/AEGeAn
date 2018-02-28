@@ -1,9 +1,9 @@
-Group7.16	21570
-Group7.16	916
-Group7.16	2246
-Group7.16	8490
-Group7.16	314
-Group7.16	0
-Group7.16	0
-Group7.16	0
-Group7.16	467
+Group7.16	21570	FF
+Group7.16	916	FF
+Group7.16	2246	FR
+Group7.16	8490	RF
+Group7.16	0	NA
+Group7.16	314	FF
+Group7.16	0	FR
+Group7.16	0	RR
+Group7.16	467	RR

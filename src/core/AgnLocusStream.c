@@ -16,6 +16,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 #include "AgnInferParentStream.h"
 #include "AgnLocusStream.h"
 #include "AgnLocus.h"
+#include "AgnTypecheck.h"
 
 #define locus_stream_cast(GS)\
         gt_node_stream_cast(locus_stream_class(), GS)
@@ -282,6 +283,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     GtFeatureNode *prevfn = gt_feature_node_cast(stream->prev_locus);
     GtFeatureNode *locusfn = gt_feature_node_cast(locus);
     GtRange prev_range = gt_genome_node_get_range(stream->prev_locus);
+    const char *orientstrs[] = { "FF", "FR", "RF", "RR" };
+    int orient = agn_locus_inner_orientation(stream->prev_locus, locus);
     bool ovlp1 = prev_range.end + stream->delta >= locusrange.start;
     bool ovlp2 = prev_range.end >= locusrange.start;
     if(ovlp1 || ovlp2)
@@ -304,8 +307,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
                                     "delta-overlap-gene");
 
-      if(stream->ilenfile != NULL)
-        fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+      if(stream->ilenfile != NULL) {
+        fprintf(stream->ilenfile, "%s\t0\t%s\n", gt_str_get(seqid),
+                orientstrs[orient]);
+      }
       gt_feature_node_add_attribute(prevfn, "riil", "0");
       gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
@@ -326,8 +331,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
                                     "delta-overlap-delta");
 
-      if(stream->ilenfile != NULL)
-        fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+      if(stream->ilenfile != NULL) {
+        fprintf(stream->ilenfile, "%s\t0\t%s\n", gt_str_get(seqid),
+                orientstrs[orient]);
+      }
       gt_feature_node_add_attribute(prevfn, "riil", "0");
       gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
@@ -339,8 +346,10 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
       gt_feature_node_add_attribute(prevfn, "iiLocus_exception",
                                     "delta-re-extend");
 
-      if(stream->ilenfile != NULL)
-        fprintf(stream->ilenfile, "%s\t0\n", gt_str_get(seqid));
+      if(stream->ilenfile != NULL) {
+        fprintf(stream->ilenfile, "%s\t0\t%s\n", gt_str_get(seqid),
+                orientstrs[orient]);
+      }
       gt_feature_node_add_attribute(prevfn, "riil", "0");
       gt_feature_node_add_attribute(locusfn, "liil", "0");
     }
@@ -360,10 +369,9 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
                            locusrange.start - stream->delta - 1 };
         agn_locus_set_range(iilocus, irange.start, irange.end);
 
-        if(stream->ilenfile != NULL)
-        {
-          fprintf(stream->ilenfile, "%s\t%lu\n", gt_str_get(seqid),
-                  gt_range_length(&irange));
+        if(stream->ilenfile != NULL) {
+          fprintf(stream->ilenfile, "%s\t%lu\t%s\n", gt_str_get(seqid),
+                  gt_range_length(&irange), orientstrs[orient]);
         }
         char iilocuslen[32];
         sprintf(iilocuslen, "%lu", gt_range_length(&irange));
@@ -375,6 +383,16 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         GtFeatureNode *iilocfn = gt_feature_node_cast(iilocus);
         gt_feature_node_set_attribute(iilocfn, "fg_orient", orientstrs[orient]);
         gt_queue_add(stream->locusqueue, iilocus);
+      }
+    }
+
+    if (stream->ilenfile != NULL) {
+      GtUword genenum = agn_typecheck_count(locusfn, agn_typecheck_gene);
+      if (genenum > 1) {
+        GtUword k;
+        for (k = 1; k < genenum; k++) {
+          fprintf(stream->ilenfile, "%s\t0\tNA\n", gt_str_get(seqid));
+        }
       }
     }
   }

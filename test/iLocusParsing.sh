@@ -20,12 +20,12 @@ run_func_test()
     echo "Error running functional test '$testlabel'"
     exit 1
   fi
-  
+
   set +e
   diff $tempfile $testoutfile > /dev/null 2>&1
   status=$?
   set -e
-  
+
   result="FAIL"
   if [ $status == 0 ]; then
     result="PASS"
@@ -48,5 +48,9 @@ run_func_test "Megachile rotundata CST (intron)" data/gff3/mrot-cst-out-cds.gff3
 run_func_test "iiLocus lengths (Amel OGS Group7.16)" data/misc/amel-ogs-ilens.txt --delta=300 --ilens=${tempfile} --cds data/gff3/amel-ogs-g716.gff3
 run_func_test "Nasonia vitripennis (intron gene)" data/gff3/nvit-exospindle-out.gff3 --outfile=${tempfile} --cds data/gff3/nvit-exospindle.gff3
 run_func_test "A. echinatior (intron gene + ncRNA)" data/gff3/aech-dachsous-out.gff3 --outfile=${tempfile} --cds data/gff3/aech-dachsous.gff3
+run_func_test "iiLocus Flank Orientations (test 1)" data/misc/zitest-01-ilens.tsv --ilens=${tempfile} --cds data/gff3/zitest-01.gff3
+run_func_test "iiLocus Flank Orientations (test 2)" data/misc/zitest-02-ilens.tsv --ilens=${tempfile} --cds data/gff3/zitest-02.gff3
+run_func_test "iiLocus Flank Orientations (test 3)" data/misc/zitest-03-ilens.tsv --ilens=${tempfile} --cds data/gff3/zitest-03.gff3
+
 
 exit $failures
