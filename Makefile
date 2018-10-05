@@ -49,7 +49,7 @@ endif
 ifneq ($(debug),no)
   CFLAGS += -g
 endif
-LDFLAGS=-lgenometools -lm -ldl \
+LDFLAGS+=-lgenometools -lm -ldl \
         -L$(prefix)/lib \
         -L/usr/local/lib
 ifdef lib
@@ -99,47 +99,47 @@ clean:
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
 		@- mkdir -p obj
 		@ echo "[compile $*]"
-		@ $(CC) $(CFLAGS) $(INCS) -c -o $@ $<
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -c -o $@ $<
 
 $(PE_EXE):	src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c src/ParsEval/pe_options.h src/ParsEval/pe_utils.h $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile ParsEval]"
-		@ $(CC) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -I src/ParsEval -o $@ $(AGN_OBJS) src/ParsEval/parseval.c src/ParsEval/pe_options.c src/ParsEval/pe_utils.c $(LDFLAGS)
 
 $(CN_EXE):	src/canon-gff3.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile CanonGFF3]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/canon-gff3.c $(LDFLAGS)
 
 $(LP_EXE):	src/locuspocus.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile LocusPocus]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/locuspocus.c $(LDFLAGS)
 
 $(GV_EXE):	src/gaeval.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile GAEVAL]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/gaeval.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/gaeval.c $(LDFLAGS)
 
 $(XT_EXE):	src/xtractore.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile Xtractore]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/xtractore.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/xtractore.c $(LDFLAGS)
 
 $(RP_EXE):	src/pmrna.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile $@]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/pmrna.c $(LDFLAGS)
 
 $(TD_EXE):	src/tidygff3.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile $@]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/tidygff3.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) src/tidygff3.c $(LDFLAGS)
 
 $(UT_EXE):	test/unittests.c $(AGN_OBJS)
 		@ mkdir -p bin
 		@ echo "[compile unit tests]"
-		@ $(CC) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
+		@ $(CC) $(CPPFLAGS) $(CFLAGS) $(INCS) -o $@ $(AGN_OBJS) test/unittests.c $(LDFLAGS)
 
 libaegean.a:	$(AGN_OBJS)
 		@ echo "[create libaegean]"
