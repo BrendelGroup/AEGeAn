@@ -1,0 +1,12 @@
+Apro:
+    species: Auxenochlorella protothecoides
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000733215.1
+    build: ASM73321v1
+    checksums:
+        gdna: 264f18aac5b2af8779ce9efdce4a4fd4539900b6
+        gff3: ab15fa94b2b6605d9cdb6eba510d5719eaf04a38
+        prot: baf52e9688e95daf43b767eb3d7d8c99a5ae7e2d
+    description: ASM73321v1 from BGI

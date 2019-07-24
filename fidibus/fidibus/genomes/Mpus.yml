@@ -1,0 +1,16 @@
+Mpus:
+    species: Micromonas pusilla
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000151265.1
+    build: Micromonas_pusilla_CCMP1545_v2.0
+    annotfilter:
+        - NC_012568.1
+    seqfilter:
+        - NC_012568.1
+    checksums:
+        gdna: e35f7ea8557d5c065d953ad91e844bfb03f81be0
+        gff3: 0540bf0e4fcff2cc971eef5b9c94ab2e0dade5b4
+        prot: c8a2efa2947e29f07d7465625510e7d53a6df079
+    description: CCMP1545 v2.0 from the Micromonas Genome Consortium

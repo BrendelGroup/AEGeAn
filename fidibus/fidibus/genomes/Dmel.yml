@@ -1,0 +1,18 @@
+Dmel:
+    species: Drosophila melanogaster
+    common: fruit fly
+    clade: fly
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000001215.4
+    build: Release_6_plus_ISO1_MT
+    annotfilter:
+        - NC_024511.2
+        - exception=trans-splicing
+    seqfilter:
+        - NC_024511.2
+    checksums:
+        gdna: e4176036c90a917372821bbf3498f6d232e69690
+        gff3: ff50e6dbe5269c5e0489caef6df93ddc6cea2375
+        prot: 633b5ad0f800cfd2762814e74ba02551a22ffcca
+    description: Release 6 (plus ISO1 MT) from the FlyBase Consortium

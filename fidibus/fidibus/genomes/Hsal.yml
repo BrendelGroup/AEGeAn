@@ -1,0 +1,14 @@
+Hsal:
+    species: Harpegnathos saltator
+    common: jumping ant
+    clade: ant
+    source: refseq
+    suppressed: True
+    branch: invertebrate
+    accession: GCF_000147195.1
+    build: HarSal_1.0
+    checksums:
+        gdna: 73b508cf0a0f7905b2fc46d0afef451b8802f45d
+        gff3: 4e5f866a6de3c2febef3cf59f4bf964a5a8e7e58
+        prot: d3acaaf687a8b098728ea8f235f9a64a7c3d24ac
+    description: HarSal_1.0 from BGI-Shenzhen

@@ -1,0 +1,15 @@
+Pccr:
+    species: Polistes canadensis
+    common: red paper wasp
+    clade: vespid
+    source: crg
+    scaffolds: PCAN.v01.fa.gz
+    annotation: PCAN.v01.gff3
+    proteins: PCAN.v01.pep.fa.gz
+    checksums:
+        gdna: 1d0c66b729d021fd69b37ea59ec94f66e0ddc5bf
+        gff3: c49a7a6e152308a64528f9c852a5977c1ee85c3a
+        prot: a2cb40bd4ad9ff9defffbeecdd71514511e8d892
+    compress:
+        - gff3
+    description: CRG version v01

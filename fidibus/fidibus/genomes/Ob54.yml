@@ -1,0 +1,13 @@
+Ob54:
+    species: Ooceraea biroi
+    common: clonal raider ant
+    clade: ant
+    source: refseq
+    branch: invertebrate
+    accession: GCF_003672135.1
+    build: Obir_v5.4
+    checksums:
+        gdna: 421070ba5f9e31acfbab717d03abfbc988c71d35
+        gff3: 45e7d814f5241685d190f925b4c2980a52951de7
+        prot: 047181c8c1793f9f7ea81dac12665192fdb5530d
+    description: Obir v5.4 from The Rockefeller University

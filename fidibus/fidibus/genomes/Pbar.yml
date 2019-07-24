@@ -1,0 +1,13 @@
+Pbar:
+    species: Pogonomyrmex barbatus
+    common: red harvester ant
+    clade: ant
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000187915.1
+    build: Pbar_UMD_V03
+    checksums:
+        gdna: 5deee484ae7e219b91bec975d9206378c8417f49
+        gff3: ae820e3cff36328e2956b3f88d67c3c2226c8990
+        prot: ed65f74551a676d848d8273c948d080a0366b131
+    description: Pbar_UMD_V03 from the Ant Genomics Consortium

@@ -1,0 +1,17 @@
+Pfal:
+    species: Plasmodium falciparum
+    common: malarial parasite
+    source: refseq
+    branch: protozoa
+    accession: GCF_000002765.3
+    build: ASM276v1
+    annotfilter:
+        - '	intron	'
+        - NC_002375.1
+    seqfilter:
+        - NC_002375.1
+    checksums:
+        gdna: 51c207b62a7b678fcf2bcde7f665dfec1d77f146
+        gff3: 0abddf9d1e81976e593df8d2687afc972f5f3a07
+        prot: 099af2fd4d703129f26ae3474a2f08ab29298fd6
+    description: ASM276v1 from the P. falciparum Genome Sequencing Consortium

@@ -1,0 +1,23 @@
+Scer:
+    species: Saccharomyces cerevisiae
+    common: brewer's yeast
+    clade: fungi
+    source: refseq
+    branch: fungi
+    accession: GCF_000146045.2
+    build: R64
+    annotfilter:
+        - GeneID:851712
+        - GeneID:856845
+        - GeneID:854639
+        - GeneID:854861
+        - GeneID:854012
+        - GeneID:854196
+        - NC_001224.1
+    seqfilter:
+        - NC_001224.1
+    checksums:
+        gdna: b422facd27488fda09236e608b2a8d14d2b9bec0
+        gff3: 6ae5f4ea43f81aa20a0528ff26e8fa9de185f0bc
+        prot: 45b5fb51bd7a21c7c53b714fc9a50ffad66fe2cf
+    description: R64 from SGD

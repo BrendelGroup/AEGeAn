@@ -1,0 +1,9 @@
+Apro
+Crei
+Cvar
+Csub
+Mcom
+Mpus
+Oluc
+Otau
+Vcar

@@ -1,0 +1,13 @@
+Sihb:
+    species: Solenopsis invictus
+    common: red fire ant
+    clade: ant
+    source: hymbase
+    scaffolds: Sinv_1.0_scaffolds.fa.gz
+    annotation: sinv_OGSv2.2.3.gff3.gz
+    proteins: sinv_OGSv2.2.3_pep.fa.gz
+    checksums:
+        gdna: 620268c1e23849063396baf538a2b2fad7b1b33c
+        gff3: c5582e4eadcf46fb165771e4e8a2b15d06f13e1b
+        prot: 251725d0d289f06db705d33ecc382c545537b782
+    description: Official Gene Set version 2.2.3

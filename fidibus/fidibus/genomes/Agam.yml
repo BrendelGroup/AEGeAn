@@ -1,0 +1,18 @@
+Agam:
+    species: Anopheles gambiae
+    common: mosquito
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000005575.2
+    build: AgamP3
+    annotfilter:
+        - NC_002084.1
+        - GeneID:4577453
+        - GeneID:4578480
+    seqfilter:
+        - NC_002084.1
+    checksums:
+        gdna: 1618adb863cda2c00c45d642c609b53f5e86aa02
+        gff3: e6804295b2dceaed4973c51fcc01a582a89b449b
+        prot: 9586cba9beda13caf8a0f2f54272a61862f98ba9
+    description: AgamP3 from the Anopheles sequencing consortium

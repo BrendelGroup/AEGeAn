@@ -1,0 +1,16 @@
+Turt:
+    species: Tetranychus urticae
+    common: spider mite
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000239435.1
+    build: ASM23943v1
+    annotfilter:
+        - NC_010526.1
+    seqfilter:
+        - NC_010526.1
+    checksums:
+        gdna: 3d75b35d2eed4fdd73a12a4975499ae7e92c3ab3
+        gff3: 8047ea56c1079ac359342e80d71517e17abdf10c
+        prot: 65f108e91242395055c06da7649c0a4f670582a1
+    description: ASM23943v1 from JGI

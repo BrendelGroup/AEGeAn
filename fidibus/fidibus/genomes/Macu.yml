@@ -1,0 +1,13 @@
+Macu:
+    species: Musa acuminata
+    common: wild banana
+    clade: monocot
+    source: refseq
+    branch: plant
+    accession: GCF_000313855.2
+    build: ASM31385v2
+    checksums:
+        gdna: 45c81f05212bed63dfc9d33ef4edaa1f593e1fc1
+        gff3: 6034e56c4ea3b40a28f15b836b377c0b67cda428
+        prot: 9a7c219c0e57d4256918ec48d035d4857b926b41
+    description: Build ASM31385v2 from Genoscope

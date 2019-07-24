@@ -1,0 +1,13 @@
+Mtru:
+    species: Medicago truncatula
+    common: barrel clover
+    clade: dicot
+    source: refseq
+    branch: plant
+    accession: GCF_000219495.2
+    build: MedtrA17_4.0
+    checksums:
+        gdna: d103f99de98a494635f2196b643f3ab8fc07ff3b
+        gff3: 76b804dd7389792e29d5711d6f29dd0e0469659f
+        prot: 907610d5bbd2fe0411e34999ff6721657cca10ab
+    description: Build MedtrA17_4.0 from the Medicago trunculata consortium
