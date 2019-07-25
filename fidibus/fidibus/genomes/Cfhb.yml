@@ -1,0 +1,16 @@
+Cfhb:
+    species: Camponotus floridanus
+    common: carpenter ant
+    clade: ant
+    source: hymbase
+    scaffolds: Cflo_3.3_scaffolds.fa.gz
+    annotation: cflo_OGSv3.3.gff3.gz
+    proteins: cflo_OGSv3.3_pep.fa.gz
+    annotfilter:
+        - C3809596
+        - C3873680
+    checksums:
+        gdna: dc269f6753ab2c96af075bf858c7c7d0f3543a19
+        gff3: fcbcf5219b1d076ec25b625750cedfeed5de3335
+        prot: 83e2c9be74f9b0490995e962d963f794c9fe09d9
+    description: Official Gene Set version 3.3

@@ -1,0 +1,13 @@
+Hs85:
+    species: Harpegnathos saltator
+    common: jumping ant
+    clade: ant
+    source: refseq
+    branch: invertebrate
+    accession: GCF_003227715.1
+    build: Hsal_v8.5
+    checksums:
+        gdna: c87ca011e96804a80572b01a10c3619551e97b79
+        gff3: 9bb34296aa8b76fa35b05248b2901d5847c7d420
+        prot: 0f03d4e76bd99433297b512a7a39ea0c400da4c9
+    description: Hsal v8.5 from University of Pennsylvania

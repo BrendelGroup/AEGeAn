@@ -1,0 +1,18 @@
+Otau:
+    species: Ostreococcus tauri
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000214015.2
+    build: version_050606
+    annotfilter:
+        - NC_008290.1
+        - NC_008289.1
+    seqfilter:
+        - NC_008290.1
+        - NC_008289.1
+    checksums:
+        gdna: 78550a450181cd8597e346af2aaa277f6456fa44
+        gff3: 8cbb792787673b09b218d3a6154d456283a4e1b9
+        prot: d0d4e5bf828e4a7b791f694fc1e71525eb2c984e
+    description: version 050606 from Laboratoire Arago

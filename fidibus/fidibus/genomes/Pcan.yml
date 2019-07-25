@@ -1,0 +1,13 @@
+Pcan:
+    species: Polistes canadensis
+    common: red paper wasp
+    clade: vespid
+    source: refseq
+    branch: invertebrate
+    accession: GCF_001313835.1
+    build: ASM131383v1
+    checksums:
+        gdna: f9ee6e692ddaccd7f62842c26a3fe1e4946254a6
+        gff3: 1cf0b89ac45c3a530ba114d836a2c70a884eae38
+        prot: 73902f0398b0a063508541ecb5973714fd8934e3
+    description: ASM131383v1 from the CRG

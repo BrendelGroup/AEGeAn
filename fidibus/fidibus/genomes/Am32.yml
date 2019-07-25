@@ -1,0 +1,15 @@
+Am32:
+    species: Apis mellifera
+    common: honey bee
+    clade:
+        - bee
+        - honeybee
+    source: beebase
+    scaffolds: Amel_4.5_scaffolds.fa.gz
+    annotation: amel_OGSv3.2.gff3.gz
+    proteins: amel_OGSv3.2_pep.fa.gz
+    checksums:
+        gdna: 8f1cfbc20198294a134b82c9655af4278ebcfd89
+        gff3: b0601bf24e534713d9bb77490065e3e5bfa889d7
+        prot: 46fb9d11cea73150b47c1c436a9a9f4ad6791232
+    description: OGS version 3.2

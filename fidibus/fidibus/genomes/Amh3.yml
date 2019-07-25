@@ -1,0 +1,19 @@
+Amh3:
+    species: Apis mellifera
+    common: honey bee
+    clade:
+        - bee
+        - honeybee
+    source: refseq
+    branch: invertebrate
+    accession: GCF_003254395.2
+    build: Amel_HAv3.1
+    annotfilter:
+        - NC_001566.1
+    seqfilter:
+        - NC_001566.1
+    checksums:
+        gdna: 7b131a3fbd63a3903e2ec6e7817b7391bfca5d09
+        gff3: f0b2d7051784338111cf25a4c0d56370ae014805
+        prot: a27d60fc7afb4c1df32637a8afc60a899ac4e031
+    description: Amel_HAv3.1 from Uppsala University

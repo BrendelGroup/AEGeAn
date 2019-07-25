@@ -1,0 +1,26 @@
+Att6:
+    species: Arabidopsis thaliana
+    common: thale cress
+    clade: dicot
+    source: tair
+    version: 6
+    annotfilter:
+        - '^ChrC'
+        - '^ChrM'
+        - 'UTR	'
+    gdna_filename: TAIR6-gdna.fa.gz
+    gff3_filename: TAIR6-genes.gff3.gz
+    prot_filename: TAIR6-pep.faa.gz
+    gdna_url:
+        - ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/OLD/chr1.fas
+        - ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/OLD/chr2.fas
+        - ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/OLD/chr3.fas
+        - ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/OLD/chr4.fas
+        - ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/OLD/chr5.fas
+    gff3_url: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR6_genome_release/TAIR6_GFF3_genes.gff
+    prot_url: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR6_genome_release/TAIR6_pep_20060907
+    compress:
+        - gdna
+        - gff3
+        - prot
+    description: Release 6 from TAIR

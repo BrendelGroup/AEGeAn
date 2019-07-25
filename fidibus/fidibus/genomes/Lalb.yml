@@ -1,0 +1,13 @@
+Lalb:
+    species: Lasioglossum albipes
+    common: sweat bee
+    clade: bee
+    source: beebase
+    scaffolds: Lalb_v2.fa.gz
+    annotation: Lalb_OGS_v5.42.gff.gz
+    proteins: Lalb_OGS_v5.42.pep.fa.gz
+    checksums:
+        gdna: b9bf37f3dfd1cf41abfb48cb4689d0103b8e6200
+        gff3: ed2fdf9624e29afec05b94a30574e7ba053d663c
+        prot: faf905e99cb190f712094903ae56a4cd59409267
+    description: Official Gene Set version 5.42

@@ -2,6 +2,7 @@
 #---Begin configuration---#
 
 prefix?=/usr/local
+piuser?=
 
 #----End configuration----#
 #----End configuration----#
@@ -72,7 +73,7 @@ endif
 all:		$(BINS) libaegean.a
 		
 
-install:	all
+install:	all fidibus
 		@ mkdir -p $(prefix)/bin/
 		@ mkdir -p $(prefix)/lib/
 		@ mkdir -p $(prefix)/include/aegean/
@@ -87,11 +88,17 @@ install-scripts:
 		@ mkdir -p $(prefix)/bin/
 		cp data/scripts/*.p? $(prefix)/bin/.
 
+fidibus:	fidibus/fidibus.egg-info
+
+fidibus/fidibus.egg-info:
+		(cd fidibus; ./install.sh ${piuser}; cd ..;)
+
 uninstall:	
 		for exe in $(INSTALL_BINS); do rm -r $(prefix)/$$exe; done
 		rm -r $(prefix)/include/aegean/
 		rm -r $(prefix)/share/aegean/
 		rm $(prefix)/lib/libaegean.a
+		(cd fidibus; ./uninstall.sh ${piuser}; cd ..;)
 
 clean:		
 		rm -rf $(BINS) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM

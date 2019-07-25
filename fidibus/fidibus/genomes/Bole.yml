@@ -1,0 +1,17 @@
+Bole:
+    species: Brassica oleracea
+    common: wild cabbage
+    clade: dicot
+    source: refseq
+    branch: plant
+    accession: GCF_000695525.1
+    build: BOL
+    annotfilter:
+        - NC_016118.1
+    seqfilter:
+        - NC_016118.1
+    checksums:
+        gdna: 8e85a73183ec9004b9d5cfca0f6a39580f3b5e4a
+        gff3: 86342ed634ce2b565f852de61f8b5e442a357914
+        prot: ead59da992814a9b5828a501f96211278984c689
+    description: Build BOL from CanSeq

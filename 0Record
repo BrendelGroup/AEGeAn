@@ -1,0 +1,9 @@
+# Without piuser=--user, make will try to install fidibus under /usr/local and fail without elevated priviliges.
+# With piuser=--user, fidibus will be installed as a user local package.
+#
+
+make prefix=~/LOCAL piuser=--user install
+make prefix=~/LOCAL piuser=--user uninstall
+
+make clean
+#... does not remove ~/LOCAL; probably a good thing!

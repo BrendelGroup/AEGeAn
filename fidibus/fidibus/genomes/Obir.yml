@@ -1,0 +1,15 @@
+Obir:
+    species: Ooceraea biroi
+    common: clonal raider ant
+    clade: ant
+    source: refseq
+    suppressed: True
+    branch: invertebrate
+    accession: GCF_000611835.1
+    build: CerBir1.0
+    checksums:
+        gdna: c175569906b4e7d92c011e11ec4300cf7db29dda
+        gff3: 81f7b9ca43fb9cc74c6552ed42cf32722587ad69
+        prot: a475013c1c063a0398b8fd65a57716faa6dcb54d
+    description: CerBir1.0 from BGI-Shenzhen
+    known_failing: 'missing'

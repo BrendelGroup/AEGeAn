@@ -1,0 +1,12 @@
+Vcar:
+    species: Volvox carteri
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000143455.1
+    build: v1.0
+    checksums:
+        gdna: 1eb1efef4260647cb76da2874e3a20a21d339459
+        gff3: a46e2914164e8e04853f21ee8e6c4137f514498e
+        prot: 3f426492b05a6fabc9c6faf60d4ad525ea0bd383
+    description: v1.0 from JGI

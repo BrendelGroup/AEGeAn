@@ -1,0 +1,12 @@
+Ocin:
+    species: Orchesella cincta
+    common: springtail
+    source: genbank
+    branch: invertebrate
+    accession: GCA_001718145.1
+    build: ASM171814v1
+    checksums:
+        gdna: d0cb243b772027e502b795d5d986c4c1402b4f35
+        gff3: ed230ac4ed442118caf50d40a9bfef2f4fb7c6f5
+        prot: 53f070b877cd07973ff11f890c5ec07d0b64c9d6
+    description: ASM171814v1 from BE Basic

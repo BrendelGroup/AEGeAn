@@ -1,0 +1,228 @@
+#!/usr/bin/env python
+#
+# -----------------------------------------------------------------------------
+# Copyright (c) 2015-2016   Daniel Standage <daniel.standage@gmail.com>
+# Copyright (c) 2015-2016   Indiana University
+#
+# This file is part of fidibus (http://github.com/standage/fidibus) and is
+# licensed under the BSD 3-clause license: see LICENSE.txt.
+# -----------------------------------------------------------------------------
+
+from __future__ import print_function
+import argparse
+import importlib
+import multiprocessing
+import os
+import subprocess
+import sys
+import fidibus
+
+tasks = [
+    'list',       # show info about reference genomes
+    'download',   # retrieve or check genome data files
+    'prep',       # pre-process reference genome data files
+    'iloci',      # compute iLoci
+    'breakdown',  # parse annotations and sequences for various genome features
+    'stats',      # compute descriptive statistics on various genome features
+    'cluster',    # cluster iLocus protein products
+    'cleanup',    # remove intermediate/ancillary data files
+]
+
+
+def run_build(builddata):
+    label, localconfig, args, registry = builddata
+    if localconfig:
+        db = fidibus.generic.GenericDB(label, localconfig, workdir=args.workdir)
+    else:
+        db = registry.genome(label, workdir=args.workdir)
+
+    if 'download' in args.task:
+        db.download()
+    if 'prep' in args.task:
+        db.prep(strict=not args.relax)
+    if 'iloci' in args.task:
+        fidibus.iloci.prepare(db, delta=args.delta, ilcformat=args.format)
+    if 'breakdown' in args.task:
+        fidibus.proteins.prepare(db)
+        fidibus.mrnas.prepare(db)
+        fidibus.exons.prepare(db)
+    if 'stats' in args.task:
+        fidibus.stats.compute(db)
+    if 'cleanup' in args.task:
+        db.cleanup(args.keep, args.fullclean)
+
+    print('[fidibus: %s] build complete!' % db.config['species'],
+          file=sys.stderr)
+
+
+def cluster_proteins(dbs, np=1, cdargs=None):
+    print('[fidibus] aggregating representative proteins', file=sys.stderr)
+    protmap = dict()
+    with open('fidibus.prot.fa', 'w') as outstream:
+        for db in dbs:
+            protfile = '%s/%s.prot.fa' % (db.dbdir, db.label)
+            with open(protfile, 'r') as instream:
+                for line in instream:
+                    print(line, end='', file=outstream)
+            for protid, locid in db.get_prot_map():
+                protmap[protid] = locid
+
+    print('[fidibus] clustering representative proteins', file=sys.stderr)
+    if cdargs is None:
+        cdargs = '-d 0 -c 0.50 -s 0.65 -p 1 -n 3 -aL 0.75 -aS 0.85 -g 1 -M 0'
+    if '-T' in cdargs:
+        message = ('warning: do not set cd-hit thread count with "-T" in '
+                   '"--cdargs", use the "--numprocs" option')
+        print(message, file=sys.stderr)
+    cdargs = '-T {} {}'.format(np, cdargs)
+    command = ('cd-hit -i fidibus.prot.fa -o fidibus.prot ' + cdargs).split()
+    subprocess.check_call(command)
+
+    with open('fidibus.prot.clstr', 'r') as infile, \
+            open('fidibus.hiloci.tsv', 'w') as outfile:
+        for clusterid, clusterseqs in fidibus.cdhit.parse_clusters(infile):
+            iloci = [protmap[prot.accession] for prot in clusterseqs]
+            species = set([prot.species for prot in clusterseqs])
+            print(len(iloci), len(species), ','.join(iloci), ','.join(species),
+                  sep='\t', file=outfile)
+
+
+def get_parser():
+    desc = '"LocusPocus Fidibus": process and summarize genome data'
+    parser = argparse.ArgumentParser(description=desc)
+    parser._optionals.title = 'basic configuration'
+
+    parser.add_argument('-v', '--version', action='version',
+                        version='fidibus v%s' % fidibus.__version__)
+    parser.add_argument('-d', '--delta', type=int, metavar='DLT', default=500,
+                        help='iLocus extension parameter; default is 500')
+    parser.add_argument('-w', '--workdir', metavar='WD', default='./species',
+                        help='working directory for data files; default is '
+                        '"./species"')
+    parser.add_argument('-p', '--numprocs', metavar='P', type=int, default=1,
+                        help='number of processors to use when processing '
+                        'multiple genomes; default is 1')
+    parser.add_argument('task', nargs='+', choices=tasks, metavar='task',
+                        help='build task(s) to execute; options include '
+                        '"%s"' % '", "'.join(tasks))
+
+    refrconf = parser.add_argument_group('reference genome configuration')
+    confargs = refrconf.add_mutually_exclusive_group()
+    confargs.add_argument('--refr', default=None, metavar='LBL',
+                          help='label (or comma-separated set of labels) '
+                          'specifying the genome(s) to process; use the `list`'
+                          ' task to show all available reference genomes')
+    confargs.add_argument('--refrbatch', default=None, metavar='LBL',
+                          help='label of a batch of reference genomes to '
+                          'process; use the `list` task to show all available '
+                          'batches')
+    refrconf.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
+                          help='directory (or comma-separated list of '
+                          'directories) from which to load user-supplied '
+                          'reference genome configuration files')
+
+    lclconf = parser.add_argument_group('custom genome configuration')
+    lclconf.add_argument('--local', action='store_true',
+                         help='the "--genome" and "--batch" options are used '
+                         'to specify reference genomes to be retrieved from '
+                         'public databases and pre-processed; the "--local" '
+                         'option invokes processing of a user-supplied genome '
+                         'on the local file system; see the fidibus manual for '
+                         'more information')
+    lclconf.add_argument('--label', type=str, metavar='LBL',
+                         help='short unique label (typically 4 letters) for '
+                         'this data set')
+    lclconf.add_argument('--gdna', help='genomic DNA sequences (chromosomes or'
+                         ' scaffolds or contigs) in Fasta format')
+    lclconf.add_argument('--gff3', help='genome annotation in GFF3 format')
+    lclconf.add_argument('--prot', help='protein sequences in Fasta format')
+
+    miscconf = parser.add_argument_group('miscellaneous settings')
+    miscconf.add_argument('-x', '--relax', action='store_true',
+                          help='continue with processing in case of a failed '
+                          'data integrity check during the `prep` task')
+    miscconf.add_argument('-f', '--format', metavar='PFX',
+                          default='{}ILC-%05lu', help='format for assigning '
+                          'serial labels to iLoci; must include the '
+                          'placeholder {} for the species label, as well as a '
+                          'printf-style placeholder for a serial number; '
+                          'default is "{}ILC-%%05lu"')
+    miscconf.add_argument('--keep', metavar='PTN', nargs='+',
+                          help='keep files matching the specified pattern(s) '
+                          'when running the `cleanup` build task')
+    miscconf.add_argument('--fullclean', action='store_true',
+                          help='when running the `cleanup` build task, delete '
+                          'original (downloaded) data files as well as '
+                          'processed data files')
+    miscconf.add_argument('--cdargs', metavar='ARGS', default=None,
+                          help='arguments for cd-hit (cluster task only); '
+                          'default is "-d 0 -c 0.50 -s 0.65 -p 1 -n 3 -aL 0.75'
+                          ' -aS 0.85 -g 1"; do not use cd-hit\'s "-T" option, '
+                          'use this program\'s "--numprocs" option instead')
+    return parser
+
+
+def main(args):
+    registry = fidibus.registry.Registry()
+    if args.cfgdir:
+        for cfgdirpath in args.cfgdir.split(','):
+            registry.update(cfgdirpath)
+
+    if 'list' in args.task:
+        registry.list()
+        sys.exit(0)
+
+    builds = list()
+    if args.local:
+        assert args.label, 'must specify "--label" with "--local"'
+        assert args.gdna, 'must specify "--gdna" with "--local"'
+        assert args.gff3, 'must specify "--gff3" with "--local"'
+        assert args.prot, 'must specify "--prot" with "--local"'
+        assert args.label not in registry.genome_configs, 'label conflict'
+        localconfig = {
+            'gdna': args.gdna,
+            'gff3': args.gff3,
+            'prot': args.prot,
+            'source': 'local',
+            'species': args.label,
+        }
+        builddata = (args.label, localconfig, args, registry)
+        builds.append(builddata)
+    if args.refr:
+        labels = args.refr.split(',')
+        registry.check(genomes=labels)
+        for label in labels:
+            builddata = (label, None, args, registry)
+            builds.append(builddata)
+    if args.refrbatch:
+        registry.check(batches=[args.refrbatch])
+        labels = registry.batch(args.refrbatch)
+        for label in labels:
+            builddata = (label, None, args, registry)
+            builds.append(builddata)
+
+    if len(builds) == 0:
+        message = ('no genomes specified, nothing to do')
+        sys.exit(0)
+
+    pool = multiprocessing.Pool(processes=args.numprocs)
+    results = [pool.apply_async(run_build, args=(b,)) for b in builds]
+    _ = [p.get() for p in results]
+
+    if 'cluster' in args.task:
+        dbs = list()
+        for builddata in builds:
+            label, localconfig, args, registry = builddata
+            if localconfig:
+                db = fidibus.generic.GenericDB(label, localconfig,
+                                              workdir=args.workdir)
+            else:
+                db = registry.genome(label, workdir=args.workdir)
+            dbs.append(db)
+        cluster_proteins(dbs, np=args.numprocs, cdargs=args.cdargs)
+
+    print('[fidibus] all builds complete!', file=sys.stderr)
+
+
+if __name__ == '__main__':
+    main(get_parser().parse_args())

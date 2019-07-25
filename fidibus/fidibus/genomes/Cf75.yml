@@ -1,0 +1,13 @@
+Cf75:
+    species: Camponotus floridanus
+    common: carpenter ant
+    clade: ant
+    source: refseq
+    branch: invertebrate
+    accession: GCF_003227725.1
+    build: Cflo_v7.5
+    checksums:
+        gdna: 2c7ce711c95e9cb8aeac8cccd062f6a9e81ac94a
+        gff3: 11a144d63310ca2f7c0d0d13485921544f4f5a0e
+        prot: 87e1b17e9c559f7a03b750f2c141e897cb227994
+    description: Cflo v7.5 from University of Pennsylvania

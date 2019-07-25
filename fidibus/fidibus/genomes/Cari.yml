@@ -1,0 +1,17 @@
+Cari:
+    species: Cicer arietinum
+    common: chick pea
+    clade: dicot
+    source: refseq
+    branch: plant
+    accession: GCF_000331145.1
+    build: ASM33114v1
+    annotfilter:
+        - NC_011163.1
+    seqfilter:
+        - NC_011163.1
+    checksums:
+        gdna: f014c6e79ada4bc5de256a4415395d3a89f0cb58
+        gff3: 7cc980985b24102b5bc24afd4970cdbab39305f3
+        prot: 73930e03d405623557902f50d010182e2622e916
+    description: Build ASM33114v1 from BGI

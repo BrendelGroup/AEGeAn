@@ -1,0 +1,15 @@
+Bimp:
+    species: Bombus impatiens
+    common: common eastern bumble bee
+    clade:
+        - bee
+        - bumblebee
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000188095.1
+    build: BIMP_2.0
+    checksums:
+        gdna: 311bb5a6f3caf75c48b7c83ead6fdcb7b6bbb4a2
+        gff3: e6cedd917f735a3869d4c9975692f5c6ab4b92b0
+        prot: b694e018b0c8a5194746e6ac52eca34df0385154
+    description: BIMP_2.0 from University of Illinois

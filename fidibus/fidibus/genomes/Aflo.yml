@@ -1,0 +1,31 @@
+Aflo:
+    species: Apis florea
+    common: little honey bee
+    clade:
+        - bee
+        - honeybee
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000184785.1
+    build: Aflo_1.0
+    annotfilter:
+        - 'GeneID:100869736'
+        - 'GeneID:100872241'
+        - 'GeneID:105734816'
+        - 'GeneID:100866334'
+        - 'GeneID:100867240'
+        - 'GeneID:100869302'
+        - 'GeneID:100870387'
+        - 'GeneID:100863969'
+        - 'GeneID:100869872'
+        - 'GeneID:105735938'
+        - 'GeneID:100868935'
+        - 'GeneID:100866510'
+        - 'GeneID:100864030'
+        - 'GeneID:100869321'
+        - 'GeneID:100868109'
+    checksums:
+        gdna: cadd39c59a1d5b10c67c78d8c2c3e38a8aa091ae
+        gff3: 22fe8e1bae43f8c33b57ba4841d112fe11d74c61
+        prot: 05b76c748e7a8002894ee48825f3739a4b1a5a1a
+    description: Aflo_1.0 from HGSC@Baylor

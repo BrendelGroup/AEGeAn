@@ -1,0 +1,12 @@
+Csub:
+    species: Coccomyxa subellipsoidea
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000258705.1
+    build: Coccomyxa_subellipsoidae_v2.0
+    checksums:
+        gdna: 65048a13686b7b1a8b29e95d08160c6c33ef0c23
+        gff3: e437343ea19014ecf6259f07545902dc2ef8015c
+        prot: 450e2586d37ad0b8a7bf2cadf455c6c47082e9e8
+    description: v2.0 from JGI

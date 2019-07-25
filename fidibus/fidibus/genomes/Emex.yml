@@ -1,0 +1,13 @@
+Emex:
+    species: Eufriesea mexicana
+    common: orchid bee
+    clade: bee
+    source: beebase
+    scaffolds: Eufriesea_mexicana.v1.0.fa.gz
+    annotation: Eufriesea_mexicana_v1.1.gff.gz
+    proteins: Eufriesea_mexicana_v1.1.pep.fa.gz
+    checksums:
+        gdna: c54b6580747e3d7e8acff1695e9410396d2dfb84
+        gff3: 5ce7fc8318941263002b5d743e9fd414c83656dc
+        prot: ae6353b7059d89f75f5480e546435259c3fd622e
+    description: BeeBase annotation version 1.1

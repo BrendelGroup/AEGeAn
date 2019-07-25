@@ -1,0 +1,21 @@
+Osat:
+    species: Oryza sativa
+    common: rice
+    clade: monocot
+    source: refseq
+    branch: plant
+    accession: GCF_001433935.1
+    build: IRGSP-1.0
+    annotfilter:
+        - NC_011033.1
+        - NC_001751.1
+        - NC_001320.1
+    seqfilter:
+        - NC_011033.1
+        - NC_001751.1
+        - NC_001320.1
+    checksums:
+        gdna: 677e03458cf5149d053c0e4bf4e42da6b7674701
+        gff3: baf948e97a8d07f60e7a18c5643e399da8403e63
+        prot: 82f4cc25a3ccababfeee0ddae4a4d0fbe34f5423
+    description: Nipponbare reference from the IRGSP

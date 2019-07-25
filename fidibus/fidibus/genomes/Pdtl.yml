@@ -1,0 +1,13 @@
+Pdtl:
+    species: Polistes dominula
+    common: European paper wasp
+    clade: vespid
+    source: pdom
+    scaffolds: pdom-scaffolds-unmasked-r1.2.fa.gz
+    annotation: pdom-annot-r1.2.gff3
+    proteins: pdom-annot-r1.2-proteins.fa
+    checksums:
+        gdna: f5762ffee0c703c54f56f180879852c79ffcf284
+        gff3: 869e9661f04ab566a634612f1193f6b672926144
+        prot: a789c1e0365cb0500360ea9a273ec1497b3c8fa8
+    description: Toth lab release 1.2

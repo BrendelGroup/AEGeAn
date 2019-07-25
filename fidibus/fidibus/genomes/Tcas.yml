@@ -1,0 +1,17 @@
+Tcas:
+    species: Tribolium castaneum
+    common: red flour beetle
+    clade: beetle
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000002335.2
+    build: Tcas_3.0
+    annotfilter:
+        - NC_003081.2
+    seqfilter:
+        - NC_003081.2
+    checksums:
+        gdna: 91b7888e800957a853d4cd54b3cdfbd2cb4e12a5
+        gff3: 8bf350b4d7fbc72849a3c53f8387cd273db2acbf
+        prot: 62f982eacabf141cc75a46ec9fb4b4104f641a4b
+    description: Tcas_3.0 from Baylor

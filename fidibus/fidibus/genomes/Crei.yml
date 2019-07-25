@@ -1,0 +1,19 @@
+Crei:
+    species: Chlamydomonas reinhardtii
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000002595.1
+    build: v3.0
+    annotfilter:
+        - NC_001638.1
+        - NC_005353.1
+        - GeneID:5716281
+    seqfilter:
+        - NC_001638.1
+        - NC_005353.1
+    checksums:
+        gdna: 9817d2aaa86f004529807d1dde88cab7180c4d9b
+        gff3: 816d99f9b9e1be9639cafa396101d13637e8797d
+        prot: b5dc2092f56b9f675be8a2418b1588c3fd6b6dc8
+    description: v3.0 from JGI

@@ -1,0 +1,17 @@
+Grai:
+    species: Gossypium raimondii
+    common: cotton
+    clade: dicot
+    source: refseq
+    branch: plant
+    accession: GCF_000327365.1
+    build: Graimondii2_0
+    annotfilter:
+        - NC_016668.1
+    seqfilter:
+        - NC_016668.1
+    checksums:
+        gdna: 46c9209e9fc82d4b4fc7f42e76f422f438591c41
+        gff3: 35f8c180a05b32f2b1fa96f4cf5e1526344b72a8
+        prot: fb1f8c2d67b2633b079ab8dee50d3d3c94cf9c10
+    description: 2.0 from JGI

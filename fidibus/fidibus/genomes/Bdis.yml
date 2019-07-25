@@ -1,0 +1,17 @@
+Bdis:
+    species: Brachypodium distachyon
+    common: purple false brome
+    clade: monocot
+    source: refseq
+    branch: plant
+    accession: GCF_000005505.2
+    build: Brachypodium_distachyon_v2.0
+    annotfilter:
+        - NC_011032.1
+    seqfilter:
+        - NC_011032.1
+    checksums:
+        gdna: a7140dde7f1bf3017a7dc2a47d37d4e56496765a
+        gff3: 34ebba883133a3f91fa657c393a603ac59a9dc13
+        prot: c3c8412f23da39064b4afe85b34384f11a4c4ba0
+    description: Brachypodium_distachyon_v2.0 from JGI

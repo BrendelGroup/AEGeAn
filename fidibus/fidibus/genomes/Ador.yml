@@ -1,0 +1,15 @@
+Ador:
+    species: Apis dorsata
+    common: giant honey bee
+    clade:
+        - bee
+        - honeybee
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000469605.1
+    build: Apis_dorsata_1.3
+    checksums:
+        gdna: 4eac29771d018d9a1f7f67bccbdeb7dace37f74c
+        gff3: 55a6548af12c3114e5d4f2203efa93e2abf33bfa
+        prot: a53a2d9d517c77605e01e54406c875129654277b
+    description: Apis_dorsata_1.3 from CSHL

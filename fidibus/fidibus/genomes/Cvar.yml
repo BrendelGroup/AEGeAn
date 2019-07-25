@@ -1,0 +1,12 @@
+Cvar:
+    species: Chlorella variabilis
+    clade: green algae
+    source: refseq
+    branch: plant
+    accession: GCF_000147415.1
+    build: v_1.0
+    checksums:
+        gdna: b4b24d04c7f5a5f63e80cae88974387e33e9eebc
+        gff3: 07a7d1663d0546405382dd3b6174ddb677474052
+        prot: 1cf1f4db858f331711691c0b32b61fb96bdbe1ca
+    description: v_1.0 from JGI

@@ -1,0 +1,18 @@
+Sinv:
+    species: Solenopsis invicta
+    common: red fire ant
+    clade: ant
+    source: refseq
+    branch: invertebrate
+    accession: GCF_000188075.1
+    build: Si_gnG
+    annotfilter:
+        - NC_014672.1
+        - GeneID:105197556
+    seqfilter:
+        - NC_014672.1
+    checksums:
+        gdna: 85f90adfa3663d5aee9b698b0dc1dac5132e3832
+        gff3: 174475f69f5df33cc170a1f40078975199fe3aae
+        prot: 34f140008239cc319225e0e4c6a00d345f2b50be
+    description: Si_gnG from the University of Lausanne

@@ -1,0 +1,14 @@
+Cflo:
+    species: Camponotus floridanus
+    common: carpenter ant
+    clade: ant
+    source: refseq
+    suppressed: True
+    branch: invertebrate
+    accession: GCF_000147175.1
+    build: CamFlo_1.0
+    checksums:
+        gdna: 389d8de5a0a8a43b91ce51d5d9c22cbf5e7b779f
+        gff3: 21aadc9e64650a98468b43e3db1530cdab2d98a8
+        prot: ebc8f0000580f6841a3c1d82057811896267cb8a
+    description: CamFlo_1.0 from BGI-Shenzhen

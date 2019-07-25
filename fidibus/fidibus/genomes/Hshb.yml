@@ -1,0 +1,15 @@
+Hshb:
+    species: Harpegnathos saltator
+    common: jumping ant
+    clade: ant
+    source: hymbase
+    scaffolds: Hsal_3.3_scaffolds.fa.gz
+    annotation: hsal_OGSv3.3.gff3.gz
+    proteins: hsal_OGSv3.3_pep.fa.gz
+    annotfilter:
+        - HSAL25946
+    checksums:
+        gdna: 77376be25415e67fe087d1e6411bf4793b8fd818
+        gff3: 027d8a43628a82d7f03a069040caf2584329ee38
+        prot: 1bd866156cce8f4a981ede83cb74dff040897923
+    description: Official Gene Set version 3.3
