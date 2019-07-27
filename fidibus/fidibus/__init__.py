@@ -48,7 +48,7 @@ del get_versions
 test_registry = registry.Registry()
 test_registry_supp = registry.Registry()
 try:
-    # This will only work when the current working directory is the GenHub
+    # This will only work when the current working directory is the fidibus 
     # root directory. Fine since it's only for development.
     test_registry_supp.update('testdata/conf')
 except FileNotFoundError:  # pragma: no cover

@@ -15,7 +15,7 @@ import sys
 
 def compute(db, logstream=sys.stderr):  # pragma: no cover
     if logstream is not None:
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'calculating feature statistics'
         print(logmsg, file=logstream)
 

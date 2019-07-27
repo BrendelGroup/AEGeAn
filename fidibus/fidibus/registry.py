@@ -25,7 +25,7 @@ except NameError:  # pragma: no cover
 class Registry(object):
 
     def __init__(self):
-        """Initialize the registry with the default GenHub configs."""
+        """Initialize the registry with the default fidibus configs."""
         fidibusdir = pkg_resources.resource_filename('fidibus', 'genomes')
         self.update(fidibusdir, clear=True)
 

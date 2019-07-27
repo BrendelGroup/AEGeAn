@@ -187,7 +187,7 @@ class GenomeDB(object):
         """Download genomic DNA sequence."""
         subprocess.call(['mkdir', '-p', self.dbdir])
         if logstream is not None:
-            logmsg = '[GenHub: %s] ' % self.config['species']
+            logmsg = '[fidibus: %s] ' % self.config['species']
             logmsg += 'download genome sequence from %r' % self
             print(logmsg, file=logstream)
         fidibus.download.url_download(self.gdnaurl, self.gdnapath,
@@ -197,7 +197,7 @@ class GenomeDB(object):
         """Download genome annotation."""
         subprocess.call(['mkdir', '-p', self.dbdir])
         if logstream is not None:
-            logmsg = '[GenHub: %s] ' % self.config['species']
+            logmsg = '[fidibus: %s] ' % self.config['species']
             logmsg += 'download genome annotation from %r' % self
             print(logmsg, file=logstream)
         fidibus.download.url_download(self.gff3url, self.gff3path,
@@ -207,7 +207,7 @@ class GenomeDB(object):
         """Download protein sequences."""
         subprocess.call(['mkdir', '-p', self.dbdir])
         if logstream is not None:
-            logmsg = '[GenHub: %s] ' % self.config['species']
+            logmsg = '[fidibus: %s] ' % self.config['species']
             logmsg += 'download protein sequences from %r' % self
             print(logmsg, file=logstream)
         fidibus.download.url_download(self.proturl, self.protpath,
@@ -245,7 +245,7 @@ class GenomeDB(object):
         assert datatype in datatypes
 
         if logstream is not None:  # pragma: no cover
-            logmsg = '[GenHub: %s] ' % self.config['species']
+            logmsg = '[Genome: %s] ' % self.config['species']
             logmsg += 'preprocess %s' % datatypes[datatype]
             print(logmsg, file=logstream)
 

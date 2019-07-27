@@ -24,7 +24,7 @@ def intervals(db, delta=500, ilcformat='{}ILC-%05lu', logstream=sys.stderr):
     details.
     """
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] computing interval loci' % db.config['species']
+        logmsg = '[Genome: %s] computing interval loci' % db.config['species']
         print(logmsg, file=logstream)
 
     nameformat = ilcformat.format(db.label)
@@ -38,7 +38,7 @@ def intervals(db, delta=500, ilcformat='{}ILC-%05lu', logstream=sys.stderr):
     subprocess.check_call(cmd)
 
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] merging iLoci' % db.config['species']
+        logmsg = '[Genome: %s] merging iLoci' % db.config['species']
         print(logmsg, file=logstream)
     infile = '%s/%s.iloci.gff3' % (specdir, db.label)
     outfile = '%s/%s.miloci.gff3' % (specdir, db.label)
@@ -49,7 +49,7 @@ def intervals(db, delta=500, ilcformat='{}ILC-%05lu', logstream=sys.stderr):
 def simple(db, logstream=sys.stderr):
     """Determine simple iLoci (those containing a single gene)."""
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] determining simple iLoci' % db.config['species']
+        logmsg = '[Genome: %s] determining simple iLoci' % db.config['species']
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
     ilocusfile = '%s/%s.iloci.gff3' % (specdir, db.label)
@@ -67,7 +67,7 @@ def simple(db, logstream=sys.stderr):
 def representatives(db, logstream=sys.stderr):
     """Select a single representative gene model for each iLocus."""
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'selecting iLocus representatives'
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
@@ -95,7 +95,7 @@ def representatives(db, logstream=sys.stderr):
 def sequences(db, logstream=sys.stderr):
     """Extract iLocus sequences."""
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'extracting iLocus sequences'
         print(logmsg, file=logstream)
 
@@ -121,7 +121,7 @@ def sequences(db, logstream=sys.stderr):
 def ancillary(db, logstream=sys.stderr):
     """Process iLocus ancillary data."""
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] iLoci ancillary data' % db.config['species']
+        logmsg = '[Genome: %s] iLoci ancillary data' % db.config['species']
         print(logmsg, file=logstream)
 
     specdir = '%s/%s' % (db.workdir, db.label)

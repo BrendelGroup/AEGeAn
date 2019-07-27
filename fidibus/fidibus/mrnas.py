@@ -73,7 +73,7 @@ def mature_mrna_intervals(db, logstream=sys.stderr):
     enabling sequence extraction via xtractore.
     """
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'calculating mature mRNA intervals'
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
@@ -112,7 +112,7 @@ def mature_mrna_intervals(db, logstream=sys.stderr):
 
 def sequences(db, logstream=sys.stderr):
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'extracting pre-mRNA and mature mRNA sequences'
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
