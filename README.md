@@ -9,6 +9,13 @@ Please find detailed installation instructions and options in the
 [INSTALL](./INSTALL.md) document.
 
 
+## FAQ
+
+Please see
+[our wiki FAQ pages](https://github.com/BrendelGroup/AEGeAn/wiki/FAQ)
+for usage examples and suggestions.
+
+
 
 Copyright (c) 2010-2016, Daniel S. Standage and [CONTRIBUTORS](https://github.com/BrendelGroup/AEGeAn/blob/master/docs/contrib.rst).
 See LICENSE and for details.
