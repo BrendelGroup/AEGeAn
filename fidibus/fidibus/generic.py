@@ -44,7 +44,7 @@ class GenericDB(fidibus.genomedb.GenomeDB):
     def download(self, logstream=sys.stderr):
         subprocess.call(['mkdir', '-p', self.dbdir])
         if logstream is not None:  # pragma: no cover
-            msg = '[GenHub: %s] checking input files' % self.config['species']
+            msg = '[Genome: %s] checking input files' % self.config['species']
             print(msg, file=logstream)
         assert os.path.isfile(self.gdnapath), \
             'gDNA file {} does not exist'.format(self.gdnapath)

@@ -23,7 +23,7 @@ def ids(db, logstream=sys.stderr):  # pragma: no cover
     method for this retrieval.
     """
     if logstream is not None:
-        logmsg = '[GenHub: %s] retrieving protein IDs' % db.config['species']
+        logmsg = '[Genome: %s] retrieving protein IDs' % db.config['species']
         print(logmsg, file=logstream)
 
     specdir = '%s/%s' % (db.workdir, db.label)
@@ -37,7 +37,7 @@ def ids(db, logstream=sys.stderr):  # pragma: no cover
 def sequences(db, logstream=sys.stderr):
     """Extract protein sequences."""
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'extracting protein sequences'
         print(logmsg, file=logstream)
 
@@ -61,14 +61,14 @@ def mapping(db, only_reps=False, logstream=sys.stderr):
     The `db` variable, a `GenomeDB` object, must implement a `protein_mapping`
     method for this retrieval.
     """
-    if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
-        logmsg += 'parsing protein->iLocus mapping'
-        print(logmsg, file=logstream)
 
     specdir = '%s/%s' % (db.workdir, db.label)
     infile = '%s/%s.iloci.gff3' % (specdir, db.label)
     if only_reps:
+        if logstream is not None:  # pragma: no cover
+            logmsg = '[Genome: %s] ' % db.config['species']
+            logmsg += 'parsing protein->iLocus reps mapping'
+            print(logmsg, file=logstream)
         outfile = '%s/%s.protein2ilocus.repr.tsv' % (specdir, db.label)
         repfile = '%s/%s.protids.txt' % (specdir, db.label)
         protreps = dict()
@@ -77,6 +77,10 @@ def mapping(db, only_reps=False, logstream=sys.stderr):
                 protid = line.strip()
                 protreps[protid] = True
     else:
+        if logstream is not None:  # pragma: no cover
+            logmsg = '[Genome: %s] ' % db.config['species']
+            logmsg += 'parsing protein->iLocus alls mapping'
+            print(logmsg, file=logstream)
         outfile = '%s/%s.protein2ilocus.tsv' % (specdir, db.label)
     with open(infile, 'r') as instream, open(outfile, 'w') as outstream:
         print('ProteinID', 'piLocusID', sep='\t', file=outstream)

@@ -18,7 +18,7 @@ import fidibus
 
 def cds_sequences(db, logstream=sys.stderr):
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'extracting coding sequences'
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
@@ -42,7 +42,7 @@ def cds_sequences(db, logstream=sys.stderr):
 
 def exon_sequences(db, logstream=sys.stderr):
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'extracting exon sequences'
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
@@ -83,7 +83,7 @@ def parse_intron_accessions(instream):
 
 def intron_sequences(db, logstream=sys.stderr):
     if logstream is not None:  # pragma: no cover
-        logmsg = '[GenHub: %s] ' % db.config['species']
+        logmsg = '[Genome: %s] ' % db.config['species']
         logmsg += 'extracting intron sequences'
         print(logmsg, file=logstream)
     specdir = '%s/%s' % (db.workdir, db.label)
