@@ -1,6 +1,6 @@
 # AEGeAn Installation and Setup
 
-## Installation as a singularity container [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/3301)
+## Installation as a singularity container [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/3327)
 
 All the AEGeAn dependencies are encapsulated in a
 [Singularity](https://www.sylabs.io/docs/) container available from
@@ -8,7 +8,7 @@ All the AEGeAn dependencies are encapsulated in a
 
 Assuming _git_ and  _singularity_ are installed on your system, you can get the
 AEGeAn code from GitHub and the container from the
-[Singularity Hub](https://www.singularity-hub.org/collections/3301) as follows:
+[Singularity Hub](https://www.singularity-hub.org/collections/3327) as follows:
 
 ```bash
 git clone https://github.com/BrendelGroup/AEGeAn.git
