@@ -4,8 +4,8 @@
 # Copyright (c) 2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2016   Indiana University
 #
-# This file is part of fidibus (http://github.com/standage/fidibus) and is
-# licensed under the BSD 3-clause license: see LICENSE.txt.
+# This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
+# licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
 from __future__ import division
@@ -13,15 +13,12 @@ from __future__ import print_function
 import argparse
 import pandas
 import re
-import fidibus
 
 
 def cli():
     """Define the command-line interface of the program."""
     desc = 'Summarize iLocus content of the specified genome(s)'
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('-v', '--version', action='version',
-                        version='fidibus v%s' % fidibus.__version__)
     parser.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
                         help='directory (or comma-separated list of '
                         'directories) from which to load user-supplied genome '
@@ -101,19 +98,16 @@ def main(args):
                         'Singletons']
     print_row(column_names, args.outfmt)
 
-    registry = fidibus.registry.Registry()
-    if args.cfgdir:
-        for cfgdirpath in args.cfgdir.split(','):
-            registry.update(cfgdirpath)
-
     for species in args.species:
-        db = registry.genome(species, workdir=args.workdir)
-        if args.shuffled:
-            iloci = pandas.read_table(db.ilocustableshuf)
-            miloci = pandas.read_table(db.milocustableshuf)
-        else:
-            iloci = pandas.read_table(db.ilocustable)
-            miloci = pandas.read_table(db.milocustable)
+        dtype = 'loci.shuffled' if args.shuffled else 'loci'
+        ilocustable = '{wd:s}/{spec:s}/{spec:s}.i{dt:s}.tsv'.format(
+            wd=args.workdir, spec=species, dt=dtype,
+        )
+        milocustable = '{wd:s}/{spec:s}/{spec:s}.mi{dt:s}.tsv'.format(
+            wd=args.workdir, spec=species, dt=dtype,
+        )
+        iloci = pandas.read_table(ilocustable)
+        miloci = pandas.read_table(milocustable)
         row = get_row(iloci, miloci, args.outfmt)
         print_row(row, args.outfmt)
 

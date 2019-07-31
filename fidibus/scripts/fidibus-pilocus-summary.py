@@ -4,8 +4,8 @@
 # Copyright (c) 2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2016   Indiana University
 #
-# This file is part of fidibus (http://github.com/standage/fidibus) and is
-# licensed under the BSD 3-clause license: see LICENSE.txt.
+# This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
+# licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
 from __future__ import division
@@ -14,15 +14,13 @@ import argparse
 import pandas
 import re
 import sys
-import fidibus
+import genhub
 
 
 def cli():
     """Define the command-line interface of the program."""
     desc = 'Summarize piLocus content of the specified genome(s)'
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('-v', '--version', action='version',
-                        version='fidibus v%s' % fidibus.__version__)
     parser.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
                         help='directory (or comma-separated list of '
                         'directories) from which to load user-supplied genome '
@@ -84,15 +82,15 @@ def main(args):
                         'Single Exon piLoci']
     print_row(column_names, args.outfmt)
 
-    registry = fidibus.registry.Registry()
-    if args.cfgdir:
-        for cfgdirpath in args.cfgdir.split(','):
-            registry.update(cfgdirpath)
-
     for species in args.species:
-        db = registry.genome(species, workdir=args.workdir)
-        iloci = pandas.read_table(db.ilocustable)
-        premrnas = pandas.read_table(db.premrnatable)
+        ilocustable = '{wd:s}/{spec:s}/{spec:s}.iloci.tsv'.format(
+            wd=args.workdir, spec=species
+        )
+        premrnatable = '{wd:s}/{spec:s}/{spec:s}.pre-mrnas.tsv'.format(
+            wd=args.workdir, spec=species
+        )
+        iloci = pandas.read_table(ilocustable)
+        premrnas = pandas.read_table(premrnatable)
         row = get_row(iloci, premrnas, args.outfmt)
         print_row(row, args.outfmt)
 
