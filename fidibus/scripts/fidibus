@@ -65,7 +65,7 @@ def cluster_proteins(dbs, np=1, cdargs=None):
                 for line in instream:
                     print(line, end='', file=outstream)
             for protid, locid in db.get_prot_map():
-                protmap[protid] = locid
+                protmap[db.label+protid] = locid
 
     print('[fidibus] clustering representative proteins', file=sys.stderr)
     if cdargs is None:
@@ -81,7 +81,7 @@ def cluster_proteins(dbs, np=1, cdargs=None):
     with open('fidibus.prot.clstr', 'r') as infile, \
             open('fidibus.hiloci.tsv', 'w') as outfile:
         for clusterid, clusterseqs in fidibus.cdhit.parse_clusters(infile):
-            iloci = [protmap[prot.accession] for prot in clusterseqs]
+            iloci = [protmap[prot.species+prot.accession] for prot in clusterseqs]
             species = set([prot.species for prot in clusterseqs])
             print(len(iloci), len(species), ','.join(iloci), ','.join(species),
                   sep='\t', file=outfile)
