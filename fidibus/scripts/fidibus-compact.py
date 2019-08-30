@@ -159,7 +159,11 @@ def main(args):
         seqids = list()
         for seqid, length in longseqs(db, args.length):
             length = seqlen(seqid, iloci, ithresh, gthresh)
-            phi = calc_phi(seqid, iloci, miloci, gthresh)
+            try:
+                phi = calc_phi(seqid, iloci, miloci, gthresh)
+            except ZeroDivisionError:
+                continue
+            # ... the exception occurs when sequence seqid contains no giloci
             milocus_occ = miloci.loc[
                 (miloci.SeqID == seqid) &
                 (miloci.LocusClass == 'miLocus')
