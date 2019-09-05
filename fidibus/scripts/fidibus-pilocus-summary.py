@@ -14,7 +14,6 @@ import argparse
 import pandas
 import re
 import sys
-import genhub
 
 
 def cli():
