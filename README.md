@@ -25,6 +25,7 @@ This documentation is focused on the core C library and the programs that direct
 
 Documentation for the fidibus module, recently merged into AEGeAn, is available from the original (and now deprecated) GenHub project.
 
+- quick start: https://github.com/standage/genhub/#quick-start-example-usages
 - user manual: https://github.com/standage/genhub/blob/master/docs/MANUAL.md
 - developer documentation: https://github.com/standage/genhub/blob/master/docs/DEVELOP.md
 
