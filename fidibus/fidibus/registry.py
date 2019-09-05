@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 #
 # -----------------------------------------------------------------------------
-# Copyright (c) 2015-2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2015-2016   Indiana University
 #
-# This file is part of fidibus (http://github.com/standage/fidibus) and is
-# licensed under the BSD 3-clause license: see LICENSE.txt.
+# This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
+# licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
 """Module implementing a registry for handling genome configuration files."""

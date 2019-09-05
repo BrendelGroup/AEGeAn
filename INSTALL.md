@@ -28,7 +28,7 @@ For a gentle introduction to singularity, see our group
 AEGeAn use via the singularity container is highly recommended, with no known
 drawbacks.
 However, if desired, you can of course install all the required third party
-software and our _fidibus_ python package individually on your computer system.
+software and our _fidibus_ Python package individually on your computer system.
 The singularity [recipe file](./Singularity) in this repository should serve as
 a guide to perform such an installation.
 The `aegean.simg` container was built on the 
