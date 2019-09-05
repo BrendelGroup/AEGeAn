@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2016   Indiana University
 #
 # This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is

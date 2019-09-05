@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 #
 # -----------------------------------------------------------------------------
-# Copyright (c) 2017   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2017   Regents of the University of California.
 #
-# This file is part of fidibus (http://github.com/standage/fidibus) and is
-# licensed under the BSD 3-clause license: see LICENSE.txt.
+# This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
+# licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
 """
