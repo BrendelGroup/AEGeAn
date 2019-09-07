@@ -170,7 +170,7 @@ def main(args):
             seqids.append(seqid)
 
         if args.centroid:
-            if len(phis)*len(sigmas) == 0:
+            if len(phis)*len(sigmas) > 0:
                 phi, sigma = calc_centroid(phis, sigmas, args.centroid)
                 print(species, 'Centroid', sigma, phi, sep='\t')
         else:
