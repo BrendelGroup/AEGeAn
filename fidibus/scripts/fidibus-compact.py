@@ -170,8 +170,9 @@ def main(args):
             seqids.append(seqid)
 
         if args.centroid:
-            phi, sigma = calc_centroid(phis, sigmas, args.centroid)
-            print(species, 'Centroid', sigma, phi, sep='\t')
+            if len(phis)*len(sigmas) > 0:
+                phi, sigma = calc_centroid(phis, sigmas, args.centroid)
+                print(species, 'Centroid', sigma, phi, sep='\t')
         else:
             for seqid, sigma, phi in zip(seqids, sigmas, phis):
                 print(species, seqid, sigma, phi, sep='\t')
