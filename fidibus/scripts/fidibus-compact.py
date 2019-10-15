@@ -91,12 +91,12 @@ def seqlen(seqid, iloci, ithresh=None, gthresh=None):
     if ithresh:
         longiiloci = seqloci.loc[(seqloci.LocusClass == 'iiLocus') &
                                  (seqloci.Length > ithresh)]
-        effsize -= longiiloci['Length'].sum()
+        effsize -= longiiloci['EffectiveLength'].sum()
     if gthresh:
         gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
         shortgiloci = seqloci.loc[(seqloci.LocusClass.isin(gilocus_types)) &
                                   (seqloci.Length < gthresh)]
-        effsize -= shortgiloci['Length'].sum()
+        effsize -= shortgiloci['EffectiveLength'].sum()
     return effsize
 
 
