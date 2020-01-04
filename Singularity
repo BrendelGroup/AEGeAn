@@ -12,7 +12,7 @@ From: fedora:30
     dnf -y install gcc-c++ make ruby
     dnf -y install cairo-devel pango-devel zlib-devel
     dnf -y install python2-pycurl python2-pyyaml python2-pandas python2-pytest
-    dnf -y install python3-pycurl python3-pyyaml python3-pandas python2-pytest
+    dnf -y install python3-pycurl python3-pyyaml python3-pandas python3-pytest
     dnf -y install pandoc
 
 
