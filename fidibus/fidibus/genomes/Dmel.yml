@@ -14,6 +14,6 @@ Dmel:
         - NC_024511.2
     checksums:
         gdna: e4176036c90a917372821bbf3498f6d232e69690
-        gff3: ff50e6dbe5269c5e0489caef6df93ddc6cea2375
-        prot: 633b5ad0f800cfd2762814e74ba02551a22ffcca
+        gff3: 6996256751ce91497e55a738a0afbb9d0bb2e095
+        prot: 8ebe8f5ba45da64b79f379016b019f7d4b4d6168
     description: Release 6 (plus ISO1 MT) from the FlyBase Consortium
