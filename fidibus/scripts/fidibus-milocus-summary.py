@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2016   Indiana University
 #
 # This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
@@ -56,7 +55,7 @@ def get_row(ilocus_data, milocus_data, fmt):
     effective_genome = milocus_data.loc[milocus_data.LocusClass != 'fiLocus']
     effective_genome_size = effective_genome['EffectiveLength'].sum()
     milocus_occ = miloci['EffectiveLength'].sum()
-    milocus_perc = milocus_occ / effective_genome_size
+    milocus_perc = milocus_occ / effective_genome_size * 100 
     gene_count = miloci['GeneCount'].quantile([0.25, 0.50, 0.75])
     gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
     singletons = milocus_data.loc[milocus_data.LocusClass.isin(gilocus_types)]
@@ -66,7 +65,7 @@ def get_row(ilocus_data, milocus_data, fmt):
     if fmt == 'tsv':
         genecounts = ','.join(['{:.0f}'.format(gc) for gc in gene_count])
         row = [species, milocus_count, milocus_occ, milocus_perc,
-               genecounts, len(singletons), len(giloci)]
+               genecounts, len(singletons), 100 * len(singletons) / len(giloci)]
     elif fmt == 'tex':
         count = '{:,d}'.format(milocus_count)
         occupancy = '{:,.1f} Mb ({:.1f}\\%)'.format(milocus_occ / 1000000,

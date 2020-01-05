@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 #
 # -----------------------------------------------------------------------------
-# Copyright (c) 2015-2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2015-2016   Indiana University
 # Copyright (c) 2016        The Regents of the University of California
 #
-# This file is part of fidibus (http://github.com/standage/fidibus) and is
-# licensed under the BSD 3-clause license: see LICENSE.txt.
+# This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
+# licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
 """Simple module for downloading data with PycURL"""

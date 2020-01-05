@@ -9,6 +9,7 @@ Dmel:
     annotfilter:
         - NC_024511.2
         - exception=trans-splicing
+        - Dmel_CG32491
     seqfilter:
         - NC_024511.2
     checksums:

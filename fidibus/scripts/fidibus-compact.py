@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 #
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016   Daniel Standage <daniel.standage@gmail.com>
 # Copyright (c) 2016   Indiana University
 #
-# This file is part of fidibus (http://github.com/standage/fidibus) and is
-# licensed under the BSD 3-clause license: see LICENSE.txt.
+# This file is part of AEGeAn (http://github.com/BrendelGroup/AEGeAn) and is
+# licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
 from __future__ import print_function
@@ -57,8 +56,8 @@ def cli():
     return parser
 
 
-def longseqs(db, minlength=1000000):
-    with open(db.gff3file, 'r') as gff3:
+def longseqs(gff3file, minlength=1000000):
+    with open(gff3file, 'r') as gff3:
         for line in gff3:
             if not line.startswith('##sequence-region'):
                 continue
@@ -91,12 +90,12 @@ def seqlen(seqid, iloci, ithresh=None, gthresh=None):
     if ithresh:
         longiiloci = seqloci.loc[(seqloci.LocusClass == 'iiLocus') &
                                  (seqloci.Length > ithresh)]
-        effsize -= longiiloci['Length'].sum()
+        effsize -= longiiloci['EffectiveLength'].sum()
     if gthresh:
         gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
         shortgiloci = seqloci.loc[(seqloci.LocusClass.isin(gilocus_types)) &
                                   (seqloci.Length < gthresh)]
-        effsize -= shortgiloci['Length'].sum()
+        effsize -= shortgiloci['EffectiveLength'].sum()
     return effsize
 
 
@@ -138,32 +137,29 @@ def calc_centroid(x, y, outlierfactor=2.25):
 
 def main(args):
     print('Species', 'SeqID', 'Sigma', 'Phi', sep='\t')
-
-    registry = fidibus.registry.Registry()
-    if args.cfgdir:
-        for cfgdirpath in args.cfgdir.split(','):
-            registry.update(cfgdirpath)
-
     for species in args.species:
-        db = registry.genome(species, workdir=args.workdir)
-        if args.shuffled:
-            iloci = pandas.read_table(db.ilocustableshuf)
-            miloci = pandas.read_table(db.milocustableshuf)
-        else:
-            iloci = pandas.read_table(db.ilocustable)
-            miloci = pandas.read_table(db.milocustable)
+        dtype = 'loci.shuffled' if args.shuffled else 'loci'
+        ilocustable = '{wd:s}/{spec:s}/{spec:s}.i{dt:s}.tsv'.format(
+            wd=args.workdir, spec=species, dt=dtype,
+        )
+        milocustable = '{wd:s}/{spec:s}/{spec:s}.mi{dt:s}.tsv'.format(
+            wd=args.workdir, spec=species, dt=dtype,
+        )
+        iloci = pandas.read_table(ilocustable)
+        miloci = pandas.read_table(milocustable)
         ithresh, gthresh = thresholds(iloci, args.iqnt, args.gqnt)
 
         phis = list()
         sigmas = list()
         seqids = list()
-        for seqid, length in longseqs(db, args.length):
+        gff3file = '{wd:s}/{spec:s}/{spec:s}.gff3'.format(wd=args.workdir, spec=species)
+        for seqid, length in longseqs(gff3file, args.length):
             length = seqlen(seqid, iloci, ithresh, gthresh)
             try:
                 phi = calc_phi(seqid, iloci, miloci, gthresh)
             except ZeroDivisionError:
+                # ... the exception occurs when sequence seqid contains no giloci
                 continue
-            # ... the exception occurs when sequence seqid contains no giloci
             milocus_occ = miloci.loc[
                 (miloci.SeqID == seqid) &
                 (miloci.LocusClass == 'miLocus')
@@ -174,8 +170,9 @@ def main(args):
             seqids.append(seqid)
 
         if args.centroid:
-            phi, sigma = calc_centroid(phis, sigmas, args.centroid)
-            print(species, 'Centroid', sigma, phi, sep='\t')
+            if len(phis)*len(sigmas) > 0:
+                phi, sigma = calc_centroid(phis, sigmas, args.centroid)
+                print(species, 'Centroid', sigma, phi, sep='\t')
         else:
             for seqid, sigma, phi in zip(seqids, sigmas, phis):
                 print(species, seqid, sigma, phi, sep='\t')
