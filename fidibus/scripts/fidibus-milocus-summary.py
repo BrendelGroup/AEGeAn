@@ -60,19 +60,19 @@ def get_row(ilocus_data, milocus_data, fmt):
     gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
     singletons = milocus_data.loc[milocus_data.LocusClass.isin(gilocus_types)]
     giloci = ilocus_data.loc[ilocus_data.LocusClass.isin(gilocus_types)]
-    single_frac = len(singletons) / len(giloci)
+    singleton_perc = len(singletons) / len(giloci) * 100
 
     if fmt == 'tsv':
         genecounts = ','.join(['{:.0f}'.format(gc) for gc in gene_count])
         row = [species, milocus_count, milocus_occ, milocus_perc,
-               genecounts, len(singletons), 100 * len(singletons) / len(giloci)]
+               genecounts, len(singletons), singleton_perc       ]
     elif fmt == 'tex':
         count = '{:,d}'.format(milocus_count)
         occupancy = '{:,.1f} Mb ({:.1f}\\%)'.format(milocus_occ / 1000000,
-                                                    milocus_perc * 100)
+                                                    milocus_perc          )
         genecounts = ', '.join(['{:.0f}'.format(gc) for gc in gene_count])
         singles = '{:,d} ({:.1f}\\%)'.format(len(singletons),
-                                             single_frac * 100)
+                                             singleton_perc  )
         row = [species, count, occupancy, genecounts, singles]
 
     return row

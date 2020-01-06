@@ -43,9 +43,9 @@ def get_row(iloci, premrnas, fmt):
     effective_genome = iloci.loc[iloci.LocusClass != 'fiLocus']
     effective_genome_size = effective_genome['EffectiveLength'].sum()
     pilocus_occ = piloci['EffectiveLength'].sum()
-    pilocus_occ_perc = pilocus_occ / effective_genome_size
+    pilocus_occ_perc = pilocus_occ / effective_genome_size * 100
     single_exon_piloci = len(premrnas[premrnas['ExonCount'] == 1])
-    single_exon_perc = single_exon_piloci / len(premrnas)
+    single_exon_perc = single_exon_piloci / len(premrnas) * 100
 
     if fmt == 'tsv':
         row = [species, pilocus_count, pilocus_occ, pilocus_occ_perc,
@@ -53,9 +53,9 @@ def get_row(iloci, premrnas, fmt):
     elif fmt == 'tex':
         count = '{:,d}'.format(pilocus_count)
         occupancy = '{:,.1f} Mb ({:.1f}\\%)'.format(pilocus_occ / 1000000,
-                                                    pilocus_occ_perc * 100)
+                                                    pilocus_occ_perc      )
         sepiloci = '{:,d} ({:.1f}\\%)'.format(single_exon_piloci,
-                                              single_exon_perc * 100)
+                                              single_exon_perc   )
         row = [species, count, occupancy, sepiloci]
 
     return row
