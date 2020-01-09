@@ -17,7 +17,7 @@ Scer:
     seqfilter:
         - NC_001224.1
     checksums:
-        gdna: b422facd27488fda09236e608b2a8d14d2b9bec0
-        gff3: 6ae5f4ea43f81aa20a0528ff26e8fa9de185f0bc
-        prot: 45b5fb51bd7a21c7c53b714fc9a50ffad66fe2cf
+        gdna: 03cd264e3061cc4febeb4bc12f5d2cf02c9e65ed
+        gff3: 278a01dfb48156d6ff61612f4edbe2beff7584cf
+        prot: 61e23cb521408fe7ea38f2917d4ab5c7b021e1eb
     description: R64 from SGD

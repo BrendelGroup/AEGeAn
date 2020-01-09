@@ -11,7 +11,7 @@ Drer:
     seqfilter:
         - NC_002333.2
     checksums:
-        gdna: a94a614ac7592fad2f274c24fc67d7b9ccd5f5b3
+        gdna: 27d539979e364802b013a84f62e9e310b4cb2ca3
         gff3: c574e7bed4b8f1837408376bd38dc3617c7729f0
-        prot: c618d02dd64160b77b0c358c1fe827844e27d41d
+        prot: 826c8cf4c2fc7a3c3e9df5bc7cccbec6038e5e3a
     description: GRCz10 from the Genome Reference Consortium

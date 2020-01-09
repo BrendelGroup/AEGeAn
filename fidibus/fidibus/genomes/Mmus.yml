@@ -15,6 +15,6 @@ Mmus:
         - NT_
     checksums:
         gdna: c2598bc76966740ef4053a285e795185fad56b89
-        gff3: c864f885e6f127cfd0be82f69badd9a42d376eaf
+        gff3: 50545afa101323d1d1bb9ee55006c7f5b0de0f50
         prot: cd834f9c48ec95f9c3401e441ccd883548d2ea02
     description: GRCm38.p4 from the Genome Reference Consortium

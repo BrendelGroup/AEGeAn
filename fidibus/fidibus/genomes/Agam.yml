@@ -12,7 +12,7 @@ Agam:
     seqfilter:
         - NC_002084.1
     checksums:
-        gdna: 1618adb863cda2c00c45d642c609b53f5e86aa02
-        gff3: e6804295b2dceaed4973c51fcc01a582a89b449b
-        prot: 9586cba9beda13caf8a0f2f54272a61862f98ba9
+        gdna: 70a2f8b91d4d83e1b950de59a22b8e8a15363923
+        gff3: 0c6949cfbc22a5e91f25683b2a1dbe2ecc335c73
+        prot: bf53220ce4bb4fca8d419534023af0b84e597ab8
     description: AgamP3 from the Anopheles sequencing consortium
