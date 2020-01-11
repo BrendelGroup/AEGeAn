@@ -90,8 +90,8 @@ def print_row(values, fmt):
 
 
 def main(args):
-    column_names = ['Species', 'miLoci', 'Occupancy', 'GenomeFraction',
-                    'GeneCountQuartiles', 'Singletons', 'SingletonFraction']
+    column_names = ['Species', 'miLoci', 'Occupancy', 'GenomePercent',
+                    'GeneCountQuartiles', 'Singletons', 'SingletonPercent']
     if args.outfmt == 'tex':
         column_names = ['Species', 'miLoci', 'Occupancy', 'Gene Count',
                         'Singletons']
