@@ -52,6 +52,7 @@ def run_build(builddata):
 
     print('[fidibus: %s] build complete!' % db.config['species'],
           file=sys.stderr)
+    sys.stderr.flush()
 
 
 def cluster_proteins(dbs, np=1, cdargs=None):
