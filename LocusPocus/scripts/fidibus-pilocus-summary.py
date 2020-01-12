@@ -73,8 +73,8 @@ def print_row(values, fmt):
 
 
 def main(args):
-    column_names = ['Species', 'piLoci', 'Occupancy', 'GenomeFraction',
-                    'SingleExon_piLoci', 'SingleExonFraction']
+    column_names = ['Species', 'piLoci', 'Occupancy', 'GenomePercent',
+                    'SingleExon_piLoci', 'SingleExonPercent']
     if args.outfmt == 'tex':
         column_names = ['Species', 'piLoci', 'Occupancy',
                         'Single Exon piLoci']
