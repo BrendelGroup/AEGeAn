@@ -26,7 +26,7 @@ import os
 import subprocess
 import sys
 import tempfile
-import fidibus
+import LocusPocus
 try:
     FileNotFoundError
 except NameError:  # pragma: no cover
@@ -189,7 +189,7 @@ class GenomeDB(object):
             logmsg = '[fidibus: %s] ' % self.config['species']
             logmsg += 'download genome sequence from %r' % self
             print(logmsg, file=logstream)
-        fidibus.download.url_download(self.gdnaurl, self.gdnapath,
+        LocusPocus.download.url_download(self.gdnaurl, self.gdnapath,
                                      compress=self.compress_gdna)
 
     def download_gff3(self, logstream=sys.stderr):  # pragma: no cover
@@ -199,7 +199,7 @@ class GenomeDB(object):
             logmsg = '[fidibus: %s] ' % self.config['species']
             logmsg += 'download genome annotation from %r' % self
             print(logmsg, file=logstream)
-        fidibus.download.url_download(self.gff3url, self.gff3path,
+        LocusPocus.download.url_download(self.gff3url, self.gff3path,
                                      compress=self.compress_gff3)
 
     def download_prot(self, logstream=sys.stderr):  # pragma: no cover
@@ -209,7 +209,7 @@ class GenomeDB(object):
             logmsg = '[fidibus: %s] ' % self.config['species']
             logmsg += 'download protein sequences from %r' % self
             print(logmsg, file=logstream)
-        fidibus.download.url_download(self.proturl, self.protpath,
+        LocusPocus.download.url_download(self.proturl, self.protpath,
                                      compress=self.compress_prot)
 
     def download(self, logstream=sys.stderr):  # pragma: no cover

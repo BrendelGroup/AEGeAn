@@ -16,7 +16,7 @@ import os
 import shutil
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
 class GenomeDBCache(object):
@@ -95,7 +95,7 @@ def get_parser():
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument('-v', '--version', action='version',
-                        version='fidibus v%s' % fidibus.__version__)
+                        version='LocusPocus v%s' % LocusPocus.__version__)
     parser.add_argument('-w', '--work', default='DELETEME', metavar='DIR',
                         help='temporary working directory')
     parser.add_argument('-c', '--cache', default='cache', metavar='DIR',
@@ -106,7 +106,7 @@ def get_parser():
 
 
 def main(args):
-    registry = fidibus.registry.Registry()
+    registry = LocusPocus.registry.Registry()
     for label, config in registry.list_genomes():
         db = registry.genome(label, workdir=args.work)
         if 'source' not in db.config or db.config['source'] != 'refseq':

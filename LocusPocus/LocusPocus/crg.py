@@ -18,10 +18,10 @@ from __future__ import print_function
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
-class CrgDB(fidibus.genomedb.GenomeDB):
+class CrgDB(LocusPocus.genomedb.GenomeDB):
 
     def __init__(self, label, conf, workdir='.'):
         super(CrgDB, self).__init__(label, conf, workdir)

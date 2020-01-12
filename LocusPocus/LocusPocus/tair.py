@@ -22,10 +22,10 @@ import os
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
-class TairDB(fidibus.genomedb.GenomeDB):
+class TairDB(LocusPocus.genomedb.GenomeDB):
 
     def __init__(self, label, conf, workdir='.'):
         super(TairDB, self).__init__(label, conf, workdir)
