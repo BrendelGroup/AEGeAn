@@ -14,7 +14,7 @@ import multiprocessing
 import os
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 tasks = [
     'list',       # show info about reference genomes
@@ -31,7 +31,7 @@ tasks = [
 def run_build(builddata):
     label, localconfig, args, registry = builddata
     if localconfig:
-        db = fidibus.generic.GenericDB(label, localconfig, workdir=args.workdir)
+        db = LocusPocus.generic.GenericDB(label, localconfig, workdir=args.workdir)
     else:
         db = registry.genome(label, workdir=args.workdir)
 
@@ -40,18 +40,19 @@ def run_build(builddata):
     if 'prep' in args.task:
         db.prep(strict=not args.relax)
     if 'iloci' in args.task:
-        fidibus.iloci.prepare(db, delta=args.delta, ilcformat=args.format)
+        LocusPocus.iloci.prepare(db, delta=args.delta, ilcformat=args.format)
     if 'breakdown' in args.task:
-        fidibus.proteins.prepare(db)
-        fidibus.mrnas.prepare(db)
-        fidibus.exons.prepare(db)
+        LocusPocus.proteins.prepare(db)
+        LocusPocus.mrnas.prepare(db)
+        LocusPocus.exons.prepare(db)
     if 'stats' in args.task:
-        fidibus.stats.compute(db)
+        LocusPocus.stats.compute(db)
     if 'cleanup' in args.task:
         db.cleanup(args.keep, args.fullclean)
 
     print('[fidibus: %s] build complete!' % db.config['species'],
           file=sys.stderr)
+    sys.stderr.flush()
 
 
 def cluster_proteins(dbs, np=1, cdargs=None):
@@ -79,7 +80,7 @@ def cluster_proteins(dbs, np=1, cdargs=None):
 
     with open('fidibus.prot.clstr', 'r') as infile, \
             open('fidibus.hiloci.tsv', 'w') as outfile:
-        for clusterid, clusterseqs in fidibus.cdhit.parse_clusters(infile):
+        for clusterid, clusterseqs in LocusPocus.cdhit.parse_clusters(infile):
             iloci = [protmap[prot.species+prot.accession] for prot in clusterseqs]
             species = set([prot.species for prot in clusterseqs])
             print(len(iloci), len(species), ','.join(iloci), ','.join(species),
@@ -92,7 +93,7 @@ def get_parser():
     parser._optionals.title = 'basic configuration'
 
     parser.add_argument('-v', '--version', action='version',
-                        version='fidibus v%s' % fidibus.__version__)
+                        version='LocusPocus v%s' % LocusPocus.__version__)
     parser.add_argument('-d', '--delta', type=int, metavar='DLT', default=500,
                         help='iLocus extension parameter; default is 500')
     parser.add_argument('-w', '--workdir', metavar='WD', default='./species',
@@ -162,7 +163,7 @@ def get_parser():
 
 
 def main(args):
-    registry = fidibus.registry.Registry()
+    registry = LocusPocus.registry.Registry()
     if args.cfgdir:
         for cfgdirpath in args.cfgdir.split(','):
             registry.update(cfgdirpath)
@@ -213,7 +214,7 @@ def main(args):
         for builddata in builds:
             label, localconfig, args, registry = builddata
             if localconfig:
-                db = fidibus.generic.GenericDB(label, localconfig,
+                db = LocusPocus.generic.GenericDB(label, localconfig,
                                               workdir=args.workdir)
             else:
                 db = registry.genome(label, workdir=args.workdir)

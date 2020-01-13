@@ -11,7 +11,7 @@ from __future__ import print_function
 import argparse
 import re
 import sys
-import fidibus
+import LocusPocus
 
 
 class FeatureFormatter(object):
@@ -227,12 +227,12 @@ def parse_args():
     desc = 'Filter features and parse accession values'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-v', '--version', action='version',
-                        version='fidibus v%s' % fidibus.__version__)
+                        version='LocusPocus v%s' % LocusPocus.__version__)
     parser.add_argument('-o', '--outfile', type=argparse.FileType('w'),
                         default=sys.stdout)
     parser.add_argument('-p', '--prefix', default=None, metavar='PFX',
                         help='attach the given prefix to each sequence ID')
-    parser.add_argument('--source', default='refseq', choices=fidibus.sources,
+    parser.add_argument('--source', default='refseq', choices=LocusPocus.sources,
                         help='data source; default is "refseq"')
     parser.add_argument('gff3', type=argparse.FileType('r'))
     return parser.parse_args()

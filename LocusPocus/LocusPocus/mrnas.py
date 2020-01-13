@@ -12,7 +12,7 @@ import filecmp
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
 def mrna_exons(instream, convert=False, keepMrnas=False, usecds=False):
@@ -141,9 +141,9 @@ def sequences(db, logstream=sys.stderr):
     with open(idfile, 'r') as idstream, \
             open(seqfile, 'r') as seqstream, \
             open(outfile, 'w') as outstream:
-        for defline, seq in fidibus.fasta.select(idstream, seqstream):
+        for defline, seq in LocusPocus.fasta.select(idstream, seqstream):
             print(defline, file=outstream)
-            fidibus.fasta.format(seq, outstream=outstream)
+            LocusPocus.fasta.format(seq, outstream=outstream)
 
     # Representative mature mRNA sequences
     idfile = '%s/%s.mrnas.txt' % (specdir, db.label)
@@ -152,9 +152,9 @@ def sequences(db, logstream=sys.stderr):
     with open(idfile, 'r') as idstream, \
             open(seqfile, 'r') as seqstream, \
             open(outfile, 'w') as outstream:
-        for defline, seq in fidibus.fasta.select(idstream, seqstream):
+        for defline, seq in LocusPocus.fasta.select(idstream, seqstream):
             print(defline, file=outstream)
-            fidibus.fasta.format(seq, outstream=outstream)
+            LocusPocus.fasta.format(seq, outstream=outstream)
 
 
 # -----------------------------------------------------------------------------
@@ -204,23 +204,23 @@ def test_mrna_sequences():
     outfile = 'testdata/demo-workdir/Atha/Atha.all.pre-mrnas.fa'
     testfile = 'testdata/fasta/atha-all-pre-mrnas.fa'
     with open(outfile, 'r') as out, open(testfile, 'r') as test:
-        assert fidibus.fasta.compare(out, test) is True, \
+        assert LocusPocus.fasta.compare(out, test) is True, \
             'all pre-mRNA seq extraction failed'
 
     outfile = 'testdata/demo-workdir/Atha/Atha.pre-mrnas.fa'
     testfile = 'testdata/fasta/atha-pre-mrnas.fa'
     with open(outfile, 'r') as out, open(testfile, 'r') as test:
-        assert fidibus.fasta.compare(out, test) is True, \
+        assert LocusPocus.fasta.compare(out, test) is True, \
             'pre-mRNA seq extraction failed'
 
     outfile = 'testdata/demo-workdir/Atha/Atha.all.pre-mrnas.fa'
     testfile = 'testdata/fasta/atha-all-pre-mrnas.fa'
     with open(outfile, 'r') as out, open(testfile, 'r') as test:
-        assert fidibus.fasta.compare(out, test) is True, \
+        assert LocusPocus.fasta.compare(out, test) is True, \
             'all mRNA seq extraction failed'
 
     outfile = 'testdata/demo-workdir/Atha/Atha.mrnas.fa'
     testfile = 'testdata/fasta/atha-mrnas.fa'
     with open(outfile, 'r') as out, open(testfile, 'r') as test:
-        assert fidibus.fasta.compare(out, test) is True, \
+        assert LocusPocus.fasta.compare(out, test) is True, \
             'mature mRNA seq extraction failed'

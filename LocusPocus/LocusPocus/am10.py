@@ -15,10 +15,10 @@ import gzip
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
-class Am10DB(fidibus.genomedb.GenomeDB):
+class Am10DB(LocusPocus.genomedb.GenomeDB):
 
     def __init__(self, label, conf, workdir='.'):
         super(Am10DB, self).__init__(label, conf, workdir)

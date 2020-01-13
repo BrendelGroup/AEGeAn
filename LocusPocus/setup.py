@@ -8,22 +8,22 @@
 # licensed under the ISC license: see LICENSE.
 # -----------------------------------------------------------------------------
 
-"""Setup configuration for fidibus"""
+"""Setup configuration for LocusPocus"""
 
 import setuptools
 import versioneer
 
 
-setuptools.setup(name='fidibus',
+setuptools.setup(name='LocusPocus',
                  version=versioneer.get_version(),
                  cmdclass=versioneer.get_cmdclass(),
                  description=('Explore eukaryotic genome composition and '
                               'organization with iLoci'),
-                 url='http://github.com/standage/fidibus',
-                 author='Daniel Standage',
+                 url='http://github.com/BrendeGroup/AEGeAn',
+                 author='Daniel Standage and collaborators',
                  author_email='daniel.standage@gmail.com',
                  license='BSD-3',
-                 packages=['fidibus'],
+                 packages=['LocusPocus'],
                  scripts=['scripts/fidibus',
                           'scripts/fidibus-filens.py',
                           'scripts/fidibus-format-gff3.py',
@@ -37,7 +37,7 @@ setuptools.setup(name='fidibus',
                           'scripts/fidibus-monitor-refseq.py',
                           'scripts/fidibus-uniq.py'],
                  install_requires=['pyyaml', 'pycurl'],
-                 package_data={'fidibus': ['genomes/*.yml', 'genomes/*.txt']},
+                 package_data={'LocusPocus': ['genome_configs/*.yml', 'genome_configs/*.txt']},
                  classifiers=[
                     'Development Status :: 4 - Beta',
                     'Environment :: Console',

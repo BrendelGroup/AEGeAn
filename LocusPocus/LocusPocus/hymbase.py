@@ -20,10 +20,10 @@ import gzip
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
-class HymBaseDB(fidibus.genomedb.GenomeDB):
+class HymBaseDB(LocusPocus.genomedb.GenomeDB):
 
     def specbase(self):
         genus = self.config['species'].split()[0].lower()
