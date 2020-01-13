@@ -21,10 +21,10 @@ import gzip
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus 
 
 
-class PdomDB(fidibus.genomedb.GenomeDB):
+class PdomDB(LocusPocus.genomedb.GenomeDB):
 
     def __init__(self, label, conf, workdir='.'):
         super(PdomDB, self).__init__(label, conf, workdir)

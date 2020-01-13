@@ -14,7 +14,7 @@ import math
 import pandas
 import re
 import sys
-import fidibus
+import LocusPocus
 
 
 def cli():
@@ -22,7 +22,7 @@ def cli():
     desc = 'Calculate measures of compactness for the specified genome(s).'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-v', '--version', action='version',
-                        version='fidibus v%s' % fidibus.__version__)
+                        version='LocusPocus v%s' % LocusPocus.__version__)
     parser.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
                         help='directory (or comma-separated list of '
                         'directories) from which to load user-supplied genome '

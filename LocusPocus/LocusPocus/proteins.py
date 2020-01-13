@@ -11,7 +11,7 @@
 from __future__ import print_function
 import filecmp
 import sys
-import fidibus
+import LocusPocus
 
 
 def ids(db, logstream=sys.stderr):  # pragma: no cover
@@ -47,10 +47,10 @@ def sequences(db, logstream=sys.stderr):
     with open(idfile, 'r') as idstream, \
             open(seqfile, 'r') as seqstream, \
             open(outfile, 'w') as outstream:
-        for defline, seq in fidibus.fasta.select(idstream, seqstream):
+        for defline, seq in LocusPocus.fasta.select(idstream, seqstream):
             defline = '>gnl|%s|%s' % (db.label, defline[1:])
             print(defline, file=outstream)
-            fidibus.fasta.format(seq, outstream=outstream)
+            LocusPocus.fasta.format(seq, outstream=outstream)
 
 
 def mapping(db, only_reps=False, logstream=sys.stderr):

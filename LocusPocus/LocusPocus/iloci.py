@@ -12,7 +12,7 @@ import filecmp
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
 def intervals(db, delta=500, ilcformat='{}ILC-%05lu', logstream=sys.stderr):

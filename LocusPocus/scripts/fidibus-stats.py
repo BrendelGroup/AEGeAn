@@ -11,7 +11,7 @@ from __future__ import print_function
 import argparse
 import re
 import sys
-import fidibus
+import LocusPocus
 
 
 def gc_content(dna):
@@ -72,7 +72,7 @@ def ilocus_desc(gff3, fasta, miloci=False):
     - fasta: file handle to a Fasta file containing iLocus sequences
     """
     seqs = {}
-    for defline, seq in fidibus.fasta.parse(fasta):
+    for defline, seq in LocusPocus.fasta.parse(fasta):
         seqid = defline[1:].split(' ')[0]
         assert seqid not in seqs, 'duplicate seqid: ' + seqid
         seqs[seqid] = seq
@@ -129,7 +129,7 @@ def premrna_desc(gff3, fasta):
     record for each.
     """
     seqs = {}
-    for defline, seq in fidibus.fasta.parse(fasta):
+    for defline, seq in LocusPocus.fasta.parse(fasta):
         seqid = defline[1:].split(' ')[0]
         if seqid not in seqs:
             seqs[seqid] = seq
@@ -195,7 +195,7 @@ def mrna_desc(gff3, fasta):
     annotations, generate a tabular record for each mRNA.
     """
     seqs = {}
-    for defline, seq in fidibus.fasta.parse(fasta):
+    for defline, seq in LocusPocus.fasta.parse(fasta):
         seqid = defline[1:].split(' ')[0]
         if seqid not in seqs:
             seqs[seqid] = seq
@@ -234,7 +234,7 @@ def cds_desc(gff3, fasta):
     record for each CDS.
     """
     seqs = {}
-    for defline, seq in fidibus.fasta.parse(fasta):
+    for defline, seq in LocusPocus.fasta.parse(fasta):
         seqid = defline[1:].split(' ')[0]
         if seqid not in seqs:
             seqs[seqid] = seq
@@ -337,7 +337,7 @@ def exon_desc(gff3, fasta):
     tabular record for each exon.
     """
     seqs = {}
-    for defline, seq in fidibus.fasta.parse(fasta):
+    for defline, seq in LocusPocus.fasta.parse(fasta):
         exonpos = defline[1:].split(' ')[1]
         seqs[exonpos] = seq
 
@@ -455,7 +455,7 @@ def intron_desc(gff3, fasta):
     tabular record for each intron.
     """
     seqs = {}
-    for defline, seq in fidibus.fasta.parse(fasta):
+    for defline, seq in LocusPocus.fasta.parse(fasta):
         intronpos = defline[1:].split(' ')[1]
         seqs[intronpos] = seq
 

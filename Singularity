@@ -8,14 +8,13 @@ From: fedora:30
     
 %post
     dnf -y update
-    dnf -y install bc git tcsh tzdata unzip zip wget which bzip2
+    dnf -y install bc bzip2 findutils git tcsh unzip zip wget which
     dnf -y install gcc-c++ make ruby
     dnf -y install cairo-devel pango-devel zlib-devel
-    dnf -y install python2-pycurl python2-pyyaml python2-pandas python2-pytest
     dnf -y install python3-pycurl python3-pyyaml python3-pandas python3-pytest
     dnf -y install pandoc
 
-
+    ln -s /usr/bin/python3 /usr/bin/python
     cd /usr/local/src
 
     echo 'Installing the GenomeTools package:'
@@ -37,7 +36,7 @@ From: fedora:30
 
     git clone https://github.com/BrendelGroup/AEGeAn.git
     cd AEGeAn
-    make
+    make all fidibus
     make install install-scripts
     sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
     ldconfig

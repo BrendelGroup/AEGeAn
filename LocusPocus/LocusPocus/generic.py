@@ -16,10 +16,10 @@ import os
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
-class GenericDB(fidibus.genomedb.GenomeDB):
+class GenericDB(LocusPocus.genomedb.GenomeDB):
 
     def __init__(self, label, conf, workdir='.'):
         super(GenericDB, self).__init__(label, conf, workdir)
@@ -154,11 +154,11 @@ def test_all():
     db = GenericDB('Gnrc', config, workdir='testdata/demo-workdir')
     db.download(logstream=None)
     db.prep(logstream=None)
-    fidibus.iloci.prepare(db, ilcformat='{}ILC-%05lu', logstream=None)
-    fidibus.proteins.prepare(db, logstream=None)
-    fidibus.mrnas.prepare(db, logstream=None)
-    fidibus.exons.prepare(db, logstream=None)
-    fidibus.stats.compute(db, logstream=None)
+    LocusPocus.iloci.prepare(db, ilcformat='{}ILC-%05lu', logstream=None)
+    LocusPocus.proteins.prepare(db, logstream=None)
+    LocusPocus.mrnas.prepare(db, logstream=None)
+    LocusPocus.exons.prepare(db, logstream=None)
+    LocusPocus.stats.compute(db, logstream=None)
 
     sha1 = 'f3629aedbd683dd4dcf158ac12d3549e5c9081a0'
     testsha1 = db.file_sha1('testdata/demo-workdir/Gnrc/Gnrc.iloci.tsv')

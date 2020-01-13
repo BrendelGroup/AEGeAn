@@ -12,7 +12,7 @@ import filecmp
 import re
 import subprocess
 import sys
-import fidibus
+import LocusPocus
 
 
 def cds_sequences(db, logstream=sys.stderr):
