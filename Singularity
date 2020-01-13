@@ -36,7 +36,7 @@ From: fedora:30
 
     git clone https://github.com/BrendelGroup/AEGeAn.git
     cd AEGeAn
-    make all fidibus
+    make all LocusPocus
     make install install-scripts
     sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
     ldconfig

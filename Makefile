@@ -73,7 +73,7 @@ endif
 all:		$(BINS) libaegean.a
 		
 
-install:	all fidibus
+install:	all LocusPocus
 		@ mkdir -p $(prefix)/bin/
 		@ mkdir -p $(prefix)/lib/
 		@ mkdir -p $(prefix)/include/aegean/
@@ -88,17 +88,17 @@ install-scripts:
 		@ mkdir -p $(prefix)/bin/
 		cp data/scripts/*.p? $(prefix)/bin/.
 
-fidibus:	fidibus/fidibus.egg-info
+LocusPocus:	LocusPocus/LocusPocus.egg-info
 
-fidibus/fidibus.egg-info:
-		(cd fidibus; ./install.sh ${piuser}; cd ..;)
+LocusPocus/LocusPocus.egg-info:
+		(cd LocusPocus; ./install.sh ${piuser}; cd ..;)
 
 uninstall:	
 		for exe in $(INSTALL_BINS); do rm -r $(prefix)/$$exe; done
 		rm -r $(prefix)/include/aegean/
 		rm -r $(prefix)/share/aegean/
 		rm $(prefix)/lib/libaegean.a
-		(cd fidibus; ./uninstall.sh ${piuser}; cd ..;)
+		(cd LocusPocus; ./uninstall.sh ${piuser}; cd ..;)
 
 clean:		
 		rm -rf $(BINS) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM
