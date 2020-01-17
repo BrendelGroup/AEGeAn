@@ -1,0 +1,23 @@
+##gff-version 3
+##sequence-region   DquaScf_275 1 15708
+DquaScf_275	AEGeAn::LocusPocus	locus	1	1568	.	.	.	ID=locus1;Name=DquaILC-14465;gene=1;mRNA=1;right_overlap=881;iiLocus_exception=delta-overlap-gene;riil=0;effective_length=687;iLocus_type=piLocus
+DquaScf_275	EVM_PASA	gene	304	1068	.	+	.	ID=gene1;Parent=locus1;accession=DQUA011a006022
+DquaScf_275	EVM_PASA	mRNA	304	1068	.	+	.	ID=mRNA1;Parent=gene1;accession=DQUA011a006022T1
+DquaScf_275	EVM_PASA	exon	304	1068	.	+	.	Parent=mRNA1;accession=DQUA011a006022T1
+DquaScf_275	EVM_PASA	CDS	304	1068	.	+	0	Parent=mRNA1;Target=DQUA011a006022P1 1 255;accession=DQUA011a006022T1
+###
+DquaScf_275	AEGeAn::LocusPocus	locus	688	2723	.	.	.	ID=locus2;left_overlap=881;liil=0;Name=DquaILC-14466;gene=1;mRNA=1;iiLocus_exception=delta-re-extend;riil=0;effective_length=2036;iLocus_type=piLocus
+DquaScf_275	EVM_PASA	gene	1188	2146	.	+	.	ID=gene2;Parent=locus2;accession=DQUA011a006023
+DquaScf_275	EVM_PASA	mRNA	1188	2146	.	+	.	ID=mRNA2;Parent=gene2;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	exon	1188	1435	.	+	.	Parent=mRNA2;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	CDS	1188	1435	.	+	0	ID=CDS1;Parent=mRNA2;Target=DQUA011a006023P1 1 83;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	exon	1588	2146	.	+	.	Parent=mRNA2;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	CDS	1588	2146	.	+	1	ID=CDS1;Parent=mRNA2;Target=DQUA011a006023P1 83 269;accession=DQUA011a006023T1
+###
+DquaScf_275	AEGeAn::LocusPocus	locus	2724	4151	.	.	.	ID=locus3;liil=0;Name=DquaILC-14467;gene=1;mRNA=1;effective_length=1428;iLocus_type=piLocus
+DquaScf_275	EVM_PASA	gene	3301	3651	.	+	.	ID=gene3;Parent=locus3;accession=DQUA011a006024
+DquaScf_275	EVM_PASA	mRNA	3301	3651	.	+	.	ID=mRNA3;Parent=gene3;accession=DQUA011a006024T1
+DquaScf_275	EVM_PASA	exon	3301	3651	.	+	.	Parent=mRNA3;accession=DQUA011a006024T1
+DquaScf_275	EVM_PASA	CDS	3301	3651	.	+	0	Parent=mRNA3;Target=DQUA011a006024P1 1 117;accession=DQUA011a006024T1
+###
+DquaScf_275	AEGeAn::LocusPocus	locus	4152	15708	.	.	.	fragment=true;Name=DquaILC-14468;effective_length=11557;iLocus_type=iiLocus

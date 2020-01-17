@@ -1,0 +1,86 @@
+##gff-version   3
+##sequence-region   NW_014576703.1 1 23566
+##sequence-region   NW_014576707.1 1 16400
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build Brachypodium_distachyon_v2.0
+#!genome-build-accession NCBI_Assembly:GCF_000005505.2
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build Brachypodium_distachyon_v2.0
+#!genome-build-accession NCBI_Assembly:GCF_000005505.2
+NW_014576703.1	Gnomon	gene	144	2342	.	+	.	ID=gene1;Dbxref=GeneID:100844543;Name=LOC100844543;gbkey=Gene;gene=LOC100844543;gene_biotype=protein_coding;accession=100844543
+NW_014576703.1	Gnomon	mRNA	144	2342	.	+	.	ID=mRNA1;Parent=gene1;Dbxref=GeneID:100844543,Genbank:XM_003581641.3;Name=XM_003581641.3;gbkey=mRNA;gene=LOC100844543;product=elongation factor 1-alpha;transcript_id=XM_003581641.3;accession=XM_003581641.3
+NW_014576703.1	Gnomon	exon	144	641	.	+	.	Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XM_003581641.3;gbkey=mRNA;gene=LOC100844543;product=elongation factor 1-alpha;transcript_id=XM_003581641.3;accession=XM_003581641.3
+NW_014576703.1	Gnomon	CDS	180	641	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XP_003581689.1;Name=XP_003581689.1;gbkey=CDS;gene=LOC100844543;product=elongation factor 1-alpha;protein_id=XP_003581689.1;accession=XM_003581641.3
+NW_014576703.1	Gnomon	CDS	1214	2095	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XP_003581689.1;Name=XP_003581689.1;gbkey=CDS;gene=LOC100844543;product=elongation factor 1-alpha;protein_id=XP_003581689.1;accession=XM_003581641.3
+NW_014576703.1	Gnomon	exon	1214	2342	.	+	.	Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XM_003581641.3;gbkey=mRNA;gene=LOC100844543;product=elongation factor 1-alpha;transcript_id=XM_003581641.3;accession=XM_003581641.3
+###
+NW_014576707.1	Gnomon	pseudogene	9	898	.	-	.	ID=pseudogene1;Dbxref=GeneID:100822099;Name=LOC100822099;gbkey=Gene;gene=LOC100822099;gene_biotype=pseudogene;pseudo=true
+NW_014576707.1	Gnomon	pseudogenic_exon	9	898	.	-	.	Parent=pseudogene1;Dbxref=GeneID:100822099;gbkey=exon;gene=LOC100822099
+###
+NW_014576707.1	Gnomon	pseudogene	3489	4762	.	-	.	ID=pseudogene2;Dbxref=GeneID:100823035;Name=LOC100823035;gbkey=Gene;gene=LOC100823035;gene_biotype=pseudogene;pseudo=true
+NW_014576707.1	Gnomon	pseudogenic_exon	3489	4762	.	-	.	Parent=pseudogene2;Dbxref=GeneID:100823035;gbkey=exon;gene=LOC100823035
+###
+NW_014576707.1	Gnomon	gene	7266	10942	.	-	.	ID=gene2;Dbxref=GeneID:100822410;Name=LOC100822410;gbkey=Gene;gene=LOC100822410;gene_biotype=protein_coding;accession=100822410
+NW_014576707.1	Gnomon	mRNA	7266	10942	.	-	.	ID=mRNA2;Parent=gene2;Dbxref=GeneID:100822410,Genbank:XM_014896223.1;Name=XM_014896223.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X2;transcript_id=XM_014896223.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	exon	7266	7716	.	-	.	Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XM_014896223.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X2;transcript_id=XM_014896223.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	CDS	7583	7716	.	-	2	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XP_014751709.1;Name=XP_014751709.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751709.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	exon	7800	8072	.	-	.	Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XM_014896223.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X2;transcript_id=XM_014896223.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	CDS	7800	8072	.	-	2	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XP_014751709.1;Name=XP_014751709.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751709.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	exon	8190	8427	.	-	.	Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XM_014896223.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X2;transcript_id=XM_014896223.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	CDS	8190	8427	.	-	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XP_014751709.1;Name=XP_014751709.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751709.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	CDS	8751	8819	.	-	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XP_014751709.1;Name=XP_014751709.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751709.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	exon	8751	9040	.	-	.	Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XM_014896223.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X2;transcript_id=XM_014896223.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	exon	10506	10942	.	-	.	Parent=mRNA2;Dbxref=GeneID:100822410,Genbank:XM_014896223.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X2;transcript_id=XM_014896223.1;accession=XM_014896223.1
+NW_014576707.1	Gnomon	mRNA	7266	10942	.	-	.	ID=mRNA3;Parent=gene2;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;Name=XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	exon	7266	7716	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	CDS	7583	7716	.	-	2	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	exon	7800	8072	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	CDS	7800	8072	.	-	2	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	exon	8190	8427	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	CDS	8190	8427	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	CDS	8751	8819	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	exon	8751	10383	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	exon	10506	10942	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	mRNA	7266	10942	.	-	.	ID=mRNA4;Parent=gene2;Dbxref=GeneID:100822410,Genbank:XM_014896226.1;Name=XM_014896226.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X5;transcript_id=XM_014896226.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	exon	7266	7716	.	-	.	Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XM_014896226.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X5;transcript_id=XM_014896226.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	CDS	7583	7716	.	-	2	ID=CDS4;Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XP_014751712.1;Name=XP_014751712.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X4;protein_id=XP_014751712.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	exon	7800	8069	.	-	.	Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XM_014896226.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X5;transcript_id=XM_014896226.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	CDS	7800	8069	.	-	2	ID=CDS4;Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XP_014751712.1;Name=XP_014751712.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X4;protein_id=XP_014751712.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	exon	8283	8427	.	-	.	Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XM_014896226.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X5;transcript_id=XM_014896226.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	CDS	8283	8427	.	-	0	ID=CDS4;Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XP_014751712.1;Name=XP_014751712.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X4;protein_id=XP_014751712.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	CDS	8751	8819	.	-	0	ID=CDS4;Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XP_014751712.1;Name=XP_014751712.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X4;protein_id=XP_014751712.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	exon	8751	10942	.	-	.	Parent=mRNA4;Dbxref=GeneID:100822410,Genbank:XM_014896226.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X5;transcript_id=XM_014896226.1;accession=XM_014896226.1
+NW_014576707.1	Gnomon	mRNA	7266	10942	.	-	.	ID=mRNA5;Parent=gene2;Dbxref=GeneID:100822410,Genbank:XM_014896225.1;Name=XM_014896225.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X4;transcript_id=XM_014896225.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	exon	7266	7716	.	-	.	Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XM_014896225.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X4;transcript_id=XM_014896225.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	CDS	7583	7716	.	-	2	ID=CDS5;Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XP_014751711.1;Name=XP_014751711.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X3;protein_id=XP_014751711.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	exon	7800	8072	.	-	.	Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XM_014896225.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X4;transcript_id=XM_014896225.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	CDS	7800	8072	.	-	2	ID=CDS5;Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XP_014751711.1;Name=XP_014751711.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X3;protein_id=XP_014751711.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	exon	8283	8427	.	-	.	Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XM_014896225.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X4;transcript_id=XM_014896225.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	CDS	8283	8427	.	-	0	ID=CDS5;Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XP_014751711.1;Name=XP_014751711.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X3;protein_id=XP_014751711.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	CDS	8751	8819	.	-	0	ID=CDS5;Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XP_014751711.1;Name=XP_014751711.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X3;protein_id=XP_014751711.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	exon	8751	10942	.	-	.	Parent=mRNA5;Dbxref=GeneID:100822410,Genbank:XM_014896225.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X4;transcript_id=XM_014896225.1;accession=XM_014896225.1
+NW_014576707.1	Gnomon	mRNA	7266	10942	.	-	.	ID=mRNA6;Parent=gene2;Dbxref=GeneID:100822410,Genbank:XM_014896224.1;Name=XM_014896224.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X3;transcript_id=XM_014896224.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	exon	7266	7716	.	-	.	Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XM_014896224.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X3;transcript_id=XM_014896224.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	CDS	7583	7716	.	-	2	ID=CDS6;Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XP_014751710.1;Name=XP_014751710.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X2;protein_id=XP_014751710.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	exon	7800	8069	.	-	.	Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XM_014896224.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X3;transcript_id=XM_014896224.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	CDS	7800	8069	.	-	2	ID=CDS6;Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XP_014751710.1;Name=XP_014751710.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X2;protein_id=XP_014751710.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	exon	8190	8427	.	-	.	Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XM_014896224.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X3;transcript_id=XM_014896224.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	CDS	8190	8427	.	-	0	ID=CDS6;Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XP_014751710.1;Name=XP_014751710.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X2;protein_id=XP_014751710.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	CDS	8751	8819	.	-	0	ID=CDS6;Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XP_014751710.1;Name=XP_014751710.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X2;protein_id=XP_014751710.1;accession=XM_014896224.1
+NW_014576707.1	Gnomon	exon	8751	10942	.	-	.	Parent=mRNA6;Dbxref=GeneID:100822410,Genbank:XM_014896224.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X3;transcript_id=XM_014896224.1;accession=XM_014896224.1
+###
+NW_014576707.1	Gnomon	gene	11548	15357	.	-	.	ID=gene3;Dbxref=GeneID:100822717;Name=LOC100822717;gbkey=Gene;gene=LOC100822717;gene_biotype=protein_coding;accession=100822717
+NW_014576707.1	Gnomon	mRNA	11548	15357	.	-	.	ID=mRNA7;Parent=gene3;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;Name=XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	exon	11548	11613	.	-	.	Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	exon	11783	13533	.	-	.	Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	CDS	11794	13533	.	-	0	ID=CDS7;Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XP_014751713.1;Name=XP_014751713.1;gbkey=CDS;gene=LOC100822717;product=disease resistance protein RGA2-like;protein_id=XP_014751713.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	CDS	13952	15265	.	-	0	ID=CDS7;Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XP_014751713.1;Name=XP_014751713.1;gbkey=CDS;gene=LOC100822717;product=disease resistance protein RGA2-like;protein_id=XP_014751713.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	exon	13952	15357	.	-	.	Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+###
+NW_014576707.1	Gnomon	gene	15734	16389	.	-	.	ID=gene4;Dbxref=GeneID:104581480;Name=LOC104581480;gbkey=Gene;gene=LOC104581480;gene_biotype=lncRNA;accession=104581480
+NW_014576707.1	Gnomon	ncRNA	15734	16389	.	-	.	ID=ncRNA1;Parent=gene4;Dbxref=GeneID:104581480,Genbank:XR_729446.2;Name=XR_729446.2;gbkey=ncRNA;gene=LOC104581480;ncrna_class=lncRNA;product=uncharacterized LOC104581480;transcript_id=XR_729446.2;accession=XR_729446.2
+NW_014576707.1	Gnomon	exon	15734	16183	.	-	.	Parent=ncRNA1;Dbxref=GeneID:104581480,Genbank:XR_729446.2;gbkey=ncRNA;gene=LOC104581480;ncrna_class=lncRNA;product=uncharacterized LOC104581480;transcript_id=XR_729446.2;accession=XR_729446.2
+NW_014576707.1	Gnomon	exon	16317	16389	.	-	.	Parent=ncRNA1;Dbxref=GeneID:104581480,Genbank:XR_729446.2;gbkey=ncRNA;gene=LOC104581480;ncrna_class=lncRNA;product=uncharacterized LOC104581480;transcript_id=XR_729446.2;accession=XR_729446.2
+###

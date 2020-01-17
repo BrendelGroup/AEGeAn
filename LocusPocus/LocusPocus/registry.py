@@ -14,7 +14,7 @@ import glob
 import os
 import pkg_resources
 import yaml
-import LocusPocus 
+import LocusPocus
 try:
     FileNotFoundError
 except NameError:  # pragma: no cover
@@ -139,10 +139,10 @@ def test_list():
     registry = Registry()
 
     genome_labels = [x for x in registry.list_genomes()]
-    ymlfiles = [x for x in glob.glob('LocusPocus/genome_configs/*.yml')]
+    ymlfiles = [x for x in glob.glob('genome_configs/*.yml')]
     assert len(genome_labels) == len(ymlfiles)
     batch_labels = [x for x in registry.list_batches()]
-    txtfiles = [x for x in glob.glob('LocusPocus/genome_configs/*.txt')]
+    txtfiles = [x for x in glob.glob('genome_configs/*.txt')]
     assert len(batch_labels) == len(txtfiles)
 
     registry.check(genomes=['Otau', 'Oluc'])
@@ -203,13 +203,13 @@ def test_batch():
 def test_parse_genome_config():
     """Registry: parsing genome configurations from a file"""
     registry = Registry()
-    with open('LocusPocus/genome_configs/Pbar.yml', 'r') as filehandle:
+    with open('genome_configs/Pbar.yml', 'r') as filehandle:
         config = registry.parse_genome_config(filehandle)
         assert len(config) == 1
         assert 'Pbar' in config
         assert config['Pbar']['species'] == 'Pogonomyrmex barbatus'
 
-    config = registry.parse_genome_config('LocusPocus/genome_configs/Hlab.yml')
+    config = registry.parse_genome_config('genome_configs/Hlab.yml')
     assert len(config) == 1
     assert 'Hlab' in config
     assert config['Hlab']['common'] == 'blueberry bee'

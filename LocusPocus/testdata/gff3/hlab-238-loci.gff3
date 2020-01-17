@@ -1,0 +1,84 @@
+##gff-version 3
+##sequence-region   HlabScf_238 1 159382
+HlabScf_238	AEGeAn::LocusPocus	locus	1	2849	.	.	.	fragment=true;Name=HlabILC-653078;effective_length=2849;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	2850	5238	.	.	.	ID=locus1;Name=HlabILC-653079;gene=1;mRNA=1;riil=18686;effective_length=2389;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	3350	4738	.	+	.	ID=gene1;Parent=locus1
+HlabScf_238	GLEAN	mRNA	3350	4738	0.821	+	.	ID=mRNA1;Parent=gene1;source_id=Hlab_GLEAN_10000992;Name=Hlab05062;accession=Hlab05062
+HlabScf_238	GLEAN	CDS	3350	4738	.	+	0	Parent=mRNA1;accession=Hlab05062
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	5239	23924	.	.	.	fg_orient=FF;Name=HlabILC-653080;effective_length=18686;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	23925	26588	.	.	.	ID=locus2;liil=18686;Name=HlabILC-653081;gene=1;mRNA=1;riil=21619;effective_length=2664;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	24425	26088	.	+	.	ID=gene2;Parent=locus2
+HlabScf_238	GLEAN	mRNA	24425	26088	0.982	+	.	ID=mRNA2;Parent=gene2;source_id=Hlab_GLEAN_10000993;Name=Hlab05063;accession=Hlab05063
+HlabScf_238	GLEAN	CDS	24425	25198	.	+	0	Parent=mRNA2;accession=Hlab05063
+HlabScf_238	GLEAN	CDS	25519	26088	.	+	0	Parent=mRNA2;accession=Hlab05063
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	26589	48207	.	.	.	fg_orient=FF;Name=HlabILC-653082;effective_length=21619;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	48208	50701	.	.	.	ID=locus3;liil=21619;Name=HlabILC-653083;gene=1;mRNA=1;riil=16065;effective_length=2494;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	48708	50201	.	+	.	ID=gene3;Parent=locus3
+HlabScf_238	GLEAN	mRNA	48708	50201	0.504	+	.	ID=mRNA3;Parent=gene3;source_id=Hlab_GLEAN_10000996;Name=Hlab05064;accession=Hlab05064
+HlabScf_238	GLEAN	CDS	48708	48907	.	+	0	Parent=mRNA3;accession=Hlab05064
+HlabScf_238	GLEAN	CDS	48980	49211	.	+	1	Parent=mRNA3;accession=Hlab05064
+HlabScf_238	GLEAN	CDS	50031	50201	.	+	0	Parent=mRNA3;accession=Hlab05064
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	50702	66766	.	.	.	fg_orient=FF;Name=HlabILC-653084;effective_length=16065;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	66767	68381	.	.	.	ID=locus4;liil=16065;Name=HlabILC-653085;gene=1;mRNA=1;right_overlap=63;iiLocus_exception=delta-overlap-delta;riil=0;effective_length=1552;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	67267	67881	.	+	.	ID=gene4;Parent=locus4
+HlabScf_238	GLEAN	mRNA	67267	67881	0.811	+	.	ID=mRNA4;Parent=gene4;source_id=Hlab_GLEAN_10000997;Name=Hlab05065;accession=Hlab05065
+HlabScf_238	GLEAN	CDS	67267	67881	.	+	0	Parent=mRNA4;accession=Hlab05065
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	68319	69994	.	.	.	ID=locus5;left_overlap=63;liil=0;Name=HlabILC-653086;gene=1;mRNA=1;riil=2089;effective_length=1676;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	68819	69494	.	+	.	ID=gene5;Parent=locus5
+HlabScf_238	GLEAN	mRNA	68819	69494	0.491	+	.	ID=mRNA5;Parent=gene5;source_id=Hlab_GLEAN_10000998;Name=Hlab05066;accession=Hlab05066
+HlabScf_238	GLEAN	CDS	68819	68944	.	+	0	Parent=mRNA5;accession=Hlab05066
+HlabScf_238	GLEAN	CDS	69141	69494	.	+	0	Parent=mRNA5;accession=Hlab05066
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	69995	72083	.	.	.	fg_orient=FF;Name=HlabILC-653087;effective_length=2089;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	72084	73659	.	.	.	ID=locus6;liil=2089;Name=HlabILC-653088;gene=1;mRNA=1;riil=4604;effective_length=1576;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	72584	73159	.	+	.	ID=gene6;Parent=locus6
+HlabScf_238	GLEAN	mRNA	72584	73159	0.821	+	.	ID=mRNA6;Parent=gene6;source_id=Hlab_GLEAN_10001000;Name=Hlab05067;accession=Hlab05067
+HlabScf_238	GLEAN	CDS	72584	73159	.	+	0	Parent=mRNA6;accession=Hlab05067
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	73660	78263	.	.	.	fg_orient=FF;Name=HlabILC-653089;effective_length=4604;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	78264	80088	.	.	.	ID=locus7;liil=4604;Name=HlabILC-653090;gene=1;mRNA=1;riil=2619;effective_length=1825;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	78764	79588	.	+	.	ID=gene7;Parent=locus7
+HlabScf_238	GLEAN	mRNA	78764	79588	0.802	+	.	ID=mRNA7;Parent=gene7;source_id=Hlab_GLEAN_10001001;Name=Hlab05068;accession=Hlab05068
+HlabScf_238	GLEAN	CDS	78764	79588	.	+	0	Parent=mRNA7;accession=Hlab05068
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	80089	82707	.	.	.	fg_orient=FF;Name=HlabILC-653091;effective_length=2619;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	82708	84241	.	.	.	ID=locus8;liil=2619;Name=HlabILC-653092;gene=1;mRNA=1;riil=561;effective_length=1534;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	83208	83741	.	+	.	ID=gene8;Parent=locus8
+HlabScf_238	GLEAN	mRNA	83208	83741	0.802	+	.	ID=mRNA8;Parent=gene8;source_id=Hlab_GLEAN_10001003;Name=Hlab05069;accession=Hlab05069
+HlabScf_238	GLEAN	CDS	83208	83741	.	+	0	Parent=mRNA8;accession=Hlab05069
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	84242	84802	.	.	.	fg_orient=FF;Name=HlabILC-653093;effective_length=561;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	84803	86927	.	.	.	ID=locus9;liil=561;Name=HlabILC-653094;gene=1;mRNA=1;riil=2107;effective_length=2125;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	85303	86427	.	+	.	ID=gene9;Parent=locus9
+HlabScf_238	GLEAN	mRNA	85303	86427	0.821	+	.	ID=mRNA9;Parent=gene9;source_id=Hlab_GLEAN_10001004;Name=Hlab05070;accession=Hlab05070
+HlabScf_238	GLEAN	CDS	85303	86427	.	+	0	Parent=mRNA9;accession=Hlab05070
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	86928	89034	.	.	.	fg_orient=FF;Name=HlabILC-653095;effective_length=2107;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	89035	90271	.	.	.	ID=locus10;liil=2107;Name=HlabILC-653096;gene=1;mRNA=1;riil=518;effective_length=1237;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	89535	89771	.	+	.	ID=gene10;Parent=locus10
+HlabScf_238	GLEAN	mRNA	89535	89771	0.821	+	.	ID=mRNA10;Parent=gene10;source_id=Hlab_GLEAN_10001005;Name=Hlab05071;accession=Hlab05071
+HlabScf_238	GLEAN	CDS	89535	89771	.	+	0	Parent=mRNA10;accession=Hlab05071
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	90272	90789	.	.	.	fg_orient=FF;Name=HlabILC-653097;effective_length=518;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	90790	92029	.	.	.	ID=locus11;liil=518;Name=HlabILC-653098;gene=1;mRNA=1;riil=31754;effective_length=1240;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	91290	91529	.	+	.	ID=gene11;Parent=locus11
+HlabScf_238	Cufflinks	mRNA	91290	91529	1e+03	+	.	ID=mRNA11;Parent=gene11;source_id=CUFF.10222.1;Name=Hlab05072;accession=Hlab05072
+HlabScf_238	Cufflinks	CDS	91290	91529	1e+03	+	0	Parent=mRNA11;accession=Hlab05072
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	92030	123783	.	.	.	fg_orient=FF;Name=HlabILC-653099;effective_length=31754;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	123784	125386	.	.	.	ID=locus12;liil=31754;Name=HlabILC-653100;gene=1;mRNA=1;riil=14624;effective_length=1603;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	124284	124886	.	+	.	ID=gene12;Parent=locus12
+HlabScf_238	GLEAN	mRNA	124284	124886	0.821	+	.	ID=mRNA12;Parent=gene12;source_id=Hlab_GLEAN_10001008;part_support_id=CUFF.10229.1;Name=Hlab05073;accession=Hlab05073
+HlabScf_238	GLEAN	CDS	124284	124886	.	+	0	Parent=mRNA12;accession=Hlab05073
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	125387	140010	.	.	.	fg_orient=FF;Name=HlabILC-653101;effective_length=14624;iLocus_type=iiLocus
+HlabScf_238	AEGeAn::LocusPocus	locus	140011	141412	.	.	.	ID=locus13;liil=14624;Name=HlabILC-653102;gene=1;mRNA=1;effective_length=1402;iLocus_type=piLocus
+HlabScf_238	AEGeAn::tidygff3	gene	140511	140912	.	+	.	ID=gene13;Parent=locus13
+HlabScf_238	Cufflinks	mRNA	140511	140912	1e+03	+	.	ID=mRNA13;Parent=gene13;source_id=CUFF.10236.1;Name=Hlab05074;accession=Hlab05074
+HlabScf_238	Cufflinks	CDS	140511	140912	1e+03	+	0	Parent=mRNA13;accession=Hlab05074
+###
+HlabScf_238	AEGeAn::LocusPocus	locus	141413	159382	.	.	.	fragment=true;Name=HlabILC-653103;effective_length=17970;iLocus_type=iiLocus

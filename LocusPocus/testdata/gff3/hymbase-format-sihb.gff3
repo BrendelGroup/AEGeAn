@@ -1,0 +1,32 @@
+##gff-version 3
+##sequence-region   Si_gnF.scaffold09397 1 59368
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	gene	3172	4925	.	+	.	ID=gene1;Name=SINV11275;accession=SINV11275
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	mRNA	3172	4925	.	+	.	ID=mRNA1;Parent=gene1;Name=SINV11275-RA;Alias=SI2.2.0_02024;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	3172	3552	.	+	0	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	3172	3552	.	+	.	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	3737	4120	.	+	0	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	3737	4120	.	+	.	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	4673	4808	.	+	0	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	4673	4808	.	+	.	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	4882	4925	.	+	2	Parent=mRNA1;accession=SINV11275-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	4882	4925	.	+	.	Parent=mRNA1;accession=SINV11275-RA
+###
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	gene	13776	14006	.	+	.	ID=gene2;Name=SINV11276;accession=SINV11276
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	mRNA	13776	14006	.	+	.	ID=mRNA2;Parent=gene2;Name=SINV11276-RA;Alias=SI2.2.0_05471;accession=SINV11276-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	13776	14006	.	+	0	Parent=mRNA2;accession=SINV11276-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	13776	14006	.	+	.	Parent=mRNA2;accession=SINV11276-RA
+###
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	gene	15861	17561	.	+	.	ID=gene3;Name=SINV11274;accession=SINV11274
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	mRNA	15861	17561	.	+	.	ID=mRNA3;Parent=gene3;Name=SINV11274-RA;Alias=SI2.2.0_10748;accession=SINV11274-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	15861	16257	.	+	0	Parent=mRNA3;accession=SINV11274-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	15861	16257	.	+	.	Parent=mRNA3;accession=SINV11274-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	17170	17288	.	+	2	Parent=mRNA3;accession=SINV11274-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	17170	17288	.	+	.	Parent=mRNA3;accession=SINV11274-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	17376	17561	.	+	0	Parent=mRNA3;accession=SINV11274-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	17376	17561	.	+	.	Parent=mRNA3;accession=SINV11274-RA
+###
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	gene	58178	58219	.	+	.	ID=gene4;Name=SINV11273;accession=SINV11273
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	mRNA	58178	58219	.	+	.	ID=mRNA4;Parent=gene4;Name=SINV11273-RA;Alias=SI2.2.0_15214;accession=SINV11273-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	CDS	58178	58219	.	+	0	Parent=mRNA4;accession=SINV11273-RA
+Si_gnF.scaffold09397	sinv_OGSv2.2.3	exon	58178	58219	.	+	.	Parent=mRNA4;accession=SINV11273-RA
+###

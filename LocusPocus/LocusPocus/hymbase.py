@@ -203,7 +203,7 @@ class BeeBaseDB(HymBaseDB):
 
 def test_scaffolds_download():
     """HymBase: scaffolds download"""
-    cfdb = fidibus.test_registry.genome('Cfhb')
+    cfdb = LocusPocus.test_registry.genome('Cfhb')
     testurl = ('http://hymenopteragenome.org/drupal/sites/hymenopteragenome.'
                'org.camponotus/files/data/Cflo_3.3_scaffolds.fa.gz')
     testpath = './Cfhb/Cflo_3.3_scaffolds.fa.gz'
@@ -216,14 +216,14 @@ def test_scaffolds_download():
 
 def test_annotation_hymbase():
     """HymBase: annotation pre-processing"""
-    db = fidibus.test_registry.genome('Cfhb', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Cfhb', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Cfhb/Cfhb.gff3'
     testfile = 'testdata/gff3/hymbase-format-cfhb.gff3'
     assert filecmp.cmp(outfile, testfile), 'Cfhb annotation formatting failed'
 
-    db = fidibus.test_registry.genome('Sihb', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Sihb', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Sihb/Sihb.gff3'
@@ -233,7 +233,7 @@ def test_annotation_hymbase():
 
 def test_gdna_format_hymbase():
     """HymBase: gDNA pre-processing"""
-    db = fidibus.test_registry.genome('Sihb', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Sihb', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Sihb/Sihb.gdna.fa'
     testoutfile = 'testdata/fasta/hymbase-format-sihb.fa'
@@ -242,7 +242,7 @@ def test_gdna_format_hymbase():
 
 def test_proteins_hymbase():
     """HymBase: protein pre-processing"""
-    db = fidibus.test_registry.genome('Sihb', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Sihb', workdir='testdata/demo-workdir')
     db.preprocess_prot(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Sihb/Sihb.all.prot.fa'
     testoutfile = 'testdata/fasta/hymbase-format-Sihb-prot.fa'
@@ -251,7 +251,7 @@ def test_proteins_hymbase():
 
 def test_scaffolds_download_beebase():
     """BeeBase: scaffolds download"""
-    emex_db = fidibus.test_registry.genome('Emex')
+    emex_db = LocusPocus.test_registry.genome('Emex')
     testurl = ('http://hymenopteragenome.org/beebase/sites/'
                'hymenopteragenome.org.beebase/files/data/consortium_data/'
                'Eufriesea_mexicana.v1.0.fa.gz')
@@ -265,7 +265,7 @@ def test_scaffolds_download_beebase():
 
 def test_annot_download():
     """BeeBase: annotation download"""
-    dnov_db = fidibus.test_registry.genome('Dnov', workdir='BeeBase')
+    dnov_db = LocusPocus.test_registry.genome('Dnov', workdir='BeeBase')
     testurl = ('http://hymenopteragenome.org/beebase/sites/'
                'hymenopteragenome.org.beebase/files/data/consortium_data/'
                'Dufourea_novaeangliae_v1.1.gff.gz')
@@ -278,7 +278,7 @@ def test_annot_download():
 
 def test_proteins_download():
     """BeeBase: protein download"""
-    hlab_db = fidibus.test_registry.genome('Hlab', workdir='/opt/db/fidibus')
+    hlab_db = LocusPocus.test_registry.genome('Hlab', workdir='/opt/db/fidibus')
     testurl = ('http://hymenopteragenome.org/beebase/sites/'
                'hymenopteragenome.org.beebase/files/data/consortium_data/'
                'Habropoda_laboriosa_v1.2.pep.fa.gz')
@@ -291,13 +291,13 @@ def test_proteins_download():
 
 def test_gdna_format():
     """BeeBase: gDNA pre-processing"""
-    db = fidibus.test_registry.genome('Hlab', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Hlab', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Hlab/Hlab.gdna.fa'
     testoutfile = 'testdata/fasta/hlab-first-6-out.fa'
     assert filecmp.cmp(testoutfile, outfile), 'Hlab gDNA formatting failed'
 
-    db = fidibus.test_registry.genome('Am32', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Am32', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Am32/Am32.gdna.fa'
     testoutfile = 'testdata/fasta/am32-gdna-out.fa'
@@ -306,7 +306,7 @@ def test_gdna_format():
 
 def test_annotation_beebase():
     """BeeBase: annotation pre-processing"""
-    db = fidibus.test_registry.genome('Hlab', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Hlab', workdir='testdata/demo-workdir')
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Hlab/Hlab.gff3'
     testfile = 'testdata/gff3/beebase-format-hlab.gff3'
@@ -315,13 +315,13 @@ def test_annotation_beebase():
 
 def test_proteins_beebase():
     """BeeBase: protein pre-processing"""
-    db = fidibus.test_registry.genome('Hlab', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Hlab', workdir='testdata/demo-workdir')
     db.preprocess_prot(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Hlab/Hlab.all.prot.fa'
     testoutfile = 'testdata/fasta/hlab-first-20-prot-out.fa'
     assert filecmp.cmp(testoutfile, outfile), 'Hlab protein formatting failed'
 
-    db = fidibus.test_registry.genome('Am32', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Am32', workdir='testdata/demo-workdir')
     db.preprocess_prot(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Am32/Am32.all.prot.fa'
     testoutfile = 'testdata/fasta/am32-prot-out.fa'
@@ -330,7 +330,7 @@ def test_proteins_beebase():
 
 def test_protids():
     """BeeBase: extract protein IDs from GFF3"""
-    db = fidibus.test_registry.genome('Hlab')
+    db = LocusPocus.test_registry.genome('Hlab')
     protids = ['Hlab050%d' % x for x in range(62, 75)]
     infile = 'testdata/gff3/hlab-238.gff3'
     testids = list()
@@ -343,7 +343,7 @@ def test_protids():
 
 def test_protmap():
     """BeeBase: extract protein-->iLocus mapping from GFF3"""
-    db = fidibus.test_registry.genome('Hlab')
+    db = LocusPocus.test_registry.genome('Hlab')
     mapping = {'Hlab05074': 'HlabILC-653102', 'Hlab05071': 'HlabILC-653096',
                'Hlab05062': 'HlabILC-653079', 'Hlab05068': 'HlabILC-653090',
                'Hlab05072': 'HlabILC-653098', 'Hlab05070': 'HlabILC-653094',

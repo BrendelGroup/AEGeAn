@@ -404,9 +404,9 @@ class GenomeDB(object):
 
 def test_file_path():
     """GenomeDB: file name resolution"""
-    db = fidibus.test_registry.genome('Bimp')
+    db = LocusPocus.test_registry.genome('Bimp')
     assert db.file_path('bogus.txt') == './Bimp/bogus.txt'
-    db = fidibus.test_registry.genome('Bimp', workdir='wd')
+    db = LocusPocus.test_registry.genome('Bimp', workdir='wd')
     assert db.file_path('Bimp.gff3') == 'wd/Bimp/Bimp.gff3'
 
     assert db.ilocusfile == 'wd/Bimp/Bimp.iloci.gff3'
@@ -417,7 +417,7 @@ def test_file_path():
 
     checkfailed = False
     try:
-        db = fidibus.test_registry.genome('Amel')
+        db = LocusPocus.test_registry.genome('Amel')
         path = db.file_path('Amel.iloci.gff3', check=True)
     except FileNotFoundError as e:
         checkfailed = True
@@ -427,14 +427,14 @@ def test_file_path():
 
 def test_props():
     """GenomeDB: properties"""
-    db = fidibus.test_registry.genome('Bimp')
+    db = LocusPocus.test_registry.genome('Bimp')
     assert db.dbdir == './Bimp'
     assert db.gdnafile == './Bimp/Bimp.gdna.fa'
     assert db.gff3file == './Bimp/Bimp.gff3'
     assert db.protfile == './Bimp/Bimp.all.prot.fa'
     assert db.source == 'refseq'
 
-    db = fidibus.test_registry.genome('Dqcr', workdir='/opt/data/genomes')
+    db = LocusPocus.test_registry.genome('Dqcr', workdir='/opt/data/genomes')
     assert db.dbdir == '/opt/data/genomes/Dqcr'
     assert db.gdnafile == '/opt/data/genomes/Dqcr/Dqcr.gdna.fa'
     assert db.gff3file == '/opt/data/genomes/Dqcr/Dqcr.gff3'
@@ -444,10 +444,10 @@ def test_props():
 
 def test_filter_file():
     """GenomeDB: filter file"""
-    db = fidibus.test_registry.genome('Lalb')
+    db = LocusPocus.test_registry.genome('Lalb')
     assert db.filter_file() is None
 
-    db = fidibus.test_registry.genome('Drer')
+    db = LocusPocus.test_registry.genome('Drer')
     ff = db.filter_file()
     with open(ff.name, 'r') as infile:
         excludestr = infile.read()
@@ -457,7 +457,7 @@ def test_filter_file():
 
 def test_compress():
     """GenomeDB: download compression"""
-    db = fidibus.test_registry.genome('Emex')
+    db = LocusPocus.test_registry.genome('Emex')
     assert db.compress_gdna is False
     assert db.compress_gff3 is False
     assert db.compress_prot is False

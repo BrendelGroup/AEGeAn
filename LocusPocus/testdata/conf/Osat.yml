@@ -1,0 +1,9 @@
+Osat:
+    species: Oryza sativa
+    common: rice
+    clade: monocot
+    source: refseq
+    branch: plant
+    accession: BogusThisIsNotARealAccession
+    build: Build_4.0
+    description: Bogus config file for unit testing

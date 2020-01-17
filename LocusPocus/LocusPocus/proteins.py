@@ -106,7 +106,7 @@ def prepare(db, logstream=sys.stderr):  # pragma: no cover
 
 def test_protein_sequence():
     """Breakdown: select protein sequences"""
-    db = fidibus.test_registry.genome('Scer', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Scer', workdir='testdata/demo-workdir')
     sequences(db, logstream=None)
     outfile = 'testdata/demo-workdir/Scer/Scer.prot.fa'
     testfile = 'testdata/fasta/scer-few-prots.fa'

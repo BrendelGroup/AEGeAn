@@ -1,0 +1,59 @@
+##gff-version 3
+##sequence-region   NW_014576703.1 1 23566
+##sequence-region   NW_014576707.1 1 16400
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build Brachypodium_distachyon_v2.0
+#!genome-build-accession NCBI_Assembly:GCF_000005505.2
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build Brachypodium_distachyon_v2.0
+#!genome-build-accession NCBI_Assembly:GCF_000005505.2
+NW_014576703.1	Gnomon	gene	144	2342	.	+	.	ID=gene1;Dbxref=GeneID:100844543;Name=LOC100844543;gbkey=Gene;gene=LOC100844543;gene_biotype=protein_coding;accession=100844543
+NW_014576703.1	Gnomon	mRNA	144	2342	.	+	.	ID=mRNA1;Parent=gene1;Dbxref=GeneID:100844543,Genbank:XM_003581641.3;Name=XM_003581641.3;gbkey=mRNA;gene=LOC100844543;product=elongation factor 1-alpha;transcript_id=XM_003581641.3;accession=XM_003581641.3
+NW_014576703.1	.	five_prime_UTR	144	179	.	+	.	Parent=mRNA1
+NW_014576703.1	Gnomon	exon	144	641	.	+	.	Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XM_003581641.3;gbkey=mRNA;gene=LOC100844543;product=elongation factor 1-alpha;transcript_id=XM_003581641.3;accession=XM_003581641.3
+NW_014576703.1	.	start_codon	180	182	.	+	.	Parent=mRNA1
+NW_014576703.1	Gnomon	CDS	180	641	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XP_003581689.1;Name=XP_003581689.1;gbkey=CDS;gene=LOC100844543;product=elongation factor 1-alpha;protein_id=XP_003581689.1;accession=XM_003581641.3
+NW_014576703.1	.	intron	642	1213	.	+	.	Parent=mRNA1
+NW_014576703.1	Gnomon	CDS	1214	2095	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XP_003581689.1;Name=XP_003581689.1;gbkey=CDS;gene=LOC100844543;product=elongation factor 1-alpha;protein_id=XP_003581689.1;accession=XM_003581641.3
+NW_014576703.1	Gnomon	exon	1214	2342	.	+	.	Parent=mRNA1;Dbxref=GeneID:100844543,Genbank:XM_003581641.3;gbkey=mRNA;gene=LOC100844543;product=elongation factor 1-alpha;transcript_id=XM_003581641.3;accession=XM_003581641.3
+NW_014576703.1	.	stop_codon	2093	2095	.	+	.	Parent=mRNA1
+NW_014576703.1	.	three_prime_UTR	2096	2342	.	+	.	Parent=mRNA1
+###
+NW_014576707.1	Gnomon	gene	7266	10942	.	-	.	ID=gene2;Dbxref=GeneID:100822410;Name=LOC100822410;gbkey=Gene;gene=LOC100822410;gene_biotype=protein_coding;accession=100822410
+NW_014576707.1	Gnomon	mRNA	7266	10942	.	-	.	ID=mRNA3;Parent=gene2;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;Name=XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	.	three_prime_UTR	7266	7582	.	-	.	Parent=mRNA3
+NW_014576707.1	Gnomon	exon	7266	7716	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	.	stop_codon	7583	7585	.	-	.	Parent=mRNA3
+NW_014576707.1	Gnomon	CDS	7583	7716	.	-	2	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	.	intron	7717	7799	.	-	.	Parent=mRNA3
+NW_014576707.1	Gnomon	exon	7800	8072	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	CDS	7800	8072	.	-	2	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	.	intron	8073	8189	.	-	.	Parent=mRNA3
+NW_014576707.1	Gnomon	exon	8190	8427	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	CDS	8190	8427	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	.	intron	8428	8750	.	-	.	Parent=mRNA3
+NW_014576707.1	Gnomon	CDS	8751	8819	.	-	0	ID=CDS3;Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XP_014751708.1;Name=XP_014751708.1;gbkey=CDS;gene=LOC100822410;product=uncharacterized protein LOC100822410 isoform X1;protein_id=XP_014751708.1;accession=XM_014896222.1
+NW_014576707.1	Gnomon	exon	8751	10383	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	.	start_codon	8817	8819	.	-	.	Parent=mRNA3
+NW_014576707.1	.	five_prime_UTR	8820	10383	.	-	.	Parent=mRNA3
+NW_014576707.1	.	intron	10384	10505	.	-	.	Parent=mRNA3
+NW_014576707.1	Gnomon	exon	10506	10942	.	-	.	Parent=mRNA3;Dbxref=GeneID:100822410,Genbank:XM_014896222.1;gbkey=mRNA;gene=LOC100822410;product=uncharacterized LOC100822410%2C transcript variant X1;transcript_id=XM_014896222.1;accession=XM_014896222.1
+NW_014576707.1	.	five_prime_UTR	10506	10942	.	-	.	Parent=mRNA3
+###
+NW_014576707.1	Gnomon	gene	11548	15357	.	-	.	ID=gene3;Dbxref=GeneID:100822717;Name=LOC100822717;gbkey=Gene;gene=LOC100822717;gene_biotype=protein_coding;accession=100822717
+NW_014576707.1	Gnomon	mRNA	11548	15357	.	-	.	ID=mRNA7;Parent=gene3;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;Name=XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	exon	11548	11613	.	-	.	Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	.	three_prime_UTR	11548	11613	.	-	.	Parent=mRNA7
+NW_014576707.1	.	intron	11614	11782	.	-	.	Parent=mRNA7
+NW_014576707.1	.	three_prime_UTR	11783	11793	.	-	.	Parent=mRNA7
+NW_014576707.1	Gnomon	exon	11783	13533	.	-	.	Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	.	stop_codon	11794	11796	.	-	.	Parent=mRNA7
+NW_014576707.1	Gnomon	CDS	11794	13533	.	-	0	ID=CDS7;Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XP_014751713.1;Name=XP_014751713.1;gbkey=CDS;gene=LOC100822717;product=disease resistance protein RGA2-like;protein_id=XP_014751713.1;accession=XM_014896227.1
+NW_014576707.1	.	intron	13534	13951	.	-	.	Parent=mRNA7
+NW_014576707.1	Gnomon	CDS	13952	15265	.	-	0	ID=CDS7;Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XP_014751713.1;Name=XP_014751713.1;gbkey=CDS;gene=LOC100822717;product=disease resistance protein RGA2-like;protein_id=XP_014751713.1;accession=XM_014896227.1
+NW_014576707.1	Gnomon	exon	13952	15357	.	-	.	Parent=mRNA7;Dbxref=GeneID:100822717,Genbank:XM_014896227.1;gbkey=mRNA;gene=LOC100822717;product=disease resistance protein RGA2-like;transcript_id=XM_014896227.1;accession=XM_014896227.1
+NW_014576707.1	.	start_codon	15263	15265	.	-	.	Parent=mRNA7
+NW_014576707.1	.	five_prime_UTR	15266	15357	.	-	.	Parent=mRNA7
+###

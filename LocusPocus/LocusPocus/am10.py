@@ -130,7 +130,7 @@ class Am10DB(LocusPocus.genomedb.GenomeDB):
 
 def test_gdna_format():
     """Amel OGSv1.0: gDNA formatting"""
-    db = fidibus.test_registry.genome('Am10', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Am10', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Am10/Am10.gdna.fa'
     testoutfile = 'testdata/fasta/am10-gdna-out.fa'
@@ -150,7 +150,7 @@ def test_gdna_format():
 
 def test_annotation_am10():
     """Amel OGSv1.0: annotation pre-processing"""
-    db = fidibus.test_registry.genome('Am10', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Am10', workdir='testdata/demo-workdir')
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Am10/Am10.gff3'
     testfile = 'testdata/gff3/am10-format.gff3'
@@ -159,7 +159,7 @@ def test_annotation_am10():
 
 def test_proteins_am10():
     """Amel OGSv1.0: protein formatting"""
-    db = fidibus.test_registry.genome('Am10', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Am10', workdir='testdata/demo-workdir')
     db.preprocess_prot(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Am10/Am10.all.prot.fa'
     testoutfile = 'testdata/fasta/am10-prot-out.fa'
@@ -168,7 +168,7 @@ def test_proteins_am10():
 
 def test_protids():
     """Amel OGSv1.0: extract protein IDs from GFF3"""
-    db = fidibus.test_registry.genome('Am10')
+    db = LocusPocus.test_registry.genome('Am10')
     protids = ['GB18127-PA', 'GB12533-PA', 'GB12334-PA', 'GB13832-PA',
                'GB10374-PA', 'GB11673-PA', 'GB17405-PA', 'GB15709-PA',
                'GB13454-PA', 'GB16202-PA', 'GB15597-PA', 'GB13411-PA',
@@ -188,7 +188,7 @@ def test_protids():
 
 def test_protmap():
     """Amel OGSv1.0: extract protein-->iLocus mapping from GFF3"""
-    db = fidibus.test_registry.genome('Am10')
+    db = LocusPocus.test_registry.genome('Am10')
     mapping = {'GB18571-PA': 'Am10ILC-00345', 'GB13022-PA': 'Am10ILC-00347'}
     infile = 'testdata/gff3/am10-loci.gff3'
     testmap = dict()
