@@ -1,2 +1,5 @@
 __pycache__/
 fidibus.egg-info/
+LocusPocus.egg-info/
+build/
+dist/

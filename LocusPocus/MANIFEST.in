@@ -1,1 +1,1 @@
-include versioneer.py MANIFEST.in
+include versioneer.py MANIFEST.in LocusPocus/_version.py
