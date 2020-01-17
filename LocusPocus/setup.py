@@ -37,7 +37,7 @@ setuptools.setup(name='LocusPocus',
                           'scripts/fidibus-monitor-refseq.py',
                           'scripts/fidibus-uniq.py'],
                  install_requires=['pyyaml', 'pycurl'],
-                 package_data={'LocusPocus': ['genome_configs/*.yml', 'genome_configs/*.txt']},
+                 package_data={'LocusPocus': ['../genome_configs/*.yml', '../genome_configs/*.txt']},
                  classifiers=[
                     'Development Status :: 4 - Beta',
                     'Environment :: Console',
