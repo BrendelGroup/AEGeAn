@@ -24,4 +24,4 @@ before_install:
 install:
   - sudo make install
   - sudo ldconfig
-script: make test
+script: make agn-test

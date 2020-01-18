@@ -186,7 +186,7 @@ locuspocus-test:
 
 
 ci-test:
-		@ set -e && for conf in $$(ls LocusPocus/genome_configs/*.yml | grep -v -e Mmus -e Btau -e Emex -e Drer -e Hsap | $(shufcmd) | head -2); do label=$$(basename $$conf .yml); echo $$label; fidibus --refr=$$label --workdir=scratch/testmore/ --relax download prep iloci breakdown stats; rm -r scratch/testmore/; done
+		@ set -e && for conf in $$(ls LocusPocus/genome_configs/*.yml | grep -v -e Mmus -e Btau -e Emex -e Drer -e Hsap | $(shufcmd) | head -n 1); do label=$$(basename $$conf .yml); echo $$label; fidibus --refr=$$label --workdir=scratch/testmore/ --relax download prep iloci breakdown stats; rm -r scratch/testmore/; done
 
 
 style:
