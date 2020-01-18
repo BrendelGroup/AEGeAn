@@ -190,7 +190,7 @@ class GenomeDB(object):
             logmsg += 'download genome sequence from %r' % self
             print(logmsg, file=logstream)
         LocusPocus.download.url_download(self.gdnaurl, self.gdnapath,
-                                     compress=self.compress_gdna)
+                                         compress=self.compress_gdna)
 
     def download_gff3(self, logstream=sys.stderr):  # pragma: no cover
         """Download genome annotation."""
@@ -200,7 +200,7 @@ class GenomeDB(object):
             logmsg += 'download genome annotation from %r' % self
             print(logmsg, file=logstream)
         LocusPocus.download.url_download(self.gff3url, self.gff3path,
-                                     compress=self.compress_gff3)
+                                         compress=self.compress_gff3)
 
     def download_prot(self, logstream=sys.stderr):  # pragma: no cover
         """Download protein sequences."""
@@ -210,7 +210,7 @@ class GenomeDB(object):
             logmsg += 'download protein sequences from %r' % self
             print(logmsg, file=logstream)
         LocusPocus.download.url_download(self.proturl, self.protpath,
-                                     compress=self.compress_prot)
+                                         compress=self.compress_prot)
 
     def download(self, logstream=sys.stderr):  # pragma: no cover
         """Run download task."""

@@ -13,6 +13,7 @@ import re
 import subprocess
 import sys
 import LocusPocus
+from LocusPocus import test_registry
 
 
 def cds_sequences(db, logstream=sys.stderr):
@@ -126,7 +127,7 @@ def prepare(db, logstream=sys.stderr):  # pragma: no cover
 
 def test_coding_sequences():
     """Breakdown: extract coding sequences"""
-    db = LocusPocus.test_registry.genome('Atha', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Atha', workdir='testdata/demo-workdir')
     cds_sequences(db, logstream=None)
     outfile = 'testdata/demo-workdir/Atha/Atha.cds.fa'
     testfile = 'testdata/fasta/atha-cds.fa'
@@ -135,7 +136,7 @@ def test_coding_sequences():
 
 def test_exon_sequences():
     """Breakdown: extract exon sequences"""
-    db = LocusPocus.test_registry.genome('Atha', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Atha', workdir='testdata/demo-workdir')
     exon_sequences(db, logstream=None)
     outfile = 'testdata/demo-workdir/Atha/Atha.exons.fa'
     testfile = 'testdata/fasta/atha-exons.fa'
@@ -144,7 +145,7 @@ def test_exon_sequences():
 
 def test_intron_sequences():
     """Breakdown: extract intron sequences"""
-    db = LocusPocus.test_registry.genome('Atha', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Atha', workdir='testdata/demo-workdir')
     intron_sequences(db, logstream=None)
     outfile = 'testdata/demo-workdir/Atha/Atha.introns.fa'
     testfile = 'testdata/fasta/atha-introns.fa'

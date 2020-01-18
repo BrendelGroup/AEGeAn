@@ -21,7 +21,7 @@ import gzip
 import re
 import subprocess
 import sys
-import LocusPocus 
+import LocusPocus
 
 
 class PdomDB(LocusPocus.genomedb.GenomeDB):
@@ -120,8 +120,9 @@ def test_download():
 
 def test_format():
     """Pdom r1.2: formatting task"""
-    pdom_db = LocusPocus.test_registry_supp.genome('Pdtl',
-                                               workdir='testdata/demo-workdir')
+    pdom_db = LocusPocus.test_registry_supp.genome(
+        'Pdtl', workdir='testdata/demo-workdir'
+    )
     pdom_db.preprocess_gdna(logstream=None)
     pdom_db.preprocess_gff3(logstream=None)
     pdom_db.preprocess_prot(logstream=None)

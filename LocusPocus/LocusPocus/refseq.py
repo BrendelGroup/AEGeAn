@@ -20,7 +20,8 @@ import os
 import re
 import subprocess
 import sys
-import LocusPocus 
+import LocusPocus
+from LocusPocus import test_registry
 
 
 class RefSeqDB(LocusPocus.genomedb.GenomeDB):
@@ -90,7 +91,7 @@ class RefSeqDB(LocusPocus.genomedb.GenomeDB):
             copy_file(annotpath, self.gff3filename)
             copy_file(protpath, self.protfilename)
 
-    def format_fasta(self, instream, outstream, logstream=sys.stderr):
+    def format_fasta(self, instream, outstrm, logstream=sys.stderr):
         for defline, sequence in LocusPocus.fasta.parse(instream):
             if 'seqfilter' in self.config:
                 discard = False
@@ -100,8 +101,8 @@ class RefSeqDB(LocusPocus.genomedb.GenomeDB):
                         break
                 if discard:
                     continue
-            print(defline, file=outstream)
-            LocusPocus.fasta.format(sequence, linewidth=80, outstream=outstream)
+            print(defline, file=outstrm)
+            LocusPocus.fasta.format(sequence, linewidth=80, outstream=outstrm)
 
     def format_gff3(self, logstream=sys.stderr, debug=False):
         cmds = list()
@@ -213,7 +214,7 @@ class GenbankDB(RefSeqDB):
 
 def test_genome_download():
     """RefSeq: gDNA download"""
-    ador_db = LocusPocus.test_registry.genome('Ador')
+    ador_db = test_registry.genome('Ador')
     testurl = ('https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/'
                'Apis_dorsata/all_assembly_versions/'
                'GCF_000469605.1_Apis_dorsata_1.3/'
@@ -226,7 +227,7 @@ def test_genome_download():
         'scaffold path mismatch\n%s\n%s' % (ador_db.gdnapath, testpath)
     assert ador_db.compress_gdna is False
 
-    amel_db = LocusPocus.test_registry.genome('Amel')
+    amel_db = test_registry.genome('Amel')
     testurl = ('https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/'
                'Apis_mellifera/all_assembly_versions/suppressed/'
                'GCF_000002195.4_Amel_4.5/'
@@ -241,7 +242,7 @@ def test_genome_download():
 
 def test_annot_download():
     """RefSeq: annotation download"""
-    ador_db = LocusPocus.test_registry.genome('Ador')
+    ador_db = test_registry.genome('Ador')
     testurl = ('https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/'
                'Apis_dorsata/all_assembly_versions/'
                'GCF_000469605.1_Apis_dorsata_1.3/'
@@ -256,7 +257,7 @@ def test_annot_download():
 
 def test_proteins_download():
     """RefSeq: protein download"""
-    db = LocusPocus.test_registry.genome('Ador', workdir='/home/gandalf/HymHub')
+    db = test_registry.genome('Ador', workdir='/home/gandalf/HymHub')
     testurl = ('https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/'
                'Apis_dorsata/all_assembly_versions/'
                'GCF_000469605.1_Apis_dorsata_1.3/'
@@ -272,21 +273,21 @@ def test_proteins_download():
 
 def test_gdna_format():
     """RefSeq: gDNA pre-processing"""
-    db = LocusPocus.test_registry.genome('Hsal', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Hsal', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Hsal/Hsal.gdna.fa'
     testoutfile = 'testdata/fasta/hsal-first-7-out.fa'
     assert filecmp.cmp(testoutfile, outfile), 'Hsal gDNA formatting failed'
 
-    conf = LocusPocus.test_registry.genome('Tcas')
-    db = LocusPocus.test_registry.genome('Tcas', workdir='testdata/demo-workdir')
+    conf = test_registry.genome('Tcas')
+    db = test_registry.genome('Tcas', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Tcas/Tcas.gdna.fa'
     testoutfile = 'testdata/fasta/tcas-first-33-out.fa'
     assert filecmp.cmp(testoutfile, outfile), 'Tcas gDNA formatting failed'
 
-    conf = LocusPocus.test_registry.genome('Mmus')
-    db = LocusPocus.test_registry.genome('Mmus', workdir='testdata/demo-workdir')
+    conf = test_registry.genome('Mmus')
+    db = test_registry.genome('Mmus', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Mmus/Mmus.gdna.fa'
     testoutfile = 'testdata/fasta/mmus-gdna.fa'
@@ -295,20 +296,20 @@ def test_gdna_format():
 
 def test_annot_format():
     """RefSeq: annotation pre-processing"""
-    db = LocusPocus.test_registry.genome('Aech', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Aech', workdir='testdata/demo-workdir')
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Aech/Aech.gff3'
     testfile = 'testdata/gff3/ncbi-format-aech.gff3'
     assert filecmp.cmp(outfile, testfile), 'Aech annotation formatting failed'
 
-    db = LocusPocus.test_registry.genome('Pbar', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Pbar', workdir='testdata/demo-workdir')
     db.config['annotfilter'] = 'NW_011933506.1'
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Pbar/Pbar.gff3'
     testfile = 'testdata/gff3/ncbi-format-pbar.gff3'
     assert filecmp.cmp(outfile, testfile), 'Pbar annotation formatting failed'
 
-    db = LocusPocus.test_registry.genome('Ador', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Ador', workdir='testdata/demo-workdir')
     db.config['annotfilter'] = ['NW_006264094.1', 'NW_006263516.1']
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Ador/Ador.gff3'
@@ -331,7 +332,7 @@ def test_annot_format():
 
 def test_prot_ncbi():
     """RefSeq: protein pre-processing"""
-    db = LocusPocus.test_registry.genome('Hsal', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Hsal', workdir='testdata/demo-workdir')
     db.preprocess_prot(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Hsal/Hsal.all.prot.fa'
     testoutfile = 'testdata/fasta/hsal-13-prot-out.fa'
@@ -340,7 +341,7 @@ def test_prot_ncbi():
 
 def test_protids():
     """RefSeq: extract protein IDs from GFF3"""
-    db = LocusPocus.test_registry.genome('Xtro')
+    db = test_registry.genome('Xtro')
     protids = ['XP_012809995.1', 'XP_012809996.1', 'XP_012809997.1',
                'XP_012809998.1']
     infile = 'testdata/gff3/xtro-3genes.gff3'
@@ -354,7 +355,7 @@ def test_protids():
 
 def test_protmap():
     """RefSeq: extract protein-->iLocus mapping from GFF3"""
-    db = LocusPocus.test_registry.genome('Xtro')
+    db = test_registry.genome('Xtro')
     mapping = {'XP_012809997.1': 'XtroILC-43374',
                'XP_012809996.1': 'XtroILC-43374',
                'XP_012809995.1': 'XtroILC-43373',
@@ -370,7 +371,7 @@ def test_protmap():
 
 def test_cleanup():
     """RefSeq: cleanup task"""
-    db = LocusPocus.test_registry.genome('Aech', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Aech', workdir='testdata/demo-workdir')
     delfiles = ['testdata/demo-workdir/Aech/Aech.gff3']
     testfiles = db.cleanup(None, False, True)
     assert testfiles == delfiles, '%r %r' % (testfiles, delfiles)
@@ -380,7 +381,7 @@ def test_cleanup():
     testfiles = db.cleanup(None, True, True)
     assert set(testfiles) == set(delfiles), '%r %r' % (testfiles, delfiles)
 
-    db = LocusPocus.test_registry.genome('Bdis', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Bdis', workdir='testdata/demo-workdir')
     delfiles = ['testdata/demo-workdir/Bdis/Bdis.gdna.fa',
                 'testdata/demo-workdir/Bdis/Bdis.gff3',
                 'testdata/demo-workdir/Bdis/Bdis.ilocus.mrnas.gff3',
@@ -406,7 +407,7 @@ def test_cleanup():
     testfiles = db.cleanup(['.miloci.', 'simple'], False, True)
     assert set(testfiles) == set(delfiles), '%r %r' % (testfiles, delfiles)
 
-    db = LocusPocus.test_registry.genome('Vcar', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Vcar', workdir='testdata/demo-workdir')
     nodelfile = 'testdata/demo-workdir/Vcar/Vcar.protein2ilocus.tsv'
     testfiles = db.cleanup(None, False, True)
     assert nodelfile not in testfiles, 'incorrectly deleted file'
@@ -414,7 +415,7 @@ def test_cleanup():
 
 def test_get_map():
     """RefSeq: get prot map"""
-    db = LocusPocus.test_registry.genome('Vcar', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Vcar', workdir='testdata/demo-workdir')
     mapping = dict()
     for protid, locid in db.get_prot_map():
         mapping[protid] = locid
@@ -427,6 +428,6 @@ def test_get_map():
 
 def test_genbank():
     """Genbank: smoke test"""
-    db = LocusPocus.test_registry.genome('Znev')
+    db = test_registry.genome('Znev')
     assert str(db) == 'Genbank'
     assert db.base() == 'https://ftp.ncbi.nlm.nih.gov/genomes/genbank'

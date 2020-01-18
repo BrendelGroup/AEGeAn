@@ -25,7 +25,9 @@ class Registry(object):
 
     def __init__(self):
         """Initialize the registry with the default LocusPocus configs."""
-        genome_configs = pkg_resources.resource_filename('LocusPocus', '../genome_configs')
+        genome_configs = pkg_resources.resource_filename(
+            'LocusPocus', '../genome_configs'
+        )
         self.update(genome_configs, clear=True)
 
     def update(self, path, clear=False):

@@ -23,6 +23,7 @@ import re
 import subprocess
 import sys
 import LocusPocus
+from LocusPocus import test_registry
 
 
 class TairDB(LocusPocus.genomedb.GenomeDB):
@@ -160,7 +161,7 @@ class TairDB(LocusPocus.genomedb.GenomeDB):
 
 def test_gdna_format():
     """TAIR6: gDNA pre-processing"""
-    db = LocusPocus.test_registry.genome('Att6', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Att6', workdir='testdata/demo-workdir')
     db.preprocess_gdna(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Att6/Att6.gdna.fa'
     testoutfile = 'testdata/fasta/tair6-gdna-out.fa'
@@ -181,7 +182,7 @@ def test_gdna_format():
 
 def test_annot_format():
     """TAIR6: annotation pre-processing"""
-    db = LocusPocus.test_registry.genome('Att6', workdir='testdata/demo-workdir')
+    db = test_registry.genome('Att6', workdir='testdata/demo-workdir')
     db.preprocess_gff3(logstream=None, verify=False)
     outfile = 'testdata/demo-workdir/Att6/Att6.gff3'
     testfile = 'testdata/gff3/tair6-format.gff3'
@@ -190,7 +191,7 @@ def test_annot_format():
 
 def test_protids():
     """TAIR6: extract protein IDs from GFF3"""
-    db = LocusPocus.test_registry.genome('Att6')
+    db = test_registry.genome('Att6')
     protids = ['AT5G01010.1', 'AT5G01015.1', 'AT5G01020.1', 'AT5G01030.1',
                'AT5G01030.2', 'AT5G01040.1', 'AT5G01050.1', 'AT5G01060.1',
                'AT5G01070.1', 'AT5G01075.1']
@@ -205,7 +206,7 @@ def test_protids():
 
 def test_protmap():
     """TAIR6: extract protein-->iLocus mapping from GFF3"""
-    db = LocusPocus.test_registry.genome('Att6')
+    db = test_registry.genome('Att6')
     mapping = {'AT2G01800.1': 'Att6ILC-09797',
                'AT2G01810.1': 'Att6ILC-09799',
                'AT2G01820.1': 'Att6ILC-09801',

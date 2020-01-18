@@ -19,6 +19,7 @@ import re
 import subprocess
 import sys
 import LocusPocus
+from LocusPocus import test_registry
 
 
 class CrgDB(LocusPocus.genomedb.GenomeDB):
@@ -149,7 +150,7 @@ class CrgDB(LocusPocus.genomedb.GenomeDB):
 
 def test_scaffolds():
     """CRG: scaffolds download"""
-    dqua_db = LocusPocus.test_registry.genome('Dqcr')
+    dqua_db = test_registry.genome('Dqcr')
     testurl = 'http://wasp.crg.eu/DQUA.v01.fa.gz'
     testpath = './Dqcr/DQUA.v01.fa.gz'
     assert dqua_db.gdnaurl == testurl, \
@@ -161,7 +162,7 @@ def test_scaffolds():
 
 def test_annot():
     """CRG: annotation download"""
-    dqua_db = LocusPocus.test_registry.genome('Dqcr', workdir='CRG')
+    dqua_db = test_registry.genome('Dqcr', workdir='CRG')
     testurl = 'http://wasp.crg.eu/DQUA.v01.gff3'
     testpath = 'CRG/Dqcr/DQUA.v01.gff3.gz'
     assert dqua_db.gff3url == testurl, \
@@ -172,7 +173,7 @@ def test_annot():
 
 def test_proteins():
     """CRG: protein download"""
-    dqua_db = LocusPocus.test_registry.genome('Dqcr', workdir='/opt/db/fidibus')
+    dqua_db = test_registry.genome('Dqcr', workdir='/opt/db/fidibus')
     testurl = 'http://wasp.crg.eu/DQUA.v01.pep.fa.gz'
     testpath = '/opt/db/fidibus/Dqcr/DQUA.v01.pep.fa.gz'
     assert dqua_db.proturl == testurl, \
@@ -183,7 +184,7 @@ def test_proteins():
 
 def test_protids():
     """CRG: extract protein IDs from GFF3"""
-    db = LocusPocus.test_registry.genome('Dqcr')
+    db = test_registry.genome('Dqcr')
     protids = ['DQUA011a006022P1', 'DQUA011a006023P1', 'DQUA011a006024P1']
     infile = 'testdata/gff3/dqua-275.gff3'
     testids = list()
@@ -196,7 +197,7 @@ def test_protids():
 
 def test_protmap():
     """CRG: extract protein-->iLocus mapping from GFF3"""
-    db = LocusPocus.test_registry.genome('Dqcr')
+    db = test_registry.genome('Dqcr')
     mapping = {'DQUA011a006022P1': 'DquaILC-14465',
                'DQUA011a006023P1': 'DquaILC-14466',
                'DQUA011a006024P1': 'DquaILC-14467'}
@@ -211,6 +212,5 @@ def test_protmap():
 
 def test_format():
     """GenomeDB task drivers"""
-    db = LocusPocus.test_registry_supp.genome('Pccr',
-                                          workdir='testdata/demo-workdir')
+    db = test_registry_supp.genome('Pccr', workdir='testdata/demo-workdir')
     db.prep(logstream=None)

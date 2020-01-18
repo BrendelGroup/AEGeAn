@@ -55,7 +55,7 @@ def get_row(ilocus_data, milocus_data, fmt):
     effective_genome = milocus_data.loc[milocus_data.LocusClass != 'fiLocus']
     effective_genome_size = effective_genome['EffectiveLength'].sum()
     milocus_occ = miloci['EffectiveLength'].sum()
-    milocus_perc = milocus_occ / effective_genome_size * 100 
+    milocus_perc = milocus_occ / effective_genome_size * 100
     gene_count = miloci['GeneCount'].quantile([0.25, 0.50, 0.75])
     gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
     singletons = milocus_data.loc[milocus_data.LocusClass.isin(gilocus_types)]
@@ -64,15 +64,17 @@ def get_row(ilocus_data, milocus_data, fmt):
 
     if fmt == 'tsv':
         genecounts = ','.join(['{:.0f}'.format(gc) for gc in gene_count])
-        row = [species, milocus_count, milocus_occ, milocus_perc,
-               genecounts, len(singletons), singleton_perc       ]
+        row = [
+            species, milocus_count, milocus_occ, milocus_perc,
+            genecounts, len(singletons), singleton_perc
+        ]
     elif fmt == 'tex':
         count = '{:,d}'.format(milocus_count)
-        occupancy = '{:,.1f} Mb ({:.1f}\\%)'.format(milocus_occ / 1000000,
-                                                    milocus_perc          )
+        occupancy = '{:,.1f} Mb ({:.1f}\\%)'.format(
+            milocus_occ / 1000000, milocus_perc
+        )
         genecounts = ', '.join(['{:.0f}'.format(gc) for gc in gene_count])
-        singles = '{:,d} ({:.1f}\\%)'.format(len(singletons),
-                                             singleton_perc  )
+        singles = '{:,d} ({:.1f}\\%)'.format(len(singletons), singleton_perc)
         row = [species, count, occupancy, genecounts, singles]
 
     return row

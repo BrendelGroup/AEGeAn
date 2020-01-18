@@ -152,13 +152,15 @@ def main(args):
         phis = list()
         sigmas = list()
         seqids = list()
-        gff3file = '{wd:s}/{spec:s}/{spec:s}.gff3'.format(wd=args.workdir, spec=species)
+        gff3file = '{wd:s}/{spec:s}/{spec:s}.gff3'.format(
+            wd=args.workdir, spec=species
+        )
         for seqid, length in longseqs(gff3file, args.length):
             length = seqlen(seqid, iloci, ithresh, gthresh)
             try:
                 phi = calc_phi(seqid, iloci, miloci, gthresh)
             except ZeroDivisionError:
-                # ... the exception occurs when sequence seqid contains no giloci
+                # ... the exception occurs when sequence contains no giloci
                 continue
             milocus_occ = miloci.loc[
                 (miloci.SeqID == seqid) &

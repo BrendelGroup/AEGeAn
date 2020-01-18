@@ -186,3 +186,7 @@ locuspocus-test:
 
 ci-test:
 		@ set -e && for conf in $$(ls genome_configs/*.yml | grep -v -e Mmus -e Btau -e Emex -e Drer -e Hsap | $(shufcmd) | head -2); do label=$$(basename $$conf .yml); echo $$label; fidibus --refr=$$label --workdir=scratch/testmore/ --relax download prep iloci breakdown stats; rm -r scratch/testmore/; done
+
+
+style:
+		cd LocusPocus && pycodestyle LocusPocus/*.py scripts/*.py
