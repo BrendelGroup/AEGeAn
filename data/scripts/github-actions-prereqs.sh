@@ -8,4 +8,4 @@ cd $HOME/local/src/genometools-1.6.1
 make -j 2 prefix=$HOME/local install
 cd -
 
-make -j 2 prefix=$HOME/local install install-scripts
+make prefix=$HOME/local install install-scripts
