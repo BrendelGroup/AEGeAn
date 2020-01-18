@@ -1,5 +1,5 @@
 bootstrap: docker
-From: fedora:30
+From: fedora:31
 
 %help
     This container provides portable & reproducible components for AEGeAn:
@@ -8,13 +8,14 @@ From: fedora:30
     
 %post
     dnf -y update
-    dnf -y install bc bzip2 findutils git tcsh unzip zip wget which
+    dnf -y install bc bzip2 findutils git mlocate tcsh unzip zip wget which
     dnf -y install gcc-c++ make ruby
     dnf -y install cairo-devel pango-devel zlib-devel
-    dnf -y install python3-pycurl python3-pyyaml python3-pandas python3-pytest
+    dnf -y install libnsl
+    dnf -y install python3-pycurl python3-pyyaml python3-pandas
+    dnf -y install python3-entrypoints python3-pytest python3-pytest-cov
     dnf -y install pandoc
 
-    ln -s /usr/bin/python3 /usr/bin/python
     cd /usr/local/src
 
     echo 'Installing the GenomeTools package:'
@@ -40,6 +41,7 @@ From: fedora:30
     make install install-scripts
     sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
     ldconfig
+    make test
     cd ..
 
     
@@ -47,7 +49,7 @@ From: fedora:30
     wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.9.0/ncbi-blast-2.9.0+-x64-linux.tar.gz
     tar -xzf ncbi-blast-2.9.0+-x64-linux.tar.gz
     cd ncbi-blast-2.9.0+/bin
-    cp * /usr/local/bin/..
+    cp * /usr/local/bin/
     cd ../..
     rm ncbi-blast-2.9.0+-x64-linux.tar.gz
     cd ..
