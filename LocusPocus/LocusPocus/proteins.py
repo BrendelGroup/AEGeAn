@@ -12,7 +12,6 @@ from __future__ import print_function
 import filecmp
 import sys
 import LocusPocus
-from LocusPocus import test_registry
 
 
 def ids(db, logstream=sys.stderr):  # pragma: no cover
@@ -107,7 +106,8 @@ def prepare(db, logstream=sys.stderr):  # pragma: no cover
 
 def test_protein_sequence():
     """Breakdown: select protein sequences"""
-    db = test_registry.genome('Scer', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Scer',
+                                         workdir='testdata/demo-workdir')
     sequences(db, logstream=None)
     outfile = 'testdata/demo-workdir/Scer/Scer.prot.fa'
     testfile = 'testdata/fasta/scer-few-prots.fa'

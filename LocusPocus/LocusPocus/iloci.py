@@ -13,7 +13,6 @@ import re
 import subprocess
 import sys
 import LocusPocus
-from LocusPocus import test_registry
 
 
 def intervals(db, delta=500, ilcformat='{}ILC-%05lu', logstream=sys.stderr):
@@ -165,7 +164,8 @@ def prepare(db, delta=500, ilcformat='%sILC-', logstream=sys.stderr):  # pragma:
 
 def test_intervals():
     """iLoci: compute iLocus intervals"""
-    db = test_registry.genome('Bdis', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Bdis',
+                                         workdir='testdata/demo-workdir')
     intervals(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Bdis/Bdis.iloci.gff3'
@@ -179,7 +179,8 @@ def test_intervals():
 
 def test_simple():
     """iLoci: determine simple iLoci"""
-    db = test_registry.genome('Bdis', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Bdis',
+                                         workdir='testdata/demo-workdir')
     simple(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Bdis/Bdis.simple-iloci.txt'
@@ -189,7 +190,8 @@ def test_simple():
 
 def test_reps():
     """iLoci: select representative gene models for each iLocus"""
-    db = test_registry.genome('Bdis', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Bdis',
+                                         workdir='testdata/demo-workdir')
     representatives(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Bdis/Bdis.ilocus.mrnas.gff3'
@@ -199,7 +201,8 @@ def test_reps():
 
 def test_sequences():
     """iLoci: extract iLocus sequences"""
-    db = test_registry.genome('Bdis', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Bdis',
+                                         workdir='testdata/demo-workdir')
     sequences(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Bdis/Bdis.iloci.fa'
@@ -213,7 +216,8 @@ def test_sequences():
 
 def test_ancillary():
     """iLoci: process ancillary data for iLoci"""
-    db = test_registry.genome('Bdis', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Bdis',
+                                         workdir='testdata/demo-workdir')
     ancillary(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Bdis/Bdis.ilens.tsv'
