@@ -1,0 +1,11 @@
+Bimp:
+    species: Bombus impatiens
+    common: common eastern bumble bee
+    clade:
+        - bee
+        - bumblebee
+    source: refseq
+    branch: invertebrate
+    accession: BogusAccessionForUnitTesting
+    build: BIMP_2.0
+    description: bogus config file for testing

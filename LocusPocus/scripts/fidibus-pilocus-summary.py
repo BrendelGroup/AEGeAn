@@ -53,9 +53,9 @@ def get_row(iloci, premrnas, fmt):
     elif fmt == 'tex':
         count = '{:,d}'.format(pilocus_count)
         occupancy = '{:,.1f} Mb ({:.1f}\\%)'.format(pilocus_occ / 1000000,
-                                                    pilocus_occ_perc      )
+                                                    pilocus_occ_perc)
         sepiloci = '{:,d} ({:.1f}\\%)'.format(single_exon_piloci,
-                                              single_exon_perc   )
+                                              single_exon_perc)
         row = [species, count, occupancy, sepiloci]
 
     return row

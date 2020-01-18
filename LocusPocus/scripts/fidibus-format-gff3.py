@@ -232,7 +232,8 @@ def parse_args():
                         default=sys.stdout)
     parser.add_argument('-p', '--prefix', default=None, metavar='PFX',
                         help='attach the given prefix to each sequence ID')
-    parser.add_argument('--source', default='refseq', choices=LocusPocus.sources,
+    parser.add_argument('--source', default='refseq',
+                        choices=LocusPocus.sources,
                         help='data source; default is "refseq"')
     parser.add_argument('gff3', type=argparse.FileType('r'))
     return parser.parse_args()

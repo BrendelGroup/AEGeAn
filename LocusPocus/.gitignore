@@ -3,3 +3,9 @@ fidibus.egg-info/
 LocusPocus.egg-info/
 build/
 dist/
+
+# Artifacts from testing
+testdata/demo-workdir/????/????.gdna.fa
+testdata/demo-workdir/????/????.gff3
+testdata/demo-workdir/????/????.all.prot.fa
+testdata/demo-workdir/Gnrc/

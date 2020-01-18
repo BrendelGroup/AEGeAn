@@ -1,0 +1,626 @@
+##gff-version 3
+##sequence-region   HlabScf_1 1 517
+##sequence-region   HlabScf_21 1 521
+##sequence-region   HlabScf_27 1 261
+##sequence-region   HlabScf_32 37719 907555
+##sequence-region   HlabScf_6 1 235
+##sequence-region   HlabScf_7 1 532
+##sequence-region   HlabScf_8 1 202
+HlabScf_32	AEGeAn::tidygff3	gene	37719	101885	.	-	.	ID=gene1
+HlabScf_32	GLEAN	mRNA	37719	101885	0.241	-	.	ID=mRNA1;Parent=gene1;source_id=Hlab_GLEAN_10004065;part_support_id=CUFF.12483.1;Name=Hlab06250;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	37719	38856	.	-	1	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	43764	44188	.	-	0	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	46839	46985	.	-	0	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	48038	48294	.	-	2	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	50728	50916	.	-	2	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	64613	64717	.	-	2	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	67926	68072	.	-	2	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	93305	93364	.	-	2	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	95850	96710	.	-	2	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	96766	97237	.	-	0	Parent=mRNA1;accession=Hlab06250
+HlabScf_32	GLEAN	CDS	101610	101885	.	-	0	Parent=mRNA1;accession=Hlab06250
+###
+HlabScf_32	AEGeAn::tidygff3	gene	128071	130812	.	+	.	ID=gene2
+HlabScf_32	GLEAN	mRNA	128071	130812	1	+	.	ID=mRNA2;Parent=gene2;source_id=Hlab_GLEAN_10004066;Name=Hlab06251;accession=Hlab06251
+HlabScf_32	GLEAN	CDS	128071	130812	.	+	0	Parent=mRNA2;accession=Hlab06251
+###
+HlabScf_32	AEGeAn::tidygff3	gene	158269	170136	.	-	.	ID=gene3
+HlabScf_32	GLEAN	mRNA	158269	170136	0.957	-	.	ID=mRNA3;Parent=gene3;source_id=Hlab_GLEAN_10004067;identical_support_id=CUFF.12487.1;part_support_id=CUFF.12487.2;Name=Hlab06252;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	158269	158445	.	-	0	Parent=mRNA3;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	159624	159900	.	-	1	Parent=mRNA3;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	161549	161747	.	-	2	Parent=mRNA3;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	165773	166123	.	-	2	Parent=mRNA3;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	167179	167411	.	-	1	Parent=mRNA3;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	168402	169019	.	-	1	Parent=mRNA3;accession=Hlab06252
+HlabScf_32	GLEAN	CDS	169910	170136	.	-	0	Parent=mRNA3;accession=Hlab06252
+###
+HlabScf_32	AEGeAn::tidygff3	gene	171229	174370	.	-	.	ID=gene4
+HlabScf_32	GLEAN	mRNA	171229	174370	0.901	-	.	ID=mRNA4;Parent=gene4;source_id=Hlab_GLEAN_10004068;part_support_id=CUFF.12488.1;Name=Hlab06253;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	171229	171273	.	-	0	Parent=mRNA4;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	171368	171582	.	-	2	Parent=mRNA4;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	171660	171772	.	-	1	Parent=mRNA4;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	171852	172163	.	-	1	Parent=mRNA4;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	172244	172660	.	-	1	Parent=mRNA4;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	172726	173002	.	-	2	Parent=mRNA4;accession=Hlab06253
+HlabScf_32	GLEAN	CDS	174232	174370	.	-	0	Parent=mRNA4;accession=Hlab06253
+###
+HlabScf_32	AEGeAn::tidygff3	gene	174993	176258	.	-	.	ID=gene5
+HlabScf_32	GLEAN	mRNA	174993	176258	0.693	-	.	ID=mRNA5;Parent=gene5;source_id=Hlab_GLEAN_10004069;Name=Hlab06254;accession=Hlab06254
+HlabScf_32	GLEAN	CDS	174993	175263	.	-	1	Parent=mRNA5;accession=Hlab06254
+HlabScf_32	GLEAN	CDS	175358	175456	.	-	1	Parent=mRNA5;accession=Hlab06254
+HlabScf_32	GLEAN	CDS	175957	176048	.	-	0	Parent=mRNA5;accession=Hlab06254
+HlabScf_32	GLEAN	CDS	176235	176258	.	-	0	Parent=mRNA5;accession=Hlab06254
+###
+HlabScf_32	AEGeAn::tidygff3	gene	177168	179143	.	-	.	ID=gene6
+HlabScf_32	GLEAN	mRNA	177168	179143	0.737	-	.	ID=mRNA6;Parent=gene6;source_id=Hlab_GLEAN_10004070;Name=Hlab06255;accession=Hlab06255
+HlabScf_32	GLEAN	CDS	177168	177716	.	-	0	Parent=mRNA6;accession=Hlab06255
+HlabScf_32	GLEAN	CDS	179000	179143	.	-	0	Parent=mRNA6;accession=Hlab06255
+###
+HlabScf_32	AEGeAn::tidygff3	gene	233577	264397	.	+	.	ID=gene7
+HlabScf_32	GLEAN	mRNA	233577	264397	0.455	+	.	ID=mRNA7;Parent=gene7;source_id=Hlab_GLEAN_10004071;part_support_id=CUFF.12504.2;Name=Hlab06256;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	233577	233867	.	+	0	Parent=mRNA7;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	247767	248068	.	+	0	Parent=mRNA7;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	258304	258690	.	+	1	Parent=mRNA7;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	262866	262992	.	+	1	Parent=mRNA7;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	263071	263841	.	+	0	Parent=mRNA7;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	263930	264193	.	+	0	Parent=mRNA7;accession=Hlab06256
+HlabScf_32	GLEAN	CDS	264266	264397	.	+	0	Parent=mRNA7;accession=Hlab06256
+###
+HlabScf_32	AEGeAn::tidygff3	gene	249556	249735	.	-	.	ID=gene8
+HlabScf_32	Cufflinks	mRNA	249556	249735	1e+03	-	.	ID=mRNA8;Parent=gene8;source_id=CUFF.12505.1;Name=Hlab06257;accession=Hlab06257
+HlabScf_32	Cufflinks	CDS	249556	249735	1e+03	-	0	Parent=mRNA8;accession=Hlab06257
+###
+HlabScf_32	AEGeAn::tidygff3	gene	267440	267991	.	-	.	ID=gene9
+HlabScf_32	GLEAN	mRNA	267440	267991	0.878	-	.	ID=mRNA9;Parent=gene9;source_id=Hlab_GLEAN_10004072;Name=Hlab06258;accession=Hlab06258
+HlabScf_32	GLEAN	CDS	267440	267690	.	-	2	Parent=mRNA9;accession=Hlab06258
+HlabScf_32	GLEAN	CDS	267778	267991	.	-	0	Parent=mRNA9;accession=Hlab06258
+###
+HlabScf_32	AEGeAn::tidygff3	gene	271944	273197	.	-	.	ID=gene10
+HlabScf_32	GLEAN	mRNA	271944	273197	0.993	-	.	ID=mRNA10;Parent=gene10;source_id=Hlab_GLEAN_10004073;part_support_id=CUFF.12512.1;Name=Hlab06259;accession=Hlab06259
+HlabScf_32	GLEAN	CDS	271944	271994	.	-	0	Parent=mRNA10;accession=Hlab06259
+HlabScf_32	GLEAN	CDS	272328	272444	.	-	0	Parent=mRNA10;accession=Hlab06259
+HlabScf_32	GLEAN	CDS	272582	272792	.	-	1	Parent=mRNA10;accession=Hlab06259
+HlabScf_32	GLEAN	CDS	273079	273197	.	-	0	Parent=mRNA10;accession=Hlab06259
+###
+HlabScf_32	AEGeAn::tidygff3	gene	274197	276197	.	-	.	ID=gene11
+HlabScf_32	GLEAN	mRNA	274197	276197	0.808	-	.	ID=mRNA11;Parent=gene11;source_id=Hlab_GLEAN_10004074;part_support_id=CUFF.12516.1;Name=Hlab06260;accession=Hlab06260
+HlabScf_32	GLEAN	CDS	274197	275164	.	-	2	Parent=mRNA11;accession=Hlab06260
+HlabScf_32	GLEAN	CDS	275396	276197	.	-	0	Parent=mRNA11;accession=Hlab06260
+###
+HlabScf_32	AEGeAn::tidygff3	gene	278510	280132	.	+	.	ID=gene12
+HlabScf_32	GLEAN	mRNA	278510	280132	0.796	+	.	ID=mRNA12;Parent=gene12;source_id=Hlab_GLEAN_10004075;part_support_id=CUFF.12518.1;Name=Hlab06261;accession=Hlab06261
+HlabScf_32	GLEAN	CDS	278510	278654	.	+	0	Parent=mRNA12;accession=Hlab06261
+HlabScf_32	GLEAN	CDS	278772	278852	.	+	2	Parent=mRNA12;accession=Hlab06261
+HlabScf_32	GLEAN	CDS	278942	279234	.	+	2	Parent=mRNA12;accession=Hlab06261
+HlabScf_32	GLEAN	CDS	279313	279450	.	+	0	Parent=mRNA12;accession=Hlab06261
+HlabScf_32	GLEAN	CDS	279546	279689	.	+	0	Parent=mRNA12;accession=Hlab06261
+HlabScf_32	GLEAN	CDS	280025	280132	.	+	0	Parent=mRNA12;accession=Hlab06261
+###
+HlabScf_32	AEGeAn::tidygff3	gene	280878	281264	.	-	.	ID=gene13
+HlabScf_32	GLEAN	mRNA	280878	281264	0.821	-	.	ID=mRNA13;Parent=gene13;source_id=Hlab_GLEAN_10004076;part_support_id=CUFF.12519.1;Name=Hlab06262;accession=Hlab06262
+HlabScf_32	GLEAN	CDS	280878	281264	.	-	0	Parent=mRNA13;accession=Hlab06262
+###
+HlabScf_32	AEGeAn::tidygff3	gene	282587	283366	.	+	.	ID=gene14
+HlabScf_32	GLEAN	mRNA	282587	283366	0.648	+	.	ID=mRNA14;Parent=gene14;source_id=Hlab_GLEAN_10004077;part_support_id=CUFF.12522.1;Name=Hlab06263;accession=Hlab06263
+HlabScf_32	GLEAN	CDS	282587	282825	.	+	0	Parent=mRNA14;accession=Hlab06263
+HlabScf_32	GLEAN	CDS	282915	283074	.	+	1	Parent=mRNA14;accession=Hlab06263
+HlabScf_32	GLEAN	CDS	283151	283366	.	+	0	Parent=mRNA14;accession=Hlab06263
+###
+HlabScf_32	AEGeAn::tidygff3	gene	283987	285579	.	-	.	ID=gene15
+HlabScf_32	GLEAN	mRNA	283987	285579	0.437	-	.	ID=mRNA15;Parent=gene15;source_id=Hlab_GLEAN_10004078;part_support_id=CUFF.12523.1;Name=Hlab06264;accession=Hlab06264
+HlabScf_32	GLEAN	CDS	283987	284347	.	-	1	Parent=mRNA15;accession=Hlab06264
+HlabScf_32	GLEAN	CDS	284423	284578	.	-	1	Parent=mRNA15;accession=Hlab06264
+HlabScf_32	GLEAN	CDS	284703	284827	.	-	0	Parent=mRNA15;accession=Hlab06264
+HlabScf_32	GLEAN	CDS	285286	285579	.	-	0	Parent=mRNA15;accession=Hlab06264
+###
+HlabScf_32	AEGeAn::tidygff3	gene	286425	290853	.	+	.	ID=gene16
+HlabScf_32	GLEAN	mRNA	286425	290853	1	+	.	ID=mRNA16;Parent=gene16;source_id=Hlab_GLEAN_10004079;identical_support_id=CUFF.12528.1;Name=Hlab06265;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	286425	286524	.	+	0	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	286969	287562	.	+	2	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	287642	287873	.	+	2	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	287938	288332	.	+	1	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	288421	289353	.	+	2	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	289476	289783	.	+	2	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	290254	290409	.	+	0	Parent=mRNA16;accession=Hlab06265
+HlabScf_32	GLEAN	CDS	290500	290853	.	+	0	Parent=mRNA16;accession=Hlab06265
+###
+HlabScf_32	AEGeAn::tidygff3	gene	291839	292165	.	-	.	ID=gene17
+HlabScf_32	GLEAN	mRNA	291839	292165	0.898	-	.	ID=mRNA17;Parent=gene17;source_id=Hlab_GLEAN_10004080;Name=Hlab06266;accession=Hlab06266
+HlabScf_32	GLEAN	CDS	291839	291953	.	-	1	Parent=mRNA17;accession=Hlab06266
+HlabScf_32	GLEAN	CDS	292128	292165	.	-	0	Parent=mRNA17;accession=Hlab06266
+###
+HlabScf_32	AEGeAn::tidygff3	gene	293559	293738	.	-	.	ID=gene18
+HlabScf_32	Cufflinks	mRNA	293559	293738	1e+03	-	.	ID=mRNA18;Parent=gene18;source_id=CUFF.12524.1;Name=Hlab06267;accession=Hlab06267
+HlabScf_32	Cufflinks	CDS	293559	293738	1e+03	-	0	Parent=mRNA18;accession=Hlab06267
+###
+HlabScf_32	AEGeAn::tidygff3	gene	293838	294655	.	-	.	ID=gene19
+HlabScf_32	GLEAN	mRNA	293838	294655	0.519	-	.	ID=mRNA19;Parent=gene19;source_id=Hlab_GLEAN_10004081;part_support_id=CUFF.12525.1;Name=Hlab06268;accession=Hlab06268
+HlabScf_32	GLEAN	CDS	293838	293922	.	-	1	Parent=mRNA19;accession=Hlab06268
+HlabScf_32	GLEAN	CDS	294012	294088	.	-	0	Parent=mRNA19;accession=Hlab06268
+HlabScf_32	GLEAN	CDS	294446	294655	.	-	0	Parent=mRNA19;accession=Hlab06268
+###
+HlabScf_32	AEGeAn::tidygff3	gene	295804	300066	.	-	.	ID=gene20
+HlabScf_32	GLEAN	mRNA	295804	300066	0.424	-	.	ID=mRNA20;Parent=gene20;source_id=Hlab_GLEAN_10004082;part_support_id=CUFF.12526.1;Name=Hlab06269;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	295804	296004	.	-	0	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	296079	296205	.	-	1	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	296311	296468	.	-	0	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	296549	296713	.	-	0	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	297053	297285	.	-	2	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	297349	297640	.	-	0	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	297807	297969	.	-	1	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	298046	298266	.	-	0	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	298352	298870	.	-	0	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	299071	299723	.	-	2	Parent=mRNA20;accession=Hlab06269
+HlabScf_32	GLEAN	CDS	299997	300066	.	-	0	Parent=mRNA20;accession=Hlab06269
+###
+HlabScf_32	AEGeAn::tidygff3	gene	301836	305976	.	+	.	ID=gene21
+HlabScf_32	GLEAN	mRNA	301836	305976	0.184	+	.	ID=mRNA21;Parent=gene21;source_id=Hlab_GLEAN_10004083;Name=Hlab06270;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	301836	302033	.	+	0	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	302094	302399	.	+	0	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	302775	302902	.	+	0	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	302982	303042	.	+	1	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	304218	304541	.	+	0	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	304609	305018	.	+	0	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	305137	305551	.	+	1	Parent=mRNA21;accession=Hlab06270
+HlabScf_32	GLEAN	CDS	305698	305976	.	+	0	Parent=mRNA21;accession=Hlab06270
+###
+HlabScf_32	AEGeAn::tidygff3	gene	307816	309281	.	-	.	ID=gene22
+HlabScf_32	GLEAN	mRNA	307816	309281	0.941	-	.	ID=mRNA22;Parent=gene22;source_id=Hlab_GLEAN_10004084;part_support_id=CUFF.12531.1;Name=Hlab06271;accession=Hlab06271
+HlabScf_32	GLEAN	CDS	307816	308116	.	-	1	Parent=mRNA22;accession=Hlab06271
+HlabScf_32	GLEAN	CDS	308191	308331	.	-	1	Parent=mRNA22;accession=Hlab06271
+HlabScf_32	GLEAN	CDS	308418	308816	.	-	1	Parent=mRNA22;accession=Hlab06271
+HlabScf_32	GLEAN	CDS	308993	309055	.	-	1	Parent=mRNA22;accession=Hlab06271
+HlabScf_32	GLEAN	CDS	309166	309281	.	-	0	Parent=mRNA22;accession=Hlab06271
+###
+HlabScf_32	AEGeAn::tidygff3	gene	311370	312888	.	-	.	ID=gene23
+HlabScf_32	GLEAN	mRNA	311370	312888	0.414	-	.	ID=mRNA23;Parent=gene23;source_id=Hlab_GLEAN_10004085;identical_support_id=CUFF.12533.2;Name=Hlab06272;accession=Hlab06272
+HlabScf_32	GLEAN	CDS	311370	311482	.	-	2	Parent=mRNA23;accession=Hlab06272
+HlabScf_32	GLEAN	CDS	312221	312410	.	-	0	Parent=mRNA23;accession=Hlab06272
+HlabScf_32	GLEAN	CDS	312489	312618	.	-	1	Parent=mRNA23;accession=Hlab06272
+HlabScf_32	GLEAN	CDS	312755	312888	.	-	0	Parent=mRNA23;accession=Hlab06272
+###
+HlabScf_32	AEGeAn::tidygff3	gene	314577	316352	.	-	.	ID=gene24
+HlabScf_32	GLEAN	mRNA	314577	316352	0.614	-	.	ID=mRNA24;Parent=gene24;source_id=Hlab_GLEAN_10004086;part_support_id=CUFF.12537.2;Name=Hlab06273;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	314577	314981	.	-	0	Parent=mRNA24;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	315039	315200	.	-	0	Parent=mRNA24;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	315300	315431	.	-	0	Parent=mRNA24;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	315526	315737	.	-	2	Parent=mRNA24;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	315815	315946	.	-	2	Parent=mRNA24;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	316017	316121	.	-	2	Parent=mRNA24;accession=Hlab06273
+HlabScf_32	GLEAN	CDS	316235	316352	.	-	0	Parent=mRNA24;accession=Hlab06273
+###
+HlabScf_32	AEGeAn::tidygff3	gene	317776	320299	.	-	.	ID=gene25
+HlabScf_32	GLEAN	mRNA	317776	320299	0.572	-	.	ID=mRNA25;Parent=gene25;source_id=Hlab_GLEAN_10004087;part_support_id=CUFF.12534.1;Name=Hlab06274;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	317776	317973	.	-	0	Parent=mRNA25;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	318124	318313	.	-	1	Parent=mRNA25;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	318398	318526	.	-	1	Parent=mRNA25;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	319125	319380	.	-	2	Parent=mRNA25;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	319484	319673	.	-	0	Parent=mRNA25;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	319746	319892	.	-	0	Parent=mRNA25;accession=Hlab06274
+HlabScf_32	GLEAN	CDS	319970	320299	.	-	0	Parent=mRNA25;accession=Hlab06274
+###
+HlabScf_32	AEGeAn::tidygff3	gene	321727	335820	.	+	.	ID=gene26
+HlabScf_32	GLEAN	mRNA	321727	335820	0.383	+	.	ID=mRNA26;Parent=gene26;source_id=Hlab_GLEAN_10004088;part_support_id=CUFF.12545.1;Name=Hlab06275;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	321727	321861	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	321970	322570	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	322649	322945	.	+	2	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	323027	323160	.	+	2	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	328537	328652	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	330305	330753	.	+	1	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	330804	330860	.	+	2	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	330951	331011	.	+	2	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	331090	331361	.	+	1	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	331444	331619	.	+	2	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	331693	331892	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	331984	332301	.	+	1	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	332363	332555	.	+	1	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	332620	332745	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	332983	333554	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	333611	333759	.	+	1	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	333826	334381	.	+	2	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	334511	334739	.	+	1	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	334969	335706	.	+	0	Parent=mRNA26;accession=Hlab06275
+HlabScf_32	GLEAN	CDS	335770	335820	.	+	0	Parent=mRNA26;accession=Hlab06275
+###
+HlabScf_32	AEGeAn::tidygff3	gene	323747	325374	.	-	.	ID=gene27
+HlabScf_32	GLEAN	mRNA	323747	325374	0.973	-	.	ID=mRNA27;Parent=gene27;source_id=Hlab_GLEAN_10004089;part_support_id=CUFF.12538.1;Name=Hlab06276;accession=Hlab06276
+HlabScf_32	GLEAN	CDS	323747	323943	.	-	2	Parent=mRNA27;accession=Hlab06276
+HlabScf_32	GLEAN	CDS	325191	325374	.	-	0	Parent=mRNA27;accession=Hlab06276
+###
+HlabScf_32	AEGeAn::tidygff3	gene	327811	328681	.	-	.	ID=gene28
+HlabScf_32	GLEAN	mRNA	327811	328681	0.973	-	.	ID=mRNA28;Parent=gene28;source_id=Hlab_GLEAN_10004090;Name=Hlab06277;accession=Hlab06277
+HlabScf_32	GLEAN	CDS	327811	327968	.	-	2	Parent=mRNA28;accession=Hlab06277
+HlabScf_32	GLEAN	CDS	328516	328681	.	-	0	Parent=mRNA28;accession=Hlab06277
+###
+HlabScf_32	AEGeAn::tidygff3	gene	337618	339268	.	-	.	ID=gene29
+HlabScf_32	GLEAN	mRNA	337618	339268	1	-	.	ID=mRNA29;Parent=gene29;source_id=Hlab_GLEAN_10004091;part_support_id=CUFF.12550.2;Name=Hlab06278;accession=Hlab06278
+HlabScf_32	GLEAN	CDS	337618	337883	.	-	2	Parent=mRNA29;accession=Hlab06278
+HlabScf_32	GLEAN	CDS	337970	338245	.	-	2	Parent=mRNA29;accession=Hlab06278
+HlabScf_32	GLEAN	CDS	338347	338962	.	-	0	Parent=mRNA29;accession=Hlab06278
+HlabScf_32	GLEAN	CDS	339218	339268	.	-	0	Parent=mRNA29;accession=Hlab06278
+###
+HlabScf_32	AEGeAn::tidygff3	gene	342847	343803	.	+	.	ID=gene30
+HlabScf_32	GLEAN	mRNA	342847	343803	1	+	.	ID=mRNA30;Parent=gene30;source_id=Hlab_GLEAN_10004093;identical_support_id=CUFF.12547.1;Name=Hlab06279;accession=Hlab06279
+HlabScf_32	GLEAN	CDS	342847	343095	.	+	0	Parent=mRNA30;accession=Hlab06279
+HlabScf_32	GLEAN	CDS	343175	343276	.	+	0	Parent=mRNA30;accession=Hlab06279
+HlabScf_32	GLEAN	CDS	343672	343803	.	+	0	Parent=mRNA30;accession=Hlab06279
+###
+HlabScf_32	AEGeAn::tidygff3	gene	344148	345499	.	-	.	ID=gene31
+HlabScf_32	GLEAN	mRNA	344148	345499	1	-	.	ID=mRNA31;Parent=gene31;source_id=Hlab_GLEAN_10004094;Name=Hlab06280;accession=Hlab06280
+HlabScf_32	GLEAN	CDS	344148	344249	.	-	0	Parent=mRNA31;accession=Hlab06280
+HlabScf_32	GLEAN	CDS	344326	344481	.	-	0	Parent=mRNA31;accession=Hlab06280
+HlabScf_32	GLEAN	CDS	344609	344803	.	-	0	Parent=mRNA31;accession=Hlab06280
+HlabScf_32	GLEAN	CDS	344891	345056	.	-	1	Parent=mRNA31;accession=Hlab06280
+HlabScf_32	GLEAN	CDS	345348	345499	.	-	0	Parent=mRNA31;accession=Hlab06280
+###
+HlabScf_32	AEGeAn::tidygff3	gene	346462	351157	.	-	.	ID=gene32
+HlabScf_32	GLEAN	mRNA	346462	351157	0.571	-	.	ID=mRNA32;Parent=gene32;source_id=Hlab_GLEAN_10004095;Name=Hlab06281;accession=Hlab06281
+HlabScf_32	GLEAN	CDS	346462	346764	.	-	0	Parent=mRNA32;accession=Hlab06281
+HlabScf_32	GLEAN	CDS	350999	351157	.	-	0	Parent=mRNA32;accession=Hlab06281
+###
+HlabScf_32	AEGeAn::tidygff3	gene	351230	351580	.	-	.	ID=gene33
+HlabScf_32	GLEAN	mRNA	351230	351580	0.57	-	.	ID=mRNA33;Parent=gene33;source_id=Hlab_GLEAN_10004096;identical_support_id=CUFF.12548.1;Name=Hlab06282;accession=Hlab06282
+HlabScf_32	GLEAN	CDS	351230	351580	.	-	0	Parent=mRNA33;accession=Hlab06282
+###
+HlabScf_32	AEGeAn::tidygff3	gene	355924	356813	.	-	.	ID=gene34
+HlabScf_32	GLEAN	mRNA	355924	356813	0.783	-	.	ID=mRNA34;Parent=gene34;source_id=Hlab_GLEAN_10004097;part_support_id=CUFF.12552.1;Name=Hlab06283;accession=Hlab06283
+HlabScf_32	GLEAN	CDS	355924	356165	.	-	2	Parent=mRNA34;accession=Hlab06283
+HlabScf_32	GLEAN	CDS	356429	356511	.	-	1	Parent=mRNA34;accession=Hlab06283
+HlabScf_32	GLEAN	CDS	356719	356813	.	-	0	Parent=mRNA34;accession=Hlab06283
+###
+HlabScf_32	AEGeAn::tidygff3	gene	357557	358387	.	+	.	ID=gene35
+HlabScf_32	GLEAN	mRNA	357557	358387	0.986	+	.	ID=mRNA35;Parent=gene35;source_id=Hlab_GLEAN_10004098;Name=Hlab06284;accession=Hlab06284
+HlabScf_32	GLEAN	CDS	357557	357807	.	+	0	Parent=mRNA35;accession=Hlab06284
+HlabScf_32	GLEAN	CDS	358132	358387	.	+	1	Parent=mRNA35;accession=Hlab06284
+###
+HlabScf_32	AEGeAn::tidygff3	gene	359726	373855	.	-	.	ID=gene36
+HlabScf_32	GLEAN	mRNA	359726	373855	0.329	-	.	ID=mRNA36;Parent=gene36;source_id=Hlab_GLEAN_10004099;part_support_id=CUFF.12557.2;Name=Hlab06285;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	359726	359897	.	-	1	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	360050	360108	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	370381	370467	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	370550	370744	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	370816	370961	.	-	2	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	371038	371405	.	-	1	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	371490	371680	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	371748	371965	.	-	2	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	372034	372274	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	372342	372578	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	372590	372693	.	-	2	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	372866	372920	.	-	0	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	373007	373161	.	-	2	Parent=mRNA36;accession=Hlab06285
+HlabScf_32	GLEAN	CDS	373408	373855	.	-	0	Parent=mRNA36;accession=Hlab06285
+###
+HlabScf_32	AEGeAn::tidygff3	gene	365999	368594	.	+	.	ID=gene37
+HlabScf_32	GLEAN	mRNA	365999	368594	0.881	+	.	ID=mRNA37;Parent=gene37;source_id=Hlab_GLEAN_10004100;identical_support_id=CUFF.12556.2;part_support_id=CUFF.12556.1;Name=Hlab06286;accession=Hlab06286
+HlabScf_32	GLEAN	CDS	365999	366047	.	+	0	Parent=mRNA37;accession=Hlab06286
+HlabScf_32	GLEAN	CDS	366417	366488	.	+	2	Parent=mRNA37;accession=Hlab06286
+HlabScf_32	GLEAN	CDS	368011	368218	.	+	2	Parent=mRNA37;accession=Hlab06286
+HlabScf_32	GLEAN	CDS	368310	368439	.	+	1	Parent=mRNA37;accession=Hlab06286
+HlabScf_32	GLEAN	CDS	368505	368594	.	+	0	Parent=mRNA37;accession=Hlab06286
+###
+HlabScf_32	AEGeAn::tidygff3	gene	369372	370138	.	+	.	ID=gene38
+HlabScf_32	GLEAN	mRNA	369372	370138	0.998	+	.	ID=mRNA38;Parent=gene38;source_id=Hlab_GLEAN_10004101;part_support_id=CUFF.12551.1;Name=Hlab06287;accession=Hlab06287
+HlabScf_32	GLEAN	CDS	369372	369417	.	+	0	Parent=mRNA38;accession=Hlab06287
+HlabScf_32	GLEAN	CDS	369837	369997	.	+	2	Parent=mRNA38;accession=Hlab06287
+HlabScf_32	GLEAN	CDS	370067	370138	.	+	0	Parent=mRNA38;accession=Hlab06287
+###
+HlabScf_32	AEGeAn::tidygff3	gene	376561	377118	.	+	.	ID=gene39
+HlabScf_32	GLEAN	mRNA	376561	377118	1	+	.	ID=mRNA39;Parent=gene39;source_id=Hlab_GLEAN_10004102;part_support_id=CUFF.12555.1;Name=Hlab06288;accession=Hlab06288
+HlabScf_32	GLEAN	CDS	376561	376696	.	+	0	Parent=mRNA39;accession=Hlab06288
+HlabScf_32	GLEAN	CDS	376934	377118	.	+	2	Parent=mRNA39;accession=Hlab06288
+###
+HlabScf_32	AEGeAn::tidygff3	gene	377989	384747	.	+	.	ID=gene40
+HlabScf_32	GLEAN	mRNA	377989	384747	0.994	+	.	ID=mRNA40;Parent=gene40;source_id=Hlab_GLEAN_10004103;part_support_id=CUFF.12561.3;Name=Hlab06289;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	377989	378062	.	+	0	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	378372	378516	.	+	1	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	378727	378849	.	+	0	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	380408	380607	.	+	0	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	381558	381767	.	+	1	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	383114	383282	.	+	1	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	383358	383427	.	+	0	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	383502	383661	.	+	2	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	383781	383918	.	+	1	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	384006	384119	.	+	1	Parent=mRNA40;accession=Hlab06289
+HlabScf_32	GLEAN	CDS	384525	384747	.	+	1	Parent=mRNA40;accession=Hlab06289
+###
+HlabScf_32	AEGeAn::tidygff3	gene	379334	379944	.	-	.	ID=gene41
+HlabScf_32	GLEAN	mRNA	379334	379944	0.929	-	.	ID=mRNA41;Parent=gene41;source_id=Hlab_GLEAN_10004104;Name=Hlab06290;accession=Hlab06290
+HlabScf_32	GLEAN	CDS	379334	379454	.	-	1	Parent=mRNA41;accession=Hlab06290
+HlabScf_32	GLEAN	CDS	379754	379944	.	-	0	Parent=mRNA41;accession=Hlab06290
+###
+HlabScf_32	AEGeAn::tidygff3	gene	387572	388676	.	-	.	ID=gene42
+HlabScf_32	GLEAN	mRNA	387572	388676	1	-	.	ID=mRNA42;Parent=gene42;source_id=Hlab_GLEAN_10004105;Name=Hlab06291;accession=Hlab06291
+HlabScf_32	GLEAN	CDS	387572	387766	.	-	0	Parent=mRNA42;accession=Hlab06291
+HlabScf_32	GLEAN	CDS	388313	388414	.	-	0	Parent=mRNA42;accession=Hlab06291
+HlabScf_32	GLEAN	CDS	388599	388676	.	-	0	Parent=mRNA42;accession=Hlab06291
+###
+HlabScf_32	AEGeAn::tidygff3	gene	389661	399809	.	+	.	ID=gene43
+HlabScf_32	GLEAN	mRNA	389661	399809	0.306	+	.	ID=mRNA43;Parent=gene43;source_id=Hlab_GLEAN_10004106;part_support_id=CUFF.12560.1;Name=Hlab06292;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	389661	389782	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	389863	389908	.	+	1	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	390182	390282	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	390740	390893	.	+	1	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	390969	391097	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	391172	391343	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	391427	391584	.	+	2	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	391664	391768	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	391844	392192	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	392323	392483	.	+	2	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	392561	392659	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	392760	393077	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	393150	393363	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	393440	393552	.	+	2	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	398210	399062	.	+	0	Parent=mRNA43;accession=Hlab06292
+HlabScf_32	GLEAN	CDS	399244	399809	.	+	2	Parent=mRNA43;accession=Hlab06292
+###
+HlabScf_32	AEGeAn::tidygff3	gene	403943	404911	.	+	.	ID=gene44
+HlabScf_32	GLEAN	mRNA	403943	404911	0.571	+	.	ID=mRNA44;Parent=gene44;source_id=Hlab_GLEAN_10004107;part_support_id=CUFF.12562.1;Name=Hlab06293;accession=Hlab06293
+HlabScf_32	GLEAN	CDS	403943	404130	.	+	0	Parent=mRNA44;accession=Hlab06293
+HlabScf_32	GLEAN	CDS	404205	404341	.	+	1	Parent=mRNA44;accession=Hlab06293
+HlabScf_32	GLEAN	CDS	404415	404679	.	+	2	Parent=mRNA44;accession=Hlab06293
+HlabScf_32	GLEAN	CDS	404761	404911	.	+	1	Parent=mRNA44;accession=Hlab06293
+###
+HlabScf_32	AEGeAn::tidygff3	gene	410496	411012	.	+	.	ID=gene45
+HlabScf_32	GLEAN	mRNA	410496	411012	0.929	+	.	ID=mRNA45;Parent=gene45;source_id=Hlab_GLEAN_10004108;Name=Hlab06294;accession=Hlab06294
+HlabScf_32	GLEAN	CDS	410496	410732	.	+	0	Parent=mRNA45;accession=Hlab06294
+HlabScf_32	GLEAN	CDS	410902	411012	.	+	0	Parent=mRNA45;accession=Hlab06294
+###
+HlabScf_32	AEGeAn::tidygff3	gene	424024	432432	.	-	.	ID=gene46
+HlabScf_32	GLEAN	mRNA	424024	432432	0.977	-	.	ID=mRNA46;Parent=gene46;source_id=Hlab_GLEAN_10004109;identical_support_id=CUFF.12567.1;Name=Hlab06295;accession=Hlab06295
+HlabScf_32	GLEAN	CDS	424024	424261	.	-	1	Parent=mRNA46;accession=Hlab06295
+HlabScf_32	GLEAN	CDS	432380	432432	.	-	0	Parent=mRNA46;accession=Hlab06295
+###
+HlabScf_32	AEGeAn::tidygff3	gene	464010	464798	.	-	.	ID=gene47
+HlabScf_32	GLEAN	mRNA	464010	464798	0.991	-	.	ID=mRNA47;Parent=gene47;source_id=Hlab_GLEAN_10004110;Name=Hlab06296;accession=Hlab06296
+HlabScf_32	GLEAN	CDS	464010	464798	.	-	0	Parent=mRNA47;accession=Hlab06296
+###
+HlabScf_32	AEGeAn::tidygff3	gene	508377	510362	.	+	.	ID=gene48
+HlabScf_32	GLEAN	mRNA	508377	510362	0.998	+	.	ID=mRNA48;Parent=gene48;source_id=Hlab_GLEAN_10004111;identical_support_id=CUFF.12576.2;part_support_id=CUFF.12576.3;Name=Hlab06297;accession=Hlab06297
+HlabScf_32	GLEAN	CDS	508377	508466	.	+	0	Parent=mRNA48;accession=Hlab06297
+HlabScf_32	GLEAN	CDS	508751	509079	.	+	0	Parent=mRNA48;accession=Hlab06297
+HlabScf_32	GLEAN	CDS	509353	509615	.	+	1	Parent=mRNA48;accession=Hlab06297
+HlabScf_32	GLEAN	CDS	509869	510043	.	+	2	Parent=mRNA48;accession=Hlab06297
+HlabScf_32	GLEAN	CDS	510215	510362	.	+	1	Parent=mRNA48;accession=Hlab06297
+###
+HlabScf_32	AEGeAn::tidygff3	gene	511784	513341	.	-	.	ID=gene49
+HlabScf_32	GLEAN	mRNA	511784	513341	1	-	.	ID=mRNA49;Parent=gene49;source_id=Hlab_GLEAN_10004112;part_support_id=CUFF.12570.1;Name=Hlab06298;accession=Hlab06298
+HlabScf_32	GLEAN	CDS	511784	512188	.	-	0	Parent=mRNA49;accession=Hlab06298
+HlabScf_32	GLEAN	CDS	512290	512600	.	-	2	Parent=mRNA49;accession=Hlab06298
+HlabScf_32	GLEAN	CDS	512678	512747	.	-	0	Parent=mRNA49;accession=Hlab06298
+HlabScf_32	GLEAN	CDS	513147	513341	.	-	0	Parent=mRNA49;accession=Hlab06298
+###
+HlabScf_32	AEGeAn::tidygff3	gene	514582	516049	.	+	.	ID=gene50
+HlabScf_32	GLEAN	mRNA	514582	516049	0.998	+	.	ID=mRNA50;Parent=gene50;source_id=Hlab_GLEAN_10004113;part_support_id=CUFF.12574.1;Name=Hlab06299;accession=Hlab06299
+HlabScf_32	GLEAN	CDS	514582	515078	.	+	0	Parent=mRNA50;accession=Hlab06299
+HlabScf_32	GLEAN	CDS	515158	516049	.	+	1	Parent=mRNA50;accession=Hlab06299
+###
+HlabScf_32	AEGeAn::tidygff3	gene	521646	528155	.	-	.	ID=gene51
+HlabScf_32	GLEAN	mRNA	521646	528155	0.137	-	.	ID=mRNA51;Parent=gene51;source_id=Hlab_GLEAN_10004114;part_support_id=CUFF.12583.1;Name=Hlab06300;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	521646	521881	.	-	2	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	522305	523528	.	-	2	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	523589	523675	.	-	2	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	523754	525112	.	-	2	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	525513	525656	.	-	2	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	525733	526276	.	-	0	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	526355	526568	.	-	1	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	526647	527023	.	-	0	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	527182	527303	.	-	2	Parent=mRNA51;accession=Hlab06300
+HlabScf_32	GLEAN	CDS	528089	528155	.	-	0	Parent=mRNA51;accession=Hlab06300
+###
+HlabScf_32	AEGeAn::tidygff3	gene	532405	535854	.	+	.	ID=gene52
+HlabScf_32	GLEAN	mRNA	532405	535854	0.687	+	.	ID=mRNA52;Parent=gene52;source_id=Hlab_GLEAN_10004115;part_support_id=CUFF.12584.1;Name=Hlab06301;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	532405	532529	.	+	0	Parent=mRNA52;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	532606	532739	.	+	1	Parent=mRNA52;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	532860	533069	.	+	2	Parent=mRNA52;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	533194	533570	.	+	2	Parent=mRNA52;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	533648	534004	.	+	0	Parent=mRNA52;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	534127	534906	.	+	0	Parent=mRNA52;accession=Hlab06301
+HlabScf_32	GLEAN	CDS	535096	535854	.	+	0	Parent=mRNA52;accession=Hlab06301
+###
+HlabScf_32	AEGeAn::tidygff3	gene	537063	537850	.	-	.	ID=gene53
+HlabScf_32	GLEAN	mRNA	537063	537850	0.906	-	.	ID=mRNA53;Parent=gene53;source_id=Hlab_GLEAN_10004116;Name=Hlab06302;accession=Hlab06302
+HlabScf_32	GLEAN	CDS	537063	537236	.	-	0	Parent=mRNA53;accession=Hlab06302
+HlabScf_32	GLEAN	CDS	537321	537505	.	-	2	Parent=mRNA53;accession=Hlab06302
+HlabScf_32	GLEAN	CDS	537805	537850	.	-	0	Parent=mRNA53;accession=Hlab06302
+###
+HlabScf_32	AEGeAn::tidygff3	gene	539218	539961	.	+	.	ID=gene54
+HlabScf_32	GLEAN	mRNA	539218	539961	0.999	+	.	ID=mRNA54;Parent=gene54;source_id=Hlab_GLEAN_10004117;part_support_id=CUFF.12582.1;Name=Hlab06303;accession=Hlab06303
+HlabScf_32	GLEAN	CDS	539218	539318	.	+	0	Parent=mRNA54;accession=Hlab06303
+HlabScf_32	GLEAN	CDS	539399	539507	.	+	1	Parent=mRNA54;accession=Hlab06303
+HlabScf_32	GLEAN	CDS	539887	539961	.	+	0	Parent=mRNA54;accession=Hlab06303
+###
+HlabScf_32	AEGeAn::tidygff3	gene	540236	543055	.	-	.	ID=gene55
+HlabScf_32	GLEAN	mRNA	540236	543055	0.576	-	.	ID=mRNA55;Parent=gene55;source_id=Hlab_GLEAN_10004118;Name=Hlab06304;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	540236	540376	.	-	0	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	540455	541242	.	-	2	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	541333	541543	.	-	0	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	541615	541902	.	-	0	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	541984	542199	.	-	0	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	542272	542533	.	-	1	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	542708	542827	.	-	1	Parent=mRNA55;accession=Hlab06304
+HlabScf_32	GLEAN	CDS	542895	543055	.	-	0	Parent=mRNA55;accession=Hlab06304
+###
+HlabScf_32	AEGeAn::tidygff3	gene	545073	549767	.	+	.	ID=gene56
+HlabScf_32	GLEAN	mRNA	545073	549767	0.687	+	.	ID=mRNA56;Parent=gene56;source_id=Hlab_GLEAN_10004119;part_support_id=CUFF.12588.1;Name=Hlab06305;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	545073	545454	.	+	0	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	545546	545676	.	+	2	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	545863	546059	.	+	0	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	546202	546438	.	+	1	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	546533	546953	.	+	1	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	547032	547192	.	+	0	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	547288	547346	.	+	1	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	547424	547485	.	+	2	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	547552	548448	.	+	0	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	548612	549326	.	+	0	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	549417	549517	.	+	2	Parent=mRNA56;accession=Hlab06305
+HlabScf_32	GLEAN	CDS	549633	549767	.	+	0	Parent=mRNA56;accession=Hlab06305
+###
+HlabScf_32	AEGeAn::tidygff3	gene	567651	567950	.	+	.	ID=gene57
+HlabScf_32	Cufflinks	mRNA	567651	567950	1e+03	+	.	ID=mRNA57;Parent=gene57;source_id=CUFF.12597.1;Name=Hlab06306;accession=Hlab06306
+HlabScf_32	Cufflinks	CDS	567651	567950	1e+03	+	0	Parent=mRNA57;accession=Hlab06306
+###
+HlabScf_32	AEGeAn::tidygff3	gene	572259	575503	.	-	.	ID=gene58
+HlabScf_32	GLEAN	mRNA	572259	575503	0.637	-	.	ID=mRNA58;Parent=gene58;source_id=Hlab_GLEAN_10004120;part_support_id=CUFF.12608.1;Name=Hlab06307;accession=Hlab06307
+HlabScf_32	GLEAN	CDS	572259	572470	.	-	2	Parent=mRNA58;accession=Hlab06307
+HlabScf_32	GLEAN	CDS	572666	572831	.	-	0	Parent=mRNA58;accession=Hlab06307
+HlabScf_32	GLEAN	CDS	572897	574846	.	-	0	Parent=mRNA58;accession=Hlab06307
+HlabScf_32	GLEAN	CDS	575408	575503	.	-	0	Parent=mRNA58;accession=Hlab06307
+###
+HlabScf_32	AEGeAn::tidygff3	gene	576823	577891	.	-	.	ID=gene59
+HlabScf_32	GLEAN	mRNA	576823	577891	1	-	.	ID=mRNA59;Parent=gene59;source_id=Hlab_GLEAN_10004121;part_support_id=CUFF.12605.1;Name=Hlab06308;accession=Hlab06308
+HlabScf_32	GLEAN	CDS	576823	577101	.	-	0	Parent=mRNA59;accession=Hlab06308
+HlabScf_32	GLEAN	CDS	577227	577478	.	-	0	Parent=mRNA59;accession=Hlab06308
+HlabScf_32	GLEAN	CDS	577757	577891	.	-	0	Parent=mRNA59;accession=Hlab06308
+###
+HlabScf_32	AEGeAn::tidygff3	gene	579668	582823	.	-	.	ID=gene60
+HlabScf_32	GLEAN	mRNA	579668	582823	0.678	-	.	ID=mRNA60;Parent=gene60;source_id=Hlab_GLEAN_10004122;part_support_id=CUFF.12610.2;Name=Hlab06309;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	579668	579841	.	-	0	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	579927	580047	.	-	1	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	580238	580380	.	-	0	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	580540	580673	.	-	2	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	580754	580877	.	-	0	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	581031	581303	.	-	0	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	581438	581671	.	-	0	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	582306	582489	.	-	1	Parent=mRNA60;accession=Hlab06309
+HlabScf_32	GLEAN	CDS	582771	582823	.	-	0	Parent=mRNA60;accession=Hlab06309
+###
+HlabScf_32	AEGeAn::tidygff3	gene	589954	591723	.	+	.	ID=gene61
+HlabScf_32	GLEAN	mRNA	589954	591723	0.712	+	.	ID=mRNA61;Parent=gene61;source_id=Hlab_GLEAN_10004123;part_support_id=CUFF.12607.1;Name=Hlab06310;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	589954	590056	.	+	0	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	590122	590292	.	+	2	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	590438	590615	.	+	2	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	590686	590765	.	+	1	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	590852	591003	.	+	2	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	591100	591178	.	+	0	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	591266	591420	.	+	2	Parent=mRNA61;accession=Hlab06310
+HlabScf_32	GLEAN	CDS	591517	591723	.	+	0	Parent=mRNA61;accession=Hlab06310
+###
+HlabScf_32	AEGeAn::tidygff3	gene	596226	599242	.	-	.	ID=gene62
+HlabScf_32	GLEAN	mRNA	596226	599242	0.644	-	.	ID=mRNA62;Parent=gene62;source_id=Hlab_GLEAN_10004124;part_support_id=CUFF.12612.1;Name=Hlab06311;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	596226	596310	.	-	1	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	596393	596700	.	-	0	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	596797	596927	.	-	2	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	597016	597172	.	-	0	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	597240	597533	.	-	0	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	598326	598508	.	-	0	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	598660	598905	.	-	0	Parent=mRNA62;accession=Hlab06311
+HlabScf_32	GLEAN	CDS	599207	599242	.	-	0	Parent=mRNA62;accession=Hlab06311
+###
+HlabScf_32	AEGeAn::tidygff3	gene	600329	612784	.	+	.	ID=gene63
+HlabScf_32	GLEAN	mRNA	600329	612784	0.998	+	.	ID=mRNA63;Parent=gene63;source_id=Hlab_GLEAN_10004125;part_support_id=CUFF.12617.1;Name=Hlab06312;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	600329	600427	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	601122	601238	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	603292	603470	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	603775	603844	.	+	1	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	604220	604660	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	604733	605182	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	605267	605433	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	605515	605676	.	+	1	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	605740	605819	.	+	1	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	605889	606142	.	+	2	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	606214	606455	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	606547	606646	.	+	1	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	606758	607129	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	607206	607403	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	607474	607620	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	607806	607992	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	608065	608094	.	+	2	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	608664	608842	.	+	2	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	608931	609139	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	609228	609635	.	+	1	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	609731	610031	.	+	1	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	610119	610278	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	610388	610548	.	+	2	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	610616	610945	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	611006	611147	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	611458	611720	.	+	2	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	611799	612117	.	+	0	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	612204	612456	.	+	2	Parent=mRNA63;accession=Hlab06312
+HlabScf_32	GLEAN	CDS	612550	612784	.	+	1	Parent=mRNA63;accession=Hlab06312
+###
+HlabScf_32	AEGeAn::tidygff3	gene	616778	617714	.	+	.	ID=gene64
+HlabScf_32	GLEAN	mRNA	616778	617714	0.999	+	.	ID=mRNA64;Parent=gene64;source_id=Hlab_GLEAN_10004126;Name=Hlab06313;accession=Hlab06313
+HlabScf_32	GLEAN	CDS	616778	616908	.	+	0	Parent=mRNA64;accession=Hlab06313
+HlabScf_32	GLEAN	CDS	617019	617319	.	+	1	Parent=mRNA64;accession=Hlab06313
+HlabScf_32	GLEAN	CDS	617472	617714	.	+	0	Parent=mRNA64;accession=Hlab06313
+###
+HlabScf_32	AEGeAn::tidygff3	gene	625399	660965	.	+	.	ID=gene65
+HlabScf_32	GLEAN	mRNA	625399	660965	0.996	+	.	ID=mRNA65;Parent=gene65;source_id=Hlab_GLEAN_10004127;part_support_id=CUFF.12614.1;Name=Hlab06314;accession=Hlab06314
+HlabScf_32	GLEAN	CDS	625399	625801	.	+	0	Parent=mRNA65;accession=Hlab06314
+HlabScf_32	GLEAN	CDS	642538	642724	.	+	2	Parent=mRNA65;accession=Hlab06314
+HlabScf_32	GLEAN	CDS	648204	648358	.	+	1	Parent=mRNA65;accession=Hlab06314
+HlabScf_32	GLEAN	CDS	659463	659651	.	+	2	Parent=mRNA65;accession=Hlab06314
+HlabScf_32	GLEAN	CDS	660499	660575	.	+	2	Parent=mRNA65;accession=Hlab06314
+HlabScf_32	GLEAN	CDS	660705	660965	.	+	0	Parent=mRNA65;accession=Hlab06314
+###
+HlabScf_32	AEGeAn::tidygff3	gene	665944	772619	.	+	.	ID=gene66
+HlabScf_32	GLEAN	mRNA	665944	772619	0.244	+	.	ID=mRNA66;Parent=gene66;source_id=Hlab_GLEAN_10004128;part_support_id=CUFF.12639.1;Name=Hlab06315;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	665944	666165	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	740135	740230	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	751802	752017	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	753713	754167	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	755854	755969	.	+	1	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	757214	757324	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	759632	759713	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	760533	760752	.	+	1	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	760814	761318	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	761410	761576	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	763143	763319	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	764547	764680	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	764778	764931	.	+	1	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	765036	765234	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	765350	765582	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	766299	766473	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	766597	766877	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	766973	767251	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	767330	767566	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	767646	767823	.	+	0	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	768389	768508	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	769077	769172	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	769593	769691	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	771021	771254	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	771716	771998	.	+	2	Parent=mRNA66;accession=Hlab06315
+HlabScf_32	GLEAN	CDS	772475	772619	.	+	1	Parent=mRNA66;accession=Hlab06315
+###
+HlabScf_32	AEGeAn::tidygff3	gene	778447	780325	.	-	.	ID=gene67
+HlabScf_32	GLEAN	mRNA	778447	780325	0.999	-	.	ID=mRNA67;Parent=gene67;source_id=Hlab_GLEAN_10004129;identical_support_id=CUFF.12629.1;Name=Hlab06316;accession=Hlab06316
+HlabScf_32	GLEAN	CDS	778447	778589	.	-	2	Parent=mRNA67;accession=Hlab06316
+HlabScf_32	GLEAN	CDS	778841	779209	.	-	2	Parent=mRNA67;accession=Hlab06316
+HlabScf_32	GLEAN	CDS	779532	779970	.	-	0	Parent=mRNA67;accession=Hlab06316
+HlabScf_32	GLEAN	CDS	780083	780325	.	-	0	Parent=mRNA67;accession=Hlab06316
+###
+HlabScf_32	AEGeAn::tidygff3	gene	780372	793230	.	-	.	ID=gene68
+HlabScf_32	GLEAN	mRNA	780372	793230	0.677	-	.	ID=mRNA68;Parent=gene68;source_id=Hlab_GLEAN_10004130;part_support_id=CUFF.12634.1;Name=Hlab06317;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	780372	780734	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	780954	781142	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	781428	781847	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	782296	782464	.	-	1	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	782547	782831	.	-	1	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	783151	783299	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	783386	783544	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	783614	783780	.	-	2	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	783872	784045	.	-	2	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	784420	784660	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	784733	784871	.	-	1	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	785495	785655	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	786292	786604	.	-	1	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	787480	787624	.	-	2	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	787698	787809	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	787883	788136	.	-	2	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	788554	788775	.	-	2	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	789058	789226	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	789854	790109	.	-	1	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	790511	790645	.	-	1	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	790725	790888	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	790991	791161	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	791334	791531	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	791892	792247	.	-	2	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	792417	792600	.	-	0	Parent=mRNA68;accession=Hlab06317
+HlabScf_32	GLEAN	CDS	793114	793230	.	-	0	Parent=mRNA68;accession=Hlab06317
+###
+HlabScf_32	AEGeAn::tidygff3	gene	896056	907555	.	+	.	ID=gene69
+HlabScf_32	GLEAN	mRNA	896056	907555	0.58	+	.	ID=mRNA69;Parent=gene69;source_id=Hlab_GLEAN_10004131;part_support_id=CUFF.12640.1;Name=Hlab06318;accession=Hlab06318
+HlabScf_32	GLEAN	CDS	896056	897228	.	+	0	Parent=mRNA69;accession=Hlab06318
+HlabScf_32	GLEAN	CDS	897390	897540	.	+	0	Parent=mRNA69;accession=Hlab06318
+HlabScf_32	GLEAN	CDS	907377	907555	.	+	2	Parent=mRNA69;accession=Hlab06318
+###

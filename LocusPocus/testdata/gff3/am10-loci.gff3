@@ -1,0 +1,23 @@
+##gff-version 3
+##sequence-region   Group1.24 1 367865
+Group1.24	AEGeAn::LocusPocus	locus	1	303103	.	.	.	fragment=true;Name=Am10ILC-00344;effective_length=303103;iLocus_type=iiLocus
+Group1.24	AEGeAn::LocusPocus	locus	303104	326670	.	.	.	ID=locus1;Name=Am10ILC-00345;child_gene=1;child_mRNA=1;riil=20992;effective_length=23567;iLocus_type=piLocus
+Group1.24	AEGeAn::tidygff3	gene	303604	326170	.	+	.	ID=gene1;Parent=locus1
+Group1.24	GLEAN3	mRNA	303604	326170	1	+	.	ID=mRNA1;Parent=gene1;Name=GB18571-PA;accession=GB18571-PA
+Group1.24	GLEAN3	CDS	303604	303768	.	+	0	ID=CDS1;Parent=mRNA1;Name=GB18571-PA;accession=GB18571-PA
+Group1.24	GLEAN3	CDS	306404	306623	.	+	0	ID=CDS1;Parent=mRNA1;Name=GB18571-PA;accession=GB18571-PA
+Group1.24	GLEAN3	CDS	317424	317607	.	+	2	ID=CDS1;Parent=mRNA1;Name=GB18571-PA;accession=GB18571-PA
+Group1.24	GLEAN3	CDS	324319	324461	.	+	1	ID=CDS1;Parent=mRNA1;Name=GB18571-PA;accession=GB18571-PA
+Group1.24	GLEAN3	CDS	326061	326170	.	+	2	ID=CDS1;Parent=mRNA1;Name=GB18571-PA;accession=GB18571-PA
+###
+Group1.24	AEGeAn::LocusPocus	locus	326671	347662	.	.	.	fg_orient=FF;Name=Am10ILC-00346;effective_length=20992;iLocus_type=iiLocus
+Group1.24	AEGeAn::LocusPocus	locus	347663	357364	.	.	.	ID=locus2;liil=20992;Name=Am10ILC-00347;child_gene=1;child_mRNA=1;effective_length=9702;iLocus_type=piLocus
+Group1.24	AEGeAn::tidygff3	gene	348163	356864	.	+	.	ID=gene2;Parent=locus2
+Group1.24	GLEAN3	mRNA	348163	356864	0.972	+	.	ID=mRNA2;Parent=gene2;Name=GB13022-PA;accession=GB13022-PA
+Group1.24	GLEAN3	CDS	348163	348765	.	+	0	ID=CDS2;Parent=mRNA2;Name=GB13022-PA;accession=GB13022-PA
+Group1.24	GLEAN3	CDS	355522	355705	.	+	0	ID=CDS2;Parent=mRNA2;Name=GB13022-PA;accession=GB13022-PA
+Group1.24	GLEAN3	CDS	355880	356082	.	+	2	ID=CDS2;Parent=mRNA2;Name=GB13022-PA;accession=GB13022-PA
+Group1.24	GLEAN3	CDS	356576	356694	.	+	0	ID=CDS2;Parent=mRNA2;Name=GB13022-PA;accession=GB13022-PA
+Group1.24	GLEAN3	CDS	356762	356864	.	+	1	ID=CDS2;Parent=mRNA2;Name=GB13022-PA;accession=GB13022-PA
+###
+Group1.24	AEGeAn::LocusPocus	locus	357365	367865	.	.	.	fragment=true;Name=Am10ILC-00348;effective_length=10501;iLocus_type=iiLocus

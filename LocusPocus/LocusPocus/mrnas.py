@@ -173,7 +173,8 @@ def prepare(db, logstream=sys.stderr):  # pragma: no cover
 
 def test_mature_mrna_intervals():
     """Breakdown: define mature mRNA intervals"""
-    db = fidibus.test_registry.genome('Atha', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Atha',
+                                         workdir='testdata/demo-workdir')
     mature_mrna_intervals(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Atha/Atha.all.mrnas.gff3'
@@ -184,7 +185,8 @@ def test_mature_mrna_intervals():
     testfile = 'testdata/gff3/atha-mrnas.gff3'
     assert filecmp.cmp(outfile, testfile), 'mature mRNA interval ID failed'
 
-    db = fidibus.test_registry.genome('Dnov', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Dnov',
+                                         workdir='testdata/demo-workdir')
     mature_mrna_intervals(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Dnov/Dnov.all.mrnas.gff3'
@@ -198,7 +200,8 @@ def test_mature_mrna_intervals():
 
 def test_mrna_sequences():
     """Breakdown: extract mRNA sequences"""
-    db = fidibus.test_registry.genome('Atha', workdir='testdata/demo-workdir')
+    db = LocusPocus.test_registry.genome('Atha',
+                                         workdir='testdata/demo-workdir')
     sequences(db, logstream=None)
 
     outfile = 'testdata/demo-workdir/Atha/Atha.all.pre-mrnas.fa'

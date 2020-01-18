@@ -1,0 +1,19 @@
+##gff-version 3
+##sequence-region   DquaScf_275 1 15708
+DquaScf_275	EVM_PASA	gene	304	1068	.	+	.	ID=gene1;accession=DQUA011a006022
+DquaScf_275	EVM_PASA	mRNA	304	1068	.	+	.	ID=mRNA1;Parent=gene1;accession=DQUA011a006022T1
+DquaScf_275	EVM_PASA	exon	304	1068	.	+	.	Parent=mRNA1;accession=DQUA011a006022T1
+DquaScf_275	EVM_PASA	CDS	304	1068	.	+	0	Parent=mRNA1;Target=DQUA011a006022P1 1 255;accession=DQUA011a006022T1
+###
+DquaScf_275	EVM_PASA	gene	1188	2146	.	+	.	ID=gene2;accession=DQUA011a006023
+DquaScf_275	EVM_PASA	mRNA	1188	2146	.	+	.	ID=mRNA2;Parent=gene2;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	exon	1188	1435	.	+	.	Parent=mRNA2;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	CDS	1188	1435	.	+	0	ID=CDS1;Parent=mRNA2;Target=DQUA011a006023P1 1 83;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	exon	1588	2146	.	+	.	Parent=mRNA2;accession=DQUA011a006023T1
+DquaScf_275	EVM_PASA	CDS	1588	2146	.	+	1	ID=CDS1;Parent=mRNA2;Target=DQUA011a006023P1 83 269;accession=DQUA011a006023T1
+###
+DquaScf_275	EVM_PASA	gene	3301	3651	.	+	.	ID=gene3;accession=DQUA011a006024
+DquaScf_275	EVM_PASA	mRNA	3301	3651	.	+	.	ID=mRNA3;Parent=gene3;accession=DQUA011a006024T1
+DquaScf_275	EVM_PASA	exon	3301	3651	.	+	.	Parent=mRNA3;accession=DQUA011a006024T1
+DquaScf_275	EVM_PASA	CDS	3301	3651	.	+	0	Parent=mRNA3;Target=DQUA011a006024P1 1 117;accession=DQUA011a006024T1
+###

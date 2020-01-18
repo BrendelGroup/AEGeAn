@@ -36,16 +36,13 @@ setuptools.setup(name='LocusPocus',
                           'scripts/fidibus-compact.py',
                           'scripts/fidibus-monitor-refseq.py',
                           'scripts/fidibus-uniq.py'],
-                 install_requires=['pyyaml', 'pycurl'],
+                 install_requires=['pyyaml', 'pycurl', 'pandas'],
                  package_data={'LocusPocus': ['../genome_configs/*.yml', '../genome_configs/*.txt']},
                  classifiers=[
                     'Development Status :: 4 - Beta',
                     'Environment :: Console',
                     'License :: OSI Approved :: BSD License',
-                    'Programming Language :: Python :: 2.7',
-                    'Programming Language :: Python :: 3.3',
-                    'Programming Language :: Python :: 3.4',
-                    'Programming Language :: Python :: 3.5',
+                    'Programming Language :: Python :: 3',
                     'Topic :: Scientific/Engineering :: Bio-Informatics'
                  ],
                  zip_safe=False)

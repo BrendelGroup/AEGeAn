@@ -1,6 +1,7 @@
 #---Begin configuration---#
 #---Begin configuration---#
 
+shufcmd := $(shell which shuf || which gshuf)
 prefix?=/usr/local
 piuser?=
 
@@ -71,7 +72,7 @@ endif
 
 # Targets
 all:		$(BINS) libaegean.a
-		
+
 
 install:	all LocusPocus
 		@ mkdir -p $(prefix)/bin/
@@ -93,14 +94,14 @@ LocusPocus:	LocusPocus/LocusPocus.egg-info
 LocusPocus/LocusPocus.egg-info:
 		(cd LocusPocus; ./install.sh ${piuser}; cd ..;)
 
-uninstall:	
+uninstall:
 		for exe in $(INSTALL_BINS); do rm -r $(prefix)/$$exe; done
 		rm -r $(prefix)/include/aegean/
 		rm -r $(prefix)/share/aegean/
 		rm $(prefix)/lib/libaegean.a
 		(cd LocusPocus; ./uninstall.sh ${piuser}; cd ..;)
 
-clean:		
+clean:
 		rm -rf $(BINS) libaegean.a $(AGN_OBJS) inc/core/AgnVersion.h bin/*.dSYM
 
 $(AGN_OBJS):	obj/%.o : src/core/%.c inc/core/%.h inc/core/AgnVersion.h
@@ -152,12 +153,12 @@ libaegean.a:	$(AGN_OBJS)
 		@ echo "[create libaegean]"
 		@ ar ru libaegean.a $(AGN_OBJS)
 
-inc/core/AgnVersion.h:	
+inc/core/AgnVersion.h:
 			@- echo "[print $@]"
 			@ data/scripts/version.py > $@
 
-test:		agn-test
-		
+test:		agn-test locuspocus-test
+
 
 agn-test:	all
 		@ $(MEMCHECK) bin/unittests
@@ -180,3 +181,13 @@ agn-test:	all
 		@ test/misc-ft.sh $(MEMCHECKFT)
 
 
+locuspocus-test:
+		cd LocusPocus && pytest --cov=LocusPocus LocusPocus/*.py
+
+
+ci-test:
+		@ set -e && for conf in $$(ls LocusPocus/genome_configs/*.yml | grep -v -e Mmus -e Btau -e Emex -e Drer -e Hsap | $(shufcmd) | head -n 1); do label=$$(basename $$conf .yml); echo $$label; fidibus --refr=$$label --workdir=scratch/testmore/ --relax download prep iloci breakdown stats; rm -r scratch/testmore/; done
+
+
+style:
+		cd LocusPocus && pycodestyle LocusPocus/*.py scripts/*.py

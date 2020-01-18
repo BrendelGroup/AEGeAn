@@ -1,0 +1,31 @@
+##gff-version 3
+##sequence-region   scaffold1962 1 19705
+scaffold1962	cflo_OGSv3.3	gene	10023	10124	34.3	+	.	ID=gene1;Name=CFLO12328;accession=CFLO12328
+scaffold1962	cflo_OGSv3.3	mRNA	10023	10124	34.3	+	.	ID=mRNA1;Parent=gene1;Name=CFLO12328-RA;Alias=Cflo_14123--XP_001599751.1_NASVI;accession=CFLO12328-RA
+scaffold1962	cflo_OGSv3.3	CDS	10023	10124	.	+	0	Parent=mRNA1;accession=CFLO12328-RA
+scaffold1962	cflo_OGSv3.3	exon	10023	10124	.	+	0	Parent=mRNA1;accession=CFLO12328-RA
+###
+scaffold1962	cflo_OGSv3.3	gene	14139	14273	28.9	-	.	ID=gene2;Name=CFLO25216;accession=CFLO25216
+scaffold1962	cflo_OGSv3.3	mRNA	14139	14273	28.9	-	.	ID=mRNA2;Parent=gene2;Name=CFLO25216-RA;Alias=Cflo_14124--NA;accession=CFLO25216-RA
+scaffold1962	cflo_OGSv3.3	CDS	14139	14273	.	-	0	Parent=mRNA2;accession=CFLO25216-RA
+scaffold1962	cflo_OGSv3.3	exon	14139	14273	.	-	0	Parent=mRNA2;accession=CFLO25216-RA
+###
+scaffold1962	cflo_OGSv3.3	gene	14678	14905	21.8	+	.	ID=gene3;Name=CFLO25217;accession=CFLO25217
+scaffold1962	cflo_OGSv3.3	mRNA	14678	14905	21.8	+	.	ID=mRNA3;Parent=gene3;Name=CFLO25217-RA;Alias=Cflo_14125--XP_001120719.1_APIME;accession=CFLO25217-RA
+scaffold1962	cflo_OGSv3.3	CDS	14678	14905	.	+	0	Parent=mRNA3;accession=CFLO25217-RA
+scaffold1962	cflo_OGSv3.3	exon	14678	14905	.	+	0	Parent=mRNA3;accession=CFLO25217-RA
+###
+scaffold1962	cflo_OGSv3.3	gene	15587	15643	27.9	+	.	ID=gene4;Name=CFLO25218;accession=CFLO25218
+scaffold1962	cflo_OGSv3.3	mRNA	15587	15643	27.9	+	.	ID=mRNA4;Parent=gene4;Name=CFLO25218-RA;Alias=Cflo_14126--NA;accession=CFLO25218-RA
+scaffold1962	cflo_OGSv3.3	CDS	15587	15643	.	+	0	Parent=mRNA4;accession=CFLO25218-RA
+scaffold1962	cflo_OGSv3.3	exon	15587	15643	.	+	0	Parent=mRNA4;accession=CFLO25218-RA
+###
+scaffold1962	cflo_OGSv3.3	gene	17696	18102	89.4	+	.	ID=gene5;Name=CFLO25219;accession=CFLO25219
+scaffold1962	cflo_OGSv3.3	mRNA	17696	18102	89.4	+	.	ID=mRNA5;Parent=gene5;Name=CFLO25219-RA;Alias=Cflo_14127--NA;accession=CFLO25219-RA
+scaffold1962	cflo_OGSv3.3	CDS	17696	17803	.	+	0	Parent=mRNA5;accession=CFLO25219-RA
+scaffold1962	cflo_OGSv3.3	exon	17696	17803	.	+	0	Parent=mRNA5;accession=CFLO25219-RA
+scaffold1962	cflo_OGSv3.3	CDS	17805	17975	.	+	0	Parent=mRNA5;accession=CFLO25219-RA
+scaffold1962	cflo_OGSv3.3	exon	17805	17975	.	+	0	Parent=mRNA5;accession=CFLO25219-RA
+scaffold1962	cflo_OGSv3.3	CDS	17980	18102	.	+	0	Parent=mRNA5;accession=CFLO25219-RA
+scaffold1962	cflo_OGSv3.3	exon	17980	18102	.	+	0	Parent=mRNA5;accession=CFLO25219-RA
+###

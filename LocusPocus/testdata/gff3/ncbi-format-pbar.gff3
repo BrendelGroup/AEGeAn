@@ -1,0 +1,49 @@
+##gff-version 3
+##sequence-region   NW_011933533.1 1 293708
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build Pbar_UMD_V03
+#!genome-build-accession NCBI_Assembly:GCF_000187915.1
+#!annotation-date 17 March 2015
+#!annotation-source NCBI Pogonomyrmex barbatus Annotation Release 100
+NW_011933533.1	Gnomon	gene	17127	17864	.	+	.	ID=gene1;Dbxref=GeneID:105423833;Name=LOC105423833;gbkey=Gene;gene=LOC105423833;accession=105423833
+NW_011933533.1	Gnomon	mRNA	17127	17864	.	+	.	ID=mRNA1;Parent=gene1;Dbxref=GeneID:105423833,Genbank:XM_011633749.1;Name=XM_011633749.1;gbkey=mRNA;gene=LOC105423833;product=uncharacterized LOC105423833;transcript_id=XM_011633749.1;accession=XM_011633749.1
+NW_011933533.1	Gnomon	exon	17127	17468	.	+	.	Parent=mRNA1;Dbxref=GeneID:105423833,Genbank:XM_011633749.1;gbkey=mRNA;gene=LOC105423833;product=uncharacterized LOC105423833;transcript_id=XM_011633749.1;accession=XM_011633749.1
+NW_011933533.1	Gnomon	CDS	17128	17468	.	+	0	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105423833,Genbank:XP_011632051.1;Name=XP_011632051.1;gbkey=CDS;gene=LOC105423833;product=uncharacterized protein LOC105423833;protein_id=XP_011632051.1;accession=XM_011633749.1
+NW_011933533.1	Gnomon	CDS	17730	17847	.	+	1	ID=CDS1;Parent=mRNA1;Dbxref=GeneID:105423833,Genbank:XP_011632051.1;Name=XP_011632051.1;gbkey=CDS;gene=LOC105423833;product=uncharacterized protein LOC105423833;protein_id=XP_011632051.1;accession=XM_011633749.1
+NW_011933533.1	Gnomon	exon	17730	17864	.	+	.	Parent=mRNA1;Dbxref=GeneID:105423833,Genbank:XM_011633749.1;gbkey=mRNA;gene=LOC105423833;product=uncharacterized LOC105423833;transcript_id=XM_011633749.1;accession=XM_011633749.1
+###
+NW_011933533.1	Gnomon	gene	25783	30379	.	+	.	ID=gene2;Dbxref=GeneID:105423835;Name=LOC105423835;gbkey=Gene;gene=LOC105423835;accession=105423835
+NW_011933533.1	Gnomon	mRNA	25783	30379	.	+	.	ID=mRNA2;Parent=gene2;Dbxref=GeneID:105423835,Genbank:XM_011633751.1;Name=XM_011633751.1;gbkey=mRNA;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;transcript_id=XM_011633751.1;accession=XM_011633751.1
+NW_011933533.1	Gnomon	exon	25783	26007	.	+	.	Parent=mRNA2;Dbxref=GeneID:105423835,Genbank:XM_011633751.1;gbkey=mRNA;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;transcript_id=XM_011633751.1;accession=XM_011633751.1
+NW_011933533.1	Gnomon	CDS	25904	26007	.	+	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105423835,Genbank:XP_011632053.1;Name=XP_011632053.1;gbkey=CDS;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;protein_id=XP_011632053.1;accession=XM_011633751.1
+NW_011933533.1	Gnomon	exon	26085	26202	.	+	.	Parent=mRNA2;Dbxref=GeneID:105423835,Genbank:XM_011633751.1;gbkey=mRNA;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;transcript_id=XM_011633751.1;accession=XM_011633751.1
+NW_011933533.1	Gnomon	CDS	26085	26202	.	+	1	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105423835,Genbank:XP_011632053.1;Name=XP_011632053.1;gbkey=CDS;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;protein_id=XP_011632053.1;accession=XM_011633751.1
+NW_011933533.1	Gnomon	CDS	30186	30239	.	+	0	ID=CDS2;Parent=mRNA2;Dbxref=GeneID:105423835,Genbank:XP_011632053.1;Name=XP_011632053.1;gbkey=CDS;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;protein_id=XP_011632053.1;accession=XM_011633751.1
+NW_011933533.1	Gnomon	exon	30186	30379	.	+	.	Parent=mRNA2;Dbxref=GeneID:105423835,Genbank:XM_011633751.1;gbkey=mRNA;gene=LOC105423835;product=cytochrome c oxidase assembly protein COX16 homolog%2C mitochondrial;transcript_id=XM_011633751.1;accession=XM_011633751.1
+###
+NW_011933533.1	Gnomon	gene	48125	48703	.	+	.	ID=gene3;Dbxref=GeneID:105423836;Name=LOC105423836;gbkey=Gene;gene=LOC105423836;accession=105423836
+NW_011933533.1	Gnomon	mRNA	48125	48703	.	+	.	ID=mRNA3;Parent=gene3;Dbxref=GeneID:105423836,Genbank:XM_011633752.1;Name=XM_011633752.1;gbkey=mRNA;gene=LOC105423836;product=uncharacterized LOC105423836;transcript_id=XM_011633752.1;accession=XM_011633752.1
+NW_011933533.1	Gnomon	exon	48125	48520	.	+	.	Parent=mRNA3;Dbxref=GeneID:105423836,Genbank:XM_011633752.1;gbkey=mRNA;gene=LOC105423836;product=uncharacterized LOC105423836;transcript_id=XM_011633752.1;accession=XM_011633752.1
+NW_011933533.1	Gnomon	CDS	48192	48509	.	+	0	Parent=mRNA3;Dbxref=GeneID:105423836,Genbank:XP_011632054.1;Name=XP_011632054.1;gbkey=CDS;gene=LOC105423836;product=uncharacterized protein LOC105423836;protein_id=XP_011632054.1;accession=XM_011633752.1
+NW_011933533.1	Gnomon	exon	48634	48703	.	+	.	Parent=mRNA3;Dbxref=GeneID:105423836,Genbank:XM_011633752.1;gbkey=mRNA;gene=LOC105423836;product=uncharacterized LOC105423836;transcript_id=XM_011633752.1;accession=XM_011633752.1
+###
+NW_011933533.1	Gnomon	gene	195402	196812	.	-	.	ID=gene4;Dbxref=GeneID:105423838;Name=LOC105423838;gbkey=Gene;gene=LOC105423838;accession=105423838
+NW_011933533.1	Gnomon	mRNA	195402	196812	.	-	.	ID=mRNA4;Parent=gene4;Dbxref=GeneID:105423838,Genbank:XM_011633754.1;Name=XM_011633754.1;gbkey=mRNA;gene=LOC105423838;product=uncharacterized LOC105423838;transcript_id=XM_011633754.1;accession=XM_011633754.1
+NW_011933533.1	Gnomon	exon	195402	195524	.	-	.	Parent=mRNA4;Dbxref=GeneID:105423838,Genbank:XM_011633754.1;gbkey=mRNA;gene=LOC105423838;product=uncharacterized LOC105423838;transcript_id=XM_011633754.1;accession=XM_011633754.1
+NW_011933533.1	Gnomon	CDS	195402	195524	.	-	0	ID=CDS3;Parent=mRNA4;Dbxref=GeneID:105423838,Genbank:XP_011632056.1;Name=XP_011632056.1;gbkey=CDS;gene=LOC105423838;product=uncharacterized protein LOC105423838;protein_id=XP_011632056.1;accession=XM_011633754.1
+NW_011933533.1	Gnomon	exon	195944	196069	.	-	.	Parent=mRNA4;Dbxref=GeneID:105423838,Genbank:XM_011633754.1;gbkey=mRNA;gene=LOC105423838;product=uncharacterized LOC105423838;transcript_id=XM_011633754.1;accession=XM_011633754.1
+NW_011933533.1	Gnomon	CDS	195944	196069	.	-	0	ID=CDS3;Parent=mRNA4;Dbxref=GeneID:105423838,Genbank:XP_011632056.1;Name=XP_011632056.1;gbkey=CDS;gene=LOC105423838;product=uncharacterized protein LOC105423838;protein_id=XP_011632056.1;accession=XM_011633754.1
+NW_011933533.1	Gnomon	exon	196609	196812	.	-	.	Parent=mRNA4;Dbxref=GeneID:105423838,Genbank:XM_011633754.1;gbkey=mRNA;gene=LOC105423838;product=uncharacterized LOC105423838;transcript_id=XM_011633754.1;accession=XM_011633754.1
+NW_011933533.1	Gnomon	CDS	196609	196812	.	-	0	ID=CDS3;Parent=mRNA4;Dbxref=GeneID:105423838,Genbank:XP_011632056.1;Name=XP_011632056.1;gbkey=CDS;gene=LOC105423838;product=uncharacterized protein LOC105423838;protein_id=XP_011632056.1;accession=XM_011633754.1
+###
+NW_011933533.1	Gnomon	gene	224560	224979	.	-	.	ID=gene5;Dbxref=GeneID:105423839;Name=LOC105423839;gbkey=Gene;gene=LOC105423839;accession=105423839
+NW_011933533.1	Gnomon	mRNA	224560	224979	.	-	.	ID=mRNA5;Parent=gene5;Dbxref=GeneID:105423839,Genbank:XM_011633755.1;Name=XM_011633755.1;gbkey=mRNA;gene=LOC105423839;product=uncharacterized LOC105423839;transcript_id=XM_011633755.1;accession=XM_011633755.1
+NW_011933533.1	Gnomon	exon	224560	224979	.	-	.	Parent=mRNA5;Dbxref=GeneID:105423839,Genbank:XM_011633755.1;gbkey=mRNA;gene=LOC105423839;product=uncharacterized LOC105423839;transcript_id=XM_011633755.1;accession=XM_011633755.1
+NW_011933533.1	Gnomon	CDS	224560	224979	.	-	0	Parent=mRNA5;Dbxref=GeneID:105423839,Genbank:XP_011632057.1;Name=XP_011632057.1;gbkey=CDS;gene=LOC105423839;product=uncharacterized protein LOC105423839;protein_id=XP_011632057.1;accession=XM_011633755.1
+###
+NW_011933533.1	Gnomon	pseudogene	283463	286202	.	+	.	ID=pseudogene1;Dbxref=GeneID:105423841;Name=LOC105423841;gbkey=Gene;gene=LOC105423841;pseudo=true
+NW_011933533.1	Gnomon	pseudogenic_exon	283463	283896	.	+	.	Parent=pseudogene1;Dbxref=GeneID:105423841;gbkey=exon;gene=LOC105423841
+NW_011933533.1	Gnomon	pseudogenic_exon	283970	284346	.	+	.	Parent=pseudogene1;Dbxref=GeneID:105423841;gbkey=exon;gene=LOC105423841
+NW_011933533.1	Gnomon	pseudogenic_exon	286031	286202	.	+	.	Parent=pseudogene1;Dbxref=GeneID:105423841;gbkey=exon;gene=LOC105423841
+###
