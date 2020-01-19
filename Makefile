@@ -182,7 +182,7 @@ agn-test:	all
 
 
 locuspocus-test:
-		cd LocusPocus && pytest-3 --cov=LocusPocus LocusPocus/*.py
+		cd LocusPocus && pytest --cov=LocusPocus LocusPocus/*.py
 
 
 ci-test:
