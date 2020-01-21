@@ -104,9 +104,9 @@ def calc_phi(seqid, miloci, mthresh=None):
     gilocus_types = ['siLocus', 'ciLocus', 'niLocus', 'miLocus']
     uilocus_types = ['siLocus', 'ciLocus', 'niLocus']
     giloci = miloci.loc[(miloci.SeqID == seqid) &
-                            (miloci.LocusClass.isin(gilocus_types))]
+                        (miloci.LocusClass.isin(gilocus_types))]
     uiloci = miloci.loc[(miloci.SeqID == seqid) &
-                            (miloci.LocusClass.isin(uilocus_types))]
+                        (miloci.LocusClass.isin(uilocus_types))]
     if mthresh:
         giloci = giloci.loc[giloci.Length >= mthresh]
         uiloci = uiloci.loc[uiloci.Length >= mthresh]
