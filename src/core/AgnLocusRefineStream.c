@@ -9,6 +9,7 @@ online at https://github.com/standage/AEGeAn/blob/master/LICENSE.
 **/
 
 #include <string.h>
+#include <math.h>
 #include "core/queue_api.h"
 #include "extended/sort_stream_api.h"
 #include "AgnGeneStream.h"
@@ -537,8 +538,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     {
       agn_assert(origro < gt_range_length(&rng2));
       GtUword overlap = rng1.end - rng2.start + 1;
-      GtUword elen1 = gt_range_length(&rng1) - overlap;
-      GtUword elen2 = gt_range_length(&rng2) - origro;
+      GtUword elen1 = gt_range_length(&rng1) - floor(overlap/2);
+      GtUword elen2 = gt_range_length(&rng2) - ceil(overlap/2) - origro;
       char lenstr1[32];
       char lenstr2[32];
       sprintf(lenstr1, "%lu", elen1);
