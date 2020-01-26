@@ -354,6 +354,11 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
   const char *orig_riil = gt_feature_node_get_attribute(origfn, "riil");
   GtStr *seqid = gt_genome_node_get_seqid(orig);
 
+  GtUword origlo = 0;
+  const char *lostr = gt_feature_node_get_attribute(origfn, "left_overlap");
+  if(lostr)
+    origlo = atol(lostr);
+
   GtUword numloci = gt_array_size(iloci);
   agn_assert(numloci > 0);
 
@@ -437,7 +442,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       if(i == 0)
       {
         char lenstr[32];
-        sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+        sprintf(lenstr, "%lu", gt_range_length(&origrange) - (long int)floor(origro/2.0));
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
         if(numloci == 2)
         {
@@ -479,9 +484,6 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     }
     if(numloci == 1)
     {
-      char lenstr[32];
-      sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
-      gt_feature_node_add_attribute(origfn, "effective_length", lenstr);
       return;
     }
   }
@@ -538,8 +540,8 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     {
       agn_assert(origro < gt_range_length(&rng2));
       GtUword overlap = rng1.end - rng2.start + 1;
-      GtUword elen1 = gt_range_length(&rng1) - floor(overlap/2);
-      GtUword elen2 = gt_range_length(&rng2) - ceil(overlap/2) - origro;
+      GtUword elen1 = gt_range_length(&rng1) - (long int)floor(overlap/2.0);
+      GtUword elen2 = gt_range_length(&rng2) - (long int)ceil(overlap/2.0);
       char lenstr1[32];
       char lenstr2[32];
       sprintf(lenstr1, "%lu", elen1);
@@ -592,7 +594,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       if(i == 0)
       {
         char lenstr[32];
-        sprintf(lenstr, "%lu", gt_range_length(&origrange) - origro);
+        sprintf(lenstr, "%lu", gt_range_length(&origrange) - (long int)ceil(origlo/2.0) - (long int)floor(origro/2.0));
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
 
         char exceptstr[32];
@@ -671,7 +673,11 @@ static int locus_refine_stream_handler(AgnLocusRefineStream *stream,
     const char *rostr = gt_feature_node_get_attribute(locus, "right_overlap");
     if(rostr != NULL)
       ro = atol(rostr);
-    sprintf(lenstr, "%lu", gt_range_length(&rng) - ro);
+    GtUword lo = 0;
+    const char *lostr = gt_feature_node_get_attribute(locus, "left_overlap");
+    if(lostr != NULL)
+      lo = atol(lostr);
+    sprintf(lenstr, "%lu", gt_range_length(&rng) - (long int)ceil(lo/2.0) - (long int)floor(ro/2.0));
     gt_feature_node_add_attribute(locus, "effective_length", lenstr);
 
     const char *loctype = gt_genome_node_get_user_data(gn, "iLocus_type");

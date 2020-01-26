@@ -36,8 +36,8 @@ def cli():
     parser.add_argument('-i', '--iqnt', metavar='QNT', type=float,
                         default=None, help='filter long iiLoci at the '
                         'specified length quantile (0.0-1.0)')
-    parser.add_argument('-m', '--mqnt', metavar='QNT', type=float,
-                        default=None, help='filter short miLoci at the '
+    parser.add_argument('-g', '--gqnt', metavar='QNT', type=float,
+                        default=None, help='filter short giLoci at the '
                         'specified length quantile (0.0-1.0)')
     parser.add_argument('-d', '--centroid', type=float, default=None,
                         metavar='F',
@@ -70,20 +70,20 @@ def longseqs(gff3file, minlength=1000000):
                 yield seqid, length
 
 
-def thresholds(iloci, iqnt=0.95, mqnt=0.05):
+def thresholds(iloci, iqnt=0.95, gqnt=0.05):
     ithresh = None
     if iqnt:
         iiloci = iloci.loc[iloci.LocusClass == 'iiLocus']
         ithresh = int(iiloci['Length'].quantile(iqnt))
-    mthresh = None
-    if mqnt:
+    gthresh = None
+    if gqnt:
         gilocus_types = ['siLocus', 'ciLocus', 'niLocus', 'miLocus']
         giloci = iloci.loc[iloci.LocusClass.isin(gilocus_types)]
-        mthresh = int(giloci['Length'].quantile(mqnt))
-    return ithresh, mthresh
+        gthresh = int(giloci['Length'].quantile(gqnt))
+    return ithresh, gthresh
 
 
-def seqlen(seqid, iloci, ithresh=None, mthresh=None):
+def det_ilspace(seqid, iloci, ithresh=None, gthresh=None):
     seqloci = iloci.loc[(iloci.SeqID == seqid) &
                         (iloci.LocusClass != 'fiLocus')]
     effsize = seqloci['EffectiveLength'].sum()
@@ -91,26 +91,24 @@ def seqlen(seqid, iloci, ithresh=None, mthresh=None):
         longiiloci = seqloci.loc[(seqloci.LocusClass == 'iiLocus') &
                                  (seqloci.Length > ithresh)]
         effsize -= longiiloci['EffectiveLength'].sum()
-    if mthresh:
+    if gthresh:
         gilocus_types = ['siLocus', 'ciLocus', 'niLocus', 'miLocus']
         shortgiloci = seqloci.loc[(seqloci.LocusClass.isin(gilocus_types)) &
-                                  (seqloci.Length < mthresh)]
+                                  (seqloci.Length < gthresh)]
         effsize -= shortgiloci['EffectiveLength'].sum()
     return effsize
 
 
-def calc_phi(seqid, miloci, mthresh=None):
-    # ... distinguishing unmerged iLoci (ui) among all genic iLoci (gi):
-    gilocus_types = ['siLocus', 'ciLocus', 'niLocus', 'miLocus']
-    uilocus_types = ['siLocus', 'ciLocus', 'niLocus']
-    giloci = miloci.loc[(miloci.SeqID == seqid) &
-                        (miloci.LocusClass.isin(gilocus_types))]
-    uiloci = miloci.loc[(miloci.SeqID == seqid) &
-                        (miloci.LocusClass.isin(uilocus_types))]
-    if mthresh:
-        giloci = giloci.loc[giloci.Length >= mthresh]
-        uiloci = uiloci.loc[uiloci.Length >= mthresh]
-    nbrmerged = len(giloci) - len(uiloci)
+def calc_phi(seqid, iloci, miloci, gthresh=None):
+    gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
+    giloci = iloci.loc[(iloci.SeqID == seqid) &
+                       (iloci.LocusClass.isin(gilocus_types))]
+    singletons = miloci.loc[(miloci.SeqID == seqid) &
+                            (miloci.LocusClass.isin(gilocus_types))]
+    if gthresh:
+        giloci     = giloci.loc[giloci.Length         >= gthresh]
+        singletons = singletons.loc[singletons.Length >= gthresh]
+    nbrmerged = len(giloci) - len(singletons)
     return nbrmerged / len(giloci)
 
 
@@ -149,7 +147,7 @@ def main(args):
         )
         iloci = pandas.read_table(ilocustable)
         miloci = pandas.read_table(milocustable)
-        ithresh, mthresh = thresholds(miloci, args.iqnt, args.mqnt)
+        ithresh, gthresh = thresholds(miloci, args.iqnt, args.gqnt)
 
         phis = list()
         sigmas = list()
@@ -158,20 +156,26 @@ def main(args):
             wd=args.workdir, spec=species
         )
         for seqid, length in longseqs(gff3file, args.length):
-            length = seqlen(seqid, miloci, ithresh, mthresh)
             try:
-                phi = calc_phi(seqid, miloci, mthresh)
+                phi = calc_phi(seqid, iloci, miloci, gthresh)
             except ZeroDivisionError:
                 # ... the exception occurs when sequence contains no giloci
                 continue
-            milocus_occ = miloci.loc[
-                (miloci.SeqID == seqid) &
-                (miloci.LocusClass == 'miLocus')
-            ]['Length'].sum()
-            sigma = milocus_occ / length
+
+            ilspace = det_ilspace(seqid, miloci, ithresh, gthresh)
+            mispace = miloci.loc[(miloci.SeqID == seqid) &
+                                 (miloci.LocusClass == 'miLocus')
+                                ]['Length'].sum()
+            if gthresh:
+               shortmiloci = miloci.loc[(miloci.SeqID == seqid) &
+                                        (miloci.LocusClass == 'miLocus') &
+                                        (miloci.Length < gthresh)]
+               mispace -= shortmiloci['Length'].sum()
+            sigma = mispace / ilspace
+
+            seqids.append(seqid)
             phis.append(phi)
             sigmas.append(sigma)
-            seqids.append(seqid)
 
         if args.centroid:
             if len(phis)*len(sigmas) > 0:
