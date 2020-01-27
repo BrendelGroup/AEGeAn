@@ -442,7 +442,7 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
       if(i == 0)
       {
         char lenstr[32];
-        sprintf(lenstr, "%lu", gt_range_length(&origrange) - (long int)floor(origro/2.0));
+	sprintf(lenstr, "%lu", gt_range_length(&origrange) - (long int)ceil(origlo/2.0) - (long int)floor(origro/2.0));
         gt_feature_node_add_attribute(fn, "effective_length", lenstr);
         if(numloci == 2)
         {
