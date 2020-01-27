@@ -101,12 +101,16 @@ def det_ilspace(seqid, iloci, ithresh=None, gthresh=None):
 
 def calc_phi(seqid, iloci, miloci, gthresh=None):
     gilocus_types = ['siLocus', 'ciLocus', 'niLocus']
-    giloci = iloci.loc[(iloci.SeqID == seqid) &
-                       (iloci.LocusClass.isin(gilocus_types))]
-    singletons = miloci.loc[(miloci.SeqID == seqid) &
-                            (miloci.LocusClass.isin(gilocus_types))]
+    giloci = iloci.loc[
+        (iloci.SeqID == seqid) &
+        (iloci.LocusClass.isin(gilocus_types))
+    ]
+    singletons = miloci.loc[
+        (miloci.SeqID == seqid) &
+        (miloci.LocusClass.isin(gilocus_types))
+    ]
     if gthresh:
-        giloci     = giloci.loc[giloci.Length         >= gthresh]
+        giloci = giloci.loc[giloci.Length >= gthresh]
         singletons = singletons.loc[singletons.Length >= gthresh]
     nbrmerged = len(giloci) - len(singletons)
     return nbrmerged / len(giloci)
@@ -163,14 +167,17 @@ def main(args):
                 continue
 
             ilspace = det_ilspace(seqid, miloci, ithresh, gthresh)
-            mispace = miloci.loc[(miloci.SeqID == seqid) &
-                                 (miloci.LocusClass == 'miLocus')
-                                ]['Length'].sum()
+            mispace = miloci.loc[
+                (miloci.SeqID == seqid) &
+                (miloci.LocusClass == 'miLocus')
+            ]['Length'].sum()
             if gthresh:
-               shortmiloci = miloci.loc[(miloci.SeqID == seqid) &
-                                        (miloci.LocusClass == 'miLocus') &
-                                        (miloci.Length < gthresh)]
-               mispace -= shortmiloci['Length'].sum()
+                shortmiloci = miloci.loc[
+                    (miloci.SeqID == seqid) &
+                    (miloci.LocusClass == 'miLocus') &
+                    (miloci.Length < gthresh)
+                ]
+                mispace -= shortmiloci['Length'].sum()
             sigma = mispace / ilspace
 
             seqids.append(seqid)
