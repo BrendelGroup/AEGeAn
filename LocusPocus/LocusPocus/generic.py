@@ -160,6 +160,6 @@ def test_all():
     LocusPocus.exons.prepare(db, logstream=None)
     LocusPocus.stats.compute(db, logstream=None)
 
-    sha1 = 'f3629aedbd683dd4dcf158ac12d3549e5c9081a0'
+    sha1 = '786122acdda794e3a63eff8a094d1dfa3e2afc75'
     testsha1 = db.file_sha1('testdata/demo-workdir/Gnrc/Gnrc.iloci.tsv')
     assert testsha1 == sha1, ('generic iLocus stats checksum failed')
