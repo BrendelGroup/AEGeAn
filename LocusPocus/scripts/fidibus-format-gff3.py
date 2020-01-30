@@ -136,6 +136,7 @@ class FeatureFormatter(object):
             'ncRNA', 'miRNA', 'snRNA', 'snoRNA', 'lnc_RNA', 'scRNA', 'SRP_RNA',
             'antisense_RNA', 'RNase_P_RNA', 'telomerase_RNA', 'piRNA',
             'RNase_MRP_RNA', 'guide_RNA',
+            'antisense_lncRNA', 'transcript_region', 'miRNA_primary_transcript'
         ]
         if ftype not in ttypes:
             return line
