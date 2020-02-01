@@ -12,6 +12,6 @@ Tcac:
         - NC_014676.2
     checksums:
         gdna: a9e4b74f0935af4fcdc6cd5942b65aaae818b3a6
-        gff3: 6a9f8e310c78d2019b9e79dcadcd48ebbb93895d
+        gff3: dd5839a625c00660d6f7e10bb367e9b58f0b5cfe
         prot: 6ad49aa61f7cbb8fadd2c006238a41409f57bf1b
     description: Criollo_cocoa_genome_V2 from CIRAD

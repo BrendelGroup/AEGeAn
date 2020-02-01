@@ -10,6 +10,6 @@ Ador:
     build: Apis_dorsata_1.3
     checksums:
         gdna: 4eac29771d018d9a1f7f67bccbdeb7dace37f74c
-        gff3: 55a6548af12c3114e5d4f2203efa93e2abf33bfa
-        prot: a53a2d9d517c77605e01e54406c875129654277b
+        gff3: a04d4fb449f241504320fcb6a2ff55a55497478e
+        prot: 6276c44b794fab5a3ea97dbc38dcd980cd6d72f1
     description: Apis_dorsata_1.3 from CSHL

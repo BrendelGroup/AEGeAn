@@ -11,6 +11,6 @@ Turt:
         - NC_010526.1
     checksums:
         gdna: 3d75b35d2eed4fdd73a12a4975499ae7e92c3ab3
-        gff3: 8047ea56c1079ac359342e80d71517e17abdf10c
-        prot: 65f108e91242395055c06da7649c0a4f670582a1
+        gff3: 6fcbd337336d025a9815eae4887dfca2813a13f2
+        prot: 9f86224627cab06d57eab04dcb9901df24d8d561
     description: ASM23943v1 from JGI

@@ -7,6 +7,6 @@ Ocin:
     build: ASM171814v1
     checksums:
         gdna: d0cb243b772027e502b795d5d986c4c1402b4f35
-        gff3: ed230ac4ed442118caf50d40a9bfef2f4fb7c6f5
+        gff3: 6d9ddcd754eeb5e53371bed28f3bdaaa2ed0b7fd
         prot: 53f070b877cd07973ff11f890c5ec07d0b64c9d6
     description: ASM171814v1 from BE Basic
