@@ -261,7 +261,8 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     {
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
-      if(stream->endmode >= 0 && !stream->skip_iiLoci)
+      if(stream->endmode >= 0 && !stream->skip_iiLoci && 
+				locusrange.start - stream->delta - 1 > 0)
       {
         AgnLocus *filocus = agn_locus_new(seqid);
         GtRange irange = {seqrange.start, locusrange.start - stream->delta - 1};
