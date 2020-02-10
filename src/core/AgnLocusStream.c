@@ -364,9 +364,12 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
 
       if(stream->endmode <= 0 && !stream->skip_iiLoci)
       {
-        AgnLocus *iilocus = agn_locus_new(seqid);
         GtRange irange = { prev_range.end + stream->delta + 1,
                            locusrange.start - stream->delta - 1 };
+	//If the two iLoci overlap, do not create an iiLocus:
+        if(irange.start > irange.end) goto noiilocus;
+
+        AgnLocus *iilocus = agn_locus_new(seqid);
         agn_locus_set_range(iilocus, irange.start, irange.end);
 
         if(stream->ilenfile != NULL) {
@@ -385,6 +388,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
         gt_queue_add(stream->locusqueue, iilocus);
       }
     }
+    noiilocus:
 
     if (stream->ilenfile != NULL) {
       GtUword genenum = agn_typecheck_count(locusfn, agn_typecheck_gene);
@@ -500,7 +504,7 @@ static int locus_stream_fn_handler(AgnLocusStream *stream, GtGenomeNode **gn,
       }
     }
 
-    if(stream->delta > 0)
+    if(stream->delta >= 0)
       locus_stream_extend(stream, locus);
 
     stream->prev_locus = locus;
