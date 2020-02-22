@@ -1,0 +1,8 @@
+Mvit:
+    species: Manacus vitellinus 
+    common: golden-collared manakin
+    source: refseq
+    branch: vertebrate_other
+    accession: GCF_001715985.3
+    build: ASM171598v3
+    description: from Smithsonian Institution National Museum of Natural History
