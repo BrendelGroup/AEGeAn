@@ -261,7 +261,7 @@ static void locus_stream_extend(AgnLocusStream *stream, AgnLocus *locus)
     {
       agn_locus_set_range(locus, locusrange.start - stream->delta,
                           locusrange.end);
-      if(stream->endmode >= 0 && !stream->skip_iiLoci && 
+      if(stream->endmode >= 0 && !stream->skip_iiLoci &&
 				locusrange.start - stream->delta - 1 > 0)
       {
         AgnLocus *filocus = agn_locus_new(seqid);
@@ -692,6 +692,7 @@ static void locus_stream_test_data(GtQueue *queue, int numfiles,
   last_stream = current_stream;
 
   current_stream = agn_locus_stream_new(last_stream, 0);
+  agn_locus_stream_skip_iiLoci((AgnLocusStream *)current_stream);
   if(pairwise)
   {
     agn_assert(numfiles == 2);
