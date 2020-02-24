@@ -16,6 +16,8 @@ From: fedora:31
     dnf -y install python3-entrypoints python3-pytest python3-pytest-cov
     dnf -y install pandoc
 
+    cd /usr/bin && ln -s ./python3 python
+    
     cd /usr/local/src
 
     echo 'Installing the GenomeTools package:'
@@ -41,7 +43,6 @@ From: fedora:31
     make install install-scripts
     sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/aegean-x86_64.conf'
     ldconfig
-    make test
     cd ..
 
     
