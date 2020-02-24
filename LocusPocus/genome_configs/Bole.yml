@@ -11,7 +11,7 @@ Bole:
     seqfilter:
         - NC_016118.1
     checksums:
-        gdna: 8e85a73183ec9004b9d5cfca0f6a39580f3b5e4a
-        gff3: 86342ed634ce2b565f852de61f8b5e442a357914
+        gdna: 8a665d50718b2fafefd3081efb376e33e7829bf7
+        gff3: 28116506ed9d2b054b92bed2df84f57586f905ef
         prot: ead59da992814a9b5828a501f96211278984c689
     description: Build BOL from CanSeq

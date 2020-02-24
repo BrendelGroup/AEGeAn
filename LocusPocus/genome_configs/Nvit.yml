@@ -4,12 +4,10 @@ Nvit:
     clade: chalcid
     source: refseq
     branch: invertebrate
-    accession: GCF_000002325.3
-    build: Nvit_2.1
-    annotfilter:
-        - 'GeneID:100498670'
+    accession: GCF_009193385.1
+    build: Nvit_psr_1
     checksums:
-        gdna: 9918e764c51a1e7c4e9b0712b388339a127dd216
-        gff3: b33a08334daadf7e7c4a296373ccec11752f7d4f
-        prot: 19e041bc807bf2421dd478a7fd717205454a3527
-    description: Nvit_2.1 from Baylor
+        gdna: 03938690934beb089df5890de65f1ad051498f2e
+        gff3: 32e5b599c82ae21976febd63333dd599fe0c7452
+        prot: b11379a8f9bd807baf238383a6ef25b806ee469d
+    description: Nvit_psr_1 from Caltech

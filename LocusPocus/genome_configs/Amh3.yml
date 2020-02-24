@@ -13,7 +13,7 @@ Amh3:
     seqfilter:
         - NC_001566.1
     checksums:
-        gdna: 7b131a3fbd63a3903e2ec6e7817b7391bfca5d09
-        gff3: f0b2d7051784338111cf25a4c0d56370ae014805
+        gdna: ed0f425f282e934b1f3424ce0021b89c0892d2d4
+        gff3: ffaceb7e64a0562fc9bc54af67ecb475d39862c4
         prot: a27d60fc7afb4c1df32637a8afc60a899ac4e031
     description: Amel_HAv3.1 from Uppsala University

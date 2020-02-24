@@ -11,7 +11,7 @@ Pfal:
     seqfilter:
         - NC_002375.1
     checksums:
-        gdna: 51c207b62a7b678fcf2bcde7f665dfec1d77f146
-        gff3: 0abddf9d1e81976e593df8d2687afc972f5f3a07
-        prot: 099af2fd4d703129f26ae3474a2f08ab29298fd6
+        gdna: a784c34c84e59d173a91e7c882fe3f75a4c10239
+        gff3: fc823fcaa0b054b86ffacc7eaf8919ed22f31dd1
+        prot: a1dcb64a243849dd772773530d85a15357d172b8
     description: ASM276v1 from the P. falciparum Genome Sequencing Consortium

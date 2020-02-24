@@ -12,6 +12,6 @@ Btau:
         - NC_006853.1
     checksums:
         gdna: 4379ee8c138ae91a8dd1126a9689dc763a419373
-        gff3: cde81e8f5b635916c7316d4d9805a067fa4d6cf9
-        prot: 7ebbb070214210f45354a904572941a56050004c
+        gff3: 0f44c11647ac624612515e9ede48dae09c3e19d7
+        prot: d52a813766000574495fb5bd9c86ee278e57efe8
     description: Bos_taurus_UMD_3.1.1 from the University of Maryland

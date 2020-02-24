@@ -19,6 +19,10 @@ Att6:
         - ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/OLD/chr5.fas
     gff3_url: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR6_genome_release/TAIR6_GFF3_genes.gff
     prot_url: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR6_genome_release/TAIR6_pep_20060907
+    checksums:
+        gdna: d53ebecd4d54b2a909e083e0bdb8a52fea49d45e
+        gff3: 0ec74f03708ca51eeae2724a10fba0a79a5d6b7c
+        prot: e117eb5876055d7f9df17bfa7551c2e4fbe8227c
     compress:
         - gdna
         - gff3

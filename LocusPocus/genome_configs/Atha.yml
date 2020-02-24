@@ -18,5 +18,5 @@ Atha:
     description: TAIR10 from TAIR
     checksums:
         gdna: b2acad58a42e657053c40aaef52b57d8faf4eeb6
-        gff3: 7d8ce773377002e63254fec37fe400380f93a011
+        gff3: 0123bbaeb8cadd487436eb503c6fcf0d7d70bf22
         prot: 2e39ac9d880e9df83083f78f3a3b36cbc6f60ad7

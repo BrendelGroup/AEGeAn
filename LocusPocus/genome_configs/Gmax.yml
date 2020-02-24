@@ -14,6 +14,6 @@ Gmax:
         - NC_020455.1
     checksums:
         gdna: f893514cf22b4e865ab8e25969d2fe2a8e20b264
-        gff3: 1efea81522b38a8adfd7e6d1365476837d90eca5
-        prot: 4ee64a991020430f9be418382a0045ae7f8c96ca
+        gff3: 0ee3189030e98a7e134a08767cd34abee8d61dc8
+        prot: fc74fb0691aacb84491c8329763a0e09c320f8eb
     description: Glycine_max_v2.0 from JGI

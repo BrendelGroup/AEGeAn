@@ -8,6 +8,6 @@ Lhum:
     build: Lhum_UMD_V04
     checksums:
         gdna: dc44f2c114cfb0d626084fdae054522f2d5620d8
-        gff3: 5a4126637dd8de4d42ebb2c7a25ed5f4948cf7ea
+        gff3: fb319bfbab19a0f572621e6e4ca82f288bc84912
         prot: bcc4a7e4c64a657d3ea2a348bb74650389aff6f7
     description: Lhum_UMD_V04 from the Ant Genomics Consortium

@@ -8,6 +8,6 @@ Pcan:
     build: ASM131383v1
     checksums:
         gdna: f9ee6e692ddaccd7f62842c26a3fe1e4946254a6
-        gff3: 1cf0b89ac45c3a530ba114d836a2c70a884eae38
+        gff3: 46d6030e934369fd0c63301c41d176fa3cb15487
         prot: 73902f0398b0a063508541ecb5973714fd8934e3
     description: ASM131383v1 from the CRG

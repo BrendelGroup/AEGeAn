@@ -1,5 +1,12 @@
-# Without piuser=--user, make will try to install fidibus under /usr/local and fail without elevated priviliges.
-# With piuser=--user, fidibus will be installed as a user local package.
+# Without piuser=--user, make will try to install fidibus under /usr/local and
+# fail without elevated priviliges.
+# With piuser=--user, fidibus will be installed as a user local package under
+# ~/.local.
+# Setting the prefix to ~/.local will also put the AEGeAn binaries into
+# ~/.local/bin. Thus, you should be able to access all the AEGeAn code in an
+# appropriate python environment after having set
+#
+# PATH=~/.local/bin:$PATH
 #
 
 make prefix=~/LOCAL piuser=--user install

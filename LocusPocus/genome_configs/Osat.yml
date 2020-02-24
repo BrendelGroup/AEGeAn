@@ -16,6 +16,6 @@ Osat:
         - NC_001320.1
     checksums:
         gdna: 677e03458cf5149d053c0e4bf4e42da6b7674701
-        gff3: baf948e97a8d07f60e7a18c5643e399da8403e63
-        prot: 82f4cc25a3ccababfeee0ddae4a4d0fbe34f5423
+        gff3: abeda7343ef8cea6eef022ec00c086704d518e32
+        prot: 1fdf42f7779f1f037552df333a7d861df89fe839
     description: Nipponbare reference from the IRGSP

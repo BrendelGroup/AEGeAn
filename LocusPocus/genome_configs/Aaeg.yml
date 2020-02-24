@@ -5,8 +5,12 @@ Aaeg:
     branch: invertebrate
     accession: GCF_002204515.2
     build: AaegL5.0
+    annotfilter:
+        - NC_035159.1
+    seqfilter:
+        - NC_035159.1
     checksums:
-        gdna: 27e8f1c53349b0aa4c031df0df6b196e82e48ac2
-        gff3: 73efa24d07a6ae1ce94b4a138aff3e604c99adad
-        prot: b39db28b217e2bba655788c524db711b82f7cdf7
+        gdna: b64658533ef7f1f5ff1ebefafba66bfbf653eef6
+        gff3: c374dfa00349f596e0d6e07c8e7fae76c438b4b7
+        prot: d076eb5dd2e0dc2471044731ee2e343a3b8deb7e
     description: AaegL5.0
