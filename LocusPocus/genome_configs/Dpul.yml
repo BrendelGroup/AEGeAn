@@ -1,0 +1,11 @@
+Dpul:
+    species: Daphnia pulex
+    common: water flea
+    source: JGI
+    branch: invertebrate
+    build: FrozenGeneCatalog20110204
+    checksums:
+        gdna: 1a71f1c7ce0ab6ef06f166b93375cc64f079dfcc
+        gff3: 3c107574cb12cbb340ea78cf36b869414262e1e4
+        prot: 2802aa82844fcf21a37adb6b58493ca4093d97b6
+    description: from JGI
