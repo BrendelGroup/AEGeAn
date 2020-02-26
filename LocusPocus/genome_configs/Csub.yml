@@ -7,6 +7,6 @@ Csub:
     build: Coccomyxa_subellipsoidae_v2.0
     checksums:
         gdna: 65048a13686b7b1a8b29e95d08160c6c33ef0c23
-        gff3: e437343ea19014ecf6259f07545902dc2ef8015c
+        gff3: fe16066ecc0491704920fe0e8910cc599f64ab42
         prot: 450e2586d37ad0b8a7bf2cadf455c6c47082e9e8
     description: v2.0 from JGI

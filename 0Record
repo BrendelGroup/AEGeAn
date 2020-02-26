@@ -9,8 +9,8 @@
 # PATH=~/.local/bin:$PATH
 #
 
-make prefix=~/LOCAL piuser=--user install
-make prefix=~/LOCAL piuser=--user uninstall
+make prefix=~/.local piuser=--user install
+make prefix=~/.local piuser=--user uninstall
 
 make clean
 #... does not remove ~/LOCAL; probably a good thing!
