@@ -178,15 +178,20 @@ def main(args):
         assert args.gdna, 'must specify "--gdna" with "--local"'
         assert args.gff3, 'must specify "--gff3" with "--local"'
         assert args.prot, 'must specify "--prot" with "--local"'
-        assert args.label not in registry.genome_configs, 'label conflict'
-        localconfig = {
+        # If no genome_configs args.label yml file exists, go with the provided
+        # data (sans checksums):
+        if (args.label not in registry.genome_configs):
+          localconfig = {
             'gdna': args.gdna,
             'gff3': args.gff3,
             'prot': args.prot,
             'source': 'local',
             'species': args.label,
-        }
-        builddata = (args.label, localconfig, args, registry)
+          }
+          builddata = (args.label, localconfig, args, registry)
+        # Otherwise, use the information in the yml file:
+        else:
+          builddata = (args.label, None, args, registry)
         builds.append(builddata)
     if args.refr:
         labels = args.refr.split(',')

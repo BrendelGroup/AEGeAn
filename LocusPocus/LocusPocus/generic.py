@@ -50,7 +50,7 @@ class GenericDB(LocusPocus.genomedb.GenomeDB):
         assert os.path.isfile(self.gff3path), \
             'GFF3 file {} does not exist'.format(self.gff3apath)
         assert os.path.isfile(self.protpath), \
-            'proetin file {} does not exist'.format(self.protpath)
+            'protein file {} does not exist'.format(self.protpath)
 
     def format_gdna(self, instream, outstream, logstream=sys.stderr):
         subprocess.call(['mkdir', '-p', self.dbdir])
