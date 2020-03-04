@@ -56,7 +56,7 @@ From: fedora:31
     cd ..
 
     echo 'Installing MuSeqBox version 5.5 from BrendelGroup'
-    wget http://www.brendelgroup.org/bioinformatics2go/Download/MuSeqBox-3-42020.tar.gz
+    wget http://www.brendelgroup.org/bioinformatics2go/Download/MuSeqBox-3-4-2020.tar.gz
     tar -xzf MuSeqBox-3-4-2020.tar.gz
     cd MUSEQBOX5.5/src/
     make linux
