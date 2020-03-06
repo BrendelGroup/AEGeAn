@@ -15,6 +15,7 @@ From: fedora:31
     dnf -y install python3-pycurl python3-pyyaml python3-pandas
     dnf -y install python3-entrypoints python3-pytest python3-pytest-cov
     dnf -y install pandoc
+    dnf -y install parallel
 
     cd /usr/bin && ln -s ./python3 python
     
