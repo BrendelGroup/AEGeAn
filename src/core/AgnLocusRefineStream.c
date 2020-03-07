@@ -503,13 +503,13 @@ static void locus_refine_stream_extend(AgnLocusRefineStream *stream,
     bool cds1 = agn_typecheck_count(fn1, agn_typecheck_cds) > 0;;
     if(cds1 == true)
     {
-      gt_feature_node_add_attribute(fn1, "iLocus_type", "siLocus");
-      gt_feature_node_add_attribute(fn2, "iLocus_type", "niLocus");
+      gt_feature_node_set_attribute(fn1, "iLocus_type", "siLocus");
+      gt_feature_node_set_attribute(fn2, "iLocus_type", "niLocus");
     }
     else
     {
-      gt_feature_node_add_attribute(fn1, "iLocus_type", "niLocus");
-      gt_feature_node_add_attribute(fn2, "iLocus_type", "siLocus");
+      gt_feature_node_set_attribute(fn1, "iLocus_type", "niLocus");
+      gt_feature_node_set_attribute(fn2, "iLocus_type", "siLocus");
     }
 
     const char *exc = gt_feature_node_get_attribute(fn2, "iiLocus_exception");
