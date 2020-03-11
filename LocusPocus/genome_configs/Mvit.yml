@@ -5,4 +5,8 @@ Mvit:
     branch: vertebrate_other
     accession: GCF_001715985.3
     build: ASM171598v3
+    checksums:
+        gdna: 1a71f1c7ce0ab6ef06f166b93375cc64f079dfcc
+        gff3: 3c107574cb12cbb340ea78cf36b869414262e1e4
+        prot: 2802aa82844fcf21a37adb6b58493ca4093d97b6
     description: from Smithsonian Institution National Museum of Natural History

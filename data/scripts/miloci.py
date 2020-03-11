@@ -55,7 +55,7 @@ class Locus(object):
 
 
 def merge_iloci(loci):
-    """Merge ajacent or overlapping gene-containing iLoci."""
+    """Merge adjacent or overlapping gene-containing iLoci."""
     assert len(loci) > 0
     if len(loci) == 1:
         loci[0].strip()

@@ -15,6 +15,7 @@ From: fedora:31
     dnf -y install python3-pycurl python3-pyyaml python3-pandas
     dnf -y install python3-entrypoints python3-pytest python3-pytest-cov
     dnf -y install pandoc
+    dnf -y install parallel
 
     cd /usr/bin && ln -s ./python3 python
     
@@ -46,7 +47,7 @@ From: fedora:31
     cd ..
 
     
-    echo 'Installing BLAST+ version 2.9.0 from NCBI '
+    echo 'Installing BLAST+ version 2.9.0 from NCBI'
     wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.9.0/ncbi-blast-2.9.0+-x64-linux.tar.gz
     tar -xzf ncbi-blast-2.9.0+-x64-linux.tar.gz
     cd ncbi-blast-2.9.0+/bin
@@ -55,6 +56,14 @@ From: fedora:31
     rm ncbi-blast-2.9.0+-x64-linux.tar.gz
     cd ..
 
+    echo 'Installing MuSeqBox version 5.5 from BrendelGroup'
+    wget http://www.brendelgroup.org/bioinformatics2go/Download/MuSeqBox-3-4-2020.tar.gz
+    tar -xzf MuSeqBox-3-4-2020.tar.gz
+    cd MUSEQBOX5.5/src/
+    make linux
+    make install
+    make clean
+    cd ../..
     
 %environment
     export LC_ALL=C
