@@ -88,12 +88,12 @@ def cluster_proteins(dbs, np=1, cdargs=None):
 
 
 def get_parser():
-    desc = '"LocusPocus Fidibus": process and summarize genome data'
+    desc = '🔮 ✨ LocusPocus Fidibus ✨ 🔮 : process and summarize genome data'
     parser = argparse.ArgumentParser(description=desc)
-    parser._optionals.title = 'basic configuration'
+    parser._optionals.title = 'Basic Settings'
 
     parser.add_argument('-v', '--version', action='version',
-                        version='LocusPocus v%s' % LocusPocus.__version__)
+                        version='AEGeAn v%s' % LocusPocus.__version__)
     parser.add_argument('-d', '--delta', type=int, metavar='DLT', default=500,
                         help='iLocus extension parameter; default is 500')
     parser.add_argument('-w', '--workdir', metavar='WD', default='./species',
@@ -106,29 +106,34 @@ def get_parser():
                         help='build task(s) to execute; options include '
                         '"%s"' % '", "'.join(tasks))
 
-    refrconf = parser.add_argument_group('reference genome configuration')
+    refrconf = parser.add_argument_group(
+        'Reference Genome Configuration',
+        'Reference genomes are downloaded by fidibus (usually from RefSeq) '
+        'prior to preprocessing. Run `fidibus list` to see a list of all '
+        'available reference genomes. Users can add support for additional '
+        'reference genomes by copying and editing .yml files in the '
+        'LocusPocus/genome_configs/ directory.'
+    )
     confargs = refrconf.add_mutually_exclusive_group()
     confargs.add_argument('--refr', default=None, metavar='LBL',
                           help='label (or comma-separated set of labels) '
-                          'specifying the genome(s) to process; use the `list`'
-                          ' task to show all available reference genomes')
+                          'specifying the genome(s) to process')
     confargs.add_argument('--refrbatch', default=None, metavar='LBL',
                           help='label of a batch of reference genomes to '
-                          'process; use the `list` task to show all available '
-                          'batches')
+                          'process; run `fidibus list` to show all '
+                          'available batches')
     refrconf.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
                           help='directory (or comma-separated list of '
-                          'directories) from which to load user-supplied '
-                          'reference genome configuration files')
+                          'directories) from which to load custom reference '
+                          'genome configuration files')
 
-    lclconf = parser.add_argument_group('custom genome configuration')
+    lclconf = parser.add_argument_group(
+        'Local Genome Configuration',
+        'Settings for processing user-supplied genomes stored locally rather '
+        'than a reference database.'
+    )
     lclconf.add_argument('--local', action='store_true',
-                         help='the "--genome" and "--batch" options are used '
-                         'to specify reference genomes to be retrieved from '
-                         'public databases and pre-processed; the "--local" '
-                         'option invokes processing of a user-supplied genome '
-                         'on the local file system; see the fidibus manual for '
-                         'more information')
+                         help='process a genome stored locally')
     lclconf.add_argument('--label', type=str, metavar='LBL',
                          help='short unique label (typically 4 letters) for '
                          'this data set')
@@ -137,7 +142,7 @@ def get_parser():
     lclconf.add_argument('--gff3', help='genome annotation in GFF3 format')
     lclconf.add_argument('--prot', help='protein sequences in Fasta format')
 
-    miscconf = parser.add_argument_group('miscellaneous settings')
+    miscconf = parser.add_argument_group('Miscellaneous Settings')
     miscconf.add_argument('-x', '--relax', action='store_true',
                           help='continue with processing in case of a failed '
                           'data integrity check during the `prep` task')
