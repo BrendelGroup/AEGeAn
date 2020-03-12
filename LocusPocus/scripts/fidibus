@@ -124,8 +124,8 @@ def get_parser():
                           'available batches')
     refrconf.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
                           help='directory (or comma-separated list of '
-                          'directories) from which to load user-supplied '
-                          'reference genome configuration files')
+                          'directories) from which to load custom reference '
+                          'genome configuration files')
 
     lclconf = parser.add_argument_group(
         'Local Genome Configuration',
