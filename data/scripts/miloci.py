@@ -91,8 +91,8 @@ def merge_iloci(loci,parts):
     for gene in parts:
         geneL = Locus(gene)
         geneN = re.findall('(Name=[^;]+;)', geneL.fields[8])
-        geneN[0] = geneN[0].replace("Name=", "miLocusGene=", 1)
         if len(geneN) > 0:
+           geneN[0] = geneN[0].replace("Name=", "miLocusGene=", 1)
            annotation += "gene from %s to %s strand %s: %s" % (geneL.fields[3],geneL.fields[4],geneL.fields[6],geneN[0])
         else:
            annotation += "gene from %s to %s strand %s: %s" % (geneL.fields[3],geneL.fields[4],geneL.fields[6],'unnamed;')
