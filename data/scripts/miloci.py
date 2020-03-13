@@ -38,6 +38,7 @@ class Locus(object):
     @property
     def mergeable(self):
         if self.ilocus_class not in ['siLocus', 'niLocus']:
+            #print('locus class not good %s' % self.ilocus_class)
             return False
         if 'iiLocus_exception=intron-gene' in self.fields[8]:
             return False
@@ -54,8 +55,8 @@ class Locus(object):
         self.fields[8] = re.sub('Name=[^;\n]+;*', '', self.fields[8])
 
 
-def merge_iloci(loci):
-    """Merge ajacent or overlapping gene-containing iLoci."""
+def merge_iloci(loci,parts):
+    """Merge adjacent or overlapping gene-containing iLoci."""
     assert len(loci) > 0
     if len(loci) == 1:
         loci[0].strip()
@@ -65,12 +66,14 @@ def merge_iloci(loci):
     start, end = -1, -1
     attrs = {}
     for locus in loci:
+        #print('in the locus loop', file=sys.stdout)
         if seqid:
             assert locus.seqid == seqid
         seqid = locus.seqid
         if start == -1 or locus.start < start:
             start = locus.start
         end = max(end, locus.end)
+        #print('start %d end %d' % (start,end) , file=sys.stdout)
         numeric_attrs = re.findall('([^;=]+=\d+)', locus.fields[8])
         for key_value_pair in numeric_attrs:
             assert '=' in key_value_pair, \
@@ -84,8 +87,20 @@ def merge_iloci(loci):
             attrs[key] += value
 
     attrstring = 'iLocus_type=miLocus'
+    annotation = '';
     for key in sorted(attrs):
         attrstring += ';%s=%d' % (key, attrs[key])
+        #print(attrstring, file=sys.stdout)
+    attrstring+= ';'
+    for gene in parts:
+        geneL = Locus(gene)
+        geneN = re.findall('(Name=[^;]+;)', geneL.fields[8])
+        geneN[0] = geneN[0].replace("Name=", "miLocusGene=", 1)
+        if len(geneN) > 0:
+           annotation += "gene from %s to %s strand %s: %s" % (geneL.fields[3],geneL.fields[4],geneL.fields[6],geneN[0])
+        else:
+           annotation += "gene from %s to %s strand %s: %s" % (geneL.fields[3],geneL.fields[4],geneL.fields[6],'unnamed;')
+    attrstring += annotation
     gff3 = [seqid, 'AEGeAn::miloci.py', 'locus', str(start), str(end),
             str(len(loci)), '.', '.', attrstring]
     line = '\t'.join(gff3)
@@ -99,27 +114,41 @@ def parse_iloci(fp):
             overlapping are combined
     """
     locus_buffer = []
+    parts_buffer = []
     for line in fp:
         if '\tlocus\t' not in line:
+            if '\tgene\t' in line:
+               parts_buffer.append(line)
             continue
-        locus = Locus(line)
+        else:
+            locus = Locus(line)
+            #print('locus')
+            #print(locus)
 
         if len(locus_buffer) > 0 and locus.seqid != locus_buffer[0].seqid:
-            yield merge_iloci(locus_buffer)
+            yield merge_iloci(locus_buffer,parts_buffer)
             locus_buffer = []
+            parts_buffer = []
 
         if locus.mergeable:
             locus_buffer.append(locus)
+            #print("added to buffer")
             continue
         else:
             if len(locus_buffer) > 0:
-                yield merge_iloci(locus_buffer)
+                #print("parts:\n")
+                #print(locus)
+                #print(parts_buffer)
+                yield merge_iloci(locus_buffer,parts_buffer)
+                #print(locus)
+                #print(parts_buffer)
                 locus_buffer = []
+            parts_buffer = []
             locus.strip()
             yield locus
 
     if len(locus_buffer) > 0:
-        yield merge_iloci(locus_buffer)
+        yield merge_iloci(locus_buffer,parts_buffer)
 
 
 if __name__ == '__main__':
