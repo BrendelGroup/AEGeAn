@@ -90,12 +90,12 @@ def merge_iloci(loci,parts):
     attrstring+= ';'
     for gene in parts:
         geneL = Locus(gene)
-        geneN = re.findall('(Name=[^;]+;)', geneL.fields[8])
+        geneN = re.findall('(Name=[^;]+);', geneL.fields[8])
         if len(geneN) > 0:
            geneN[0] = geneN[0].replace("Name=", "miLocusGene=", 1)
-           annotation += "gene from %s to %s strand %s: %s" % (geneL.fields[3],geneL.fields[4],geneL.fields[6],geneN[0])
+           annotation += "%s from %s to %s, strand %s;" % (geneN[0], geneL.fields[3],geneL.fields[4],geneL.fields[6])
         else:
-           annotation += "gene from %s to %s strand %s: %s" % (geneL.fields[3],geneL.fields[4],geneL.fields[6],'unnamed;')
+           annotation += "%s from %s to %s, strand %s;" % ('miLocusGene=unnamed', geneL.fields[3],geneL.fields[4],geneL.fields[6])
     attrstring += annotation
     gff3 = [seqid, 'AEGeAn::miloci.py', 'locus', str(start), str(end),
             str(len(loci)), '.', '.', attrstring]
