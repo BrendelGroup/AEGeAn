@@ -38,7 +38,6 @@ class Locus(object):
     @property
     def mergeable(self):
         if self.ilocus_class not in ['siLocus', 'niLocus']:
-            #print('locus class not good %s' % self.ilocus_class)
             return False
         if 'iiLocus_exception=intron-gene' in self.fields[8]:
             return False
@@ -66,14 +65,12 @@ def merge_iloci(loci,parts):
     start, end = -1, -1
     attrs = {}
     for locus in loci:
-        #print('in the locus loop', file=sys.stdout)
         if seqid:
             assert locus.seqid == seqid
         seqid = locus.seqid
         if start == -1 or locus.start < start:
             start = locus.start
         end = max(end, locus.end)
-        #print('start %d end %d' % (start,end) , file=sys.stdout)
         numeric_attrs = re.findall('([^;=]+=\d+)', locus.fields[8])
         for key_value_pair in numeric_attrs:
             assert '=' in key_value_pair, \
@@ -90,7 +87,6 @@ def merge_iloci(loci,parts):
     annotation = '';
     for key in sorted(attrs):
         attrstring += ';%s=%d' % (key, attrs[key])
-        #print(attrstring, file=sys.stdout)
     attrstring+= ';'
     for gene in parts:
         geneL = Locus(gene)
@@ -122,8 +118,6 @@ def parse_iloci(fp):
             continue
         else:
             locus = Locus(line)
-            #print('locus')
-            #print(locus)
 
         if len(locus_buffer) > 0 and locus.seqid != locus_buffer[0].seqid:
             yield merge_iloci(locus_buffer,parts_buffer)
@@ -132,16 +126,10 @@ def parse_iloci(fp):
 
         if locus.mergeable:
             locus_buffer.append(locus)
-            #print("added to buffer")
             continue
         else:
             if len(locus_buffer) > 0:
-                #print("parts:\n")
-                #print(locus)
-                #print(parts_buffer)
                 yield merge_iloci(locus_buffer,parts_buffer)
-                #print(locus)
-                #print(parts_buffer)
                 locus_buffer = []
             parts_buffer = []
             locus.strip()
