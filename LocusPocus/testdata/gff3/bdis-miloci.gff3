@@ -1,4 +1,4 @@
 NW_014576703.1	AEGeAn::LocusPocus	locus	1	2842	.	.	.	child_gene=1;child_mRNA=1;effective_length=2842;iLocus_type=siLocus
 NW_014576703.1	AEGeAn::LocusPocus	locus	2843	23566	.	.	.	effective_length=20724;iLocus_type=fiLocus
 NW_014576707.1	AEGeAn::LocusPocus	locus	1	6765	.	.	.	effective_length=6765;iLocus_type=fiLocus
-NW_014576707.1	AEGeAn::miloci.py	locus	6766	16400	3	.	.	iLocus_type=miLocus;child_gene=3;child_mRNA=6;child_ncRNA=1;effective_length=9635;liil=0;riil=0;miLocusGene=LOC100822410 from 7266 to 10942, strand -;miLocusGene=LOC100822717 from 11548 to 15357, strand -;miLocusGene=LOC104581480 from 15734 to 16389, strand -;
+NW_014576707.1	AEGeAn::miloci.py	locus	6766	16400	3	.	.	iLocus_type=miLocus;child_gene=3;child_mRNA=6;child_ncRNA=1;effective_length=9635;liil=0;riil=0;miLocusGene1=LOC100822410 on - strand from 7266 to 10942;miLocusGene2=LOC100822717 on - strand from 11548 to 15357;miLocusGene3=LOC104581480 on - strand from 15734 to 16389;
