@@ -74,12 +74,16 @@ def thresholds(iloci, iqnt=0.95, gqnt=0.05):
     ithresh = None
     if iqnt:
         iiloci = iloci.loc[iloci.LocusClass == 'iiLocus']
-        ithresh = int(iiloci['Length'].quantile(iqnt))
+# ... the quantile approach is only invoked when there are at least 20 iiloci:
+        if len(iiloci['Length']) >= 20:
+            ithresh = int(iiloci['Length'].quantile(iqnt))
     gthresh = None
     if gqnt:
         gilocus_types = ['siLocus', 'ciLocus', 'niLocus', 'miLocus']
         giloci = iloci.loc[iloci.LocusClass.isin(gilocus_types)]
-        gthresh = int(giloci['Length'].quantile(gqnt))
+# ... the quantile approach is only invoked when there are at least 20 giloci:
+        if len(giloci['Length']) >= 20:
+            gthresh = int(giloci['Length'].quantile(gqnt))
     return ithresh, gthresh
 
 
@@ -163,7 +167,7 @@ def main(args):
             try:
                 phi = calc_phi(seqid, iloci, miloci, gthresh)
             except ZeroDivisionError:
-                # ... the exception occurs when sequence contains no giloci
+                # ... the exception occurs when the sequence contains no giloci
                 continue
 
             ilspace = det_ilspace(seqid, miloci, ithresh, gthresh)
