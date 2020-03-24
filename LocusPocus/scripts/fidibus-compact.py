@@ -153,8 +153,8 @@ def main(args):
         milocustable = '{wd:s}/{spec:s}/{spec:s}.mi{dt:s}.tsv'.format(
             wd=args.workdir, spec=species, dt=dtype,
         )
-        iloci = pandas.read_table(ilocustable)
-        miloci = pandas.read_table(milocustable)
+        iloci = pandas.read_table(ilocustable,low_memory=False)
+        miloci = pandas.read_table(milocustable,low_memory=False)
         ithresh, gthresh = thresholds(miloci, args.iqnt, args.gqnt)
 
         phis = list()
