@@ -190,4 +190,5 @@ ci-test:
 
 
 style:
+		pycodestyle data/scripts/*.py
 		cd LocusPocus && pycodestyle LocusPocus/*.py scripts/*.py

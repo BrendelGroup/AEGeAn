@@ -22,7 +22,7 @@ def parse_gff3(fp, feattypes=['gene']):
     seqlens = {}
     for line in fp:
         if line.startswith('##sequence-region'):
-            pattern = '##sequence-region\s+(\S+)\s+(\d+)\s+(\d+)'
+            pattern = r'##sequence-region\s+(\S+)\s+(\d+)\s+(\d+)'
             seqmatch = re.search(pattern, line)
             assert seqmatch, 'unable to parse seqreg pragma: %s' % line
             seqid = seqmatch.group(1)
@@ -91,7 +91,9 @@ def test_parse_gff3():
     testout = run_parse_gff3(gff3, idformat='locus%03d')
     assert out == testout, 'test 2 failed'
 
+
 test_parse_gff3()
+
 
 if __name__ == '__main__':
     desc = 'Report iLoci for unannotated sequences'
