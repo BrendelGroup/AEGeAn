@@ -154,7 +154,9 @@ def get_parser():
                           'default is "{}ILC-%%05lu"')
     miscconf.add_argument('--keep', metavar='PTN', nargs='+',
                           help='keep files matching the specified pattern(s) '
-                          'when running the `cleanup` build task')
+                          'when running the `cleanup` build task; cannot be '
+                          'declared directly before the `task` argument(s) '
+                          ' unless a `--` is placed in between')
     miscconf.add_argument('--fullclean', action='store_true',
                           help='when running the `cleanup` build task, delete '
                           'original (downloaded) data files as well as '
