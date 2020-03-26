@@ -73,6 +73,7 @@ def align_convert(fp):
         else:
             yield line
 
+
 if __name__ == '__main__':
     fqiter = Peeker(sys.stdin)
     for entry in align_convert(fqiter):

@@ -19,7 +19,7 @@ try:
     logproc = subprocess.Popen(['git', 'log'], stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE, universal_newlines=True)
     logout, logerr = logproc.communicate()
-except:
+except Exception:
     logerr = True
 
 if logerr:
@@ -28,13 +28,13 @@ if logerr:
     link = 'https://github.com/standage/AEGeAn/releases/tag/' + semver
     year = '2016'
 else:
-    sha1match = re.search('commit (\S+)', logout)
+    sha1match = re.search(r'commit (\S+)', logout)
     assert sha1match, 'could not find latest commit SHA1 hash'
     sha1 = sha1match.group(1)
     sha1slug = sha1[:10]
     link = 'https://github.com/standage/AEGeAn/tree/' + sha1
 
-    yearmatch = re.search('Date:\s+.+(\d{4}) ', logout)
+    yearmatch = re.search(r'Date:\s+.+(\d{4}) ', logout)
     assert yearmatch, 'could not find year of latest commit'
     year = yearmatch.group(1)
 

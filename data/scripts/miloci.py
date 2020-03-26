@@ -54,7 +54,7 @@ class Locus(object):
         self.fields[8] = re.sub('Name=[^;\n]+;*', '', self.fields[8])
 
 
-def merge_iloci(loci,parts):
+def merge_iloci(loci, parts):
     """Merge adjacent or overlapping gene-containing iLoci."""
     assert len(loci) > 0
     if len(loci) == 1:
@@ -71,7 +71,7 @@ def merge_iloci(loci,parts):
         if start == -1 or locus.start < start:
             start = locus.start
         end = max(end, locus.end)
-        numeric_attrs = re.findall('([^;=]+=\d+)', locus.fields[8])
+        numeric_attrs = re.findall(r'([^;=]+=\d+)', locus.fields[8])
         for key_value_pair in numeric_attrs:
             assert '=' in key_value_pair, \
                 'malformed key/value pair %s' % key_value_pair
@@ -84,24 +84,24 @@ def merge_iloci(loci,parts):
             attrs[key] += value
 
     attrstring = 'iLocus_type=miLocus'
-    annotation = '';
+    annotation = ''
     for key in sorted(attrs):
         attrstring += ';%s=%d' % (key, attrs[key])
-    attrstring+= ';'
+    attrstring += ';'
     i = 0
     for gene in parts:
         i += 1
         geneL = Locus(gene)
-        geneN = re.findall('(Name=[^;]+);', geneL.fields[8])
+        geneN = re.findall(r'(Name=[^;]+);', geneL.fields[8])
         if len(geneN) > 0:
-           mgname = "miLocusGene%d=" % i
-           geneN[0] = geneN[0].replace("Name=", mgname, 1)
-           annotation += "%s on %s strand from %s to %s;" % \
-             (geneN[0], geneL.fields[6], geneL.fields[3],geneL.fields[4])
+            mgname = "miLocusGene%d=" % i
+            geneN[0] = geneN[0].replace("Name=", mgname, 1)
+            annotation += "%s on %s strand from %s to %s;" % \
+                (geneN[0], geneL.fields[6], geneL.fields[3], geneL.fields[4])
         else:
-           mgname = "miLocusGene%d=unnamed" % i
-           annotation += "%s on %s strand from %s to %s;" % \
-             (mgname, geneL.fields[6], geneL.fields[3],geneL.fields[4])
+            mgname = "miLocusGene%d=unnamed" % i
+            annotation += "%s on %s strand from %s to %s;" % \
+                (mgname, geneL.fields[6], geneL.fields[3], geneL.fields[4])
     attrstring += annotation
     gff3 = [seqid, 'AEGeAn::miloci.py', 'locus', str(start), str(end),
             str(len(loci)), '.', '.', attrstring]
@@ -120,13 +120,13 @@ def parse_iloci(fp):
     for line in fp:
         if '\tlocus\t' not in line:
             if '\tgene\t' in line:
-               parts_buffer.append(line)
+                parts_buffer.append(line)
             continue
         else:
             locus = Locus(line)
 
         if len(locus_buffer) > 0 and locus.seqid != locus_buffer[0].seqid:
-            yield merge_iloci(locus_buffer,parts_buffer)
+            yield merge_iloci(locus_buffer, parts_buffer)
             locus_buffer = []
             parts_buffer = []
 
@@ -135,14 +135,14 @@ def parse_iloci(fp):
             continue
         else:
             if len(locus_buffer) > 0:
-                yield merge_iloci(locus_buffer,parts_buffer)
+                yield merge_iloci(locus_buffer, parts_buffer)
                 locus_buffer = []
             parts_buffer = []
             locus.strip()
             yield locus
 
     if len(locus_buffer) > 0:
-        yield merge_iloci(locus_buffer,parts_buffer)
+        yield merge_iloci(locus_buffer, parts_buffer)
 
 
 if __name__ == '__main__':
