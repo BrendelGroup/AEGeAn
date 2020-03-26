@@ -8,7 +8,7 @@ From: fedora:31
     
 %post
     dnf -y update
-    dnf -y install bc bzip2 findutils git mlocate tcsh unzip zip wget which
+    dnf -y install bc bzip2 findutils git lftp mlocate tcsh unzip zip wget which
     dnf -y install gcc-c++ make ruby
     dnf -y install cairo-devel pango-devel zlib-devel
     dnf -y install libnsl
