@@ -19,10 +19,6 @@ def cli():
     """Define the command-line interface of the program."""
     desc = 'Summarize piLocus content of the specified genome(s)'
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('-c', '--cfgdir', default=None, metavar='DIR',
-                        help='directory (or comma-separated list of '
-                        'directories) from which to load user-supplied genome '
-                        'configuration files')
     parser.add_argument('-w', '--workdir', metavar='WD', default='./species',
                         help='working directory for data files; default is '
                         '"./species"')
