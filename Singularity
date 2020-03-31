@@ -14,6 +14,7 @@ From: fedora:31
     dnf -y install libnsl
     dnf -y install python3-pycurl python3-pyyaml python3-pandas
     dnf -y install python3-entrypoints python3-pytest python3-pytest-cov
+    dnf -y install python3-biopython
     dnf -y install pandoc
     dnf -y install parallel
 
@@ -37,6 +38,18 @@ From: fedora:31
     make
     make install
     cd ..
+
+    echo 'Installing the lastz package:'
+    mkdir LASTZ
+    cd LASTZ
+    wget http://www.bx.psu.edu/~rsharris/lastz/lastz-1.04.03.tar.gz
+    tar -xzf lastz-1.04.03.tar.gz
+    cd lastz-distrib-1.04.03/
+    sed -i -e "1i LASTZ_INSTALL=/usr/local/bin" make-include.mak
+    sed -i -e "s/-Wall//;" src/Makefile
+    make
+    make install
+    cd ../..
 
     git clone https://github.com/BrendelGroup/AEGeAn.git
     cd AEGeAn
