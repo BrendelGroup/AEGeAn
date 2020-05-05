@@ -13,6 +13,6 @@ Cele:
     fixseqreg: true
     checksums:
         gdna: 25f7bca0e887f5e1793211d43e32b7abbfa1bc6b
-        gff3: f664fc6565e5a1cc6aeb4b703a1f05c57e540fd5
-        prot: b352effffb28c8e8cf96a615d33c22fb1c36545f
+        gff3: eea3db4794a1fde2af087097a48261f7b2bffd36
+        prot: f886c4fd9dc259165d8bdea8bf377f6649569bbd
     description: WBcel235 from the C. elegans sequencing consortium
