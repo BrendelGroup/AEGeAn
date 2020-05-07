@@ -226,7 +226,7 @@ def test_genome_download():
         'scaffold path mismatch\n%s\n%s' % (ador_db.gdnapath, testpath)
     assert ador_db.compress_gdna is False
 
-    amel_db = LocusPocus.test_registry.genome('Amel')
+    amel_db = LocusPocus.test_registry.genome('Am45')
     testurl = ('https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/'
                'Apis_mellifera/all_assembly_versions/suppressed/'
                'GCF_000002195.4_Amel_4.5/'
