@@ -81,7 +81,7 @@ def main(args):
         ilocustable = '{wd:s}/{spec:s}/{spec:s}.iloci.tsv'.format(
             wd=args.workdir, spec=species
         )
-        data = pandas.read_table(ilocustable)
+        data = pandas.read_table(ilocustable, low_memory=False)
         row = get_row(data, args.outfmt)
         print_row(row, args.outfmt)
 

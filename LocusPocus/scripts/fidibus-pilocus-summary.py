@@ -83,8 +83,8 @@ def main(args):
         premrnatable = '{wd:s}/{spec:s}/{spec:s}.pre-mrnas.tsv'.format(
             wd=args.workdir, spec=species
         )
-        iloci = pandas.read_table(ilocustable)
-        premrnas = pandas.read_table(premrnatable)
+        iloci = pandas.read_table(ilocustable, low_memory=False)
+        premrnas = pandas.read_table(premrnatable, low_memory=False)
         row = get_row(iloci, premrnas, args.outfmt)
         print_row(row, args.outfmt)
 
