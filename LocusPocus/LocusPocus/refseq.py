@@ -231,7 +231,7 @@ def test_genome_download():
                'Apis_mellifera/all_assembly_versions/suppressed/'
                'GCF_000002195.4_Amel_4.5/'
                'GCF_000002195.4_Amel_4.5_genomic.fna.gz')
-    testpath = './Amel/GCF_000002195.4_Amel_4.5_genomic.fna.gz'
+    testpath = './Am45/GCF_000002195.4_Amel_4.5_genomic.fna.gz'
     assert amel_db.gdnaurl == testurl, \
         'chromosome URL mismatch\n%s\n%s' % (amel_db.gdnaurl, testurl)
     assert amel_db.gdnapath == testpath, \
