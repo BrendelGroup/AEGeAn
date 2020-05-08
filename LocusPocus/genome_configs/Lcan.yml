@@ -1,0 +1,6 @@
+Lcan:
+    species: Lynx canadensis
+    source: refseq 
+    branch: vertebrate_mammalian
+    accession: GCF_007474595.1
+    build: mLynCan4_v1.p
