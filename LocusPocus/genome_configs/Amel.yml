@@ -5,16 +5,15 @@ Amel:
         - bee
         - honeybee
     source: refseq
-    suppressed: True
     branch: invertebrate
-    accession: GCF_000002195.4
-    build: Amel_4.5
+    accession: GCF_003254395.2
+    build: Amel_HAv3.1
     annotfilter:
         - NC_001566.1
     seqfilter:
         - NC_001566.1
     checksums:
-        gdna: d301a875b9cd8320eca1c31cb9ebfd4f79edf7ed
-        gff3: 9bc22ec7299169700b45764eb3e16b0c2e772f2b
-        prot: 84a87ebd078df309917da3b90afc045b94d02938
-    description: Amel_4.5 from HGSC@Baylor
+        gdna: ed0f425f282e934b1f3424ce0021b89c0892d2d4
+        gff3: ffaceb7e64a0562fc9bc54af67ecb475d39862c4
+        prot: a27d60fc7afb4c1df32637a8afc60a899ac4e031
+    description: Amel_HAv3.1 from Uppsala University
