@@ -1,5 +1,5 @@
 bootstrap: docker
-From: fedora:31
+From: fedora:32
 
 %help
     This container provides portable & reproducible components for AEGeAn:
@@ -18,8 +18,6 @@ From: fedora:31
     dnf -y install pandoc
     dnf -y install parallel
 
-    cd /usr/bin && ln -s ./python3 python
-    
     cd /usr/local/src
 
     echo 'Installing the GenomeTools package:'
@@ -60,13 +58,13 @@ From: fedora:31
     cd ..
 
     
-    echo 'Installing BLAST+ version 2.9.0 from NCBI'
-    wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.9.0/ncbi-blast-2.9.0+-x64-linux.tar.gz
-    tar -xzf ncbi-blast-2.9.0+-x64-linux.tar.gz
-    cd ncbi-blast-2.9.0+/bin
+    echo 'Installing BLAST+ version 2.10.1 from NCBI'
+    wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.10.1/ncbi-blast-2.10.1+-x64-linux.tar.gz
+    tar -xzf ncbi-blast-2.10.1+-x64-linux.tar.gz
+    cd ncbi-blast-2.10.1+/bin
     cp * /usr/local/bin/
     cd ../..
-    rm ncbi-blast-2.9.0+-x64-linux.tar.gz
+    rm ncbi-blast-2.10.1+-x64-linux.tar.gz
     cd ..
 
     echo 'Installing MuSeqBox version 5.5 from BrendelGroup'
