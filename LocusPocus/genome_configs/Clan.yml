@@ -4,3 +4,8 @@ Clan:
     branch: vertebrate_other
     accession: GCF_009829145.1
     build: bChiLan1.pri
+    checksums:
+        gdna: 8b552be555631873a520458fa129f587463d308a
+        gff3: 2b843dae62129536dc061b1386488bac0c43e530
+        prot: bd9c2880046090c3f6b158ac76a1c42261e28a71
+    description: submitted by Vertebrate Genomes Project

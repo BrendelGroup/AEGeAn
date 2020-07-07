@@ -13,7 +13,7 @@ Dmel:
     seqfilter:
         - NC_024511.2
     checksums:
-        gdna: e4176036c90a917372821bbf3498f6d232e69690
+        gdna: da39a3ee5e6b4b0d3255bfef95601890afd80709
         gff3: 5179399d3209170df68351a030518ee4e8962622
         prot: 40da868a60c53c6e7bd53014e195cd3536445b95
     description: Release 6 (plus ISO1 MT) from the FlyBase Consortium
