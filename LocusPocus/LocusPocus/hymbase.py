@@ -29,8 +29,6 @@ class HymBaseDB(LocusPocus.genomedb.GenomeDB):
         genus = self.config['species'].split()[0].lower()
         base = 'http://hymenopteragenome.org/drupal/sites/'
         base += 'hymenopteragenome.org.%s/files/data' % genus
-        #base = 'https://hymenoptera.elsiklab.missouri.edu/sites/'
-        #base += 'hymenoptera.org/files/data/archive/beebase/'
         return base
 
     def __init__(self, label, conf, workdir='.'):
