@@ -26,8 +26,11 @@ import LocusPocus
 class HymBaseDB(LocusPocus.genomedb.GenomeDB):
 
     def specbase(self):
-        base = 'https://hymenoptera.elsiklab.missouri.edu/sites/'
-        base += 'hymenoptera.org/files/data/archive/beebase/'
+        genus = self.config['species'].split()[0].lower()
+        base = 'http://hymenopteragenome.org/drupal/sites/'
+        base += 'hymenopteragenome.org.%s/files/data' % genus
+        #base = 'https://hymenoptera.elsiklab.missouri.edu/sites/'
+        #base += 'hymenoptera.org/files/data/archive/beebase/'
         return base
 
     def __init__(self, label, conf, workdir='.'):
