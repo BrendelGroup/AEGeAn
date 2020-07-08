@@ -145,7 +145,7 @@ def test_gdna_format():
            'files/data/archive/beebase/amel_OGSv1.0.gff.gz')
     assert db.gff3url == url, db.gff3url
     url = ('https://hymenoptera.elsiklab.missouri.edu/sites/hymenoptera.org/'
-           'files/data/archive/beebase/amel_OGSv1.1_pep.fa.gz')
+           'files/data/archive/beebase/amel_OGSv1.0_pep.fa.gz')
     assert db.proturl == url, db.proturl
 
 
