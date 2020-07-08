@@ -8,9 +8,13 @@
 # -----------------------------------------------------------------------------
 
 """
+NOTE: This implementation concerns archived data at the the current
+      Hymenoptera Genome Database (https://hymenoptera.elskilab.missouri.edu).
+      Current HGD data are largely derived from original NCBI files.
+
 Retrieve and format data from BeeBase.
 
-GenomeDB implementation for BeeBase consortium data provisioned by
+GenomeDB implementation for BeeBase consortium data provided by
 HymenopteraBase.
 """
 
@@ -26,8 +30,10 @@ import LocusPocus
 class HymBaseDB(LocusPocus.genomedb.GenomeDB):
 
     def specbase(self):
+        source = self.config['source']
+        print("source is %s\n\n" % source)
         genus = self.config['species'].split()[0].lower()
-        base = 'http://hymenopteragenome.org/drupal/sites/'
+        base = 'http://genomes.missouri.edu/drupal/sites/'
         base += 'hymenopteragenome.org.%s/files/data' % genus
         return base
 
@@ -141,8 +147,8 @@ class HymBaseDB(LocusPocus.genomedb.GenomeDB):
 class BeeBaseDB(HymBaseDB):
 
     def specbase(self):
-        return ('http://hymenopteragenome.org/beebase/sites/'
-                'hymenopteragenome.org.beebase/files/data/consortium_data')
+        return ('https://hymenoptera.elsiklab.missouri.edu/sites/'
+                'hymenoptera.org/files/data/archive/beebase')
 
     def __init__(self, label, conf, workdir='.'):
         super(BeeBaseDB, self).__init__(label, conf, workdir)

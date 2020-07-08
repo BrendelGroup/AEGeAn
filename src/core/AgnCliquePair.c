@@ -234,8 +234,8 @@ AgnCliquePair* agn_clique_pair_new(AgnTranscriptClique *refr,
   GtStr *seqidrefr = gt_genome_node_get_seqid(refr);
   GtStr *seqidpred = gt_genome_node_get_seqid(pred);
   agn_assert(gt_genome_node_get_start(refr) == gt_genome_node_get_start(pred) &&
-            gt_genome_node_get_end(refr) == gt_genome_node_get_end(pred) &&
-            gt_str_cmp(seqidrefr, seqidpred) == 0);
+             gt_genome_node_get_end(refr) == gt_genome_node_get_end(pred) &&
+             gt_str_cmp(seqidrefr, seqidpred) == 0);
 
   AgnCliquePair *pair = (AgnCliquePair *)gt_malloc( sizeof(AgnCliquePair) );
   pair->refr_clique = gt_genome_node_ref(refr);
