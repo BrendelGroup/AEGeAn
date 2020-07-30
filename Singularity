@@ -18,6 +18,10 @@ From: fedora:32
     dnf -y install pandoc
     dnf -y install parallel
 
+    #NOTE: "python" is refered to in AEGeAn code, but not defined for the Fedora 32
+    #      environment as set up above. The following will work:
+    ln -s /usr/bin/python3 /usr/bin/python
+
     cd /usr/local/src
 
     echo 'Installing the GenomeTools package:'
