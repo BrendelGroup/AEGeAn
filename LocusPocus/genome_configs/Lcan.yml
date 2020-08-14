@@ -4,3 +4,8 @@ Lcan:
     branch: vertebrate_mammalian
     accession: GCF_007474595.1
     build: mLynCan4_v1.p
+    checksums:
+        gdna: f70f4d7704177b0f2440adcffac129d08aa8cef4
+        gff3: a34adf75dfdbc4eef4f3951a564dae42236a8061
+        prot: c9231d3ef5a0496c411d3fdacd5da897c7bd2fb9
+    description: submitted by Vertebrate Genomes Project

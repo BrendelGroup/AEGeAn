@@ -23,8 +23,8 @@ class Am10DB(LocusPocus.genomedb.GenomeDB):
     def __init__(self, label, conf, workdir='.'):
         super(Am10DB, self).__init__(label, conf, workdir)
         assert self.config['source'] == 'am10'
-        self.specbase = ('http://hymenopteragenome.org/drupal/sites/'
-                         'hymenopteragenome.org.beebase/files/data')
+        self.specbase = ('https://hymenoptera.elsiklab.missouri.edu/sites/'
+                         'hymenoptera.org/files/data/archive/beebase')
 
     def __repr__(self):
         return 'OGS1.0'
@@ -138,14 +138,14 @@ def test_gdna_format():
     assert filecmp.cmp(testoutfile, outfile), 'Am10 gDNA formatting failed'
 
     assert repr(db) == 'OGS1.0'
-    url = ('http://hymenopteragenome.org/drupal/sites/'
-           'hymenopteragenome.org.beebase/files/data/Amel_2.0_scaffolds.fa.gz')
+    url = ('https://hymenoptera.elsiklab.missouri.edu/sites/hymenoptera.org/'
+           'files/data/archive/beebase/Amel_2.0_scaffolds.fa.gz')
     assert db.gdnaurl == url, db.gdnaurl
-    url = ('http://hymenopteragenome.org/drupal/sites/'
-           'hymenopteragenome.org.beebase/files/data/amel_OGSv1.0.gff.gz')
+    url = ('https://hymenoptera.elsiklab.missouri.edu/sites/hymenoptera.org/'
+           'files/data/archive/beebase/amel_OGSv1.0.gff.gz')
     assert db.gff3url == url, db.gff3url
-    url = ('http://hymenopteragenome.org/drupal/sites/'
-           'hymenopteragenome.org.beebase/files/data/amel_OGSv1.0_pep.fa.gz')
+    url = ('https://hymenoptera.elsiklab.missouri.edu/sites/hymenoptera.org/'
+           'files/data/archive/beebase/amel_OGSv1.0_pep.fa.gz')
     assert db.proturl == url, db.proturl
 
 

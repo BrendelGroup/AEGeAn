@@ -8,9 +8,13 @@
 # -----------------------------------------------------------------------------
 
 """
+NOTE: This implementation concerns archived data at the the current
+      Hymenoptera Genome Database (https://hymenoptera.elskilab.missouri.edu).
+      Current HGD data are largely derived from original NCBI files.
+
 Retrieve and format data from BeeBase.
 
-GenomeDB implementation for BeeBase consortium data provisioned by
+GenomeDB implementation for BeeBase consortium data provided by
 HymenopteraBase.
 """
 
@@ -26,8 +30,10 @@ import LocusPocus
 class HymBaseDB(LocusPocus.genomedb.GenomeDB):
 
     def specbase(self):
+        source = self.config['source']
+        print("source is %s\n\n" % source)
         genus = self.config['species'].split()[0].lower()
-        base = 'http://hymenopteragenome.org/drupal/sites/'
+        base = 'http://genomes.missouri.edu/drupal/sites/'
         base += 'hymenopteragenome.org.%s/files/data' % genus
         return base
 
@@ -141,8 +147,8 @@ class HymBaseDB(LocusPocus.genomedb.GenomeDB):
 class BeeBaseDB(HymBaseDB):
 
     def specbase(self):
-        return ('http://hymenopteragenome.org/beebase/sites/'
-                'hymenopteragenome.org.beebase/files/data/consortium_data')
+        return ('https://hymenoptera.elsiklab.missouri.edu/sites/'
+                'hymenoptera.org/files/data/archive/beebase')
 
     def __init__(self, label, conf, workdir='.'):
         super(BeeBaseDB, self).__init__(label, conf, workdir)
@@ -204,8 +210,9 @@ class BeeBaseDB(HymBaseDB):
 def test_scaffolds_download():
     """HymBase: scaffolds download"""
     cfdb = LocusPocus.test_registry.genome('Cfhb')
-    testurl = ('http://hymenopteragenome.org/drupal/sites/hymenopteragenome.'
-               'org.camponotus/files/data/Cflo_3.3_scaffolds.fa.gz')
+    testurl = ('http://genomes.missouri.edu/drupal/sites/'
+               'hymenopteragenome.org.camponotus/'
+               'files/data/Cflo_3.3_scaffolds.fa.gz')
     testpath = './Cfhb/Cflo_3.3_scaffolds.fa.gz'
     assert cfdb.gdnaurl == testurl, \
         'scaffold URL mismatch\n%s\n%s' % (cfdb.gdnaurl, testurl)
@@ -256,8 +263,8 @@ def test_proteins_hymbase():
 def test_scaffolds_download_beebase():
     """BeeBase: scaffolds download"""
     emex_db = LocusPocus.test_registry.genome('Emex')
-    testurl = ('http://hymenopteragenome.org/beebase/sites/'
-               'hymenopteragenome.org.beebase/files/data/consortium_data/'
+    testurl = ('https://hymenoptera.elsiklab.missouri.edu/sites/'
+               'hymenoptera.org/files/data/archive/beebase/'
                'Eufriesea_mexicana.v1.0.fa.gz')
     testpath = './Emex/Eufriesea_mexicana.v1.0.fa.gz'
     assert emex_db.gdnaurl == testurl, \
@@ -270,8 +277,8 @@ def test_scaffolds_download_beebase():
 def test_annot_download():
     """BeeBase: annotation download"""
     dnov_db = LocusPocus.test_registry.genome('Dnov', workdir='BeeBase')
-    testurl = ('http://hymenopteragenome.org/beebase/sites/'
-               'hymenopteragenome.org.beebase/files/data/consortium_data/'
+    testurl = ('https://hymenoptera.elsiklab.missouri.edu/sites/'
+               'hymenoptera.org/files/data/archive/beebase/'
                'Dufourea_novaeangliae_v1.1.gff.gz')
     testpath = 'BeeBase/Dnov/Dufourea_novaeangliae_v1.1.gff.gz'
     assert dnov_db.gff3url == testurl, \
@@ -284,8 +291,8 @@ def test_proteins_download():
     """BeeBase: protein download"""
     hlab_db = LocusPocus.test_registry.genome('Hlab',
                                               workdir='/opt/db/fidibus')
-    testurl = ('http://hymenopteragenome.org/beebase/sites/'
-               'hymenopteragenome.org.beebase/files/data/consortium_data/'
+    testurl = ('https://hymenoptera.elsiklab.missouri.edu/sites/'
+               'hymenoptera.org/files/data/archive/beebase/'
                'Habropoda_laboriosa_v1.2.pep.fa.gz')
     testpath = '/opt/db/fidibus/Hlab/Habropoda_laboriosa_v1.2.pep.fa.gz'
     assert hlab_db.proturl == testurl, \

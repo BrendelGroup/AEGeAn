@@ -83,8 +83,8 @@ def cluster_proteins(dbs, np=1, cdargs=None):
         for clusterid, clusterseqs in LocusPocus.cdhit.parse_clusters(infile):
             iloci = [protmap[prot.species+prot.accession] for prot in clusterseqs]
             species = set([prot.species for prot in clusterseqs])
-            print(len(iloci), len(species), ','.join(iloci), ','.join(species),
-                  sep='\t', file=outfile)
+            print(len(iloci), len(species), ','.join(iloci), ','.
+                  join(sorted(species)), sep='\t', file=outfile)
 
 
 def get_parser():

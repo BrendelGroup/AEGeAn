@@ -4,3 +4,8 @@ Acen:
     branch: vertebrate_other
     accession: GCF_007364275.1
     build: fArcCen1
+    checksums:
+        gdna: a594436ee1ee81e90b1236aff84c5ea7fd4c41da
+        gff3: 826ad1f6e863f51f4daaf194168b2b0fc34b7703
+        prot: ddc77219fcb2eb3bce281be4a236462d3393077e
+    description: submitted by Vertebrate Genomes Project
