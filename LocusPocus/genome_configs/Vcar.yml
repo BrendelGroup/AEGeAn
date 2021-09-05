@@ -7,6 +7,6 @@ Vcar:
     build: v1.0
     checksums:
         gdna: 1eb1efef4260647cb76da2874e3a20a21d339459
-        gff3: 2c75ff11041d2e5933e48359629369968ad95d67
+        gff3: c15e488ebba08130909fb311e53863e85522b8d5
         prot: 3f426492b05a6fabc9c6faf60d4ad525ea0bd383
     description: v1.0 from JGI
