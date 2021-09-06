@@ -6,8 +6,15 @@ Mtru:
     branch: plant
     accession: GCF_003473485.1
     build: MtrunA17r5.0-ANR
+    annotfilter:
+        - NC_003119.8
+        - NC_029641.1
+        - exception=trans-splicing
+    seqfilter:
+        - NC_003119.8
+        - NC_029641.1
     checksums:
-        gdna: 48b305174358df84c38fc8bef1206f75af235040
-        gff3: 2461a4c59387fb0ca1bbffee0c11f2ca42778d5a
+        gdna: 174b515dcddbd2fa8d8314581ba33ab702649f70
+        gff3: 74bee0191b051169e93414e2c351cceb527922a9
         prot: 506db0f0472620924c14d403c9c078022c2baf93
     description: Build MtrunA17r5.0-ANR from INRA/CNRS
