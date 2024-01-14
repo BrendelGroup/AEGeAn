@@ -2,9 +2,9 @@
 
 mkdir -p $HOME/local/src
 
-wget -P $HOME/local/src https://github.com/genometools/genometools/archive/v1.6.1.tar.gz
-tar -xzf $HOME/local/src/v1.6.1.tar.gz --directory $HOME/local/src/
-cd $HOME/local/src/genometools-1.6.1
+wget -P $HOME/local/src https://github.com/genometools/genometools/archive/v1.6.5.tar.gz
+tar -xzf $HOME/local/src/v1.6.5.tar.gz --directory $HOME/local/src/
+cd $HOME/local/src/genometools-1.6.5
 make -j 2 prefix=$HOME/local install
 cd -
 

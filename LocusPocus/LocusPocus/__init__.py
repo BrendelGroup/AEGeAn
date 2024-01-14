@@ -37,9 +37,8 @@ from . import am10
 from . import pdom
 
 # Versioneer
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+from . import _version
+__version__ = _version.get_versions()['version']
 
 
 # Unit test fixtures (can't figure out how to do package-scope global fixtures

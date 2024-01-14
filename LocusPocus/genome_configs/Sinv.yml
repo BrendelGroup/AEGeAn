@@ -4,15 +4,10 @@ Sinv:
     clade: ant
     source: refseq
     branch: invertebrate
-    accession: GCF_000188075.1
-    build: Si_gnG
-    annotfilter:
-        - NC_014672.1
-        - GeneID:105197556
-    seqfilter:
-        - NC_014672.1
+    accession: GCF_016802725.1_UNIL
+    build: Sinv_3.0
     checksums:
-        gdna: 85f90adfa3663d5aee9b698b0dc1dac5132e3832
-        gff3: 174475f69f5df33cc170a1f40078975199fe3aae
-        prot: 34f140008239cc319225e0e4c6a00d345f2b50be
-    description: Si_gnG from the University of Lausanne
+        gdna: 6ae540356663d05b8f1f1f17eb9b084742983573
+        gff3: cc90c820e67a098e2f850a6ebba817e53207b9d6
+        prot: 2d8b6fb37688df0dfeb0467f1a49711eb7ed1953
+    description: Sinv_3.0 from the University of Lausanne

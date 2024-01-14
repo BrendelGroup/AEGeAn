@@ -77,7 +77,7 @@ def parse_intron_accessions(instream):
             accession = id_to_accession[parentid]
             line += ';accession=%s' % accession
 
-        yield(line)
+        yield line
 
 
 def intron_sequences(db, logstream=sys.stderr):
