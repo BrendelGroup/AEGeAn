@@ -378,7 +378,7 @@ def git_pieces_from_vcs(
         pieces["distance"] = len(out.split())  # total number of commits
 
     # commit date: see ISO-8601 comment in git_versions_from_keywords()
-    date = runner(GITS, ["show", "-s", "--format=%ci", "HEAD"], \
+    date = runner(GITS, ["show", "-s", "--format=%ci", "HEAD"],
                   cwd=root)[0].strip()
     # Use only the last line.  Previous lines may contain GPG signature
     # information.
@@ -473,7 +473,7 @@ def render_pep440_pre(pieces: Dict[str, Any]) -> str:
                 pep440_split_post(pieces["closest-tag"])
             rendered = tag_version
             if post_version is not None:
-                rendered += ".post%d.dev%d" % (post_version + 1, \
+                rendered += ".post%d.dev%d" % (post_version + 1,
                                                pieces["distance"])
             else:
                 rendered += ".post0.dev%d" % (pieces["distance"])
