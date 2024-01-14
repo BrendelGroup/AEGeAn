@@ -1,5 +1,5 @@
 bootstrap: docker
-From: fedora:32
+From: fedora:39
 
 %help
     This container provides portable & reproducible components for AEGeAn:
@@ -19,7 +19,7 @@ From: fedora:32
     dnf -y install parallel
 
     #NOTE: "python" is refered to in AEGeAn code, but may not be defined for
-    #      the Fedora 32 environment as set up above. The following will work:
+    #      the Fedora 39 environment as set up above. The following will work:
     ln -sf /usr/bin/python3 /usr/bin/python
 
     cd /usr/local/src
@@ -44,16 +44,15 @@ From: fedora:32
     echo 'Installing the lastz package:'
     mkdir LASTZ
     cd LASTZ
-    wget http://www.bx.psu.edu/~rsharris/lastz/lastz-1.04.03.tar.gz
-    tar -xzf lastz-1.04.03.tar.gz
-    cd lastz-distrib-1.04.03/
+    wget https://github.com/lastz/lastz/archive/refs/tags/1.04.22.tar.gz
+    tar -xzf 1.04.22.tar.gz
+    cd lastz-1.04.22/
     sed -i -e "1i LASTZ_INSTALL=/usr/local/bin" make-include.mak
-    sed -i -e "s/-Wall//;" src/Makefile
     make
     make install
     cd ../..
 
-    git clone https://github.com/BrendelGroup/AEGeAn.git
+    git clone https://github.com/vpbrendel/AEGeAn.git
     cd AEGeAn
     make all LocusPocus
     make install install-scripts
@@ -62,19 +61,19 @@ From: fedora:32
     cd ..
 
     
-    echo 'Installing BLAST+ version 2.10.1 from NCBI'
-    wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.10.1/ncbi-blast-2.10.1+-x64-linux.tar.gz
-    tar -xzf ncbi-blast-2.10.1+-x64-linux.tar.gz
-    cd ncbi-blast-2.10.1+/bin
+    echo 'Installing BLAST+ version 2.15.0 from NCBI'
+    wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.15.0/ncbi-blast-2.15.0+-x64-linux.tar.gz
+    tar -xzf ncbi-blast-2.15.0+-x64-linux.tar.gz
+    cd ncbi-blast-2.15.0+/bin
     cp * /usr/local/bin/
     cd ../..
-    rm ncbi-blast-2.10.1+-x64-linux.tar.gz
+    rm ncbi-blast-2.15.0+-x64-linux.tar.gz
     cd ..
 
-    echo 'Installing MuSeqBox version 5.5 from BrendelGroup'
-    wget http://www.brendelgroup.org/bioinformatics2go/Download/MuSeqBox-3-4-2020.tar.gz
-    tar -xzf MuSeqBox-3-4-2020.tar.gz
-    cd MUSEQBOX5.5/src/
+    echo 'Installing MuSeqBox version 5.8 from BrendelGroup'
+    wget http://www.brendelgroup.org/bioinformatics2go/Download/MuSeqBox-1-13-2024.tar.gz
+    tar -xzf MuSeqBox-1-13-2024.tar.gz
+    cd MUSEQBOX5.8/src/
     make linux
     make install
     make clean
@@ -86,4 +85,4 @@ From: fedora:32
 
 %labels
     Maintainer vpbrendel
-    Version v1.1.0
+    Version v1.2.0
