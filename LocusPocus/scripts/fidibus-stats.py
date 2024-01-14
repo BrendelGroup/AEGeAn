@@ -99,7 +99,7 @@ def ilocus_desc(gff3, fasta, miloci=False):
         ncontent = n_content(locusseq)
 
         classmatch = re.search(r'iLocus_type=([^;\n]+)', fields[8])
-        assert(classmatch), fields[8]
+        assert classmatch, fields[8]
         locusclass = classmatch.group(1)
         genecount = 0
         attrs = fields[8]
