@@ -1,6 +1,12 @@
 name: LocusPocus CI Build
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches: 
+      - master
 
 jobs:
   build:
@@ -33,3 +39,49 @@ jobs:
         export PATH=$HOME/local/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/local/lib
         make test ci-test
+
+  build-aarch64:
+    name: Build on Linux ARM64 / Python 3.11
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build and test on Linux ARM64
+      uses: uraimo/run-on-arch-action@v2
+      with:
+        arch: aarch64
+        distro: ubuntu22.04
+        githubToken: ${{ github.token }}
+        dockerRunArgs: |
+          --volume "${PWD}:/AEGeAn"
+        install: |
+          set -x
+          apt-get update -q
+          apt-get install -y libcurl4-openssl-dev libssl-dev libpango1.0-dev libcairo2-dev libyaml-dev wget make gcc binutils
+          # Use conda to be able to install newer Python that is not available in the main Ubuntu repository
+          mkdir -p ~/miniconda3
+          wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O ~/miniconda3/miniconda.sh
+          bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+          rm -rf ~/miniconda3/miniconda.sh
+          export PATH=~/miniconda3/bin:$PATH
+          conda create -n aegean python==3.11.0
+          conda init bash
+        run: |
+          set -x
+          export PATH=~/miniconda3/bin:$PATH
+          set +u                    # disable failures due to usage of undeclared env vars in .bashrc
+          export PS1="\u@\h:\w\$ "  # needed to fully source ~/.bashrc
+          source ~/.bashrc          # needed to init/enable conda
+          set -u
+          conda activate aegean
+          python --version
+          conda install --yes pyyaml pycurl pandas setuptools pytest pytest-cov pycodestyle
+          cd /AEGeAn
+          # Build
+          data/scripts/github-actions-prereqs.sh
+          # Test
+          export PATH=$HOME/local/bin:$PATH
+          export LD_LIBRARY_PATH=$HOME/local/lib
+          make test ci-test
