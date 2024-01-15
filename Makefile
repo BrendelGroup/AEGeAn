@@ -45,7 +45,9 @@ ifeq ($(optimize),yes)
   CFLAGS += -O3
 endif
 ifneq ($(64bit),no)
+  ifeq ($(shell uname -m),x86_64)
   CFLAGS += -m64
+  endif
   GTFLAGS += 64bit=yes
 endif
 ifneq ($(debug),no)
