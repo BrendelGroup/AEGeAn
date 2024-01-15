@@ -1,6 +1,6 @@
 name: LocusPocus CI Build
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -33,3 +33,36 @@ jobs:
         export PATH=$HOME/local/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/local/lib
         make test ci-test
+
+  build-aarch64:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build and test on Linux ARM64
+      uses: uraimo/run-on-arch-action@v2
+      with:
+        arch: aarch64
+        distro: ubuntu22.04
+        githubToken: ${{ github.token }}
+        dockerRunArgs: |
+          --volume "${PWD}:/AEGeAn"
+        install: |
+          conda --version
+          exit 1
+          sudo apt-get update -q
+          sudo apt-get install libcurl4-openssl-dev libssl-dev libpango1.0-dev libcairo2-dev libyaml-dev
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml pycurl pandas
+          python -m pip install setuptools
+          python -m pip install pytest pytest-cov pycodestyle
+        run: |
+          cd /AEGeAn
+          # Build
+          data/scripts/github-actions-prereqs.sh
+          # Test
+          export PATH=$HOME/local/bin:$PATH
+          export LD_LIBRARY_PATH=$HOME/local/lib
+          make test ci-test
