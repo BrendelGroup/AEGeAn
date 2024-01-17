@@ -52,7 +52,7 @@ From: fedora:39
     make install
     cd ../..
 
-    git clone https://github.com/vpbrendel/AEGeAn.git
+    git clone https://github.com/BrendelGroup/AEGeAn.git
     cd AEGeAn
     make all LocusPocus
     make install install-scripts
