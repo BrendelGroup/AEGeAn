@@ -46,7 +46,7 @@ GtNodeStream* agn_pseudogene_fix_stream_new(GtNodeStream *in)
   return ns;
 }
 
-GtNodeVisitor *agn_pseudogene_fix_visitor_new(GtLogger *logger)
+GtNodeVisitor *agn_pseudogene_fix_visitor_new()
 {
   return gt_node_visitor_create(pseudogene_fix_visitor_class());
 }

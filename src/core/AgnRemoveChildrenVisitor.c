@@ -44,7 +44,7 @@ GtNodeStream* agn_remove_children_stream_new(GtNodeStream *in)
   return ns;
 }
 
-GtNodeVisitor *agn_remove_children_visitor_new(GtLogger *logger)
+GtNodeVisitor *agn_remove_children_visitor_new()
 {
   return gt_node_visitor_create(remove_children_visitor_class());
 }
